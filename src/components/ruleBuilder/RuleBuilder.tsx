@@ -33,6 +33,56 @@ import {
 import { getConditionTypeById } from "./data/Conditions";
 import { getEffectTypeById } from "./data/Effects";
 
+// Helper to build default parameter objects when creating new blocks
+function getDefaultConditionParams(typeId: string) {
+  const def = getConditionTypeById(typeId);
+  const params: Record<string, unknown> = {};
+  if (def) {
+    def.params.forEach((p) => {
+      if (p.default !== undefined) {
+        params[p.id] = p.default;
+      }
+    });
+  }
+  return params;
+}
+
+function getDefaultEffectParams(typeId: string) {
+  const def = getEffectTypeById(typeId);
+  const params: Record<string, unknown> = {};
+  if (def) {
+    def.params.forEach((p) => {
+      if (p.default !== undefined) {
+        params[p.id] = p.default;
+      }
+    });
+  }
+  return params;
+}
+
+function applyDefaultsToRules(rules: Rule[]): Rule[] {
+  return rules.map((rule) => ({
+    ...rule,
+    conditionGroups: rule.conditionGroups.map((group) => ({
+      ...group,
+      conditions: group.conditions.map((condition) => ({
+        ...condition,
+        params: {
+          ...getDefaultConditionParams(condition.type),
+          ...condition.params,
+        },
+      })),
+    })),
+    effects: rule.effects.map((effect) => ({
+      ...effect,
+      params: {
+        ...getDefaultEffectParams(effect.type),
+        ...effect.params,
+      },
+    })),
+  }));
+}
+
 interface RuleBuilderProps {
   isOpen: boolean;
   onClose: () => void;
@@ -234,7 +284,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setRules(existingRules);
+      setRules(applyDefaultsToRules(existingRules));
       setSelectedItem(null);
     }
   }, [isOpen, existingRules]);
@@ -332,7 +382,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         id: crypto.randomUUID(),
         type: conditionType,
         negate: false,
-        params: {},
+        params: getDefaultConditionParams(conditionType),
       };
 
       let targetGroupId = selectedItem.groupId;
@@ -471,7 +521,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     const newEffect: Effect = {
       id: crypto.randomUUID(),
       type: effectType,
-      params: {},
+      params: getDefaultEffectParams(effectType),
     };
 
     setRules((prev) =>
