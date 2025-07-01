@@ -490,6 +490,13 @@
               "params": {
                 "tarot_card": "the_fool"
               }
+            },
+            {
+              "id": "fe6dd541-eb3f-45ac-9925-a31a5ae674ed",
+              "type": "create_tarot_card",
+              "params": {
+                "tarot_card": "the_fool"
+              }
             }
           ],
           "position": {
