@@ -65,11 +65,11 @@ html {
   --color-balatro-gold-new: #eaba44;
   --color-balatro-default: #3a5055;
 
-  --color-mint-lighter: #6cb79a;
-  --color-mint-light: #59a487;
-  --color-mint: #469274;
-  --color-mint-dark: #3c7f65;
-  --color-mint-darker: #336d57;
+  --color-mint-lighter: #e8ebf2;
+  --color-mint-light: #e5e8f0;
+  --color-mint:  #E5E9F0;
+  --color-mint-dark: #ced6e3;
+  --color-mint-darker: #bec9da;
 
   --color-white-lighter: #d8dfe8;
   --color-white-light: #cbd3de;
@@ -77,11 +77,11 @@ html {
   --color-white-dark: #aab4c2;
   --color-white-darker: #96a1b0;
 
-  --color-black-lighter: #465a60;
-  --color-black-light: #3a4c53;
-  --color-black: #2f4047;
-  --color-black-dark: #26353b;
-  --color-black-darker: #1e2b30;
+  --color-black-lighter: #6b7894;
+  --color-black-light: #3a4d5f;
+  --color-black: #404859;
+  --color-black-dark: #353c4b;
+  --color-black-darker:  #2b303b;
 
   --color-effect: #c0a435;
   --color-condition: #1d7bde;
@@ -241,7 +241,7 @@ html {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(126, 211, 181, 0.5);
+  background: rgba(223, 228, 236, 0.5);
   border-radius: 4px;
   transition: background 0.2s ease;
 }
@@ -253,7 +253,7 @@ html {
 /* Firefox scrollbar */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(126, 211, 181, 0.5) rgba(0, 0, 0, 0.3);
+  scrollbar-color: rgba(223, 228, 236, 0.5) rgba(0, 0, 0, 0.3);
 }
 
 @keyframes float {

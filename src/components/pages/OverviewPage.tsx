@@ -591,7 +591,7 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
               See full checkist in the README
             </h1>
           </div>
-          <a href="https://github.com/Jayd-H/joker-forge/blob/main/README.md">
+          <a href="https://github.com/Jayd-H/joker-forge/blob/main/README.md" target="_blank" rel="noopener noreferrer">
             <h1 className=" text-mint hover:underline text-center">
               View README
             </h1>

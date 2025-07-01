@@ -271,7 +271,7 @@ const ExtraCreditPage: React.FC<ExtraCreditPageProps> = ({
                   {filteredAndSortedJokers.length} of {extraCreditJokers.length}{" "}
                   jokers from the{" "}
                   <a
-                    href="https://github.com/GuilloryCraft/ExtraCredit"
+                    href="https://github.com/GuilloryCraft/ExtraCredit" target="_blank" rel="noopener noreferrer"
                     className="text-mint-light hover:text-mint-lighter hover:underline decoration-dashed"
                   >
                     Extra Credit
