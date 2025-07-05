@@ -1,0 +1,69 @@
+name: Auto Version Update
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "package.json"
+      - "public/version.json"
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'chore: auto-increment version')"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Update version
+        run: |
+          if [ ! -f package.json ]; then
+            echo '{"name": "joker-forge", "version": "0.1.0", "private": true}' > package.json
+          fi
+
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+
+          node -e "
+            const pkg = require('./package.json');
+            pkg.version = '$NEW_VERSION';
+            require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+          mkdir -p public
+          cat > public/version.json << EOF
+          {
+            "version": "$NEW_VERSION",
+            "lastUpdated": "$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)",
+            "buildNumber": $GITHUB_RUN_NUMBER,
+            "commitSha": "$GITHUB_SHA",
+            "metadata": {
+              "branch": "$GITHUB_REF_NAME",
+              "buildDate": "$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)",
+              "environment": "production",
+              "workflow": "$GITHUB_WORKFLOW",
+              "actor": "$GITHUB_ACTOR"
+            }
+          }
+          EOF
+
+      - name: Commit and push changes
+        run: |
+          git add package.json public/version.json
+          git commit -m "chore: auto-increment version to $(node -p "require('./package.json').version")" || exit 0
+          git push origin main

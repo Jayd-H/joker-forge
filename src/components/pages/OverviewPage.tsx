@@ -24,6 +24,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { JokerData } from "../JokerCard";
 import { ModMetadata } from "./ModMetadataPage";
+import { VersionInfo } from "../../App";
 
 interface OverviewPageProps {
   jokerCount: number;
@@ -34,6 +35,10 @@ interface OverviewPageProps {
   setMetadata: (metadata: ModMetadata) => void;
   onExport: () => void;
   onNavigate: (section: string) => void;
+  version?: string;
+  versionInfo?: VersionInfo | null;
+  onUpdateVersion?: (major: number, minor: number, patch?: number) => void;
+  versionLoading?: boolean;
 }
 
 interface ImplementationStats {
@@ -306,6 +311,10 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
   setMetadata,
   onExport,
   onNavigate,
+  version,
+  versionInfo,
+  onUpdateVersion,
+  versionLoading,
 }) => {
   const [stats, setStats] = React.useState<ImplementationStats>({
     triggers: { implemented: 13, total: 19, percentage: 68 },
@@ -321,6 +330,9 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
   const [editingAuthor, setEditingAuthor] = useState(false);
   const [editingVersion, setEditingVersion] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [editingAppVersion, setEditingAppVersion] = useState(false);
+  const [tempMajor, setTempMajor] = useState("0");
+  const [tempMinor, setTempMinor] = useState("1");
 
   const displayName = metadata?.name || "My Custom Mod";
   const displayAuthor =
@@ -334,6 +346,49 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
   const [tempAuthor, setTempAuthor] = useState(displayAuthor);
   const [tempVersion, setTempVersion] = useState(displayVersion);
   const [tempDescription, setTempDescription] = useState(displayDescription);
+
+  const parseVersionString = (versionStr: string) => {
+    const parts = versionStr.split(".").map((n) => parseInt(n) || 0);
+    return {
+      major: parts[0] || 0,
+      minor: parts[1] || 0,
+      patch: parts[2] || 0,
+    };
+  };
+
+  const handleAppVersionSave = () => {
+    if (!onUpdateVersion) return;
+
+    const major = parseInt(tempMajor) || 0;
+    const minor = parseInt(tempMinor) || 0;
+
+    onUpdateVersion(major, minor, 0);
+    setEditingAppVersion(false);
+  };
+
+  const handleAppVersionCancel = () => {
+    const currentVersionParts = parseVersionString(version || "0.1.0");
+    setTempMajor(currentVersionParts.major.toString());
+    setTempMinor(currentVersionParts.minor.toString());
+    setEditingAppVersion(false);
+  };
+
+  const formatBuildInfo = () => {
+    if (!versionInfo) return null;
+
+    const buildDate = new Date(versionInfo.metadata.buildDate);
+    const lastUpdated = new Date(versionInfo.lastUpdated);
+
+    return {
+      buildNumber: versionInfo.buildNumber,
+      shortSha: versionInfo.commitSha.substring(0, 7),
+      fullSha: versionInfo.commitSha,
+      buildDate: buildDate.toLocaleString(),
+      lastUpdated: lastUpdated.toLocaleString(),
+      branch: versionInfo.metadata.branch,
+      actor: versionInfo.metadata.actor,
+    };
+  };
 
   React.useEffect(() => {
     parseImplementationStats().then(setStats);
@@ -350,6 +405,14 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
     setTempVersion(displayVersion);
     setTempDescription(displayDescription);
   }, [displayName, displayAuthor, displayVersion, displayDescription]);
+
+  React.useEffect(() => {
+    if (version) {
+      const versionParts = parseVersionString(version);
+      setTempMajor(versionParts.major.toString());
+      setTempMinor(versionParts.minor.toString());
+    }
+  }, [version]);
 
   const handleNameSave = () => {
     if (!metadata || !setMetadata) return;
@@ -435,6 +498,8 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
   const completeJokers = jokers.filter(
     (joker) => validateJoker(joker).length === 0
   );
+
+  const buildInfo = formatBuildInfo();
 
   return (
     <div className="p-8 max-w-7xl mx-auto font-lexend">
@@ -662,6 +727,141 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
           </div>
         </div>
 
+        <div className="bg-black-darker border border-black-lighter rounded-xl p-6 mt-6">
+          <div className="flex items-center gap-3 mb-4">
+            <StarIcon className="h-5 w-5 text-mint" />
+            <h3 className="text-lg text-white-light font-medium">
+              Version Control
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <div className="text-sm text-white-darker mb-2">
+                  Current Version
+                </div>
+                {versionLoading ? (
+                  <div className="animate-pulse">
+                    <div className="h-8 bg-black-lighter rounded"></div>
+                  </div>
+                ) : (
+                  <div className="text-2xl font-bold text-mint">
+                    v{version || "0.1.0"}
+                  </div>
+                )}
+              </div>
+
+              {buildInfo && (
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-white-darker">Build:</span>
+                    <span className="text-white-light">
+                      #{buildInfo.buildNumber}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white-darker">Commit:</span>
+                    <span
+                      className="text-white-light font-mono"
+                      title={buildInfo.fullSha}
+                    >
+                      {buildInfo.shortSha}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white-darker">Branch:</span>
+                    <span className="text-white-light">{buildInfo.branch}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-white-darker">Built:</span>
+                    <span className="text-white-light">
+                      {buildInfo.buildDate}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <div className="text-sm text-white-darker mb-2">
+                  Manual Version Control
+                </div>
+                <div className="text-sm text-white-light mb-4">
+                  Control major and minor versions. Patch version
+                  auto-increments with each commit.
+                </div>
+              </div>
+
+              {editingAppVersion ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-white-darker mb-2">
+                        Major
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={tempMajor}
+                        onChange={(e) => setTempMajor(e.target.value)}
+                        className="w-full bg-black-dark border border-black-lighter rounded px-3 py-2 text-white-light focus:outline-none focus:border-mint"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-white-darker mb-2">
+                        Minor
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={tempMinor}
+                        onChange={(e) => setTempMinor(e.target.value)}
+                        className="w-full bg-black-dark border border-black-lighter rounded px-3 py-2 text-white-light focus:outline-none focus:border-mint"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-white-darker mb-4">
+                    Will become: v{tempMajor}.{tempMinor}.0 (patch resets to 0)
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAppVersionSave}
+                      className="flex-1 px-4 py-2 bg-mint text-black-dark rounded hover:bg-mint-light transition-colors font-medium"
+                    >
+                      Update Version
+                    </button>
+                    <button
+                      onClick={handleAppVersionCancel}
+                      className="flex-1 px-4 py-2 bg-black-lighter text-white-light rounded hover:bg-black-light transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setEditingAppVersion(true)}
+                  className="w-full px-4 py-2 bg-black-dark border border-black-lighter rounded hover:border-mint hover:text-mint transition-colors text-white-light"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <PencilIcon className="h-4 w-4" />
+                    <span>Update Major/Minor Version</span>
+                  </div>
+                </button>
+              )}
+
+              <div className="text-xs text-white-darker">
+                <strong>Note:</strong> Patch version automatically increments
+                with each commit to main branch.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="border-t border-black-lighter pt-8">
           <div className="flex items-center gap-3 mb-6">
             <WrenchScrewdriverIcon className="h-5 w-5 text-mint" />
@@ -866,7 +1066,7 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
             <div className="flex items-center justify-center gap-2 mb-2">
               <FireIcon className="h-4 w-4 text-orange-400" />
               <span className="text-sm text-orange-400 font-medium">
-                v0.1.0
+                v{version || "0.1.0"}
               </span>
             </div>
             <h1 className="text-sm mb-2 text-white-darker text-center">

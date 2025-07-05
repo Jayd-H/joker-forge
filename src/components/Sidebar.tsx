@@ -16,6 +16,7 @@ import {
   LinkIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./JokerCard";
+import { VersionInfo } from "../App";
 
 interface SidebarProps {
   selectedSection?: string;
@@ -28,6 +29,8 @@ interface SidebarProps {
   jokers?: JokerData[];
   modName?: string;
   authorName?: string;
+  version?: string;
+  versionInfo?: VersionInfo | null;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -39,6 +42,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onImportJSON,
   exportLoading = false,
   jokers = [],
+  version = "0.1.0",
+  versionInfo,
 }) => {
   const handleSectionClick = (section: string) => {
     if (section === "github") {
@@ -71,6 +76,22 @@ const Sidebar: React.FC<SidebarProps> = ({
       await onImportJSON();
     }
   };
+
+  const formatBuildInfo = () => {
+    if (!versionInfo) return null;
+
+    const buildDate = new Date(versionInfo.metadata.buildDate);
+    const isToday = buildDate.toDateString() === new Date().toDateString();
+
+    return {
+      buildNumber: versionInfo.buildNumber,
+      shortSha: versionInfo.commitSha.substring(0, 7),
+      timeAgo: isToday ? "today" : buildDate.toLocaleDateString(),
+      fullSha: versionInfo.commitSha,
+    };
+  };
+
+  const buildInfo = formatBuildInfo();
 
   const navigationItems = [
     { id: "overview", label: "Overview", icon: HomeIcon },
@@ -195,10 +216,21 @@ const Sidebar: React.FC<SidebarProps> = ({
             </span>
           </button>
 
-          <div className="text-center mt-4">
-            <span className="text-xs text-mint font-medium tracking-widest">
-              v0.1.0
-            </span>
+          <div className="text-center mt-4 space-y-1">
+            <div className="text-xs text-mint font-medium tracking-widest">
+              v{version}
+            </div>
+            {buildInfo && (
+              <div className="text-xs text-white-darker space-y-0.5">
+                <div>Build #{buildInfo.buildNumber}</div>
+                <div
+                  title={`Commit: ${buildInfo.fullSha}`}
+                  className="font-mono cursor-help"
+                >
+                  {buildInfo.shortSha} • {buildInfo.timeAgo}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

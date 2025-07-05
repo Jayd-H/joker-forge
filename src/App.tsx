@@ -49,6 +49,26 @@ interface AutoSaveData {
   timestamp: number;
 }
 
+export interface VersionInfo {
+  version: string;
+  lastUpdated: string;
+  buildNumber: number;
+  commitSha: string;
+  metadata: {
+    branch: string;
+    buildDate: string;
+    environment: string;
+    workflow: string;
+    actor: string;
+  };
+}
+
+interface AppVersion {
+  major: number;
+  minor: number;
+  patch: number;
+}
+
 const AUTO_SAVE_KEY = "joker-forge-autosave";
 
 function AppContent() {
@@ -75,6 +95,16 @@ function AppContent() {
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const [showExportSuccessModal, setShowExportSuccessModal] = useState(false);
 
+  const [appVersion, setAppVersion] = useState<AppVersion>({
+    major: 0,
+    minor: 1,
+    patch: 0,
+  });
+  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
+  const [versionLoading, setVersionLoading] = useState(true);
+
+  const currentVersion = `${appVersion.major}.${appVersion.minor}.${appVersion.patch}`;
+
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const statusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const clearStatusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -82,6 +112,75 @@ function AppContent() {
     modMetadata: ModMetadata;
     jokers: JokerData[];
   } | null>(null);
+
+  const parseVersionString = (versionStr: string): AppVersion => {
+    const parts = versionStr.split(".").map((n) => parseInt(n) || 0);
+    return {
+      major: parts[0] || 0,
+      minor: parts[1] || 0,
+      patch: parts[2] || 0,
+    };
+  };
+
+  const saveVersionToStorage = (version: AppVersion) => {
+    try {
+      localStorage.setItem(
+        "joker-forge-manual-version",
+        JSON.stringify(version)
+      );
+    } catch (error) {
+      console.warn("Failed to save manual version:", error);
+    }
+  };
+
+  const loadManualVersionFromStorage = (): AppVersion | null => {
+    try {
+      const saved = localStorage.getItem("joker-forge-manual-version");
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      console.warn("Failed to load manual version:", error);
+      return null;
+    }
+  };
+
+  const loadVersionFromBuild = async (): Promise<VersionInfo | null> => {
+    try {
+      const response = await fetch("/version.json?" + Date.now());
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Loaded version info:", data);
+        return data;
+      }
+    } catch (error) {
+      console.warn("Could not load version.json:", error);
+    }
+    return null;
+  };
+
+  const updateVersion = (major: number, minor: number, patch?: number) => {
+    const newVersion: AppVersion = {
+      major,
+      minor,
+      patch: patch !== undefined ? patch : 0,
+    };
+
+    setAppVersion(newVersion);
+    saveVersionToStorage(newVersion);
+
+    console.log(
+      `Manual version update: ${newVersion.major}.${newVersion.minor}.${newVersion.patch}`
+    );
+  };
+
+  const shouldUseManualVersion = (
+    manualVersion: AppVersion,
+    buildVersion: AppVersion
+  ): boolean => {
+    return (
+      manualVersion.major !== buildVersion.major ||
+      manualVersion.minor !== buildVersion.minor
+    );
+  };
 
   const saveToLocalStorage = useCallback(
     (metadata: ModMetadata, jokerData: JokerData[]) => {
@@ -194,6 +293,88 @@ function AppContent() {
 
     loadAutoSave();
   }, [loadFromLocalStorage]);
+
+  useEffect(() => {
+    const initializeVersion = async () => {
+      setVersionLoading(true);
+
+      try {
+        const buildVersionInfo = await loadVersionFromBuild();
+
+        if (buildVersionInfo) {
+          setVersionInfo(buildVersionInfo);
+          const buildVersion = parseVersionString(buildVersionInfo.version);
+
+          const manualVersion = loadManualVersionFromStorage();
+
+          if (
+            manualVersion &&
+            shouldUseManualVersion(manualVersion, buildVersion)
+          ) {
+            const combinedVersion: AppVersion = {
+              major: manualVersion.major,
+              minor: manualVersion.minor,
+              patch: buildVersion.patch,
+            };
+            setAppVersion(combinedVersion);
+            console.log("Using manual version override:", combinedVersion);
+          } else {
+            setAppVersion(buildVersion);
+            console.log("Using build version:", buildVersion);
+          }
+        } else {
+          const manualVersion = loadManualVersionFromStorage();
+          if (manualVersion) {
+            setAppVersion(manualVersion);
+            console.log("Using stored manual version:", manualVersion);
+          } else {
+            const defaultVersion = { major: 0, minor: 1, patch: 0 };
+            setAppVersion(defaultVersion);
+            console.log("Using default version:", defaultVersion);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to initialize version:", error);
+        setAppVersion({ major: 0, minor: 1, patch: 0 });
+      } finally {
+        setVersionLoading(false);
+      }
+    };
+
+    if (hasLoadedInitialData) {
+      initializeVersion();
+    }
+  }, [hasLoadedInitialData]);
+
+  useEffect(() => {
+    const refreshVersion = async () => {
+      const newVersionInfo = await loadVersionFromBuild();
+      if (newVersionInfo && newVersionInfo.version !== versionInfo?.version) {
+        console.log("New version detected:", newVersionInfo.version);
+        setVersionInfo(newVersionInfo);
+
+        const newBuildVersion = parseVersionString(newVersionInfo.version);
+        const manualVersion = loadManualVersionFromStorage();
+
+        if (
+          manualVersion &&
+          shouldUseManualVersion(manualVersion, newBuildVersion)
+        ) {
+          const combinedVersion: AppVersion = {
+            major: manualVersion.major,
+            minor: manualVersion.minor,
+            patch: newBuildVersion.patch,
+          };
+          setAppVersion(combinedVersion);
+        } else {
+          setAppVersion(newBuildVersion);
+        }
+      }
+    };
+
+    const interval = setInterval(refreshVersion, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [versionInfo]);
 
   useEffect(() => {
     if (!hasLoadedInitialData) return;
@@ -323,7 +504,7 @@ function AppContent() {
 
     setExportLoading(true);
     try {
-      await exportJokersAsMod(jokers, modMetadata);
+      await exportJokersAsMod(jokers, modMetadata, currentVersion);
       setShowExportSuccessModal(true);
     } catch (error) {
       console.error("Export failed:", error);
@@ -395,6 +576,8 @@ function AppContent() {
         jokers={jokers}
         modName={modMetadata.name}
         authorName={modMetadata.author.join(", ")}
+        version={currentVersion}
+        versionInfo={versionInfo}
       />
       <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
         <Routes>
@@ -410,6 +593,10 @@ function AppContent() {
                 setMetadata={setModMetadata}
                 onExport={handleExport}
                 onNavigate={handleNavigate}
+                version={currentVersion}
+                versionInfo={versionInfo}
+                onUpdateVersion={updateVersion}
+                versionLoading={versionLoading}
               />
             }
           />
@@ -425,6 +612,10 @@ function AppContent() {
                 setMetadata={setModMetadata}
                 onExport={handleExport}
                 onNavigate={handleNavigate}
+                version={currentVersion}
+                versionInfo={versionInfo}
+                onUpdateVersion={updateVersion}
+                versionLoading={versionLoading}
               />
             }
           />
