@@ -28,6 +28,7 @@ import {
   getRarityBadgeColor,
   type CustomRarity,
 } from "./data/BalatroUtils";
+import { applyAutoFormatting } from "./generic/balatroTextFormatter";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
@@ -224,169 +225,6 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     return `{${parts.join(",")}}`;
   };
 
-  const applyAutoFormatting = (text: string): string => {
-    if (!autoFormatEnabled || text === lastFormattedText) return text;
-
-    let formatted = text;
-    const words = text.split(/(\s+)/);
-    let hasChanges = false;
-
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
-      if (!word || word.match(/^\s+$/)) continue;
-
-      const lowerWord = word.toLowerCase();
-
-      if (lowerWord.match(/^(wild|steel|glass|gold|lucky|stone|bonus)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:attention}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(chips?|dollars?|mult)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = capitalizedWord;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(common)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:common}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(uncommon)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:uncommon}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(rare)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:rare}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(legendary)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:legendary}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^tarot$/)) {
-        words[i] = `{C:tarot}${word}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^spectral$/)) {
-        words[i] = `{C:spectral}${word}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^planet$/)) {
-        words[i] = `{C:planet}${word}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(enhanced?|enhancement)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:enhanced}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (lowerWord.match(/^(edition)$/)) {
-        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-        words[i] = `{C:edition}${capitalizedWord}{}`;
-        hasChanges = true;
-      } else if (word.match(/^-\d+(\.\d+)?$/)) {
-        words[i] = `{C:red}${word}{}`;
-        hasChanges = true;
-      }
-
-      if (i < words.length - 2) {
-        const nextSpace = words[i + 1];
-        const nextWord = words[i + 2];
-
-        if (
-          nextSpace &&
-          nextSpace.match(/^\s+$/) &&
-          nextWord &&
-          nextWord.toLowerCase() === "seal"
-        ) {
-          if (lowerWord.match(/^(red|blue|purple|gold)$/)) {
-            const capitalizedWord =
-              word.charAt(0).toUpperCase() + word.slice(1);
-            const capitalizedSeal =
-              nextWord.charAt(0).toUpperCase() + nextWord.slice(1);
-            words[i] = `{C:attention}${capitalizedWord}{}`;
-            words[i + 2] = capitalizedSeal;
-            hasChanges = true;
-          }
-        }
-      }
-
-      if (i >= 2) {
-        const prevSuit = words[i - 2];
-        const prevSpace = words[i - 1];
-
-        if (prevSuit && prevSpace && prevSpace.match(/^\s+$/)) {
-          const lowerSuit = prevSuit.toLowerCase();
-          if (lowerSuit.match(/^(hearts?|spades?|clubs?|diamonds?)$/)) {
-            const suitName = lowerSuit.charAt(0) + lowerSuit.slice(1);
-            const capitalizedSuit =
-              prevSuit.charAt(0).toUpperCase() + prevSuit.slice(1);
-            words[i - 2] = `{C:${suitName}}${capitalizedSuit}{}`;
-            hasChanges = true;
-          }
-        }
-      }
-
-      if (i >= 4) {
-        const prevNumber = words[i - 4];
-        const prevSpace = words[i - 3];
-        const contextWord = words[i - 2];
-        const currentSpace = words[i - 1];
-
-        if (
-          prevNumber &&
-          prevNumber.match(/^\+\d+(\.\d+)?$/) &&
-          prevSpace &&
-          prevSpace.match(/^\s+$/) &&
-          contextWord &&
-          currentSpace &&
-          currentSpace.match(/^\s+$/)
-        ) {
-          const contextLower = contextWord.toLowerCase();
-
-          if (contextLower.includes("chip")) {
-            words[i - 4] = `{C:blue}${prevNumber}{}`;
-            hasChanges = true;
-          } else if (contextLower.includes("mult")) {
-            words[i - 4] = `{C:red}${prevNumber}{}`;
-            hasChanges = true;
-          } else if (contextLower.includes("dollar")) {
-            words[i - 4] = `{C:money}${prevNumber}{}`;
-            hasChanges = true;
-          } else {
-            words[i - 4] = `{C:attention}${prevNumber}{}`;
-            hasChanges = true;
-          }
-        }
-      }
-
-      if (i >= 4) {
-        const prevXNumber = words[i - 4];
-        const prevSpace = words[i - 3];
-        const contextWord = words[i - 2];
-        const currentSpace = words[i - 1];
-
-        if (
-          prevXNumber &&
-          prevXNumber.match(/^x(\d*\.?\d*)$/i) &&
-          prevSpace &&
-          prevSpace.match(/^\s+$/) &&
-          contextWord &&
-          contextWord.toLowerCase().includes("mult") &&
-          currentSpace &&
-          currentSpace.match(/^\s+$/)
-        ) {
-          const match = prevXNumber.match(/^x(\d*\.?\d*)$/i);
-          if (match) {
-            words[i - 4] = `{X:red,C:white}X${match[1]}{}`;
-            hasChanges = true;
-          }
-        }
-      }
-    }
-
-    if (hasChanges) {
-      formatted = words.join("");
-      setLastFormattedText(formatted);
-    }
-
-    return formatted;
-  };
-
   const colorButtons = [
     { tag: "{C:red}", color: "bg-balatro-red", name: "Red" },
     { tag: "{C:blue}", color: "bg-balatro-blue", name: "Blue" },
@@ -488,7 +326,18 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     let finalValue = value;
 
     if (field === "description" && shouldAutoFormat) {
-      finalValue = applyAutoFormatting(value);
+      const result = applyAutoFormatting(
+        value,
+        lastFormattedText,
+        autoFormatEnabled,
+        true
+      );
+      finalValue = result.formatted;
+
+      if (result.hasChanges) {
+        setLastFormattedText(finalValue);
+      }
+
       setFormData({
         ...formData,
         [field]: finalValue,
