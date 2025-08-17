@@ -229,7 +229,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
       <div className="flex flex-col gap-2 items-center">
         <div className="flex items-center gap-2">
           <span className="text-white-light text-sm">{label}</span>
-          {itemType === "joker" && (
+          {itemType !== "consumable" && (
             <button
               onClick={() =>
                 handleModeChange(isVariableMode ? "number" : "variable")
@@ -294,7 +294,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
               placeholder="Max"
             />
           </div>
-        ) : isVariableMode && itemType === "joker" ? (
+        ) : isVariableMode && itemType !== "consumable" ? (
           <div className="space-y-2 w-full">
             {availableVariables.length > 0 ? (
               <InputDropdown
@@ -630,7 +630,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
             <span className="text-white-light text-sm">
               {String(param.label)}
             </span>
-            {itemType === "joker" && (
+            {itemType !== "consumable" && (
               <button
                 onClick={() =>
                   handleModeChange(isVariableMode ? "number" : "variable")
@@ -786,7 +786,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
                 />
               </div>
             </div>
-          ) : isVariableMode && itemType === "joker" ? (
+          ) : isVariableMode && itemType !== "consumable" ? (
             <div className="space-y-2">
               {availableVariables && availableVariables.length > 0 ? (
                 <InputDropdown
