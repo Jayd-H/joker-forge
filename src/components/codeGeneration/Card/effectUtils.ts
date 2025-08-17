@@ -18,6 +18,7 @@ import { generateBalanceReturn } from "./effects/BalanceEffect";
 import { generateDrawCardsReturn } from "./effects/DrawCardsEffect";
 import { generateCreateLastPlayedPlanetReturn } from "./effects/CreateLastPlayedPlanetEffect";
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
+import { generateModifyInternalVariableReturn } from "./effects/ModifyInternalVariableEffect";
 
 export interface ConfigExtraVariable {
   name: string;
@@ -110,6 +111,9 @@ const generateSingleEffect = (
 
     case "swap_chips_mult":
       return generateSwapChipsMultReturn(effect);
+
+    case "modify_internal_variable":
+      return generateModifyInternalVariableReturn(effect, trigger || "");
 
     default:
       return {

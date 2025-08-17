@@ -632,7 +632,7 @@ export const getVariableNamesFromItem = (
 };
 
 export const getVariableUsageDetails = (
-  item: JokerData | ConsumableData | EnhancementData
+  item: JokerData | ConsumableData | EnhancementData | SealData
 ): VariableUsage[] => {
   if (!item.rules) return [];
 

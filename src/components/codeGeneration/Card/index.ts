@@ -636,6 +636,14 @@ const generateSingleEnhancementCode = (
     configItems.push(`${gameVar.name} = ${gameVar.startsFrom}`);
   });
 
+  if (enhancement.userVariables && enhancement.userVariables.length > 0) {
+    enhancement.userVariables.forEach((variable) => {
+      if (variable.type === "number" || !variable.type) {
+        configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
+      }
+    });
+  }
+
   conditionalRules.forEach((rule) => {
     const regularEffects = rule.effects || [];
     const randomGroups = (rule.randomGroups || []).map((group) => ({
@@ -830,6 +838,14 @@ const generateSingleSealCode = (
       configItems.push(...effectResult.configVariables);
     }
   });
+
+  if (seal.userVariables && seal.userVariables.length > 0) {
+    seal.userVariables.forEach((variable) => {
+      if (variable.type === "number" || !variable.type) {
+        configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
+      }
+    });
+  }
 
   const sealsPerRow = 10;
   const col = currentPosition % sealsPerRow;
