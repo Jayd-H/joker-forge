@@ -69,6 +69,7 @@ export const PROBABILITY_IDENTIFIERS: {
   jokers: ConditionParameterOption[];
   consumables: ConditionParameterOption[];
   enhancements: ConditionParameterOption[];
+  blinds: ConditionParameterOption[];
 } = {
   jokers: [
     { value: "8ball", label: "8 Ball" },
@@ -86,6 +87,7 @@ export const PROBABILITY_IDENTIFIERS: {
     { value: "lucky_money", label: "Lucky Card Money" },
     { value: "glass", label: "Glass Card" },
   ],
+  blinds: [{ value: "wheel", label: "The Wheel" }],
 };
 
 export const CONDITION_CATEGORIES: CategoryDefinition[] = [
@@ -1767,6 +1769,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "jokers", label: "Jokers" },
           { value: "consumables", label: "Consumables" },
           { value: "enhancements", label: "Enhancements" },
+          { value: "blinds", label: "Blinds" },
         ],
         default: "jokers",
         showWhen: {
@@ -1786,6 +1789,8 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
               return [...PROBABILITY_IDENTIFIERS.consumables];
             case "enhancements":
               return [...PROBABILITY_IDENTIFIERS.enhancements];
+            case "blinds":
+              return [...PROBABILITY_IDENTIFIERS.blinds];
             default:
               return [...PROBABILITY_IDENTIFIERS.jokers];
           }

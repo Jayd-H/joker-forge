@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { JokerData, UserVariable } from "../data/BalatroUtils";
+import { ConsumableData, UserVariable } from "../data/BalatroUtils";
 import { getVariableUsageDetails } from "../codeGeneration/Jokers/variableUtils";
 import {
   SUITS,
@@ -24,11 +24,12 @@ import InputField from "../generic/InputField";
 import InputDropdown from "../generic/InputDropdown";
 import Button from "../generic/Button";
 import { validateVariableName } from "../generic/validationUtils";
+import { ItemData } from "./RuleBuilder";
 
 interface VariablesProps {
   position: { x: number; y: number };
-  joker: JokerData;
-  onUpdateJoker: (updates: Partial<JokerData>) => void;
+  item: Exclude<ItemData, ConsumableData>;
+  onUpdateItem: (updates: Partial<ItemData>) => void;
   onClose: () => void;
   onPositionChange: (position: { x: number; y: number }) => void;
 }
@@ -78,8 +79,8 @@ type PokerHandValue = (typeof POKER_HAND_VALUES)[number];
 
 const Variables: React.FC<VariablesProps> = ({
   position,
-  joker,
-  onUpdateJoker,
+  item,
+  onUpdateItem,
   onClose,
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -126,8 +127,8 @@ const Variables: React.FC<VariablesProps> = ({
         top: position.y,
       };
 
-  const usageDetails = useMemo(() => getVariableUsageDetails(joker), [joker]);
-  const userVariables = joker.userVariables || [];
+  const usageDetails = useMemo(() => getVariableUsageDetails(item), [item]);
+  const userVariables = item.userVariables || [];
 
   const getUsageInfo = (variableName: string) => {
     const usages = usageDetails.filter(
@@ -202,7 +203,7 @@ const Variables: React.FC<VariablesProps> = ({
     }
 
     const updatedVariables = [...userVariables, newVariable];
-    onUpdateJoker({ userVariables: updatedVariables });
+    onUpdateItem({ userVariables: updatedVariables });
 
     setNewVariableName("");
     setNewVariableValue("0");
@@ -216,7 +217,7 @@ const Variables: React.FC<VariablesProps> = ({
 
   const handleDeleteVariable = (variableId: string) => {
     const updatedVariables = userVariables.filter((v) => v.id !== variableId);
-    onUpdateJoker({ userVariables: updatedVariables });
+    onUpdateItem({ userVariables: updatedVariables });
   };
 
   const handleStartEdit = (variable: UserVariable) => {
@@ -256,7 +257,7 @@ const Variables: React.FC<VariablesProps> = ({
     const updatedVariables = userVariables.map((v) =>
       v.id === variableId ? updatedVariable : v
     );
-    onUpdateJoker({ userVariables: updatedVariables });
+    onUpdateItem({ userVariables: updatedVariables });
     setEditingVariable(null);
     setEditValidationError("");
   };
