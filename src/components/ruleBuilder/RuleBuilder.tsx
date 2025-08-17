@@ -50,7 +50,7 @@ import {
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 
-type ItemData = JokerData | ConsumableData | EnhancementData | SealData;
+export type ItemData = JokerData | ConsumableData | EnhancementData | SealData;
 type ItemType = "joker" | "consumable" | "card";
 
 interface RuleBuilderProps {
@@ -143,8 +143,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       },
     };
 
-    // Only add variables panel for jokers
-    if (itemType === "joker") {
+    // Only add variables panel for non-consumables
+    if (itemType !== "consumable") {
       return {
         ...basePanels,
         variables: {
@@ -211,7 +211,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       // Don't allow toggling variables panel for consumables
       if (
         panelId === "variables" &&
-        (itemType === "consumable" || itemType === "card")
+        (itemType === "consumable")
       ) {
         return;
       }
@@ -1635,12 +1635,12 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
                 itemType={itemType}
               />
             )}
-            {itemType === "joker" && panels.variables?.isVisible && (
+            {itemType !== "consumable" && panels.variables?.isVisible && (
               <Variables
                 position={panels.variables.position}
-                joker={item as JokerData}
-                onUpdateJoker={
-                  onUpdateItem as (updates: Partial<JokerData>) => void
+                item={item as Exclude<ItemData, ConsumableData>}
+                onUpdateItem={
+                  onUpdateItem
                 }
                 onClose={() => togglePanel("variables")}
                 onPositionChange={(position) =>
