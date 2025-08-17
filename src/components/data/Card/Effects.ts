@@ -784,6 +784,14 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Special",
   },
   {
+    id: "swap_chips_mult",
+    label: "Swap Chips & Mult",
+    description: "Swap the Chips and Mult values",
+    applicableTriggers: SCORING_TRIGGERS,
+    params: [],
+    category: "Special",
+  },
+  {
     id: "draw_cards",
     label: "Draw Cards to Hand",
     description: "Draw cards from your deck to your hand",

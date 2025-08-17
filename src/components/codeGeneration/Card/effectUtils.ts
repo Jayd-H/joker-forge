@@ -17,6 +17,7 @@ import { generateShowMessageReturn } from "./effects/ShowMessageEffect";
 import { generateBalanceReturn } from "./effects/BalanceEffect";
 import { generateDrawCardsReturn } from "./effects/DrawCardsEffect";
 import { generateCreateLastPlayedPlanetReturn } from "./effects/CreateLastPlayedPlanetEffect";
+import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
 
 export interface ConfigExtraVariable {
   name: string;
@@ -106,6 +107,9 @@ const generateSingleEffect = (
 
     case "create_last_played_planet":
       return generateCreateLastPlayedPlanetReturn(effect);
+
+    case "swap_chips_mult":
+      return generateSwapChipsMultReturn(effect);
 
     default:
       return {
