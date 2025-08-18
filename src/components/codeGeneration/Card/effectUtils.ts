@@ -86,7 +86,7 @@ const generateSingleEffect = (
       return generateCopyJokerReturn(effect);
 
     case "level_up_hand":
-      return generateLevelUpHandReturn(effect);
+      return generateLevelUpHandReturn(effect, 0, itemType);
 
     case "create_consumable":
       return generateCreateConsumableReturn(effect, trigger || "");
@@ -104,7 +104,7 @@ const generateSingleEffect = (
       return generateBalanceReturn(effect);
 
     case "draw_cards":
-      return generateDrawCardsReturn(effect);
+      return generateDrawCardsReturn(effect, 0, itemType);
 
     case "create_last_played_planet":
       return generateCreateLastPlayedPlanetReturn(effect);
