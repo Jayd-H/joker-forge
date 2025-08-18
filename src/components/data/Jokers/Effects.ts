@@ -1067,6 +1067,32 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
+    id: "unlock_joker",
+    label: "Unlock Joker",
+    description:
+      "Unlock a locked joker in the collection ",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "joker_key",
+        type: "text",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "joker",
+      },
+      {
+        id: "discover",
+        type: "select",
+        label: "Discover the Unlocked Joker",
+        options: [
+          {value: "true", label: "Discover"},
+          {value: "false", label: "Leave Undiscovered"}
+        ],
+        default: "false",
+      }
+    ],
+    category: "Jokers",
+  },
+  {
     id: "create_consumable",
     label: "Create Consumable",
     description:
