@@ -88,6 +88,7 @@ import {
   generatePassiveDiscardSize,
 } from "./effects/EditDiscardSizeEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
+import { generateUnlockJokerReturn } from "./effects/UnlockJokerEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -570,6 +571,8 @@ const generateSingleEffect = (
       return generateEditPlaySizeReturn(effect, sameTypeCount);
     case "edit_discard_size":
       return generateEditDiscardSizeReturn(effect, sameTypeCount);
+    case "unlock_joker":
+      return generateUnlockJokerReturn(effect);
     default:
       return {
         statement: "",
