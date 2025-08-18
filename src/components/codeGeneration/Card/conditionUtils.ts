@@ -20,6 +20,7 @@ import { generateDeckSizeConditionCode } from "./conditions/DeckSizeCondition";
 import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeemedCondition";
 import { generateTriggeredBossBlindConditionCode } from "./conditions/TriggeredBossBlindCondition";
 import { generateInternalVariableConditionCode } from "./conditions/InternalVariableCondition";
+import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
 
 export const generateConditionChain = (rule: Rule): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
@@ -164,6 +165,9 @@ const generateSingleConditionCode = (
 
     case "internal_variable":
       return generateInternalVariableConditionCode([singleConditionRule]);
+      
+    case "generic_compare":
+      return generateGenericCompareConditionCode([singleConditionRule]);
 
     default:
       return null;

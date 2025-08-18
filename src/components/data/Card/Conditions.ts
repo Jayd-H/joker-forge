@@ -529,6 +529,33 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Game Context",
   },
   {
+    id: "generic_compare",
+    label: "Generic Compare",
+    description: "Compare two custom values with an operator",
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
+    params: [
+      {
+        id: "value1",
+        type: "number",
+        label: "First Value",
+        default: 0,
+      },
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [...COMPARISON_OPERATORS],
+      },
+      {
+        id: "value2",
+        type: "number",
+        label: "Second Value",
+        default: 0,
+      },
+    ],
+    category: "Special",
+  },
+  {
     id: "internal_variable",
     label: "Internal Variable",
     description: "Check the value of an internal variable for this joker",
