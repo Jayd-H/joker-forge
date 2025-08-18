@@ -4,6 +4,7 @@ import {
   InformationCircleIcon,
   IdentificationIcon,
   ArchiveBoxIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
 import {
@@ -38,6 +39,10 @@ export const CARD_CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Deck & Jokers",
     icon: ArchiveBoxIcon,
+  },
+  {
+    label: "Special",
+    icon: SparklesIcon,
   },
 ];
 
@@ -522,6 +527,33 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
     applicableTriggers: GENERIC_TRIGGERS,
     params: [],
     category: "Game Context",
+  },
+  {
+    id: "internal_variable",
+    label: "Internal Variable",
+    description: "Check the value of an internal variable for this joker",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "text",
+        label: "Variable Name",
+        default: "var1",
+      },
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [...COMPARISON_OPERATORS],
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Value",
+        default: 0,
+      },
+    ],
+    category: "Special",
   },
 ];
 
