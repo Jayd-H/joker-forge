@@ -349,8 +349,20 @@ export const generateUnlockFunction = (jokerData: JokerData) => {
         targetCard = `args.cards[i]`;
         break;
 
-      case "modify_deck":
+      case "modify_deck": 
         unlockFunction += `
+        if deck_initialized == nil then
+          local deck_initialized = false
+        end
+
+        if not deck_initialized and #G.playing_cards >= 40 then
+          deck_initialized = true
+        end
+
+        if not deck_initialized then
+          return false
+        end
+
         for _, card in ipairs(G.playing_cards or {}) do`;
         targetCard = `card`;
         break;
