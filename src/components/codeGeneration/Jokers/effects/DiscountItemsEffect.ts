@@ -35,7 +35,7 @@ export const generateDiscountItemsReturn = (
   const variableName = "discount_amount";
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
+    `${effect.params?.discount_amount}_hook`,
     effect.id,
     variableName
   );
@@ -151,7 +151,9 @@ function Card:set_cost()
     hookCode += `
     
     if next(SMODS.find_card("${fullJokerKey}")) then
-        if ${costCondition} then ${costLogic} end
+        if ${costCondition} then
+            ${costLogic}
+        end
     end`;
   });
 

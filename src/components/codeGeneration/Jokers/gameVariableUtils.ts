@@ -123,6 +123,8 @@ export const generateConfigVariables = (
   } else if (typeof effectValue === "string") {
     if (effectValue.endsWith("_value")) {
       valueCode = effectValue;
+    } else if (effectValue.endsWith("_hook")) {
+      valueCode = effectValue.replace("_hook", "")
     } else {
       valueCode = `${abilityPath}.${effectValue}`;
     }
