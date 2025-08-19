@@ -878,7 +878,10 @@ export const getAllVariables = (
   const gameVariables = extractGameVariablesFromRules(item.rules || []);
   const gameVarAutoVars = gameVariables.map((gameVar) => ({
     id: `auto_gamevar_${gameVar.id}`,
-    name: gameVar.name.replace(/\s+/g, "").toLowerCase(),
+    name: gameVar.name
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase(),
     initialValue: gameVar.startsFrom,
     description: `${gameVar.description}${
       gameVar.multiplier !== 1 ? ` (×${gameVar.multiplier})` : ""

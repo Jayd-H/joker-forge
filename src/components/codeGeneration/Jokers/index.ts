@@ -219,7 +219,10 @@ const generateSingleJokerCode = (
 
   const gameVariables = extractGameVariablesFromRules(joker.rules || []);
   gameVariables.forEach((gameVar) => {
-    const varName = gameVar.name.replace(/\s+/g, "").toLowerCase();
+    const varName = gameVar.name
+    .replace(/\s+/g, "")
+    .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+    .toLowerCase();
     configItems.push(`${varName} = ${gameVar.startsFrom}`);
   });
 
@@ -1538,7 +1541,10 @@ const generateLocVarsFunction = (
 
     for (const gameVar of remainingGameVars) {
       if (currentIndex >= maxVariableIndex) break;
-      const varName = gameVar.name.replace(/\s+/g, "").toLowerCase();
+      const varName = gameVar.name
+        .replace(/\s+/g, "")
+        .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+        .toLowerCase();
       let gameVarCode: string;
 
       if (gameVar.multiplier === 1 && gameVar.startsFrom === 0) {
@@ -1637,7 +1643,10 @@ const generateLocVarsFunction = (
 
     for (const gameVar of gameVariables) {
       if (currentIndex >= maxVariableIndex) break;
-      const varName = gameVar.name.replace(/\s+/g, "").toLowerCase();
+      const varName = gameVar.name
+        .replace(/\s+/g, "")
+        .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+        .toLowerCase();
       let gameVarCode: string;
 
       if (gameVar.multiplier === 1 && gameVar.startsFrom === 0) {

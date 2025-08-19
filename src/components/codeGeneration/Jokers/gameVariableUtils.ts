@@ -77,7 +77,10 @@ export const generateGameVariableCode = (
     parsed.startsFrom !== undefined
   ) {
     const gameVariable = getGameVariableById(parsed.gameVariableId!);
-    const configVarName = gameVariable?.label.replace(/\s+/g, "").toLowerCase();
+    const configVarName = gameVariable?.label
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase();
     const startsFromCode = itemType === "hook" ? parsed.startsFrom.toString() : `card.ability.extra.${configVarName}`
 
     if (parsed.multiplier === 1 && parsed.startsFrom === 0) {
