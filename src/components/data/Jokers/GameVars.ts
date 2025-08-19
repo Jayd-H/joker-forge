@@ -826,7 +826,7 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
         label: "Free Joker Slots",
         description: "Number of empty joker slots",
         category: "jokers",
-        code: "(G.jokers and G.jokers.config.card_limit or 0 - #(G.jokers and G.jokers.cards or {}))",
+        code: "((G.jokers and G.jokers.config.card_limit or 0) - #(G.jokers and G.jokers.cards or {}))",
       },
     ],
     subcategories: [

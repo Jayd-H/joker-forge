@@ -155,7 +155,11 @@ const generateSingleConsumableCode = (
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
-    configItems.push(`${gameVar.name} = ${gameVar.startsFrom}`);
+    const varName = gameVar.name
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase();
+    configItems.push(`${varName} = ${gameVar.startsFrom}`);
   });
 
   activeRules.forEach((rule) => {
@@ -491,6 +495,10 @@ const generateLocVarsFunction = (
     if (variableMapping.length >= maxVariableIndex) return;
 
     let gameVarCode: string;
+    const varName = gameVar.name
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase();
     if (gameVar.multiplier === 1 && gameVar.startsFrom === 0) {
       gameVarCode = wrapGameVariableCode(gameVar.code);
     } else if (gameVar.startsFrom === 0) {
@@ -499,11 +507,11 @@ const generateLocVarsFunction = (
       }`;
     } else if (gameVar.multiplier === 1) {
       gameVarCode = `card.ability.extra.${
-        gameVar.name
+        varName
       } + (${wrapGameVariableCode(gameVar.code)})`;
     } else {
       gameVarCode = `card.ability.extra.${
-        gameVar.name
+        varName
       } + (${wrapGameVariableCode(gameVar.code)}) * ${gameVar.multiplier}`;
     }
 

@@ -1,12 +1,14 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateIncrementRankReturn = (effect: Effect): EffectReturn => {
   const operation = effect.params?.operation || "increment";
   const value = effect.params?.value || 1;
   const customMessage = effect.customMessage;
 
-  const actualValue = operation === "decrement" ? -value : value;
+  const valueCode = generateGameVariableCode(value);
+  const actualValue = operation === "decrement" ? `-${valueCode}` : `${valueCode}`;
 
   const incrementRankCode = `
             __PRE_RETURN_CODE__
