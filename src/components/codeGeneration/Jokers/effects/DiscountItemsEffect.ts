@@ -35,9 +35,10 @@ export const generateDiscountItemsReturn = (
   const variableName = "discount_amount";
 
   const { valueCode, configVariables } = generateConfigVariables(
-    `${effect.params?.discount_amount}_hook`,
+    effect.params?.discount_amount,
     effect.id,
-    variableName
+    variableName,
+    "hook"
   );
 
   return {

@@ -64,7 +64,10 @@ export const parseRangeVariable = (value: unknown): ParsedRangeVariable => {
   };
 };
 
-export const generateGameVariableCode = (value: unknown): string => {
+export const generateGameVariableCode = (
+  value: unknown,
+  itemType: "seal" | "enhancement" | "hook" = "enhancement"
+): string => {
   const parsed = parseGameVariable(value);
 
   if (
@@ -75,15 +78,16 @@ export const generateGameVariableCode = (value: unknown): string => {
   ) {
     const gameVariable = getGameVariableById(parsed.gameVariableId!);
     const configVarName = gameVariable?.label.replace(/\s+/g, "").toLowerCase();
+    const startsFromCode = itemType === "hook" ? parsed.startsFrom.toString() : `card.ability.extra.${configVarName}`
 
     if (parsed.multiplier === 1 && parsed.startsFrom === 0) {
       return parsed.code;
     } else if (parsed.startsFrom === 0) {
       return `(${parsed.code}) * ${parsed.multiplier}`;
     } else if (parsed.multiplier === 1) {
-      return `card.ability.extra.${configVarName} + (${parsed.code})`;
+      return `${startsFromCode} + (${parsed.code})`;
     } else {
-      return `card.ability.extra.${configVarName} + (${parsed.code}) * ${parsed.multiplier}`;
+      return `${startsFromCode} + (${parsed.code}) * ${parsed.multiplier}`;
     }
   }
 
@@ -98,7 +102,7 @@ export const generateConfigVariables = (
   effectValue: unknown,
   effectId: string,
   variableName: string,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "hook" = "enhancement"
 ): ConfigVariablesReturn => {
   effectValue = effectValue ?? 1;
   const parsed = parseGameVariable(effectValue);
@@ -111,7 +115,7 @@ export const generateConfigVariables = (
   const configVariables: ConfigExtraVariable[] = [];
 
   if (parsed.isGameVariable) {
-    valueCode = generateGameVariableCode(effectValue);
+    valueCode = generateGameVariableCode(effectValue, itemType);
   } else if (rangeParsed.isRangeVariable) {
     const seedName = `${variableName}_${effectId.substring(0, 8)}`;
     valueCode = `pseudorandom('${seedName}', ${abilityPath}.${variableName}_min, ${abilityPath}.${variableName}_max)`;
@@ -120,11 +124,11 @@ export const generateConfigVariables = (
       { name: `${variableName}_min`, value: rangeParsed.min ?? 1 },
       { name: `${variableName}_max`, value: rangeParsed.max ?? 5 }
     );
+  } else if (itemType === "hook") {
+    valueCode = `${effectValue}`
   } else if (typeof effectValue === "string") {
     if (effectValue.endsWith("_value")) {
       valueCode = effectValue;
-    } else if (effectValue.endsWith("_hook")) {
-      valueCode = effectValue.replace("_hook", "")
     } else {
       valueCode = `${abilityPath}.${effectValue}`;
     }
