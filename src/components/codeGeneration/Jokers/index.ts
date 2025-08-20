@@ -178,7 +178,7 @@ const generateInPoolFunction = (
           ${appearsIn.length > 0 ? "or" : ""} ${appearsIn.join(" or ")}
           )
           and ${appearFlags.length > 0 ? appearFlags.join(" and ") : "true"}
-      end,`;
+      end`;
   }
   return `in_pool = function(self, args)
         return ${
@@ -186,7 +186,7 @@ const generateInPoolFunction = (
             ? "true"
             : "args.source ~= 'sho'"
         }
-    end,`;
+    end`;
 };
 
 const generateSingleJokerCode = (
