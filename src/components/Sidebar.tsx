@@ -18,6 +18,7 @@ import {
   CpuChipIcon,
   ChevronDownIcon,
   EllipsisHorizontalIcon,
+  KeyIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -114,6 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "github", label: "GitHub Repository", icon: LinkIcon },
     { id: "discord", label: "Discord Server", icon: ChatBubbleLeftRightIcon },
     { id: "acknowledgements", label: "Acknowledgements", icon: StarIcon },
+    { id: "keys", label: "Keys Reference", icon: KeyIcon },
   ];
 
   const actionItems = [
