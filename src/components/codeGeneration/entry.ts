@@ -82,7 +82,8 @@ export const exportModCode = async (
       sortedBoosters,
       sortedEnhancements,
       sortedSeals,
-      hasModIcon
+      hasModIcon,
+      metadata,
     );
     zip.file(metadata.main_file, mainLuaCode);
 
@@ -220,7 +221,8 @@ const generateMainLuaCode = (
   boosters: BoosterData[],
   enhancements: EnhancementData[],
   seals: SealData[],
-  hasModIcon: boolean
+  hasModIcon: boolean,
+  metadata: ModMetadata,
 ): string => {
   let output = "";
 
@@ -365,6 +367,22 @@ end
 
 `;
   }
+
+  if (metadata.disable_vanilla) {
+      output += `function SMODS.current_mod.reset_game_globals(run_start)
+      local jokerPool = {}
+      for k, v in pairs(G.P_CENTERS) do
+          if v.set == 'Joker' then
+              if (not v.mod) then
+                  G.GAME.banned_keys[k] = true
+              end
+          end
+      end
+  end
+
+  `;
+  }
+
 
   if (customRarities.length > 0) {
     output += `local function load_rarities_file()

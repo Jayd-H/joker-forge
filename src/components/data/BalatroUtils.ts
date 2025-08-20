@@ -18,6 +18,7 @@ export interface ModMetadata {
   description: string;
   prefix: string;
   main_file: string;
+  disable_vanilla?: boolean
   version: string;
   priority: number;
   badge_colour: string;
