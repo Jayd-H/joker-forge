@@ -50,10 +50,17 @@ import { generateFirstLastScoredConditionCode } from "./conditions/FirstLastScor
 import { generateProbabilitySucceededConditionCode } from "./conditions/ProbabilitySucceededCondition";
 import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeemedCondition";
 import { generateJokerRarityConditionCode } from "./conditions/JokerRarityCondition";
-import { generateJokerStickerConditionCode, generateThisJokerStickerConditionCode } from "./conditions/JokerStickerCondition";
-import { generateJokerPositionConditionCode, generateThisJokerPositionConditionCode } from "./conditions/JokerPositionCondition";
+import {
+  generateJokerStickerConditionCode,
+  generateThisJokerStickerConditionCode,
+} from "./conditions/JokerStickerCondition";
+import {
+  generateJokerPositionConditionCode,
+  generateThisJokerPositionConditionCode,
+} from "./conditions/JokerPositionCondition";
 import { generateJokerKeyConditionCode } from "./conditions/JokerKeyCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
+import { generateBossBlindTypeConditionCode } from "./conditions/BossBlindTypeCondition";
 
 export const generateConditionChain = (
   rule: Rule,
@@ -295,8 +302,12 @@ const generateSingleConditionCode = (
 
     case "joker_sticker":
       return generateJokerStickerConditionCode([singleConditionRule]);
+
     case "this_joker_sticker":
-      return generateThisJokerStickerConditionCode([singleConditionRule])
+      return generateThisJokerStickerConditionCode([singleConditionRule]);
+
+    case "boss_blind_type":
+      return generateBossBlindTypeConditionCode([singleConditionRule]);
 
     default:
       return null;

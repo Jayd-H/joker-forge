@@ -31,6 +31,7 @@ import {
   RARITIES,
   VOUCHERS,
   STICKERS,
+  BOSS_BLINDS,
 } from "../BalatroUtils";
 
 export const GENERIC_TRIGGERS: string[] = [
@@ -1216,6 +1217,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         },
         default: "any",
       },
+
       {
         id: "operator",
         type: "select",
@@ -1398,6 +1400,32 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "big", label: "Big Blind" },
           { value: "boss", label: "Boss Blind" },
         ],
+      },
+    ],
+    category: "Game State",
+  },
+  {
+    id: "boss_blind_type",
+    label: "Boss Blind Type",
+    description: "Check the type of the current boss blind",
+    applicableTriggers: [...GENERIC_TRIGGERS, "blind_selected"],
+    params: [
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [
+          { value: "equals", label: "Equals" },
+          { value: "not_equals", label: "Not Equals" },
+        ],
+        default: "equals",
+      },
+      {
+        id: "value",
+        type: "select",
+        label: "Boss Blind",
+        options: [...BOSS_BLINDS],
+        default: "bl_hook",
       },
     ],
     category: "Game State",

@@ -104,14 +104,15 @@ export interface JokerData {
   placeholderCreditIndex?: number;
   jokerKey?: string;
   hasUserUploadedImage?: boolean;
-  cardAppearance: { // this uses the "source keys" as keys
-    jud?: boolean // judgement
-    sou?: boolean // soul
-    wra?: boolean // wraith
-    buf?: boolean // buffoon_pack
-    rif?: boolean // riff raff
-    rta?: boolean // rare tag
-    uta?: boolean // uncommon tag
+  cardAppearance: {
+    // this uses the "source keys" as keys
+    jud?: boolean; // judgement
+    sou?: boolean; // soul
+    wra?: boolean; // wraith
+    buf?: boolean; // buffoon_pack
+    rif?: boolean; // riff raff
+    rta?: boolean; // rare tag
+    uta?: boolean; // uncommon tag
   };
   appearFlags?: string;
 }
@@ -859,6 +860,38 @@ export const getConsumableSetDropdownOptions = (
 };
 
 //* ==== Centralized Balatro game data and utilities ====
+
+export const BOSS_BLINDS = [
+  { value: "bl_hook", label: "The Hook" },
+  { value: "bl_ox", label: "The Ox" },
+  { value: "bl_house", label: "The House" },
+  { value: "bl_wall", label: "The Wall" },
+  { value: "bl_wheel", label: "The Wheel" },
+  { value: "bl_arm", label: "The Arm" },
+  { value: "bl_club", label: "The Club" },
+  { value: "bl_fish", label: "The Fish" },
+  { value: "bl_psychic", label: "The Psychic" },
+  { value: "bl_goad", label: "The Goad" },
+  { value: "bl_water", label: "The Water" },
+  { value: "bl_window", label: "The Window" },
+  { value: "bl_manacle", label: "The Manacle" },
+  { value: "bl_eye", label: "The Eye" },
+  { value: "bl_mouth", label: "The Mouth" },
+  { value: "bl_plant", label: "The Plant" },
+  { value: "bl_serpent", label: "The Serpent" },
+  { value: "bl_pillar", label: "The Pillar" },
+  { value: "bl_needle", label: "The Needle" },
+  { value: "bl_head", label: "The Head" },
+  { value: "bl_tooth", label: "The Tooth" },
+  { value: "bl_flint", label: "The Flint" },
+  { value: "bl_mark", label: "The Mark" },
+
+  { value: "bl_final_acorn", label: "Amber Acorn (final)" },
+  { value: "bl_final_leaf", label: "Verdant Leaf (final)" },
+  { value: "bl_final_vessel", label: "Violet Vessel (final)" },
+  { value: "bl_final_heart", label: "Crimson Heart (final)" },
+  { value: "bl_final_bell", label: "Cerulean Bell (final)" },
+];
 
 // Ranks
 export const RANKS = [
