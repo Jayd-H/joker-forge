@@ -899,7 +899,7 @@ export const JOKERS = [
   { key: "j_greedy_joker", label: "Greedy Joker" },
   { key: "j_lusty_joker", label: "Lusty Joker" },
   { key: "j_wrathful_joker", label: "Wrathful Joker" },
-  { key: "j_gluttonous_joker", label: "Gluttonous Joker" },
+  { key: "j_gluttenous_joker", label: "Gluttonous Joker" },
   { key: "j_jolly", label: "Jolly Joker" },
   { key: "j_zany", label: "Zany Joker" },
   { key: "j_mad", label: "Mad Joker" },
