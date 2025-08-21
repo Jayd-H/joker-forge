@@ -65,6 +65,8 @@ const AcknowledgementsPage = lazy(
 );
 const NotFoundPage = lazy(() => import("./components/pages/NotFoundPage"));
 
+const KeysPage = lazy(() => import("./components/pages/KeysPage"));
+
 // Core components
 import Sidebar from "./components/Sidebar";
 
@@ -1379,6 +1381,23 @@ function AppContent() {
 
           <Route path="/acknowledgements" element={<AcknowledgementsPage />} />
           <Route path="*" element={<NotFoundPage />} />
+
+          <Route
+            path="/keys"
+            element={
+              <Suspense fallback={<SkeletonPage variant="grid" />}>
+                <KeysPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/keys/:section"
+            element={
+              <Suspense fallback={<SkeletonPage variant="grid" />}>
+                <KeysPage />
+              </Suspense>
+            }
+          />
         </Routes>
       </motion.div>
 

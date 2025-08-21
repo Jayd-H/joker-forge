@@ -18,6 +18,7 @@ export interface ModMetadata {
   description: string;
   prefix: string;
   main_file: string;
+  disable_vanilla?: boolean
   version: string;
   priority: number;
   badge_colour: string;
@@ -104,14 +105,15 @@ export interface JokerData {
   placeholderCreditIndex?: number;
   jokerKey?: string;
   hasUserUploadedImage?: boolean;
-  cardAppearance: { // this uses the "source keys" as keys
-    jud?: boolean // judgement
-    sou?: boolean // soul
-    wra?: boolean // wraith
-    buf?: boolean // buffoon_pack
-    rif?: boolean // riff raff
-    rta?: boolean // rare tag
-    uta?: boolean // uncommon tag
+  cardAppearance: {
+    // this uses the "source keys" as keys
+    jud?: boolean; // judgement
+    sou?: boolean; // soul
+    wra?: boolean; // wraith
+    buf?: boolean; // buffoon_pack
+    rif?: boolean; // riff raff
+    rta?: boolean; // rare tag
+    uta?: boolean; // uncommon tag
   };
   appearFlags?: string;
 }
@@ -860,6 +862,195 @@ export const getConsumableSetDropdownOptions = (
 
 //* ==== Centralized Balatro game data and utilities ====
 
+export const BOSS_BLINDS = [
+  { value: "bl_hook", label: "The Hook" },
+  { value: "bl_ox", label: "The Ox" },
+  { value: "bl_house", label: "The House" },
+  { value: "bl_wall", label: "The Wall" },
+  { value: "bl_wheel", label: "The Wheel" },
+  { value: "bl_arm", label: "The Arm" },
+  { value: "bl_club", label: "The Club" },
+  { value: "bl_fish", label: "The Fish" },
+  { value: "bl_psychic", label: "The Psychic" },
+  { value: "bl_goad", label: "The Goad" },
+  { value: "bl_water", label: "The Water" },
+  { value: "bl_window", label: "The Window" },
+  { value: "bl_manacle", label: "The Manacle" },
+  { value: "bl_eye", label: "The Eye" },
+  { value: "bl_mouth", label: "The Mouth" },
+  { value: "bl_plant", label: "The Plant" },
+  { value: "bl_serpent", label: "The Serpent" },
+  { value: "bl_pillar", label: "The Pillar" },
+  { value: "bl_needle", label: "The Needle" },
+  { value: "bl_head", label: "The Head" },
+  { value: "bl_tooth", label: "The Tooth" },
+  { value: "bl_flint", label: "The Flint" },
+  { value: "bl_mark", label: "The Mark" },
+
+  { value: "bl_final_acorn", label: "Amber Acorn (final)" },
+  { value: "bl_final_leaf", label: "Verdant Leaf (final)" },
+  { value: "bl_final_vessel", label: "Violet Vessel (final)" },
+  { value: "bl_final_heart", label: "Crimson Heart (final)" },
+  { value: "bl_final_bell", label: "Cerulean Bell (final)" },
+];
+
+// VANILLA JOKERS
+export const JOKERS = [
+  { key: "j_joker", label: "Joker" },
+  { key: "j_greedy_joker", label: "Greedy Joker" },
+  { key: "j_lusty_joker", label: "Lusty Joker" },
+  { key: "j_wrathful_joker", label: "Wrathful Joker" },
+  { key: "j_gluttenous_joker", label: "Gluttonous Joker" },
+  { key: "j_jolly", label: "Jolly Joker" },
+  { key: "j_zany", label: "Zany Joker" },
+  { key: "j_mad", label: "Mad Joker" },
+  { key: "j_crazy", label: "Crazy Joker" },
+  { key: "j_droll", label: "Droll Joker" },
+  { key: "j_sly", label: "Sly Joker" },
+  { key: "j_wily", label: "Wily Joker" },
+  { key: "j_clever", label: "Clever Joker" },
+  { key: "j_devious", label: "Devious Joker" },
+  { key: "j_crafty", label: "Crafty Joker" },
+  { key: "j_half", label: "Half Joker" },
+  { key: "j_stencil", label: "Joker Stencil" },
+  { key: "j_four_fingers", label: "Four Fingers" },
+  { key: "j_mime", label: "Mime" },
+  { key: "j_credit_card", label: "Credit Card" },
+  { key: "j_ceremonial", label: "Ceremonial Dagger" },
+  { key: "j_banner", label: "Banner" },
+  { key: "j_mystic_summit", label: "Mystic Summit" },
+  { key: "j_marble", label: "Marble Joker" },
+  { key: "j_loyalty_card", label: "Loyalty Card" },
+  { key: "j_8_ball", label: "8 Ball" },
+  { key: "j_misprint", label: "Misprint" },
+  { key: "j_dusk", label: "Dusk" },
+  { key: "j_raised_fist", label: "Raised Fist" },
+  { key: "j_chaos", label: "Chaos the Clown" },
+  { key: "j_fibonacci", label: "Fibonacci" },
+  { key: "j_steel_joker", label: "Steel Joker" },
+  { key: "j_scary_face", label: "Scary Face" },
+  { key: "j_abstract", label: "Abstract Joker" },
+  { key: "j_delayed_grat", label: "Delayed Gratification" },
+  { key: "j_hack", label: "Hack" },
+  { key: "j_pareidolia", label: "Pareidolia" },
+  { key: "j_gros_michel", label: "Gros Michel" },
+  { key: "j_even_steven", label: "Even Steven" },
+  { key: "j_odd_todd", label: "Odd Todd" },
+  { key: "j_scholar", label: "Scholar" },
+  { key: "j_business", label: "Business Card" },
+  { key: "j_supernova", label: "Supernova" },
+  { key: "j_ride_the_bus", label: "Ride the Bus" },
+  { key: "j_space", label: "Space Joker" },
+  { key: "j_egg", label: "Egg" },
+  { key: "j_burglar", label: "Burglar" },
+  { key: "j_blackboard", label: "Blackboard" },
+  { key: "j_runner", label: "Runner" },
+  { key: "j_ice_cream", label: "Ice Cream" },
+  { key: "j_dna", label: "DNA" },
+  { key: "j_splash", label: "Splash" },
+  { key: "j_blue_joker", label: "Blue Joker" },
+  { key: "j_sixth_sense", label: "Sixth Sense" },
+  { key: "j_constellation", label: "Constellation" },
+  { key: "j_hiker", label: "Hiker" },
+  { key: "j_faceless", label: "Faceless Joker" },
+  { key: "j_green_joker", label: "Green Joker" },
+  { key: "j_superposition", label: "Superposition" },
+  { key: "j_todo_list", label: "To Do List" },
+  { key: "j_cavendish", label: "Cavendish" },
+  { key: "j_card_sharp", label: "Card Sharp" },
+  { key: "j_red_card", label: "Red Card" },
+  { key: "j_madness", label: "Madness" },
+  { key: "j_square_joker", label: "Square Joker" },
+  { key: "j_seance", label: "Séance" },
+  { key: "j_riff_raff", label: "Riff-Raff" },
+  { key: "j_vampire", label: "Vampire" },
+  { key: "j_shortcut", label: "Shortcut" },
+  { key: "j_hologram", label: "Hologram" },
+  { key: "j_vagabond", label: "Vagabond" },
+  { key: "j_baron", label: "Baron" },
+  { key: "j_cloud_9", label: "Cloud 9" },
+  { key: "j_rocket", label: "Rocket" },
+  { key: "j_obelisk", label: "Obelisk" },
+  { key: "j_midas_mask", label: "Midas Mask" },
+  { key: "j_luchador", label: "Luchador" },
+  { key: "j_photograph", label: "Photograph" },
+  { key: "j_gift", label: "Gift Card" },
+  { key: "j_turtle_bean", label: "Turtle Bean" },
+  { key: "j_erosion", label: "Erosion" },
+  { key: "j_reserved_parking", label: "Reserved Parking" },
+  { key: "j_mail", label: "Mail-In Rebate" },
+  { key: "j_to_the_moon", label: "To the Moon" },
+  { key: "j_hallucination", label: "Hallucination" },
+  { key: "j_fortune_teller", label: "Fortune Teller" },
+  { key: "j_juggler", label: "Juggler" },
+  { key: "j_drunkard", label: "Drunkard" },
+  { key: "j_stone", label: "Stone Joker" },
+  { key: "j_golden", label: "Golden Joker" },
+  { key: "j_lucky_cat", label: "Lucky Cat" },
+  { key: "j_baseball", label: "Baseball Card" },
+  { key: "j_bull", label: "Bull" },
+  { key: "j_diet_cola", label: "Diet Cola" },
+  { key: "j_trading", label: "Trading Card" },
+  { key: "j_flash", label: "Flash Card" },
+  { key: "j_popcorn", label: "Popcorn" },
+  { key: "j_trousers", label: "Spare Trousers" },
+  { key: "j_ancient", label: "Ancient Joker" },
+  { key: "j_ramen", label: "Ramen" },
+  { key: "j_walkie_talkie", label: "Walkie Talkie" },
+  { key: "j_selzer", label: "Seltzer" },
+  { key: "j_castle", label: "Castle" },
+  { key: "j_smiley", label: "Smiley Face" },
+  { key: "j_campfire", label: "Campfire" },
+  { key: "j_golden_ticket", label: "Golden Ticket" },
+  { key: "j_mr_bones", label: "Mr. Bones" },
+  { key: "j_acrobat", label: "Acrobat" },
+  { key: "j_sock_and_buskin", label: "Sock and Buskin" },
+  { key: "j_swashbuckler", label: "Swashbuckler" },
+  { key: "j_troubadour", label: "Troubadour" },
+  { key: "j_certificate", label: "Certificate" },
+  { key: "j_smeared", label: "Smeared Joker" },
+  { key: "j_throwback", label: "Throwback" },
+  { key: "j_hanging_chad", label: "Hanging Chad" },
+  { key: "j_rough_gem", label: "Rough Gem" },
+  { key: "j_bloodstone", label: "Bloodstone" },
+  { key: "j_arrowhead", label: "Arrowhead" },
+  { key: "j_onyx_agate", label: "Onyx Agate" },
+  { key: "j_glass", label: "Glass Joker" },
+  { key: "j_ring_master", label: "Showman" },
+  { key: "j_flower_pot", label: "Flower Pot" },
+  { key: "j_blueprint", label: "Blueprint" },
+  { key: "j_wee", label: "Wee Joker" },
+  { key: "j_merry_andy", label: "Merry Andy" },
+  { key: "j_oops", label: "Oops! All 6s" },
+  { key: "j_idol", label: "The Idol" },
+  { key: "j_seeing_double", label: "Seeing Double" },
+  { key: "j_matador", label: "Matador" },
+  { key: "j_hit_the_road", label: "Hit the Road" },
+  { key: "j_duo", label: "The Duo" },
+  { key: "j_trio", label: "The Trio" },
+  { key: "j_family", label: "The Family" },
+  { key: "j_order", label: "The Order" },
+  { key: "j_tribe", label: "The Tribe" },
+  { key: "j_stuntman", label: "Stuntman" },
+  { key: "j_invisible", label: "Invisible Joker" },
+  { key: "j_brainstorm", label: "Brainstorm" },
+  { key: "j_satellite", label: "Satellite" },
+  { key: "j_shoot_the_moon", label: "Shoot the Moon" },
+  { key: "j_drivers_license", label: "Driver's License" },
+  { key: "j_cartomancer", label: "Cartomancer" },
+  { key: "j_astronomer", label: "Astronomer" },
+  { key: "j_burnt", label: "Burnt Joker" },
+  { key: "j_bootstraps", label: "Bootstraps" },
+  { key: "j_caino", label: "Canio" },
+  { key: "j_triboulet", label: "Triboulet" },
+  { key: "j_yorick", label: "Yorick" },
+  { key: "j_chicot", label: "Chicot" },
+  { key: "j_perkeo", label: "Perkeo" },
+] as const;
+
+export const JOKER_KEYS = JOKERS.map((joker) => joker.key);
+export const JOKER_LABELS = JOKERS.map((joker) => joker.label);
+
 // Ranks
 export const RANKS = [
   { value: "2", label: "2", id: 2 },
@@ -963,7 +1154,7 @@ export const TAROT_CARDS = [
   },
   { key: "c_empress", value: "c_empress", label: "The Empress" },
   { key: "c_emperor", value: "c_emperor", label: "The Emperor" },
-  { key: "c_hierophant", value: "c_hierophant", label: "The Hierophant" },
+  { key: "c_heirophant", value: "c_heirophant", label: "The Hierophant" },
   { key: "c_lovers", value: "c_lovers", label: "The Lovers" },
   { key: "c_chariot", value: "c_chariot", label: "The Chariot" },
   { key: "c_justice", value: "c_justice", label: "Justice" },

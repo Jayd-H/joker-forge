@@ -125,31 +125,51 @@ export const generateCustomRaritiesCode = (
 
 const generateInPoolFunction = (
   joker: JokerData,
-  modprefix: string,
+  modprefix: string
 ): string => {
-  const notAppearsIn: string[] = []
-  const appearsIn: string[] = []
+  const notAppearsIn: string[] = [];
+  const appearsIn: string[] = [];
 
-  const appearFlags: string[] = joker.appearFlags 
-  ? joker.appearFlags
-    .split(",")
-    .map(flag => flag.trim())
-    .filter(Boolean)
-    .map(flag => {
-      const isNegated = flag.startsWith("not ");
-      const rawFlag = isNegated ? flag.slice(4).trim() : flag
-      const safeFlagName = rawFlag.replace(/[^a-zA-Z0-9_]/g, '_') // replace non-alphanumeric charactes with underscore
-      const luaFlag = `G.GAME.pool_flags.${modprefix}_${safeFlagName}`;
-      return isNegated ? `not ${luaFlag}` : luaFlag;
-    }) 
-  : [];
+  const appearFlags: string[] = joker.appearFlags
+    ? joker.appearFlags
+        .split(",")
+        .map((flag) => flag.trim())
+        .filter(Boolean)
+        .map((flag) => {
+          const isNegated = flag.startsWith("not ");
+          const rawFlag = isNegated ? flag.slice(4).trim() : flag;
+          const safeFlagName = rawFlag.replace(/[^a-zA-Z0-9_]/g, "_"); // replace non-alphanumeric charactes with underscore
+          const luaFlag = `G.GAME.pool_flags.${modprefix}_${safeFlagName}`;
+          return isNegated ? `not ${luaFlag}` : luaFlag;
+        })
+    : [];
 
   joker.appears_in_shop = joker.appears_in_shop ?? true;
-  joker.appears_in_shop ? appearsIn.push("args.source == 'sho'") : notAppearsIn.push("args.source ~= 'sho'")
+  if (joker.appears_in_shop) {
+    appearsIn.push("args.source == 'sho'");
+  } else {
+    notAppearsIn.push("args.source ~= 'sho'");
+  }
 
   Object.entries(joker.cardAppearance).forEach(([key, value]) => {
-    value ? appearsIn.push(`args.source == '${key}'`) : notAppearsIn.push(`args.source ~= '${key}'`)
+    if (value) {
+      appearsIn.push(`args.source == '${key}'`);
+    } else {
+      notAppearsIn.push(`args.source ~= '${key}'`);
+    }
   });
+
+  // Check if all advanced settings are permissive (no restrictions)
+  const isShopPermissive = joker.appears_in_shop !== false;
+  const hasCardAppearanceRestrictions = Object.values(
+    joker.cardAppearance
+  ).some((value) => value === false);
+  const hasAppearFlags = appearFlags.length > 0;
+
+  // If everything is permissive (no restrictions), don't generate in_pool function
+  if (isShopPermissive && !hasCardAppearanceRestrictions && !hasAppearFlags) {
+    return "";
+  }
 
   if (notAppearsIn.length > 0 || appearsIn.length > 0) {
     return `in_pool = function(self, args)
@@ -159,18 +179,16 @@ const generateInPoolFunction = (
           ${appearsIn.length > 0 ? "or" : ""} ${appearsIn.join(" or ")}
           )
           and ${appearFlags.length > 0 ? appearFlags.join(" and ") : "true"}
-      end
-    `
+      end`;
   }
-  return `
-    in_pool = function(self, args)
+  return `in_pool = function(self, args)
         return ${
           joker.rarity === 4 && joker.appears_in_shop === true
             ? "true"
             : "args.source ~= 'sho'"
         }
-    end`
-}
+    end`;
+};
 
 const generateSingleJokerCode = (
   joker: JokerData,
@@ -221,9 +239,9 @@ const generateSingleJokerCode = (
   const gameVariables = extractGameVariablesFromRules(joker.rules || []);
   gameVariables.forEach((gameVar) => {
     const varName = gameVar.name
-    .replace(/\s+/g, "")
-    .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
-    .toLowerCase();
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase();
     configItems.push(`${varName} = ${gameVar.startsFrom}`);
   });
 
@@ -326,10 +344,11 @@ const generateSingleJokerCode = (
     nextPosition++;
   }
 
-  
+  const inPoolFunction = generateInPoolFunction(joker, modPrefix);
+  if (inPoolFunction) {
     jokerCode += `,
-    ` + generateInPoolFunction(joker, modPrefix);
-  
+    ${inPoolFunction}`;
+  }
 
   const locVarsCode = generateLocVarsFunction(joker, passiveEffects, modPrefix);
   if (locVarsCode) {
@@ -368,7 +387,7 @@ const generateSingleJokerCode = (
   }
 
   if (joker.unlockTrigger) {
-    jokerCode += `${generateUnlockFunction(joker)}`
+    jokerCode += `${generateUnlockFunction(joker)}`;
   }
   jokerCode += `\n}`;
 
@@ -1412,9 +1431,8 @@ const generateCalculateFunction = (
   processPassiveEffects(joker)
     .filter((effect) => effect.calculateFunction)
     .forEach((effect) => {
-      calculateFunction += `\n        ${effect.calculateFunction}`
+      calculateFunction += `\n        ${effect.calculateFunction}`;
     });
-
 
   calculateFunction += `
     end`;
