@@ -33,3 +33,6 @@
 33:lyrelyre
 34:Astro
 35:Astro
+36:HoodlyTheOwl
+37:HoodlyTheOwl
+38:Balatro
