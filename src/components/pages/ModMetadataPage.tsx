@@ -13,6 +13,7 @@ import {
 import InputField from "../generic/InputField";
 import Button from "../generic/Button";
 import { ModMetadata } from "../data/BalatroUtils";
+import Checkbox from "../generic/Checkbox";
 
 interface ModMetadataValidation {
   isValid: boolean;
@@ -455,6 +456,19 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
               )}
             </div>
           </div>
+        </div>
+        <div>
+          <Checkbox
+            id="a"
+            label="Disable Vanilla Jokers"
+            checked={metadata.disable_vanilla ?? false}  // Assuming metadataRef holds the latest state
+            onChange={(e) => {
+              updateMetadata({ disable_vanilla: e});
+            }}
+          />
+          <p className="text-xs text-white-darker mt-2">
+            Jimbo may still appear
+          </p>
         </div>
 
         <div className="border-t border-black-light pt-8">
