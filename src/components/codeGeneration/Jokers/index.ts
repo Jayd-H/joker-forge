@@ -390,6 +390,16 @@ const generateSingleJokerCode = (
   }
   jokerCode += `\n}`;
 
+  if (joker.ignoreSlotLimit) {
+    jokerCode += `\n\nlocal check_for_buy_space_ref = G.FUNCS.check_for_buy_space
+G.FUNCS.check_for_buy_space = function(card)
+    if card.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then -- ignore slot limit when bought
+        return true
+    end
+    return check_for_buy_space_ref()
+end`
+  }
+
   return {
     code: jokerCode,
     nextPosition,
