@@ -1871,6 +1871,15 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
+    id: "ignore_slot_limit",
+    label: "Ignore Slot Limit",
+    description:
+      "Allow buying this Joker even when the slots are full",
+    applicableTriggers: ["passive"],
+    params: [],
+    category: "Jokers",
+  },
+  {
     id: "prevent_game_over",
     label: "Prevent Game Over",
     description:

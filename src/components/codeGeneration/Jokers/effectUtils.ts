@@ -89,6 +89,7 @@ import {
 } from "./effects/EditDiscardSizeEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateUnlockJokerReturn } from "./effects/UnlockJokerEffect";
+import { generateIgnoreSlotLimitReturn } from "./effects/IgnoreSlotLimitEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -767,6 +768,10 @@ export const processPassiveEffects = (
           }
           case "edit_discard_size": {
             passiveResult = generatePassiveDiscardSize(effect);
+            break;
+          }
+          case "ignore_slot_limit": {
+            passiveResult = generateIgnoreSlotLimitReturn(jokerKey);
             break;
           }
         }
