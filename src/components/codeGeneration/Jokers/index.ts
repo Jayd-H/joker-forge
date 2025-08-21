@@ -28,7 +28,6 @@ import {
 import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
-import { generateIgnoreSlotLimitHook } from "./effects/IgnoreSlotLimitEffect";
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -1913,16 +1912,6 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
           suit1: string;
           suit2: string;
         };
-      }>,
-      modPrefix
-    );
-  }
-
-  if (hooksByType.ignoreslotlimit) {
-    allHooks += generateIgnoreSlotLimitHook(
-      hooksByType.ignoreslotlimit as Array<{
-        jokerKey: string;
-        params: Record<string, unknown>;
       }>,
       modPrefix
     );
