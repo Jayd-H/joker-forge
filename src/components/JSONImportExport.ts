@@ -116,6 +116,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
       wra: true
     },
     appearFlags: joker.appearFlags || "",
+    ignoreSlotLimit: joker.ignoreSlotLimit || false
   };
 };
 
