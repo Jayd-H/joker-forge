@@ -13192,8 +13192,8 @@
           ],
           "randomGroups": [],
           "position": {
-            "x": 2210,
-            "y": 1009
+            "x": 600,
+            "y": 100
           }
         },
         {
@@ -13212,8 +13212,43 @@
           ],
           "randomGroups": [],
           "position": {
-            "x": 1376,
-            "y": 587
+            "x": 1100,
+            "y": 100
+          }
+        }
+      ],
+      "placeholderCreditIndex": 2,
+      "no_collection": false,
+      "hasUserUploadedImage": true
+    },
+    {
+      "id": "44ad4a5d-c7af-4e7c-8eb1-cc2a26701ed0",
+      "name": "Blue Seal",
+      "description": "Retrigger this card {C:attention}1{} time",
+      "imagePreview": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI4AAAC+CAYAAADjhzelAAAAAXNSR0IArs4c6QAAA/1JREFUeJzt3T+LHVUYB+CTYL0IViII2ypRtk2TIiCxTeV3SCepLazT5juk2tYgpEhju4jRdkAQK0H2A7gWd97Ree89O3PPhsxs5nma5cLMmbsD57fveefPlgIAAAAAAAAAAAAAAAAAAAAAc91Z+gvc1ONXV1f///zw493PV3+OP2dPPrtz63/3Jd1d+gtwO92aWVdLlic//dM03vP74zkTCXX+UBLNIXFosvrZFUlTS5jT339sGrf79KvR50ggyTOPxKHJ6mbVjRPmw0/mHejvP0YfcwI9Ph3PKQk0JnFosppZVEuaasJUkqU7+byUcs2qqevHvfx1vGMlgSTPYRKHJh8s/QXCZNJMJEyIpHn2Jm345uVu3Ngv1TSnafM4/nk5nDxb52zQZPHEidpmbtLkhJnUJ00eL2qcGC+PGwkUSTPURt/9cFVKKd33X2+61pE4NFkscfIq6rxLG0wkTV41hVzbRC0zJFm/enr6zaNSyoE+0clu3K7sjndW+f5bTx6JQ5PFZkskzlA7VGqbWtJEX+bir+OO210ePt6QTCd3D26/V+v0+0scOMJiNc7c2qbm4udfSin/JVJOiqyWNGFYZZV5422ds0OTd544z3+b6Nv0pvo1Q9K0JkUkW7pGlcV4UdsMtU7fUd7q6kri0GTxzvGUoa/S1yixmgpPH90rpRy4NnWkozvSGydxaLKexJm5mopa423Zu0o+USNVV4MbI3Fosp7E6dX6MrnWCVHzDH2aSuc33/E3t//DYc4aTVaXOFNy8uzdQ3xy7/CO0a/JV90rScX1nC2avPPEyX2YY+UaJ5x9uUuaqavlx/Zr8tXxMHS85z7H9Z6RODRZbY2Ta4+cNPkOwFrneNi/9pxUXyOpdY7jLNFkfXcATtz5F256bSqcfbT7OfW+nTh+vqq/taviQeLQZDU1ztmD3VMHcWdfzd5TDBO1UK1mie26y93ni9d94k28tWLrq6kgcWiyWOJcvB4/yz08o933Y7p0x131jsE+IfauSfWd4vz0wuRTDlG7pOQZjj//V3yvSRyaLL4iGO7ZTX2WfN9NrbYYOsZRG+VrUjl5ajVK2i6+R6y2nr14Odqv+/aLxc/dkiQOTVYza+YmTza8DycnQn77xMwnRSXNPBKHJqvp44Tam7Bqnd2ppAl7q6Z+u9yn2UsaDpI4NFnd3+uodULtDehh7v9yqCVLHqe26lLbjEkcmqx+Fh2bQHNNvXNQwlxP4tDk1syqnDwhJ1B1/5lvaJc080gcmtz62VVLoj2S5a2SOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwaf8C0oGfoVgq0asAAAAASUVORK5CYII=",
+      "sealKey": "blueseal",
+      "badge_colour": "#1E90FF",
+      "unlocked": true,
+      "discovered": true,
+      "rules": [
+        {
+          "id": "943bbc56-7df6-4bfa-9c0c-733b3d2f757e",
+          "trigger": "card_held",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "3526322b-32fc-4a0a-9fe3-f9576b7ef5ab",
+              "type": "create_last_played_planet",
+              "params": {
+                "is_negative": "none"
+              }
+            }
+          ],
+          "randomGroups": [],
+          "position": {
+            "x": 708,
+            "y": 148
           }
         }
       ],

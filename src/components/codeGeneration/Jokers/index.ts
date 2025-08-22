@@ -396,7 +396,7 @@ G.FUNCS.check_for_buy_space = function(card)
     if card.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then -- ignore slot limit when bought
         return true
     end
-    return check_for_buy_space_ref()
+    return check_for_buy_space_ref(card)
 end`
   }
 

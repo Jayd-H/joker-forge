@@ -243,7 +243,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                           : "text-white-dark hover:text-white-light hover:bg-black-light"
                       }`}
                     >
-                      <Icon className="h-4 w-4 flex-shrink-0" />
+                      <Icon className={`h-4 w-4 flex-shrink-0 ${item.id === "vanilla" && !isActive ? "text-mint-light" : ""}`} />
                       <span className="text-sm tracking-wide">
                         {item.label}
                       </span>
@@ -459,7 +459,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                           : "text-white-dark hover:text-white-light hover:bg-black-light"
                       }`}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className={`h-4 w-4 ${item.id === "vanilla" && !isActive ? "text-mint-light" : ""}`} />
                     </motion.button>
 
                     <AnimatePresence>

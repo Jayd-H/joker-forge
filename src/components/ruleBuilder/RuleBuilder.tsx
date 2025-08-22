@@ -33,6 +33,7 @@ import Button from "../generic/Button";
 import {
   CheckCircleIcon,
   ArrowsPointingInIcon,
+  WindowIcon,
 } from "@heroicons/react/24/outline";
 import { getConditionTypeById } from "../data/Jokers/Conditions";
 import { getEffectTypeById } from "../data/Jokers/Effects";
@@ -191,6 +192,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       setPanState({ x: 0, y: 0, scale: 1 });
       setBackgroundOffset({ x: 0, y: 0 });
     }
+  };
+  
+  const handleResetPosition = () => {
+    rules.forEach((rule) => {
+      rule.position = { x: 800, y: 300 }
+    });
+    handleRecenter() // why would you look elsewhere if the windows are at the center
   };
 
   const getCenterPosition = () => {
@@ -1436,6 +1444,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
               title="Recenter View"
             >
               <ArrowsPointingInIcon className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleResetPosition}
+              className="p-1 text-white-darker hover:text-white transition-colors cursor-pointer"
+              title="Reset Window Position"
+            >
+              <WindowIcon className="h-4 w-4" />
             </button>
             <div className="w-px h-4 bg-black-lighter" />
             <Button
