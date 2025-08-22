@@ -904,6 +904,22 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                                 ? "Change Overlay"
                                 : "Add Overlay"}
                             </Button>
+                            <InputField
+                              value={formData.scale_w?.toString() || "100"}
+                              onChange={(e) => handleNumberChange("scale_w", parseInt(e.target.value))}
+                              placeholder="100"
+                              label="Scale Width (%)"
+                              type="number"
+                              size="sm"
+                            />
+                            <InputField
+                              value={formData.scale_h?.toString() || "100"}
+                              onChange={(e) => handleNumberChange("scale_h", parseInt(e.target.value))}
+                              placeholder="100"
+                              label="Scale Height (%)"
+                              type="number"
+                              size="sm"
+                            />
                             {formData.overlayImagePreview && (
                               <Button
                                 onClick={() =>

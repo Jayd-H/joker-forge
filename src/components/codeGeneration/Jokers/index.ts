@@ -306,6 +306,10 @@ const generateSingleJokerCode = (
         x = ${col},
         y = ${row}
     },
+    display_size = {
+        w = 71 * ${(joker.scale_w || 100) / 100}, 
+        h = 95 * ${(joker.scale_h || 100) / 100}
+    },
     cost = ${joker.cost !== undefined ? joker.cost : 4},
     rarity = ${(() => {
       if (typeof joker.rarity === "string") {
