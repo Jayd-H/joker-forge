@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   PhotoIcon,
   SparklesIcon,
@@ -31,8 +37,14 @@ import {
   slugify,
 } from "../../data/BalatroUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
-import { BuildingStorefrontIcon, LockOpenIcon } from "@heroicons/react/24/solid";
-import { unlockOptions, unlockTriggerOptions } from "../../codeGeneration/Jokers/unlockUtils";
+import {
+  BuildingStorefrontIcon,
+  LockOpenIcon,
+} from "@heroicons/react/24/solid";
+import {
+  unlockOptions,
+  unlockTriggerOptions,
+} from "../../codeGeneration/Jokers/unlockUtils";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
@@ -54,8 +66,8 @@ interface EditJokerInfoProps {
 }
 
 interface PropertyRuleProps {
-  formData: JokerData
-  index: number
+  formData: JokerData;
+  index: number;
 }
 
 type UnlockTrigger = keyof typeof unlockOptions;
@@ -70,9 +82,9 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   showConfirmation,
 }) => {
   const [formData, setFormData] = useState<JokerData>(joker);
-  const [activeTab, setActiveTab] = useState<"visual" | "description" | "settings">(
-    "visual"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "visual" | "description" | "settings"
+  >("visual");
   const [placeholderError, setPlaceholderError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const overlayFileInputRef = useRef<HTMLInputElement>(null);
@@ -99,20 +111,48 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     { value: "greater_than", label: "greater than" },
     { value: "less_than", label: "less than" },
     { value: "greater_equals", label: "greater than or equal" },
-    { value: "less_equals", label: "less than or equal" }
-  ]
+    { value: "less_equals", label: "less than or equal" },
+  ];
+
+  const forcedEditionOptions = [
+    { value: "", label: "None" },
+    { value: "foil", label: "Always Spawn Foil" },
+    { value: "holographic", label: "Always Spawn Holographic" },
+    { value: "polychrome", label: "Always Spawn Polychrome" },
+    { value: "negative", label: "Always Spawn Negative" },
+  ];
+
+  const handleForcedEditionChange = (value: string) => {
+    setFormData({
+      ...formData,
+      force_foil: value === "foil",
+      force_holographic: value === "holographic",
+      force_polychrome: value === "polychrome",
+      force_negative: value === "negative",
+    });
+  };
+
+  const getForcedEditionValue = (): string => {
+    if (formData.force_foil) return "foil";
+    if (formData.force_holographic) return "holographic";
+    if (formData.force_polychrome) return "polychrome";
+    if (formData.force_negative) return "negative";
+    return "";
+  };
 
   const PropertyRule: React.FC<PropertyRuleProps> = ({ formData, index }) => {
     const propertyCategoryOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
       return unlockOptions[formData.unlockTrigger]?.categories ?? [];
-
     }, [formData.unlockTrigger]);
 
-    const selectedPropertyCategory = formData.unlockProperties?.[index]?.category;
+    const selectedPropertyCategory =
+      formData.unlockProperties?.[index]?.category;
     const propertyOptions = useMemo(() => {
-      if (!formData.unlockTrigger) return []
-      const category = unlockOptions[formData.unlockTrigger]?.categories?.find(c => c.value === selectedPropertyCategory);
+      if (!formData.unlockTrigger) return [];
+      const category = unlockOptions[formData.unlockTrigger]?.categories?.find(
+        (c) => c.value === selectedPropertyCategory
+      );
 
       return category?.options ?? [];
     }, [formData.unlockTrigger, selectedPropertyCategory]);
@@ -129,14 +169,14 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
           />
         </div>
         <div className="col-span-9">
-        <InputDropdown
-          value={formData.unlockProperties?.[index].property || ""}
-          onChange={(value) => handleUnlockProperty(value, index)}
-          options={propertyOptions || []}
-          separator={true}
-          label="Property"
-          className="col-span-5"
-        />
+          <InputDropdown
+            value={formData.unlockProperties?.[index].property || ""}
+            onChange={(value) => handleUnlockProperty(value, index)}
+            options={propertyOptions || []}
+            separator={true}
+            label="Property"
+            className="col-span-5"
+          />
         </div>
         <div className="w-11 h-11 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10 self-end place-self-center">
           <button
@@ -147,8 +187,8 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
           </button>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const validateField = (field: string, value: string) => {
     let result: ValidationResult;
@@ -369,15 +409,15 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
 
   const handleCheckboxChange = (field: string, checked: boolean) => {
     if (field === "unlocked") {
-    setFormData({
-      ...formData,
-      unlockTrigger: undefined,
-      unlockOperator: "",
-      unlockCount: 1,
-      unlockDescription: "",
-      unlockProperties: [],
-      [field]: checked
-    })
+      setFormData({
+        ...formData,
+        unlockTrigger: undefined,
+        unlockOperator: "",
+        unlockCount: 1,
+        unlockDescription: "",
+        unlockProperties: [],
+        [field]: checked,
+      });
     } else {
       setFormData({
         ...formData,
@@ -386,19 +426,22 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     }
   };
 
-  const handleCardAppearanceCheckboxChange = (field: string, checked: boolean) => {
+  const handleCardAppearanceCheckboxChange = (
+    field: string,
+    checked: boolean
+  ) => {
     if (field === "shop") {
       setFormData({
         ...formData,
-        appears_in_shop: checked
+        appears_in_shop: checked,
       });
     } else {
       setFormData({
         ...formData,
         cardAppearance: {
           ...formData.cardAppearance,
-          [field]: checked
-        }
+          [field]: checked,
+        },
       });
     }
   };
@@ -462,61 +505,64 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     }
   };
 
-  const addPropertyHidden = 
-  (formData.unlockTrigger === "career_stat" && formData.unlockProperties?.length) || 
-  !formData.unlockTrigger ||
-  formData.unlockTrigger === "chip_score"
+  const addPropertyHidden =
+    (formData.unlockTrigger === "career_stat" &&
+      formData.unlockProperties?.length) ||
+    !formData.unlockTrigger ||
+    formData.unlockTrigger === "chip_score";
 
   const handleAddProperty = () => {
-    const newProperty: { category: string, property: string } = {
+    const newProperty: { category: string; property: string } = {
       category: "",
-      property: ""
+      property: "",
     };
-    setFormData(prevFormData => ({
+    setFormData((prevFormData) => ({
       ...prevFormData,
-      unlockProperties: [...prevFormData.unlockProperties ?? [], newProperty]
+      unlockProperties: [...(prevFormData.unlockProperties ?? []), newProperty],
     }));
-  }
+  };
 
   const handleDeleteProperty = (index: number) => {
-    const updatedProperties = formData.unlockProperties?.filter((_, i) => i !== index)
-    setFormData(prevFormData => ({
+    const updatedProperties = formData.unlockProperties?.filter(
+      (_, i) => i !== index
+    );
+    setFormData((prevFormData) => ({
       ...prevFormData,
-      unlockProperties: updatedProperties
-    }))
-  }
+      unlockProperties: updatedProperties,
+    }));
+  };
 
   const handleUnlockTrigger = (value: string) => {
     setFormData({
       ...formData,
       unlockTrigger: value as UnlockTrigger,
       unlockProperties: [],
-    })
-  }
+    });
+  };
 
   const handleUnlockPropertyCategory = (value: string, index: number) => {
     setFormData({
       ...formData,
       unlockProperties: formData.unlockProperties?.map((propertyRule, i) =>
         i === index ? { ...propertyRule, category: value } : propertyRule
-      )
-    })
-  }
+      ),
+    });
+  };
   const handleUnlockProperty = (value: string, index: number) => {
     setFormData({
       ...formData,
       unlockProperties: formData.unlockProperties?.map((propertyRule, i) =>
         i === index ? { ...propertyRule, property: value } : propertyRule
-      )
-    })
-  }
+      ),
+    });
+  };
 
   const handleUnlockOperator = (value: string) => {
     setFormData({
       ...formData,
-      unlockOperator: value
-    })
-  }
+      unlockOperator: value,
+    });
+  };
 
   const upscaleImage = (img: HTMLImageElement): string => {
     const canvas = document.createElement("canvas");
@@ -693,7 +739,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   const tabs = [
     { id: "visual", label: "Visual & Properties", icon: PhotoIcon },
     { id: "description", label: "Description", icon: DocumentTextIcon },
-    { id: "settings", label: "Advanced Settings", icon: Cog6ToothIcon }
+    { id: "settings", label: "Advanced Settings", icon: Cog6ToothIcon },
   ];
 
   const handleKeyDown = (
@@ -718,7 +764,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       const value = textarea.value;
       const newValue = value.substring(0, start) + "[s]" + value.substring(end);
 
-      if (field === "description") {  
+      if (field === "description") {
         setLastDescription(value);
         setLastFormattedText(value);
       }
@@ -1069,57 +1115,14 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                                 </div>
                               </div>
                               <div>
-                                <p className="text-xs font-medium tracking-widest text-white-darker mb-2">
-                                  Forced Spawning Editions
-                                </p>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
-                                  <Checkbox
-                                    id="force_foil_edit"
-                                    label="Always Spawn Foil"
-                                    checked={formData.force_foil === true}
-                                    onChange={(checked) =>
-                                      handleCheckboxChange(
-                                        "force_foil",
-                                        checked
-                                      )
-                                    }
-                                  />
-                                  <Checkbox
-                                    id="force_holographic_edit"
-                                    label="Always Spawn Holographic"
-                                    checked={
-                                      formData.force_holographic === true
-                                    }
-                                    onChange={(checked) =>
-                                      handleCheckboxChange(
-                                        "force_holographic",
-                                        checked
-                                      )
-                                    }
-                                  />
-                                  <Checkbox
-                                    id="force_polychrome_edit"
-                                    label="Always Spawn Polychrome"
-                                    checked={formData.force_polychrome === true}
-                                    onChange={(checked) =>
-                                      handleCheckboxChange(
-                                        "force_polychrome",
-                                        checked
-                                      )
-                                    }
-                                  />
-                                  <Checkbox
-                                    id="force_negative_edit"
-                                    label="Always Spawn Negative"
-                                    checked={formData.force_negative === true}
-                                    onChange={(checked) =>
-                                      handleCheckboxChange(
-                                        "force_negative",
-                                        checked
-                                      )
-                                    }
-                                  />
-                                </div>
+                                <InputDropdown
+                                  value={getForcedEditionValue()}
+                                  onChange={handleForcedEditionChange}
+                                  options={forcedEditionOptions}
+                                  separator={true}
+                                  label="Force Edition"
+                                  placeholder="Select forced edition"
+                                />
                               </div>
                             </div>
                           </div>
@@ -1171,7 +1174,6 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                                   options={unlockTriggerOptions}
                                   separator={true}
                                   label="Trigger"
-                                  
                                 />
                               </div>
                               <InputDropdown
@@ -1195,7 +1197,11 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                                 type="number"
                                 label="Amount"
                               />
-                              <div className={addPropertyHidden ? "hidden" : "col-span-full"}>
+                              <div
+                                className={
+                                  addPropertyHidden ? "hidden" : "col-span-full"
+                                }
+                              >
                                 <Button
                                   variant="secondary"
                                   size="sm"
@@ -1209,21 +1215,36 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             </div>
 
                             <div className="grid grid-cols-1 gap-y-8">
-                              {formData.unlockProperties?.map((_property, index) => (
-                                formData.unlockTrigger !== "chip_score" && <PropertyRule formData={formData} index={index} />
-                              ))}
+                              {formData.unlockProperties?.map(
+                                (_property, index) =>
+                                  formData.unlockTrigger !== "chip_score" && (
+                                    <PropertyRule
+                                      formData={formData}
+                                      index={index}
+                                    />
+                                  )
+                              )}
                             </div>
                             {/* not sure if adding formatting tools is needed, makes it really bloated */}
                             <InputField
                               id={"joker-unlock-edit"}
                               value={formData.unlockDescription || ""}
-                              onChange={(e) => handleInputChange("unlockDescription", e.target.value)}
-                              onKeyDown={(e) => handleKeyDown("unlockDescription", e)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "unlockDescription",
+                                  e.target.value
+                                )
+                              }
+                              onKeyDown={(e) =>
+                                handleKeyDown("unlockDescription", e)
+                              }
                               multiline={true}
                               height="140px"
                               separator={true}
                               label="Unlock Text"
-                              placeholder={"Play a 5 hand card that contains only Gold Cards"}
+                              placeholder={
+                                "Play a 5 hand card that contains only Gold Cards"
+                              }
                             />
                           </div>
                         </div>
@@ -1233,7 +1254,6 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                       <p className="text-xs text-white-darker -mt-2">
                         Joker is Unlocked by Default
                       </p>
-
                     )}
                     <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
                       <BuildingStorefrontIcon className="h-5 w-5 text-mint" />
@@ -1245,10 +1265,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         label="Can appear in Shop"
                         checked={formData.appears_in_shop !== false}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "shop",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("shop", checked)
                         }
                       />
                       <Checkbox
@@ -1256,10 +1273,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         label="Can appear from Judgement"
                         checked={formData.cardAppearance.jud === true}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "jud",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("jud", checked)
                         }
                       />
                       <Checkbox
@@ -1267,10 +1281,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         label="Can appear in a Buffoon Pack"
                         checked={formData.cardAppearance.buf === true}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "buf",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("buf", checked)
                         }
                       />
                       <Checkbox
@@ -1279,10 +1290,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         checked={formData.cardAppearance.sou === true}
                         className={formData.rarity !== 4 ? "hidden" : ""}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "sou",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("sou", checked)
                         }
                       />
                       <Checkbox
@@ -1291,10 +1299,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         checked={formData.cardAppearance.wra === true}
                         className={formData.rarity !== 3 ? "hidden" : ""}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "wra",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("wra", checked)
                         }
                       />
                       <Checkbox
@@ -1303,10 +1308,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         checked={formData.cardAppearance.rif === true}
                         className={formData.rarity !== 1 ? "hidden" : ""}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "rif",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("rif", checked)
                         }
                       />
                       <Checkbox
@@ -1315,10 +1317,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         checked={formData.cardAppearance.rta === true}
                         className={formData.rarity !== 3 ? "hidden" : ""}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "rta",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("rta", checked)
                         }
                       />
                       <Checkbox
@@ -1327,23 +1326,22 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         checked={formData.cardAppearance.uta === true}
                         className={formData.rarity !== 2 ? "hidden" : ""}
                         onChange={(checked) =>
-                          handleCardAppearanceCheckboxChange(
-                            "uta",
-                            checked
-                          )
+                          handleCardAppearanceCheckboxChange("uta", checked)
                         }
                       />
                     </div>
-                      <InputField
-                        id={"joker-pool-flags"}
-                        value={formData.appearFlags || ""}
-                        onChange={(e) => handleInputChange("appearFlags", e.target.value)}
-                        className="col-span-full"
-                        height="44px"
-                        separator={true}
-                        label="Flags Required"
-                        placeholder={"custom_flag1, not custom_flag2, ..."}
-                      />
+                    <InputField
+                      id={"joker-pool-flags"}
+                      value={formData.appearFlags || ""}
+                      onChange={(e) =>
+                        handleInputChange("appearFlags", e.target.value)
+                      }
+                      className="col-span-full"
+                      height="44px"
+                      separator={true}
+                      label="Flags Required"
+                      placeholder={"custom_flag1, not custom_flag2, ..."}
+                    />
                   </div>
                 </div>
               )}
@@ -1375,7 +1373,10 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
               data={{
                 id: formData.id,
                 name: formData.name,
-                description: activeTab === "settings" ? formData.unlockDescription : formData.description,
+                description:
+                  activeTab === "settings"
+                    ? formData.unlockDescription
+                    : formData.description,
                 imagePreview: formData.imagePreview,
                 overlayImagePreview: formData.overlayImagePreview,
                 cost: formData.cost,
