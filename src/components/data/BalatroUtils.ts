@@ -116,6 +116,7 @@ export interface JokerData {
     uta?: boolean; // uncommon tag
   };
   appearFlags?: string;
+  ignoreSlotLimit?: boolean;
 }
 
 export interface RarityData {

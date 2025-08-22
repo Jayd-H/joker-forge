@@ -89,6 +89,7 @@ import {
 } from "./effects/EditDiscardSizeEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateUnlockJokerReturn } from "./effects/UnlockJokerEffect";
+import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -573,6 +574,8 @@ const generateSingleEffect = (
       return generateEditDiscardSizeReturn(effect, sameTypeCount);
     case "unlock_joker":
       return generateUnlockJokerReturn(effect);
+    case "redeem_voucher":
+      return generateRedeemVoucherReturn(effect);
     default:
       return {
         statement: "",
