@@ -31,6 +31,7 @@ import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generatePermaBonusReturn } from "./effects/PermaBonusEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
+import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 
 export interface EffectReturn {
   statement: string;
@@ -326,6 +327,9 @@ const generateSingleEffect = (
 
     case "destroy_consumable":
       return generateDestroyConsumableReturn(effect);
+
+    case "redeem_voucher":
+      return generateRedeemVoucherReturn(effect);
 
     default:
       return {

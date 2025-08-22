@@ -1124,6 +1124,24 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                                   placeholder="Select forced edition"
                                 />
                               </div>
+                              <div>
+                                <p className="text-xs font-medium tracking-widest text-white-darker mb-2">
+                                  Other
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                                  <Checkbox
+                                    id="ignoreSlotLimit"
+                                    label="Ignore Slot Limit When Bought"
+                                    checked={formData.ignoreSlotLimit === true}
+                                    onChange={(checked) =>
+                                      handleCheckboxChange(
+                                        "ignoreSlotLimit",
+                                        checked
+                                      )
+                                    }
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>

@@ -28,6 +28,7 @@ import {
   CUSTOM_CONSUMABLES,
   CONSUMABLE_SETS,
   STICKERS,
+  VOUCHERS,
 } from "../BalatroUtils";
 
 export const EFFECT_CATEGORIES: CategoryDefinition[] = [
@@ -1375,6 +1376,43 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "tag_type",
           values: ["specific"],
         },
+      },
+    ],
+    category: "Consumables",
+  },
+  {
+    id: "redeem_voucher",
+    label: "Redeem Voucher",
+    description: "Redeem a specific or random voucher",
+    applicableTriggers: [...GENERIC_TRIGGERS.filter(
+      (trigger) => {
+        return ![
+          "card_scored", "hand_played", "hand_drawn", "card_discarded", "hand_discarded", "first_hand_drawn",
+          "after_hand_played", "before_hand_played", "card_held_in_hand", "card_held_in_hand_end_of_round",
+        ].includes(trigger) // redeeming a voucher while in blind is buggy adding vouchers to other cards in play etc.
+      }
+    )],
+    params: [
+      {
+        id: "voucher_type",
+        type: "select",
+        label: "Voucher Type",
+        options: [
+          { value: "random", label: "Random Voucher" },
+          { value: "specific", label: "Specific Voucher" },
+        ],
+        default: "random",
+      },
+      {
+        id: "specific_voucher",
+        type: "select",
+        label: "Specific Voucher",
+        options: [...VOUCHERS()],
+        showWhen: {
+          parameter: "voucher_type",
+          values: ["specific"],
+        },
+        default: "v_overstock_norm"
       },
     ],
     category: "Consumables",

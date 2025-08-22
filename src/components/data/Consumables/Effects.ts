@@ -24,6 +24,7 @@ import {
   CONSUMABLE_SETS,
   RARITIES,
   TAGS,
+  VOUCHERS,
 } from "../BalatroUtils";
 
 export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
@@ -1000,6 +1001,36 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "tag_type",
           values: ["specific"],
         },
+      },
+    ],
+    category: "Consumables",
+  },
+  {
+    id: "redeem_voucher",
+    label: "Redeem Voucher",
+    description: "Redeem a specific or random voucher",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "voucher_type",
+        type: "select",
+        label: "Voucher Type",
+        options: [
+          { value: "random", label: "Random Voucher" },
+          { value: "specific", label: "Specific Voucher" },
+        ],
+        default: "random",
+      },
+      {
+        id: "specific_voucher",
+        type: "select",
+        label: "Specific Voucher",
+        options: [...VOUCHERS()],
+        showWhen: {
+          parameter: "voucher_type",
+          values: ["specific"],
+        },
+        default: "v_overstock_norm"
       },
     ],
     category: "Consumables",
