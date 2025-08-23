@@ -21,6 +21,7 @@ import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeem
 import { generateTriggeredBossBlindConditionCode } from "./conditions/TriggeredBossBlindCondition";
 import { generateInternalVariableConditionCode } from "./conditions/InternalVariableCondition";
 import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
+import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 
 export const generateConditionChain = (rule: Rule): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
@@ -168,6 +169,9 @@ const generateSingleConditionCode = (
       
     case "generic_compare":
       return generateGenericCompareConditionCode([singleConditionRule]);
+
+    case "check_flag": 
+      return generateCheckFlagConditionCode([singleConditionRule]);    
 
     default:
       return null;
