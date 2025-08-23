@@ -34,6 +34,7 @@ import {
   CheckCircleIcon,
   ArrowsPointingInIcon,
   WindowIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { getConditionTypeById } from "../data/Jokers/Conditions";
 import { getEffectTypeById } from "../data/Jokers/Effects";
@@ -112,6 +113,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);
   const [panState, setPanState] = useState({ x: 0, y: 0, scale: 1 });
   const [backgroundOffset, setBackgroundOffset] = useState({ x: 0, y: 0 });
+  const [gridSnapping, setGridSnapping] = useState<boolean>(false)
   const [panels, setPanels] = useState<Record<string, PanelState>>(() => {
     const basePanels = {
       blockPalette: {
@@ -434,6 +436,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
           case "p":
             togglePanel("inspector");
             break;
+          case "s":
+            setGridSnapping((prev) => !prev)
         }
       };
 
@@ -693,8 +697,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     ruleId: string,
     position: { x: number; y: number }
   ) => {
+    const snappedPosition = gridSnapping
+    ? {
+        x: Math.round(position.x / 20) * 20,
+        y: Math.round(position.y / 20) * 20,
+      }
+    : position;
     setRules((prev) =>
-      prev.map((rule) => (rule.id === ruleId ? { ...rule, position } : rule))
+      prev.map((rule) => 
+        (rule.id === ruleId ? { ...rule, position: snappedPosition } : rule))
     );
   };
 
@@ -1451,6 +1462,16 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
               title="Reset Window Position"
             >
               <WindowIcon className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setGridSnapping((prev) => !prev)}
+              className={gridSnapping 
+                ? "p-1 text-mint-light hover:text-mint-lighter transition-colors cursor-pointer" 
+                : "p-1 text-white-darker hover:text-white transition-colors cursor-pointer"
+              }
+              title="Toggle Grid Snapping (S)"
+            >
+              <Squares2X2Icon className="h-4 w-4" />
             </button>
             <div className="w-px h-4 bg-black-lighter" />
             <Button
