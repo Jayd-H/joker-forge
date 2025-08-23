@@ -342,6 +342,21 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Player State",
   },
+  {
+    id: "check_flag",
+    label: "Check Flag",
+    description: "Check if a specific flag from your mod is true",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "flag_name",
+        type: "text",
+        label: "Flag Name",
+        default: "custom_flag",
+      },
+    ],
+    category: "Special",
+  },
 ];
 
 export function getConsumableConditionsForTrigger(
