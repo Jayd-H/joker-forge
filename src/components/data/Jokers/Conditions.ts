@@ -152,8 +152,8 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         options: [
           { value: "contains", label: "contains" },
           { value: "equals", label: "equals" },
-          { value: "not_equals", label: "not equals" },
         ],
+        default: "contains"
       },
       {
         id: "value",
@@ -183,7 +183,10 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         id: "card_scope",
         type: "select",
         label: "Card Scope",
-        options: [...CARD_SCOPES],
+        options: [
+          ...CARD_SCOPES, 
+          { value: "unscored", label: "Unscored Cards" },
+        ],
         default: "scoring",
       },
       {

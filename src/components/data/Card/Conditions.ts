@@ -18,6 +18,7 @@ import {
   SEALS,
   RARITIES,
   VOUCHERS,
+  CARD_SCOPES,
 } from "../../data/BalatroUtils";
 import { GENERIC_TRIGGERS } from "./Triggers";
 
@@ -333,13 +334,21 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
     applicableTriggers: GENERIC_TRIGGERS,
     params: [
       {
+        id: "card_scope",
+        type: "select",
+        label: "Card Scope",
+        options: [...CARD_SCOPES],
+        default: "scoring",
+      },
+      {
         id: "operator",
         type: "select",
         label: "Operator",
         options: [
+          { value: "contains", label: "contains" },
           { value: "equals", label: "equals" },
-          { value: "not_equals", label: "not equals" },
         ],
+        default: "contains"
       },
       {
         id: "value",

@@ -33,10 +33,20 @@ export const generateCountCardConditionCode = (
       comparison = `== ${value}`;
   }
 
-  const cardsToCheck =
-    scope === "scoring" ? "context.scoring_hand" : "context.full_hand";
-
-  return `#${cardsToCheck} ${comparison}`;
+  let cardsToCheck = ""
+  switch (scope) {
+    case "scoring":
+      cardsToCheck = "#context.scoring_hand"
+      break
+    case "all_played":
+      cardsToCheck = "#context.full_hand"
+      break
+    case "unscored":
+      cardsToCheck = "(#context.full_hand - #context.scoring_hand)"
+      break
+  }  
+  
+  return `${cardsToCheck} ${comparison}`;
 };
 
 export const generateDiscardedCardCountConditionCode = (
