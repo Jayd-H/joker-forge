@@ -183,7 +183,10 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         id: "card_scope",
         type: "select",
         label: "Card Scope",
-        options: [...CARD_SCOPES],
+        options: [
+          ...CARD_SCOPES, 
+          { value: "unscored", label: "Unscored Cards" },
+        ],
         default: "scoring",
       },
       {
