@@ -117,6 +117,8 @@ export interface JokerData {
   };
   appearFlags?: string;
   ignoreSlotLimit?: boolean;
+  scale_w?: number;
+  scale_h?: number;
 }
 
 export interface RarityData {
