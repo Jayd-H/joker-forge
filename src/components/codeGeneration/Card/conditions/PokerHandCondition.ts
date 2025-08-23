@@ -3,15 +3,13 @@ import type { Rule } from "../../../ruleBuilder/types";
 export const generatePokerHandConditionCode = (rules: Rule[]): string => {
   if (rules.length === 0) return "";
 
-  const rule = rules[0];
-  const condition = rule.conditionGroups?.[0]?.conditions?.[0];
-  if (!condition || condition.type !== "poker_hand") return "";
+  const condition = rules[0].conditionGroups[0].conditions[0];
+  const scope = condition.params.card_scope as string || "scoring";
+  const operator = condition.params.operator as string || "contains";
+  const handType = condition.params.value as string || "High Card";
 
-  const handType = (condition.params?.value as string) || "High Card";
-  const operator = (condition.params?.operator as string) || "equals";
-
-  if (handType === "most_played_hand") {
-    const isMostPlayedCode = `(function()
+    if (handType === "most_played_hand") {
+      return `(function()
     local current_played = G.GAME.hands[context.scoring_name].played or 0
     for handname, values in pairs(G.GAME.hands) do
         if handname ~= context.scoring_name and values.played > current_played and values.visible then
@@ -20,16 +18,10 @@ export const generatePokerHandConditionCode = (rules: Rule[]): string => {
     end
     return true
 end)()`;
-
-    if (operator === "not_equals") {
-      return `not (${isMostPlayedCode})`;
-    } else {
-      return isMostPlayedCode;
     }
-  }
 
-  if (handType === "least_played_hand") {
-    const isLeastPlayedCode = `(function()
+    if (handType === "least_played_hand") {
+      return `(function()
     local current_played = G.GAME.hands[context.scoring_name].played or 0
     for handname, values in pairs(G.GAME.hands) do
         if handname ~= context.scoring_name and values.played < current_played and values.visible then
@@ -38,17 +30,17 @@ end)()`;
     end
     return true
 end)()`;
-
-    if (operator === "not_equals") {
-      return `not (${isLeastPlayedCode})`;
-    } else {
-      return isLeastPlayedCode;
     }
-  }
 
-  if (operator === "not_equals") {
-    return `context.scoring_name ~= "${handType}"`;
-  } else {
-    return `context.scoring_name == "${handType}"`;
-  }
+    if (operator === "contains") {
+      return `next(context.poker_hands["${handType}"])`;
+    }
+
+    if (scope === "scoring") {
+      return `context.scoring_name == "${handType}"`;
+    } else if (scope === "all_played") {
+      return `next(context.poker_hands["${handType}"])`;
+    }
+
+    return `true`;
 };

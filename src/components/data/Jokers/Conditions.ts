@@ -152,8 +152,8 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         options: [
           { value: "contains", label: "contains" },
           { value: "equals", label: "equals" },
-          { value: "not_equals", label: "not equals" },
         ],
+        default: "contains"
       },
       {
         id: "value",
