@@ -32,6 +32,7 @@ import { generatePermaBonusReturn } from "./effects/PermaBonusEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
+import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 
 export interface EffectReturn {
   statement: string;
@@ -330,6 +331,9 @@ const generateSingleEffect = (
 
     case "redeem_voucher":
       return generateRedeemVoucherReturn(effect);
+    
+    case "emit_flag":
+      return generateEmitFlagReturn(effect, modprefix);
 
     default:
       return {

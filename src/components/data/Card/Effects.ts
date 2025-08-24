@@ -845,6 +845,37 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+    id: "emit_flag",
+    label: "Emit Flag",
+    description: "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
+    applicableTriggers: [
+      "card_scored",
+      "card_discarded",
+      "card_held",
+      "card_held_in_hand_end_of_round",
+    ],
+    params: [
+      {
+        id: "flag_name",
+        type: "text",
+        label: "Unique Flag Name",
+        default: "custom_flag",
+      },
+      {
+        id: "change",
+        type: "select",
+        label: "Set Flag to",
+        options: [
+          {value: "true", label: "True"},
+          {value: "false", label: "False"},
+          {value: "invert", label: "Invert Current"},
+        ],
+        default: "true"
+      },
+    ],
+    category: "Special",
+  },
 ];
 
 export function getCardEffectsForTrigger(

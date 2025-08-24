@@ -591,6 +591,21 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+    id: "check_flag",
+    label: "Check Flag",
+    description: "Check if a specific flag from your mod is true",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "flag_name",
+        type: "text",
+        label: "Flag Name",
+        default: "custom_flag",
+      },
+    ],
+    category: "Special",
+  },
 ];
 
 export function getCardConditionsForTrigger(

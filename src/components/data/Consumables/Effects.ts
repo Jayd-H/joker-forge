@@ -53,12 +53,12 @@ export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
     icon: CakeIcon,
   },
   {
-    label: "Special",
-    icon: SparklesIcon,
-  },
-  {
     label: "Jokers",
     icon: UserGroupIcon,
+  },
+  {
+    label: "Special",
+    icon: SparklesIcon,
   },
 ];
 
@@ -1258,6 +1258,32 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
       },
     ],
     category: "Jokers",
+  },
+  {
+    id: "emit_flag",
+    label: "Emit Flag",
+    description: "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "flag_name",
+        type: "text",
+        label: "Unique Flag Name",
+        default: "custom_flag",
+      },
+      {
+        id: "change",
+        type: "select",
+        label: "Set Flag to",
+        options: [
+          {value: "true", label: "True"},
+          {value: "false", label: "False"},
+          {value: "invert", label: "Invert Current"},
+        ],
+        default: "true"
+      },
+    ],
+    category: "Special",
   },
 ];
 

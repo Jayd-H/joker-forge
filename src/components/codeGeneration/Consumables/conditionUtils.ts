@@ -7,6 +7,7 @@ import { generateRemainingHandsConditionCode } from "./conditions/RemainingHands
 import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeemedCondition";
 import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateConsumableCountConditionCode } from "./conditions/ConsumableCountCondition";
+import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 
 export const generateConditionChain = (rule: Rule): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
@@ -112,6 +113,9 @@ const generateSingleConditionCode = (
 
     case "consumable_count":
       return generateConsumableCountConditionCode([singleConditionRule]);
+    
+    case "check_flag":
+      return generateCheckFlagConditionCode([singleConditionRule]);
 
     default:
       return null;
