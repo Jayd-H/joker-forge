@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   DocumentTextIcon,
   PhotoIcon,
@@ -15,6 +15,7 @@ import InputDropdown from "../../generic/InputDropdown";
 import BalatroCard from "../../generic/BalatroCard";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { BoosterData, BoosterType } from "../../data/BalatroUtils";
+import { UserConfigContext } from "../../Contexts";
 
 interface EditBoosterInfoProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   formData,
   onFormDataChange,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
   const [activeTab, setActiveTab] = useState<
     "visual" | "description" | "settings"
   >("visual");
@@ -40,7 +42,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
@@ -669,9 +671,13 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                         <Button
                           size="sm"
                           variant={autoFormatEnabled ? "primary" : "secondary"}
-                          onClick={() =>
+                          onClick={() => {
+                            setUserConfig(prevConfig => ({
+                              ...prevConfig,
+                              defaultAutoFormat: !autoFormatEnabled
+                            }))
                             setAutoFormatEnabled(!autoFormatEnabled)
-                          }
+                          }}
                           icon={<SparklesIcon className="h-3 w-3" />}
                         >
                           Auto Format

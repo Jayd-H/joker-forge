@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import {
   PlusIcon,
@@ -30,6 +30,7 @@ import {
   ConsumableData,
 } from "../data/BalatroUtils";
 import { exportSingleConsumable } from "../codeGeneration/Consumables";
+import { UserConfigContext } from "../Contexts";
 
 interface ConsumablesPageProps {
   modName: string;
@@ -720,6 +721,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   setConsumableSets,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
   const [activeTab, setActiveTab] = useState<"consumables" | "sets">(
     "consumables"
   );
@@ -740,7 +742,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [setFilter, setSetFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState("name-asc");
+  const [sortBy, setSortBy] = useState(userConfig.filters.consumablesFilter ?? "name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -1495,6 +1497,13 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
+                      setUserConfig(prevConfig => ({
+                        ...prevConfig,
+                        filters: {
+                          ...prevConfig.filters,
+                          consumablesFilter: option.value
+                        }
+                      }))
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import {
   PlusIcon,
@@ -15,6 +15,7 @@ import Button from "../generic/Button";
 import { exportSingleEnhancement } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { EnhancementData, slugify } from "../data/BalatroUtils";
+import { UserConfigContext } from "../Contexts";
 
 interface EnhancementsPageProps {
   modName: string;
@@ -168,13 +169,14 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
   modPrefix,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext) 
   const [editingEnhancement, setEditingEnhancement] =
     useState<EnhancementData | null>(null);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentEnhancementForRules, setCurrentEnhancementForRules] =
     useState<EnhancementData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("name-asc");
+  const [sortBy, setSortBy] = useState(userConfig.filters.enhancementsFilter ?? "name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -555,6 +557,13 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
+                      setUserConfig(prevConfig => ({
+                        ...prevConfig,
+                        filters: {
+                          ...prevConfig.filters,
+                          enhancementsFilter: option.value
+                        }
+                      }))
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

@@ -3,7 +3,6 @@ import {
   PlusIcon,
   MagnifyingGlassIcon,
   PencilIcon,
-  TrashIcon,
   DocumentDuplicateIcon,
   SwatchIcon,
   InformationCircleIcon,
@@ -15,6 +14,7 @@ import InputField from "../generic/InputField";
 import Modal from "../generic/Modal";
 import { validateJokerName } from "../generic/validationUtils";
 import { RarityData } from "../data/BalatroUtils";
+import { TrashIcon } from "@heroicons/react/24/solid";
 
 interface RaritiesPageProps {
   modName: string;

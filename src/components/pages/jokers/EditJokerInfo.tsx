@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useContext,
 } from "react";
 import {
   PhotoIcon,
@@ -13,7 +14,6 @@ import {
   PuzzlePieceIcon,
   PlusIcon,
   Cog6ToothIcon,
-  TrashIcon,
 } from "@heroicons/react/24/outline";
 import InputField from "../../generic/InputField";
 import InputDropdown from "../../generic/InputDropdown";
@@ -40,11 +40,13 @@ import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import {
   BuildingStorefrontIcon,
   LockOpenIcon,
+  TrashIcon,
 } from "@heroicons/react/24/solid";
 import {
   unlockOptions,
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
+import { UserConfigContext } from "../../Contexts";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
@@ -81,6 +83,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   customRarities = [],
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
   const [formData, setFormData] = useState<JokerData>(joker);
   const [activeTab, setActiveTab] = useState<
     "visual" | "description" | "settings"
@@ -91,7 +94,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -1178,9 +1181,13 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                   itemType="joker"
                   textAreaId="joker-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
-                  onAutoFormatToggle={() =>
+                  onAutoFormatToggle={() => {
+                    setUserConfig(prevConfig => ({
+                      ...prevConfig,
+                      defaultAutoFormat: !autoFormatEnabled
+                    }))
                     setAutoFormatEnabled(!autoFormatEnabled)
-                  }
+                  }}
                   validationResult={validationResults.description}
                   placeholder="Describe your joker's effects using Balatro formatting..."
                   onInsertTag={insertTagSmart}

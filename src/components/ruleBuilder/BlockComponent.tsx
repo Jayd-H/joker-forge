@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  TrashIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -9,6 +8,7 @@ import {
   PuzzlePieceIcon,
   BeakerIcon,
   PercentBadgeIcon,
+  TrashIcon,
 } from "@heroicons/react/16/solid";
 
 interface BlockComponentProps {
