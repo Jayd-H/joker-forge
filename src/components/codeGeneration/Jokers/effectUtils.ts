@@ -90,6 +90,8 @@ import {
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateUnlockJokerReturn } from "./effects/UnlockJokerEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
+import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
+import { generateShuffleJokerReturn } from "./effects/ShuffleJokersEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -576,6 +578,11 @@ const generateSingleEffect = (
       return generateUnlockJokerReturn(effect);
     case "redeem_voucher":
       return generateRedeemVoucherReturn(effect);
+    case "flip_joker":
+      return generateFlipJokerReturn(effect);
+    case "shuffle_jokers":
+      return generateShuffleJokerReturn(effect);
+
     default:
       return {
         statement: "",

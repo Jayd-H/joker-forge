@@ -61,6 +61,7 @@ import {
 import { generateJokerKeyConditionCode } from "./conditions/JokerKeyCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 import { generateBossBlindTypeConditionCode } from "./conditions/BossBlindTypeCondition";
+import { generateJokerFlippedConditionCode, generateThisJokerFlippedConditionCode } from "./conditions/JokerFlippedCondition";
 
 export const generateConditionChain = (
   rule: Rule,
@@ -302,9 +303,13 @@ const generateSingleConditionCode = (
 
     case "joker_sticker":
       return generateJokerStickerConditionCode([singleConditionRule]);
-
     case "this_joker_sticker":
       return generateThisJokerStickerConditionCode([singleConditionRule]);
+    
+    case "joker_flipped":
+      return generateJokerFlippedConditionCode();
+    case "this_joker_flipped":
+      return generateThisJokerFlippedConditionCode();
 
     case "boss_blind_type":
       return generateBossBlindTypeConditionCode([singleConditionRule]);
