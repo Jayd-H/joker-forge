@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import {
   PlusIcon,
@@ -15,6 +15,7 @@ import Button from "../generic/Button";
 import { exportSingleSeal } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { SealData, slugify } from "../data/BalatroUtils";
+import { UserConfigContext } from "../Contexts";
 
 interface SealsPageProps {
   modName: string;
@@ -166,12 +167,13 @@ const SealsPage: React.FC<SealsPageProps> = ({
   modPrefix,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext) 
   const [editingSeal, setEditingSeal] = useState<SealData | null>(null);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentSealForRules, setCurrentSealForRules] =
     useState<SealData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("name-asc");
+  const [sortBy, setSortBy] = useState(userConfig.filters.sealsFilter ?? "name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -533,6 +535,13 @@ const SealsPage: React.FC<SealsPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
+                      setUserConfig(prevConfig => ({
+                        ...prevConfig,
+                        filters: {
+                          ...prevConfig.filters,
+                          sealsFilter: option.value
+                        }
+                      }))
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
 import {
   PhotoIcon,
   BoltIcon,
@@ -17,6 +17,7 @@ import {
   ValidationResult,
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
+import { UserConfigContext } from "../../Contexts";
 
 interface EditEnhancementInfoProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   onDelete,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
   const [formData, setFormData] = useState<EnhancementData>(enhancement);
   const [activeTab, setActiveTab] = useState<"visual" | "description">(
     "visual"
@@ -53,7 +55,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -725,9 +727,13 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                   itemType="enhancement"
                   textAreaId="enhancement-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
-                  onAutoFormatToggle={() =>
+                  onAutoFormatToggle={() => {
+                    setUserConfig(prevConfig => ({
+                      ...prevConfig,
+                      defaultAutoFormat: !autoFormatEnabled
+                    }))
                     setAutoFormatEnabled(!autoFormatEnabled)
-                  }
+                  }}
                   validationResult={validationResults.description}
                   placeholder="Describe your enhancement's effects using Balatro formatting..."
                   onInsertTag={insertTagSmart}

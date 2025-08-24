@@ -32,6 +32,18 @@ export interface ModMetadata {
   hasUserUploadedIcon?: boolean;
 }
 
+export interface UserConfig {
+  filters: {
+    jokersFilter?: string,
+    consumablesFilter?: string,
+    boostersFilter?: string,
+    enhancementsFilter?: string,
+    sealsFilter?: string,
+  },
+  defaultAutoFormat: boolean,
+  defaultGridSnap: boolean,
+}
+
 // =============================================================================
 // DATA REGISTRY INTERFACES
 // =============================================================================

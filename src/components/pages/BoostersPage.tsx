@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useContext } from "react";
 import ReactDOM from "react-dom";
 import {
   PlusIcon,
@@ -26,6 +26,7 @@ import {
 } from "../data/BalatroUtils";
 import BoosterCard from "./boosters/BoosterCard";
 import EditBoosterInfo from "./boosters/EditBoosterInfo";
+import { UserConfigContext } from "../Contexts";
 
 interface BoostersPageProps {
   modName: string;
@@ -580,6 +581,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   consumableSets,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext) 
   const [editingBooster, setEditingBooster] = useState<BoosterData | null>(
     null
   );
@@ -601,7 +603,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     boosterKey: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("name-asc");
+  const [sortBy, setSortBy] = useState(userConfig.filters.boostersFilter ?? "name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -1004,6 +1006,13 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
+                      setUserConfig(prevConfig => ({
+                        ...prevConfig,
+                        filters: {
+                          ...prevConfig.filters,
+                          boostersFilter: option.value
+                        }
+                      }))
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

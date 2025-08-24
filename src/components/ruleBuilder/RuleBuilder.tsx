@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
 import {
   TransformWrapper,
   TransformComponent,
@@ -51,6 +51,7 @@ import {
 } from "../data/BalatroUtils";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
+import { UserConfigContext } from "../Contexts";
 
 export type ItemData = JokerData | ConsumableData | EnhancementData | SealData;
 type ItemType = "joker" | "consumable" | "card";
@@ -90,6 +91,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   onUpdateItem,
   itemType,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const [inspectorIsOpen, setInspectorIsOpen] = useState(false);
@@ -113,7 +116,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);
   const [panState, setPanState] = useState({ x: 0, y: 0, scale: 1 });
   const [backgroundOffset, setBackgroundOffset] = useState({ x: 0, y: 0 });
-  const [gridSnapping, setGridSnapping] = useState<boolean>(false)
+  const [gridSnapping, setGridSnapping] = useState<boolean>(userConfig.defaultGridSnap ?? false)
   const [panels, setPanels] = useState<Record<string, PanelState>>(() => {
     const basePanels = {
       blockPalette: {
@@ -197,8 +200,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   };
   
   const handleResetPosition = () => {
-    rules.forEach((rule) => {
-      rule.position = { x: 800, y: 300 }
+    rules.forEach((rule, index) => {
+      rule.position = { x: 800 + index * 340, y: 300 }
     });
     handleRecenter() // why would you look elsewhere if the windows are at the center
   };
@@ -1464,7 +1467,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
               <WindowIcon className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setGridSnapping((prev) => !prev)}
+              onClick={() => {
+                setUserConfig(prevConfig => ({
+                  ...prevConfig,
+                  defaultGridSnap: !gridSnapping
+                }))
+                setGridSnapping((prev) => !prev)
+              }}
               className={gridSnapping 
                 ? "p-1 text-mint-light hover:text-mint-lighter transition-colors cursor-pointer" 
                 : "p-1 text-white-darker hover:text-white transition-colors cursor-pointer"

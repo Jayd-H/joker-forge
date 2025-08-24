@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
 import {
   PhotoIcon,
   BoltIcon,
@@ -18,6 +18,7 @@ import {
   ValidationResult,
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
+import { UserConfigContext } from "../../Contexts";
 
 interface EditSealInfoProps {
   isOpen: boolean;
@@ -72,6 +73,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
   onDelete,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
   const [formData, setFormData] = useState<SealData>(seal);
   const [activeTab, setActiveTab] = useState<
     "visual" | "description" | "colour"
@@ -81,7 +83,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -686,9 +688,13 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                   itemType="seal"
                   textAreaId="seal-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
-                  onAutoFormatToggle={() =>
+                  onAutoFormatToggle={() => {
+                    setUserConfig(prevConfig => ({
+                      ...prevConfig,
+                      defaultAutoFormat: !autoFormatEnabled
+                    }))
                     setAutoFormatEnabled(!autoFormatEnabled)
-                  }
+                  }}
                   validationResult={validationResults.description}
                   placeholder="Describe your seal's effects using Balatro formatting..."
                   onInsertTag={insertTagSmart}

@@ -89,6 +89,7 @@ import DonationNotification from "./components/generic/DonationNotification";
 import RestoreProgressModal from "./components/generic/RestoreProgressModal";
 import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
+import { UserConfigProvider } from "./components/Contexts";
 interface AlertState {
   isVisible: boolean;
   type: "success" | "warning" | "error";
@@ -1480,9 +1481,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <UserConfigProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </UserConfigProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
 import {
   PhotoIcon,
   SparklesIcon,
@@ -20,6 +20,7 @@ import {
 } from "../../generic/validationUtils";
 import { ConsumableSetData } from "../../data/BalatroUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
+import { UserConfigContext } from "../../Contexts";
 
 interface EditConsumableInfoProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   availableSets,
   showConfirmation,
 }) => {
+  const {userConfig, setUserConfig} = useContext(UserConfigContext)
   const [formData, setFormData] = useState<ConsumableData>(consumable);
   const [activeTab, setActiveTab] = useState<"visual" | "description">(
     "visual"
@@ -59,7 +61,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -803,9 +805,13 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                   itemType="consumable"
                   textAreaId="consumable-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
-                  onAutoFormatToggle={() =>
+                  onAutoFormatToggle={() => {
+                    setUserConfig(prevConfig => ({
+                      ...prevConfig,
+                      defaultAutoFormat: !autoFormatEnabled
+                    }))
                     setAutoFormatEnabled(!autoFormatEnabled)
-                  }
+                  }}
                   validationResult={validationResults.description}
                   placeholder="Describe your consumable's effects using Balatro formatting..."
                   onInsertTag={insertTagSmart}
