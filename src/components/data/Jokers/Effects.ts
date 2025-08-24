@@ -1426,6 +1426,62 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
+    id: "flip_joker",
+    label: "Flip Joker",
+    description: "Flip a joker",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "selection_method",
+        type: "select",
+        label: "Selection Method",
+        options: [
+          { value: "all", label: "All Jokers" },
+          { value: "random", label: "Random Joker" },
+          { value: "self", label: "This Joker" },
+          { value: "position", label: "By Position" },
+        ],
+        default: "all",
+      },
+      {
+        id: "position",
+        type: "select",
+        label: "Position",
+        options: [
+          { value: "first", label: "First Joker" },
+          { value: "last", label: "Last Joker" },
+          { value: "left", label: "Left of This Joker" },
+          { value: "right", label: "Right of This Joker" },
+          { value: "specific", label: "Specific Index" },
+        ],
+        default: "first",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["position"],
+        },
+      },
+      {
+        id: "specific_index",
+        type: "number",
+        label: "Joker Index (1-5)",
+        default: 1,
+        showWhen: {
+          parameter: "position",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Jokers",
+  },
+  {
+    id: "shuffle_jokers",
+    label: "Shuffle Jokers",
+    description: "Shuffle all jokers",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [],
+    category: "Jokers"
+  },
+  {
     id: "disable_boss_blind",
     label: "Disable Boss Blind",
     description: "Disable the current boss blind, removing its effect",

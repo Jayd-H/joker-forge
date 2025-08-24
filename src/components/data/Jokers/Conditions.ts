@@ -1998,6 +1998,22 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Deck & Jokers",
   },
+  {
+    id: "joker_flipped",
+    label: "Joker is Flipped",
+    description: "Check if the evaluated joker is flipped (facing back)",
+    applicableTriggers: ["joker_evaluated"],
+    params: [],
+    category: "Joker",
+  },
+  {
+    id: "this_joker_flipped",
+    label: "This Joker is Flipped",
+    description: "Check if this joker is flipped (facing back)",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [],
+    category: "Deck & Jokers",
+  },
 ];
 
 export function getConditionTypeById(
