@@ -169,7 +169,8 @@ const generateSingleConsumableCode = (
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
-      modPrefix
+      modPrefix,
+      consumable.consumableKey
     );
 
     if (effectResult.configVariables) {
@@ -254,7 +255,7 @@ const generateSingleConsumableCode = (
     ${locVarsCode},`;
   }
 
-  const useCode = generateUseFunction(activeRules, modPrefix);
+  const useCode = generateUseFunction(activeRules, modPrefix, consumable.consumableKey);
   if (useCode) {
     consumableCode += `
     ${useCode},`;
@@ -305,7 +306,11 @@ export const exportSingleConsumable = (consumable: ConsumableData): void => {
   }
 };
 
-const generateUseFunction = (rules: Rule[], modPrefix: string): string => {
+const generateUseFunction = (
+  rules: Rule[],
+  modPrefix: string,
+  consumableKey?: string,
+): string => {
   if (rules.length === 0) {
     return `use = function(self, card, area, copier)
         
@@ -330,7 +335,8 @@ const generateUseFunction = (rules: Rule[], modPrefix: string): string => {
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
-      modPrefix
+      modPrefix,
+      consumableKey
     );
 
     if (effectResult.preReturnCode) {

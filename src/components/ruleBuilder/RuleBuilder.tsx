@@ -913,6 +913,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       id: crypto.randomUUID(),
       chance_numerator: 1,
       chance_denominator: 4,
+      respect_probability_effects: true,
+      custom_key: "",
       effects: [],
     };
     setRules((prev) =>
@@ -997,6 +999,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       id: crypto.randomUUID(),
       chance_numerator: 1,
       chance_denominator: 4,
+      respect_probability_effects: true,
+      custom_key: "",
       effects: [],
     };
     setRules((prev) =>

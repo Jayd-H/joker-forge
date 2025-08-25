@@ -1,4 +1,4 @@
-import type { Effect } from "../../ruleBuilder/types";
+import type { Effect, RandomGroup } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
@@ -97,13 +97,6 @@ interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
   _ruleContext?: string;
   _effectIndex?: number;
-}
-
-export interface RandomGroup {
-  id: string;
-  chance_numerator: number;
-  chance_denominator: number;
-  effects: Effect[];
 }
 
 export interface PassiveEffectResult {
@@ -234,7 +227,7 @@ export function generateEffectReturnStatement(
     const randomGroupStatements: string[] = [];
 
     const denominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator)),
+      ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
     ];
     const denominatorToOddsVar: Record<number, string> = {};
 
@@ -325,7 +318,7 @@ export function generateEffectReturnStatement(
         });
       });
 
-      const oddsVar = denominatorToOddsVar[group.chance_denominator];
+      const oddsVar = denominatorToOddsVar[group.chance_denominator as number];
       const probabilityIdentifier = `group_${groupIndex}_${group.id.substring(
         0,
         8
@@ -404,14 +397,16 @@ export function generateEffectReturnStatement(
         groupContent += effectCalls.join("\n                        ");
       }
 
-      const groupStatement =
+      const probabilityStatement = group.respect_probability_effects !== false && !(
         hasFixProbablityEffects || hasModProbablityEffects // prevents stack overflow
-          ? `if pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar} then
-                        ${groupContent}
-                    end`
-          : `if SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, 'j_${modprefix}_${jokerKey}') then
-                      ${groupContent}
-                  end`;
+      ) ?
+        `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${jokerKey}`}')`
+        : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`
+      
+      const groupStatement = `if ${probabilityStatement} then
+              ${groupContent}
+          end`;
+
       randomGroupStatements.push(groupStatement);
     });
 

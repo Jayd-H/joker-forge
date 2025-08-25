@@ -56,6 +56,7 @@ const generateCalculateFunction = (
   modPrefix: string,
   hasNonDiscardDestroy: boolean,
   hasRetrigger: boolean,
+  cardKey: string,
   itemType: "enhancement" | "seal"
 ): string => {
   if (rules.length === 0 && !hasNonDiscardDestroy && !hasRetrigger) {
@@ -164,6 +165,7 @@ const generateCalculateFunction = (
       regularEffects,
       randomGroups,
       modPrefix,
+      cardKey,
       rule.trigger,
       itemType
     );
@@ -787,6 +789,7 @@ const generateSingleEnhancementCode = (
     modPrefix,
     hasNonDiscardDestroy,
     hasRetrigger,
+    enhancement.enhancementKey,
     "enhancement"
   );
   if (calculateCode) {
@@ -931,6 +934,7 @@ const generateSingleSealCode = (
     modPrefix,
     hasNonDiscardDestroy,
     hasRetrigger,
+    seal.sealKey,
     "seal"
   );
   if (calculateCode) {
