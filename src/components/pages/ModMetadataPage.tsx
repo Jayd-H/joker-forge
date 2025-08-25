@@ -309,11 +309,11 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
       }
 
       img.onload = () => {
-        canvas.width = 32;
-        canvas.height = 32;
+        canvas.width = 34;
+        canvas.height = 34;
 
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(img, 0, 0, 32, 32);
+        ctx.drawImage(img, 0, 0, 34, 34);
 
         resolve(canvas.toDataURL("image/png"));
       };
@@ -461,9 +461,9 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
           <Checkbox
             id="a"
             label="Disable Vanilla Jokers"
-            checked={metadata.disable_vanilla ?? false}  // Assuming metadataRef holds the latest state
+            checked={metadata.disable_vanilla ?? false} // Assuming metadataRef holds the latest state
             onChange={(e) => {
-              updateMetadata({ disable_vanilla: e});
+              updateMetadata({ disable_vanilla: e });
             }}
           />
           <p className="text-xs text-white-darker mt-2">
