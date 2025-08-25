@@ -20,6 +20,7 @@ import { generateCreateLastPlayedPlanetReturn } from "./effects/CreateLastPlayed
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
 import { generateModifyInternalVariableReturn } from "./effects/ModifyInternalVariableEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
+import { generateEditPlayingCardReturn } from "./effects/EditPlayingCardEffect";
 import { getModPrefix } from "../../data/BalatroUtils";
 
 export interface ConfigExtraVariable {
@@ -118,8 +119,11 @@ const generateSingleEffect = (
       return generateModifyInternalVariableReturn(effect, trigger || "");
 
     case "emit_flag":
-      return generateEmitFlagReturn(effect, getModPrefix())
-      
+      return generateEmitFlagReturn(effect, getModPrefix());
+
+    case "edit_playing_card":
+      return generateEditPlayingCardReturn(effect, trigger);
+
     default:
       return {
         statement: "",

@@ -17,6 +17,10 @@ import {
   PLANET_CARDS,
   SPECTRAL_CARDS,
   EDITIONS,
+  RANKS,
+  SEALS,
+  ENHANCEMENTS,
+  SUITS,
 } from "../BalatroUtils";
 import { GENERIC_TRIGGERS, SCORING_TRIGGERS } from "./Triggers";
 
@@ -785,6 +789,73 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
       },
     ],
     category: "Consumables",
+  },
+  {
+    id: "edit_playing_card",
+    label: "Edit Playing Card",
+    description: "Modify the properties of this playing card",
+    applicableTriggers: GENERIC_TRIGGERS,
+    params: [
+      {
+        id: "new_rank",
+        type: "select",
+        label: "New Rank",
+        options: [
+          { value: "none", label: "Don't Change" },
+          { value: "random", label: "Random" },
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+        ],
+        default: "none",
+      },
+      {
+        id: "new_suit",
+        type: "select",
+        label: "New Suit",
+        options: [
+          { value: "none", label: "Don't Change" },
+          { value: "random", label: "Random" },
+          ...SUITS,
+        ],
+        default: "none",
+      },
+      {
+        id: "new_enhancement",
+        type: "select",
+        label: "New Enhancement",
+        options: () => [
+          { value: "none", label: "Don't Change" },
+          { value: "remove", label: "Remove Enhancement" },
+          { value: "random", label: "Random" },
+          ...ENHANCEMENTS(),
+        ],
+        default: "none",
+      },
+      {
+        id: "new_seal",
+        type: "select",
+        label: "New Seal",
+        options: () => [
+          { value: "none", label: "Don't Change" },
+          { value: "remove", label: "Remove Seal" },
+          { value: "random", label: "Random" },
+          ...SEALS(),
+        ],
+        default: "none",
+      },
+      {
+        id: "new_edition",
+        type: "select",
+        label: "New Edition",
+        options: [
+          { value: "none", label: "Don't Change" },
+          { value: "remove", label: "Remove Edition" },
+          { value: "random", label: "Random" },
+          ...EDITIONS,
+        ],
+        default: "none",
+      },
+    ],
+    category: "Special",
   },
   {
     id: "show_message",
