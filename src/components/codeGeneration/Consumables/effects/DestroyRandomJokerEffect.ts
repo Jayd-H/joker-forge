@@ -1,10 +1,12 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateDestroyRandomJokerReturn = (
   effect: Effect
 ): EffectReturn => {
   const amount = effect.params?.amount || 1;
+  const amountCode = generateGameVariableCode(amount);
   const customMessage = effect.customMessage;
 
   const destroyJokerCode = `
@@ -26,7 +28,7 @@ export const generateDestroyRandomJokerReturn = (
                 
                 pseudoshuffle(temp_jokers, 98765)
                 
-                for i = 1, math.min(card.ability.extra.destroy_joker_amount, #temp_jokers) do
+                for i = 1, math.min(${amountCode}, #temp_jokers) do
                     jokers_to_destroy[#jokers_to_destroy + 1] = temp_jokers[i]
                 end
             end
@@ -56,10 +58,15 @@ export const generateDestroyRandomJokerReturn = (
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
 
+  const configVariables =
+    typeof amount === "string" && amount.startsWith("GAMEVAR:")
+      ? []
+      : [`destroy_joker_amount = ${amount}`];
+    
   const result: EffectReturn = {
     statement: destroyJokerCode,
     colour: "G.C.RED",
-    configVariables: [`destroy_joker_amount = ${amount}`],
+    configVariables,
   };
 
   if (customMessage) {
