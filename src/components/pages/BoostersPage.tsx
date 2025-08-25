@@ -442,6 +442,18 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
 
                 {boosterType === "joker" && (
                   <>
+                    <InputField
+                      label="Pool (Optional)"
+                      type="text"
+                      value={rule.pool || ""}
+                      onChange={(e) =>
+                        handleUpdateRule(index, {
+                          pool: e.target.value || undefined,
+                        })
+                      }
+                      placeholder="e.g. food, planet, special"
+                      size="sm"
+                    />
                     <InputDropdown
                       label="Rarity"
                       value={rule.rarity || ""}
@@ -581,7 +593,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   consumableSets,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext) 
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [editingBooster, setEditingBooster] = useState<BoosterData | null>(
     null
   );
@@ -603,7 +615,9 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     boosterKey: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState(userConfig.filters.boostersFilter ?? "name-asc");
+  const [sortBy, setSortBy] = useState(
+    userConfig.filters.boostersFilter ?? "name-asc"
+  );
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -1006,13 +1020,13 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig(prevConfig => ({
+                      setUserConfig((prevConfig) => ({
                         ...prevConfig,
                         filters: {
                           ...prevConfig.filters,
-                          boostersFilter: option.value
-                        }
-                      }))
+                          boostersFilter: option.value,
+                        },
+                      }));
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

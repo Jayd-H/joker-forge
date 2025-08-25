@@ -238,7 +238,15 @@ const generateCardConfigFromRule = (
   }
 
   if (boosterType === "joker") {
-    config += `${indent}set = "Joker",\n`;
+    // Use custom pool if specified in the rule, otherwise default to "Joker"
+    if (rule.pool && rule.pool.trim()) {
+      const finalPool = modPrefix
+        ? `${modPrefix}_${rule.pool.trim()}`
+        : rule.pool.trim();
+      config += `${indent}set = "${finalPool}",\n`;
+    } else {
+      config += `${indent}set = "Joker",\n`;
+    }
 
     if (rule.rarity && rule.rarity !== "" && rule.rarity !== "any") {
       const formattedRarity = formatRarityForCode(rule.rarity, modPrefix);

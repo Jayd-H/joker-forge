@@ -186,6 +186,7 @@ export interface BoosterCardRule {
   weight?: number;
   specific_key?: string;
   specific_type?: "consumable" | "joker" | null;
+  pool?: string;
 }
 
 export interface BoosterData {
