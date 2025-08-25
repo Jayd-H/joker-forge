@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const version: string = "v0.5.6";
+  const version: string = "v0.5.7";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
@@ -243,7 +243,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                           : "text-white-dark hover:text-white-light hover:bg-black-light"
                       }`}
                     >
-                      <Icon className={`h-4 w-4 flex-shrink-0 ${item.id === "vanilla" && !isActive ? "text-mint-light" : ""}`} />
+                      <Icon
+                        className={`h-4 w-4 flex-shrink-0 ${
+                          item.id === "vanilla" && !isActive
+                            ? "text-mint-light"
+                            : ""
+                        }`}
+                      />
                       <span className="text-sm tracking-wide">
                         {item.label}
                       </span>
@@ -459,7 +465,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                           : "text-white-dark hover:text-white-light hover:bg-black-light"
                       }`}
                     >
-                      <Icon className={`h-4 w-4 ${item.id === "vanilla" && !isActive ? "text-mint-light" : ""}`} />
+                      <Icon
+                        className={`h-4 w-4 ${
+                          item.id === "vanilla" && !isActive
+                            ? "text-mint-light"
+                            : ""
+                        }`}
+                      />
                     </motion.button>
 
                     <AnimatePresence>
