@@ -19,7 +19,7 @@ export const generateModifyInternalVariableReturn = (
 
   let valueCode: string;
   const abilityPath =
-      itemType === "seal" ? "card.ability.seal.extra" : "${abilityPath}";
+      itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
 
   if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
     valueCode = generateGameVariableCode(effectValue);
