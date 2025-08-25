@@ -25,11 +25,10 @@ import {
 } from "@heroicons/react/24/outline";
 
 // Pages
-const OverviewPage = lazy(() => import("./components/pages/OverviewPage"));
+import OverviewPage from "./components/pages/OverviewPage";
+import ModMetadataPage from "./components/pages/ModMetadataPage";
+
 const JokersPage = lazy(() => import("./components/pages/JokersPage"));
-const ModMetadataPage = lazy(
-  () => import("./components/pages/ModMetadataPage")
-);
 const RaritiesPage = lazy(() => import("./components/pages/RaritiesPage"));
 const ConsumablesPage = lazy(
   () => import("./components/pages/ConsumablesPage")
