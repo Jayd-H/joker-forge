@@ -194,6 +194,7 @@ const normalizeEnhancementData = (
     userVariables: enhancement.userVariables || [],
     placeholderCreditIndex: enhancement.placeholderCreditIndex,
     hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
+    weight: enhancement.weight ?? 5,
   };
 };
 

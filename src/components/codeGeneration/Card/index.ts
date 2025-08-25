@@ -772,6 +772,11 @@ const generateSingleEnhancementCode = (
     no_collection = ${enhancement.no_collection},`;
   }
 
+  if (enhancement.weight !== undefined) {
+    enhancementCode += `
+    weight = ${enhancement.weight},`
+  }
+
   const locVarsCode = generateLocVarsFunction(
     enhancement,
     gameVariables,

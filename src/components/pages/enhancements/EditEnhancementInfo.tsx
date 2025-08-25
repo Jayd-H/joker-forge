@@ -68,6 +68,35 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
     description?: ValidationResult;
   }>({});
 
+  const [isEditingWeight, setIsEditingWeight] = useState(false);
+  const [weightInputValue, setWeightInputValue] = useState("");
+
+  const handleWeightClick = () => {
+    setWeightInputValue((formData.weight ?? 0).toString());
+    setIsEditingWeight(true);
+  };
+
+  const handleWeightInputBlur = () => {
+    const numValue = parseFloat(weightInputValue);
+    if (!isNaN(numValue) && numValue >= 0 && numValue <= 25) {
+      setFormData((prev) => ({
+        ...prev,
+        weight: numValue,
+      }));
+    }
+    setIsEditingWeight(false);
+  };
+
+  const handleWeightInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Enter") {
+      handleWeightInputBlur();
+    } else if (e.key === "Escape") {
+      setIsEditingWeight(false);
+    }
+  };
+
   const validateField = (field: string, value: string) => {
     let result: ValidationResult;
     switch (field) {
@@ -601,6 +630,56 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                             Used in code generation. Auto-fills when you type
                             the name.
                           </p>
+                          <div className=" p-4">
+                            <h3 className="text-white-light font-medium mb-4">
+                              Appearance Weight
+                            </h3>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="20"
+                                  step="0.25"
+                                  value={formData.weight ?? 0}
+                                  onChange={(e) =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      weight: parseFloat(e.target.value) ?? 0,
+                                    }))
+                                  }
+                                  className="flex-1 h-2 bg-black-lighter rounded appearance-none cursor-pointer"
+                                />
+                                {isEditingWeight ? (
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    step="0.25"
+                                    value={weightInputValue}
+                                    onChange={(e) =>
+                                      setWeightInputValue(e.target.value)
+                                    }
+                                    onBlur={handleWeightInputBlur}
+                                    onKeyDown={handleWeightInputKeyDown}
+                                    autoFocus
+                                    className="text-mint font-mono w-16 text-sm rounded px-1 py-0.5 text-center border-0 outline-none focus:ring-1 focus:ring-mint/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  />
+                                ) : (
+                                  <span
+                                    className="text-mint font-mono w-16 text-sm cursor-pointer hover:bg-black-lighter rounded px-1 py-0.5 text-center"
+                                    onClick={handleWeightClick}
+                                  >
+                                    {(formData.weight || 0).toFixed(3)}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-white-darker">
+                                Higher values appear more frequently. Click the value
+                                to edit directly.
+                              </p>
+                            </div>
+                          </div>
 
                           <div>
                             <h4 className="text-white-light font-medium text-base mb-3 justify-center pt-2 flex tracking-wider items-center gap-2">
