@@ -18,7 +18,7 @@ export interface ModMetadata {
   description: string;
   prefix: string;
   main_file: string;
-  disable_vanilla?: boolean
+  disable_vanilla?: boolean;
   version: string;
   priority: number;
   badge_colour: string;
@@ -34,14 +34,14 @@ export interface ModMetadata {
 
 export interface UserConfig {
   filters: {
-    jokersFilter?: string,
-    consumablesFilter?: string,
-    boostersFilter?: string,
-    enhancementsFilter?: string,
-    sealsFilter?: string,
-  },
-  defaultAutoFormat: boolean,
-  defaultGridSnap: boolean,
+    jokersFilter?: string;
+    consumablesFilter?: string;
+    boostersFilter?: string;
+    enhancementsFilter?: string;
+    sealsFilter?: string;
+  };
+  defaultAutoFormat: boolean;
+  defaultGridSnap: boolean;
 }
 
 // =============================================================================
@@ -131,6 +131,7 @@ export interface JokerData {
   ignoreSlotLimit?: boolean;
   scale_w?: number;
   scale_h?: number;
+  pools?: string[];
 }
 
 export interface RarityData {

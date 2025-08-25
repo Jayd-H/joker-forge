@@ -83,7 +83,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   customRarities = [],
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [formData, setFormData] = useState<JokerData>(joker);
   const [activeTab, setActiveTab] = useState<
     "visual" | "description" | "settings"
@@ -94,7 +94,9 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -106,6 +108,8 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     name?: ValidationResult;
     description?: ValidationResult;
   }>({});
+
+  const [poolsInput, setPoolsInput] = useState("");
 
   const rarityOptions = getRarityDropdownOptions(customRarities);
 
@@ -279,6 +283,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       setLastDescription(joker.description || "");
       setLastFormattedText("");
       setValidationResults({});
+      setPoolsInput((joker.pools || []).join(", "));
     }
   }, [isOpen, joker]);
 
@@ -909,7 +914,12 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             </Button>
                             <InputField
                               value={formData.scale_w?.toString() || "100"}
-                              onChange={(e) => handleNumberChange("scale_w", parseInt(e.target.value))}
+                              onChange={(e) =>
+                                handleNumberChange(
+                                  "scale_w",
+                                  parseInt(e.target.value)
+                                )
+                              }
                               placeholder="100"
                               label="Scale Width (%)"
                               type="number"
@@ -917,7 +927,12 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             />
                             <InputField
                               value={formData.scale_h?.toString() || "100"}
-                              onChange={(e) => handleNumberChange("scale_h", parseInt(e.target.value))}
+                              onChange={(e) =>
+                                handleNumberChange(
+                                  "scale_h",
+                                  parseInt(e.target.value)
+                                )
+                              }
                               placeholder="100"
                               label="Scale Height (%)"
                               type="number"
@@ -1182,11 +1197,11 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                   textAreaId="joker-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
                   onAutoFormatToggle={() => {
-                    setUserConfig(prevConfig => ({
+                    setUserConfig((prevConfig) => ({
                       ...prevConfig,
-                      defaultAutoFormat: !autoFormatEnabled
-                    }))
-                    setAutoFormatEnabled(!autoFormatEnabled)
+                      defaultAutoFormat: !autoFormatEnabled,
+                    }));
+                    setAutoFormatEnabled(!autoFormatEnabled);
                   }}
                   validationResult={validationResults.description}
                   placeholder="Describe your joker's effects using Balatro formatting..."
@@ -1383,6 +1398,52 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                       label="Flags Required"
                       placeholder={"custom_flag1, not custom_flag2, ..."}
                     />
+                    <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
+                      <PuzzlePieceIcon className="h-5 w-5 text-mint" />
+                      Custom Pools
+                    </h4>
+                    <div className="space-y-4">
+                      <InputField
+                        value={poolsInput}
+                        onChange={(e) => setPoolsInput(e.target.value)}
+                        onBlur={() => {
+                          // Parse the pools when user finishes editing
+                          const pools = poolsInput
+                            .split(",")
+                            .map((pool) => pool.trim())
+                            .filter((pool) => pool.length > 0);
+
+                          setFormData({
+                            ...formData,
+                            pools: pools.length > 0 ? pools : undefined,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            // Parse pools on Enter key
+                            const pools = poolsInput
+                              .split(",")
+                              .map((pool) => pool.trim())
+                              .filter((pool) => pool.length > 0);
+
+                            setFormData({
+                              ...formData,
+                              pools: pools.length > 0 ? pools : undefined,
+                            });
+                            e.currentTarget.blur();
+                          }
+                        }}
+                        placeholder="pool1, pool2, special_jokers"
+                        separator={true}
+                        label="Pool Names"
+                        size="md"
+                      />
+                      <p className="text-xs text-white-darker -mt-2">
+                        Enter pool names separated by commas. This joker will be
+                        available for selection in effects that target these
+                        pools.
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}

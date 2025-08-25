@@ -12,7 +12,7 @@ import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
 import { generateConsumablesCode } from "./Consumables/index";
 import { generateBoostersCode } from "./boosters";
-import { ConsumableSetData } from "../data/BalatroUtils";
+import { ConsumableSetData, slugify, getModPrefix } from "../data/BalatroUtils";
 import { modToJson } from "../JSONImportExport";
 import { generateEnhancementsCode, generateSealsCode } from "./Card/index";
 
@@ -29,6 +29,52 @@ const sortForExport = <T extends { id: string; name: string }>(
     if (nameComparison !== 0) return nameComparison;
     return idA.localeCompare(idB);
   });
+};
+
+const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
+  const poolsMap: Record<string, string[]> = {};
+
+  jokers.forEach((joker) => {
+    if (joker.pools && joker.pools.length > 0) {
+      joker.pools.forEach((poolName) => {
+        if (!poolsMap[poolName]) {
+          poolsMap[poolName] = [];
+        }
+        const jokerKey = joker.jokerKey || slugify(joker.name);
+        poolsMap[poolName].push(`j_${getModPrefix()}_${jokerKey}`);
+      });
+    }
+  });
+
+  return poolsMap;
+};
+
+const generateObjectTypes = (
+  poolsMap: Record<string, string[]>,
+  modPrefix: string
+): string => {
+  if (Object.keys(poolsMap).length === 0) {
+    return "";
+  }
+
+  let output = "";
+
+  Object.entries(poolsMap).forEach(([poolName, jokerKeys]) => {
+    const cardsObject = jokerKeys
+      .map((key) => `["${key}"] = true`)
+      .join(",\n        ");
+
+    output += `SMODS.ObjectType({
+    key = "${modPrefix}_${poolName}",
+    cards = {
+        ${cardsObject}
+    },
+})
+
+`;
+  });
+
+  return output;
 };
 
 export const exportModCode = async (
@@ -83,7 +129,7 @@ export const exportModCode = async (
       sortedEnhancements,
       sortedSeals,
       hasModIcon,
-      metadata,
+      metadata
     );
     zip.file(metadata.main_file, mainLuaCode);
 
@@ -222,7 +268,7 @@ const generateMainLuaCode = (
   enhancements: EnhancementData[],
   seals: SealData[],
   hasModIcon: boolean,
-  metadata: ModMetadata,
+  metadata: ModMetadata
 ): string => {
   let output = "";
 
@@ -369,7 +415,7 @@ end
   }
 
   if (metadata.disable_vanilla) {
-      output += `function SMODS.current_mod.reset_game_globals(run_start)
+    output += `function SMODS.current_mod.reset_game_globals(run_start)
       local jokerPool = {}
       for k, v in pairs(G.P_CENTERS) do
           if v.set == 'Joker' then
@@ -382,7 +428,6 @@ end
 
   `;
   }
-
 
   if (customRarities.length > 0) {
     output += `local function load_rarities_file()
@@ -422,6 +467,14 @@ load_boosters_file()
   if (seals.length > 0) {
     output += `load_seals_folder()
 `;
+  }
+
+  if (jokers.length > 0) {
+    const poolsMap = collectJokerPools(jokers);
+    const objectTypesCode = generateObjectTypes(poolsMap, metadata.prefix);
+    if (objectTypesCode) {
+      output += objectTypesCode;
+    }
   }
 
   return output.trim();

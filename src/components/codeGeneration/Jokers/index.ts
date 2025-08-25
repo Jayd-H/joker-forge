@@ -334,6 +334,15 @@ const generateSingleJokerCode = (
     discovered = ${joker.discovered !== undefined ? joker.discovered : true},
     atlas = '${atlasKey}'`;
 
+  if (joker.pools && joker.pools.length > 0) {
+    const poolsObject = joker.pools
+      .map((poolName) => `["${modPrefix}_${poolName}"] = true`)
+      .join(", ");
+
+    jokerCode += `,
+    pools = { ${poolsObject} }`;
+  }
+
   if (joker.overlayImagePreview) {
     const soulCol = nextPosition % jokersPerRow;
     const soulRow = Math.floor(nextPosition / jokersPerRow);
@@ -401,7 +410,7 @@ G.FUNCS.check_for_buy_space = function(card)
         return true
     end
     return check_for_buy_space_ref(card)
-end`
+end`;
   }
 
   return {

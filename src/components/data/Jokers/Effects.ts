@@ -28,7 +28,6 @@ import {
   CUSTOM_CONSUMABLES,
   CONSUMABLE_SETS,
   STICKERS,
-  VOUCHERS,
 } from "../BalatroUtils";
 
 export const EFFECT_CATEGORIES: CategoryDefinition[] = [
@@ -878,6 +877,16 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
       {
+        id: "pool",
+        type: "text",
+        label: "Pool Name (optional)",
+        default: "",
+        showWhen: {
+          parameter: "joker_type",
+          values: ["random"],
+        },
+      },
+      {
         id: "edition",
         type: "select",
         label: "Edition",
@@ -986,7 +995,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Jokers",
   },
-
   {
     id: "destroy_joker",
     label: "Destroy Joker",
@@ -1064,32 +1072,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Variable to Add Sell Value To",
         default: "var1",
       },
-    ],
-    category: "Jokers",
-  },
-  {
-    id: "unlock_joker",
-    label: "Unlock Joker",
-    description:
-      "Unlock a locked joker in the collection ",
-    applicableTriggers: [...GENERIC_TRIGGERS],
-    params: [
-      {
-        id: "joker_key",
-        type: "text",
-        label: "Joker Key ( [modprefix]_joker )",
-        default: "joker",
-      },
-      {
-        id: "discover",
-        type: "select",
-        label: "Discover the Unlocked Joker",
-        options: [
-          {value: "true", label: "Discover"},
-          {value: "false", label: "Leave Undiscovered"}
-        ],
-        default: "false",
-      }
     ],
     category: "Jokers",
   },
@@ -1381,105 +1363,12 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Consumables",
   },
   {
-    id: "redeem_voucher",
-    label: "Redeem Voucher",
-    description: "Redeem a specific or random voucher",
-    applicableTriggers: [...GENERIC_TRIGGERS.filter(
-      (trigger) => {
-        return ![
-          "card_scored", "hand_played", "hand_drawn", "card_discarded", "hand_discarded", "first_hand_drawn",
-          "after_hand_played", "before_hand_played", "card_held_in_hand", "card_held_in_hand_end_of_round",
-        ].includes(trigger) // redeeming a voucher while in blind is buggy adding vouchers to other cards in play etc.
-      }
-    )],
-    params: [
-      {
-        id: "voucher_type",
-        type: "select",
-        label: "Voucher Type",
-        options: [
-          { value: "random", label: "Random Voucher" },
-          { value: "specific", label: "Specific Voucher" },
-        ],
-        default: "random",
-      },
-      {
-        id: "specific_voucher",
-        type: "select",
-        label: "Specific Voucher",
-        options: [...VOUCHERS()],
-        showWhen: {
-          parameter: "voucher_type",
-          values: ["specific"],
-        },
-        default: "v_overstock_norm"
-      },
-    ],
-    category: "Consumables",
-  },
-  {
     id: "destroy_self",
     label: "Destroy Self",
     description: "Destroy this joker",
     applicableTriggers: [...GENERIC_TRIGGERS],
     params: [],
     category: "Jokers",
-  },
-  {
-    id: "flip_joker",
-    label: "Flip Joker",
-    description: "Flip a joker",
-    applicableTriggers: [...GENERIC_TRIGGERS],
-    params: [
-      {
-        id: "selection_method",
-        type: "select",
-        label: "Selection Method",
-        options: [
-          { value: "all", label: "All Jokers" },
-          { value: "random", label: "Random Joker" },
-          { value: "self", label: "This Joker" },
-          { value: "position", label: "By Position" },
-        ],
-        default: "all",
-      },
-      {
-        id: "position",
-        type: "select",
-        label: "Position",
-        options: [
-          { value: "first", label: "First Joker" },
-          { value: "last", label: "Last Joker" },
-          { value: "left", label: "Left of This Joker" },
-          { value: "right", label: "Right of This Joker" },
-          { value: "specific", label: "Specific Index" },
-        ],
-        default: "first",
-        showWhen: {
-          parameter: "selection_method",
-          values: ["position"],
-        },
-      },
-      {
-        id: "specific_index",
-        type: "number",
-        label: "Joker Index (1-5)",
-        default: 1,
-        showWhen: {
-          parameter: "position",
-          values: ["specific"],
-        },
-      },
-    ],
-    category: "Jokers",
-  },
-  {
-    id: "shuffle_jokers",
-    label: "Shuffle Jokers",
-    description: "Shuffle all jokers",
-    applicableTriggers: [...GENERIC_TRIGGERS],
-    params: [],
-    category: "Jokers"
   },
   {
     id: "disable_boss_blind",
@@ -1501,15 +1390,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "modify_blind_requirement",
     label: "Modify Blind Requirement",
     description: "Changes the score requirement of a blind",
-    applicableTriggers: [
-      "blind_selected",
-      "card_scored",
-      "hand_played",
-      "card_discarded",
-      "hand_discarded",
-      "card_held_in_hand",
-      "joker_evaluated",
-    ],
+    applicableTriggers: ["blind_selected"],
     params: [
       {
         id: "operation",
@@ -2010,32 +1891,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rotation",
         min: 0,
         default: 1,
-      },
-    ],
-    category: "Special",
-  },
-  {
-    id: "emit_flag",
-    label: "Emit Flag",
-    description: "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
-    applicableTriggers: [...GENERIC_TRIGGERS],
-    params: [
-      {
-        id: "flag_name",
-        type: "text",
-        label: "Unique Flag Name",
-        default: "custom_flag",
-      },
-      {
-        id: "change",
-        type: "select",
-        label: "Set Flag to",
-        options: [
-          {value: "true", label: "True"},
-          {value: "false", label: "False"},
-          {value: "invert", label: "Invert Current"},
-        ],
-        default: "true"
       },
     ],
     category: "Special",
