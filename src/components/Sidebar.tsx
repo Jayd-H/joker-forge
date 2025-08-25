@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const version: string = "v0.5.7";
+  const version: string = "v0.5.8";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
