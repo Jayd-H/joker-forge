@@ -34,6 +34,7 @@ const sortForExport = <T extends { id: string; name: string }>(
 const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
   const poolsMap: Record<string, string[]> = {};
 
+  // Vanilla food jokers to include in food pool
   const vanillaFoodJokers = [
     "j_gros_michel",
     "j_egg",
@@ -46,6 +47,12 @@ const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
     "j_selzer",
   ];
 
+  // Always generate the food pool with vanilla food jokers
+  // This ensures it exists even if no custom jokers use the food pool
+  // Technically you could systematically search every item that may want to use the pool, then generate it
+  // But that is too much effort for something most people will never even see lol
+  poolsMap["food"] = [...vanillaFoodJokers];
+
   jokers.forEach((joker) => {
     if (joker.pools && joker.pools.length > 0) {
       joker.pools.forEach((poolName) => {
@@ -57,10 +64,6 @@ const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
       });
     }
   });
-
-  if (poolsMap["food"]) {
-    poolsMap["food"].push(...vanillaFoodJokers);
-  }
 
   return poolsMap;
 };

@@ -6,6 +6,7 @@ export const generateCreateJokerReturn = (effect: Effect): EffectReturn => {
   const jokerType = (effect.params?.joker_type as string) || "random";
   const rarity = (effect.params?.rarity as string) || "random";
   const jokerKey = (effect.params?.joker_key as string) || "";
+  const pool = (effect.params?.pool as string) || "";
   const edition = (effect.params?.edition as string) || "none";
   const sticker = (effect.params?.sticker as string) || "none";
   const ignoreSlotsParam = (effect.params?.ignore_slots as string) || "respect";
@@ -16,15 +17,22 @@ export const generateCreateJokerReturn = (effect: Effect): EffectReturn => {
   const hasSticker = sticker !== "none";
   const ignoreSlots = ignoreSlotsParam === "ignore";
 
-  const cardParams = ["set = 'Joker'"];
+  const normalizedJokerKey = jokerKey.startsWith("j_")
+    ? jokerKey
+    : `j_${jokerKey}`;
 
-  const normalizedJokerKey = jokerKey.startsWith("j_") 
-  ? jokerKey 
-  : `j_${jokerKey}`
+  const cardParams = [];
+
+  if (pool && pool.trim()) {
+    const finalPool = modPrefix ? `${modPrefix}_${pool.trim()}` : pool.trim();
+    cardParams.push(`set = '${finalPool}'`);
+  } else {
+    cardParams.push(`set = 'Joker'`);
+  }
 
   if (jokerType === "specific" && normalizedJokerKey) {
     cardParams.push(`key = '${normalizedJokerKey}'`);
-  } else if (rarity !== "random") {
+  } else if (rarity !== "random" && (!pool || !pool.trim())) {
     const rarityMap: Record<string, string> = {
       common: "Common",
       uncommon: "Uncommon",

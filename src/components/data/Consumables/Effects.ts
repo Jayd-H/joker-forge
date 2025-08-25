@@ -25,6 +25,7 @@ import {
   RARITIES,
   TAGS,
   VOUCHERS,
+  STICKERS,
 } from "../BalatroUtils";
 
 export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
@@ -1030,7 +1031,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "voucher_type",
           values: ["specific"],
         },
-        default: "v_overstock_norm"
+        default: "v_overstock_norm",
       },
     ],
     category: "Consumables",
@@ -1115,7 +1116,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "create_joker",
     label: "Create Joker",
     description:
-      "Create a random or specific joker card. For creating jokers from your own mod, it is j_[modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
+      "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
     applicableTriggers: ["consumable_used"],
     params: [
       {
@@ -1145,25 +1146,46 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
       {
         id: "joker_key",
         type: "text",
-        label: "Joker Key (e.g., j_joker, j_greedy_joker)",
-        default: "j_joker",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "joker",
         showWhen: {
           parameter: "joker_type",
           values: ["specific"],
         },
       },
       {
+        id: "pool",
+        type: "text",
+        label: "Pool Name (optional)",
+        default: "",
+        showWhen: {
+          parameter: "joker_type",
+          values: ["random"],
+        },
+      },
+      {
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [
-          { value: "none", label: "No Edition" },
-          ...EDITIONS.map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
-        ],
+        options: [{ value: "none", label: "No Edition" }, ...EDITIONS],
         default: "none",
+      },
+      {
+        id: "sticker",
+        type: "select",
+        label: "Sticker for Copy",
+        options: [{ value: "none", label: "No Sticker" }, ...STICKERS],
+        default: "none",
+      },
+      {
+        id: "ignore_slots",
+        type: "select",
+        label: "___ Joker Slots",
+        options: [
+          { value: "respect", label: "Respect" },
+          { value: "ignore", label: "Ignore" },
+        ],
+        default: "respect",
       },
     ],
     category: "Jokers",
@@ -1262,7 +1284,8 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
   {
     id: "emit_flag",
     label: "Emit Flag",
-    description: "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
+    description:
+      "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
     applicableTriggers: ["consumable_used"],
     params: [
       {
@@ -1276,11 +1299,11 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Set Flag to",
         options: [
-          {value: "true", label: "True"},
-          {value: "false", label: "False"},
-          {value: "invert", label: "Invert Current"},
+          { value: "true", label: "True" },
+          { value: "false", label: "False" },
+          { value: "invert", label: "Invert Current" },
         ],
-        default: "true"
+        default: "true",
       },
     ],
     category: "Special",

@@ -16,6 +16,7 @@ import {
   CUSTOM_CONSUMABLES,
   PLANET_CARDS,
   SPECTRAL_CARDS,
+  EDITIONS,
 } from "../BalatroUtils";
 import { GENERIC_TRIGGERS, SCORING_TRIGGERS } from "./Triggers";
 
@@ -205,7 +206,8 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
   {
     id: "create_joker",
     label: "Create Joker",
-    description: "Create a random or specific joker card",
+    description:
+      "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
     applicableTriggers: GENERIC_TRIGGERS,
     params: [
       {
@@ -235,30 +237,34 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
       {
         id: "joker_key",
         type: "text",
-        label: "Joker Key (e.g., j_joker, j_greedy_joker)",
-        default: "j_joker",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "joker",
         showWhen: {
           parameter: "joker_type",
           values: ["specific"],
         },
       },
       {
+        id: "pool",
+        type: "text",
+        label: "Pool Name (optional)",
+        default: "",
+        showWhen: {
+          parameter: "joker_type",
+          values: ["random"],
+        },
+      },
+      {
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [
-          { value: "none", label: "No Edition" },
-          { value: "e_foil", label: "Foil" },
-          { value: "e_holo", label: "Holographic" },
-          { value: "e_polychrome", label: "Polychrome" },
-          { value: "e_negative", label: "Negative" },
-        ],
+        options: [{ value: "none", label: "No Edition" }, ...EDITIONS],
         default: "none",
       },
       {
         id: "sticker",
         type: "select",
-        label: "Sticker",
+        label: "Sticker for Copy",
         options: [{ value: "none", label: "No Sticker" }, ...STICKERS],
         default: "none",
       },
@@ -848,7 +854,8 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
   {
     id: "emit_flag",
     label: "Emit Flag",
-    description: "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
+    description:
+      "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
     applicableTriggers: [
       "card_scored",
       "card_discarded",
@@ -867,11 +874,11 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Set Flag to",
         options: [
-          {value: "true", label: "True"},
-          {value: "false", label: "False"},
-          {value: "invert", label: "Invert Current"},
+          { value: "true", label: "True" },
+          { value: "false", label: "False" },
+          { value: "invert", label: "Invert Current" },
         ],
-        default: "true"
+        default: "true",
       },
     ],
     category: "Special",
