@@ -451,7 +451,7 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                           pool: e.target.value || undefined,
                         })
                       }
-                      placeholder="e.g. food, planet, special"
+                      placeholder="e.g. food, jokers_pool, jokerforging"
                       size="sm"
                     />
                     <InputDropdown
