@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { UserConfig } from "./data/BalatroUtils";
 
 const USER_CONFIG_KEY = "joker-forge-user-config";
@@ -8,9 +14,10 @@ interface UserConfigContextType {
   setUserConfig: React.Dispatch<React.SetStateAction<UserConfig>>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const UserConfigContext = createContext<UserConfigContextType>({
-  userConfig: {filters: {}, defaultAutoFormat: true, defaultGridSnap: false },
-  setUserConfig: () => {}
+  userConfig: { filters: {}, defaultAutoFormat: true, defaultGridSnap: false },
+  setUserConfig: () => {},
 });
 
 type ContextProviderProps = {
@@ -38,7 +45,9 @@ export const UserConfigProvider = ({ children }: ContextProviderProps) => {
     }
   }, []);
 
-  const [userConfig, setUserConfig] = useState<UserConfig>(() => loadUserConfig());
+  const [userConfig, setUserConfig] = useState<UserConfig>(() =>
+    loadUserConfig()
+  );
 
   useEffect(() => {
     localStorage.setItem(USER_CONFIG_KEY, JSON.stringify(userConfig));
