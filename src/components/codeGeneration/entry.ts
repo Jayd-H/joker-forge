@@ -34,6 +34,18 @@ const sortForExport = <T extends { id: string; name: string }>(
 const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
   const poolsMap: Record<string, string[]> = {};
 
+  const vanillaFoodJokers = [
+    "j_gros_michel",
+    "j_egg",
+    "j_ice_cream",
+    "j_cavendish",
+    "j_turtle_bean",
+    "j_diet_cola",
+    "j_popcorn",
+    "j_ramen",
+    "j_selzer",
+  ];
+
   jokers.forEach((joker) => {
     if (joker.pools && joker.pools.length > 0) {
       joker.pools.forEach((poolName) => {
@@ -45,6 +57,10 @@ const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
       });
     }
   });
+
+  if (poolsMap["food"]) {
+    poolsMap["food"].push(...vanillaFoodJokers);
+  }
 
   return poolsMap;
 };
