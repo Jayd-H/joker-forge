@@ -103,11 +103,6 @@ ${cardEntries.join(",\n")}
     setsCode += `SMODS.ConsumableType {
     key = '${set.key}',`;
 
-    if (set.shader) {
-      setsCode += `
-    shader = '${set.shader}',`;
-    }
-
     const primaryColor = set.primary_colour.startsWith("#")
       ? set.primary_colour.substring(1)
       : set.primary_colour;
@@ -506,13 +501,13 @@ const generateLocVarsFunction = (
         gameVar.multiplier
       }`;
     } else if (gameVar.multiplier === 1) {
-      gameVarCode = `card.ability.extra.${
-        varName
-      } + (${wrapGameVariableCode(gameVar.code)})`;
+      gameVarCode = `card.ability.extra.${varName} + (${wrapGameVariableCode(
+        gameVar.code
+      )})`;
     } else {
-      gameVarCode = `card.ability.extra.${
-        varName
-      } + (${wrapGameVariableCode(gameVar.code)}) * ${gameVar.multiplier}`;
+      gameVarCode = `card.ability.extra.${varName} + (${wrapGameVariableCode(
+        gameVar.code
+      )}) * ${gameVar.multiplier}`;
     }
 
     variableMapping.push(gameVarCode);

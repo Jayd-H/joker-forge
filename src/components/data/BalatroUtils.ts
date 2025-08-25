@@ -166,7 +166,6 @@ export interface ConsumableSetData {
   name: string;
   primary_colour: string;
   secondary_colour: string;
-  shader?: string;
   collection_rows: [number, number];
   default_card?: string;
   shop_rate?: number;

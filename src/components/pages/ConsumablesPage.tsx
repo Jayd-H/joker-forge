@@ -17,7 +17,6 @@ import ConsumableCard from "./consumables/ConsumableCard";
 import EditConsumableInfo from "./consumables/EditConsumableInfo";
 import Button from "../generic/Button";
 import InputField from "../generic/InputField";
-import InputDropdown from "../generic/InputDropdown";
 import Modal from "../generic/Modal";
 import { Suspense, lazy } from "react";
 const RuleBuilder = lazy(() => import("../ruleBuilder/RuleBuilder"));
@@ -163,13 +162,6 @@ const ConsumableSetCard: React.FC<ConsumableSetCardProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-white-darker text-sm">Shader:</span>
-            <span className="text-white-light text-sm">
-              {set.shader || "None"}
-            </span>
-          </div>
-
           <div className="flex items-center gap-2">
             <span className="text-white-darker text-sm">Shop Rate:</span>
             {editingShopRate ? (
@@ -274,13 +266,6 @@ const EditConsumableSetModal: React.FC<EditConsumableSetModalProps> = ({
     const toHex = (n: number) => n.toString(16).padStart(2, "0");
     return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
   };
-
-  const shaderOptions = [
-    { value: "", label: "None" },
-    { value: "tarot", label: "Tarot" },
-    { value: "planet", label: "Planet" },
-    { value: "spectral", label: "Spectral" },
-  ];
 
   const isEditingExistingSet = editingSet && setFormData.id === editingSet.id;
 
@@ -422,17 +407,6 @@ const EditConsumableSetModal: React.FC<EditConsumableSetModalProps> = ({
             </div>
 
             <div className="flex-1 mt-4 space-y-4">
-              <InputDropdown
-                label="Shader"
-                value={setFormData.shader || ""}
-                onChange={(value) =>
-                  onFormDataChange({
-                    shader: value || undefined,
-                  })
-                }
-                options={shaderOptions}
-              />
-
               <div>
                 <h3 className="text-white-light font-medium mb-4">Set Color</h3>
                 <div
@@ -721,7 +695,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   setConsumableSets,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [activeTab, setActiveTab] = useState<"consumables" | "sets">(
     "consumables"
   );
@@ -742,7 +716,9 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [setFilter, setSetFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState(userConfig.filters.consumablesFilter ?? "name-asc");
+  const [sortBy, setSortBy] = useState(
+    userConfig.filters.consumablesFilter ?? "name-asc"
+  );
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -969,7 +945,6 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         "#",
         ""
       ),
-      shader: setFormData.shader,
       collection_rows: setFormData.collection_rows || [4, 5],
       default_card: setFormData.default_card,
       shop_rate: setFormData.shop_rate ?? 1,
@@ -1497,13 +1472,13 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig(prevConfig => ({
+                      setUserConfig((prevConfig) => ({
                         ...prevConfig,
                         filters: {
                           ...prevConfig.filters,
-                          consumablesFilter: option.value
-                        }
-                      }))
+                          consumablesFilter: option.value,
+                        },
+                      }));
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

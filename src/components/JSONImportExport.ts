@@ -236,7 +236,6 @@ const normalizeConsumableSetData = (
     name: set.name || "",
     primary_colour: set.primary_colour || "#ffffff",
     secondary_colour: set.secondary_colour || "#000000",
-    shader: set.shader,
     collection_rows: set.collection_rows || [5, 5],
     default_card: set.default_card,
     shop_rate: set.shop_rate ?? 1,
