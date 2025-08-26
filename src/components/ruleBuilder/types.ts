@@ -14,6 +14,8 @@ export interface RandomGroup {
   id: string;
   chance_numerator: number | string;
   chance_denominator: number | string;
+  respect_probability_effects: boolean;
+  custom_key: string;
   effects: Effect[];
 }
 

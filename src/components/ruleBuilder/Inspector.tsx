@@ -9,7 +9,7 @@ import type {
   EffectParameter,
   ShowWhenCondition,
 } from "./types";
-import { JokerData } from "../data/BalatroUtils";
+import { getModPrefix, JokerData } from "../data/BalatroUtils";
 import {
   addSuitVariablesToOptions,
   addRankVariablesToOptions,
@@ -50,6 +50,7 @@ import { SelectedItem } from "./types";
 import { getCardTriggerById } from "../data/Card/Triggers";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
+import Checkbox from "../generic/Checkbox";
 
 interface InspectorProps {
   position: { x: number; y: number };
@@ -1250,6 +1251,73 @@ const Inspector: React.FC<InspectorProps> = ({
               />
             </div>
           </div>
+          {selectedRule.trigger !== "change_probability" &&
+            <div className="space-y-3">
+              <h5 className="text-white-light font-medium text-sm flex items-center gap-2">
+                <div className="w-2 h-2 bg-mint rounded-full"></div>
+                Advanced Configuration
+              </h5>
+
+              <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="space-y-6 p-2">
+                    <Checkbox
+                      id="respect_probability_effects"
+                      label="Affected by Probability Effects"
+                      checked={selectedRandomGroup.respect_probability_effects !== false}
+                      onChange={(checked) => {
+                        onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
+                          respect_probability_effects: checked,
+                        });
+                      }}
+                    />
+                    {selectedRandomGroup.respect_probability_effects !== false && 
+                      <InputField
+                        key="custom_key"
+                        value={selectedRandomGroup.custom_key}
+                        onChange={(e) =>{
+                          onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
+                            custom_key: e.target.value,
+                          });
+                        }}
+                        placeholder={(
+                          () => {
+                            let classPrefix: string;
+                            let key: string;
+                            switch (itemType) {
+                              case "joker":
+                                classPrefix = "j";
+                                key = joker.jokerKey || "";
+                                break;
+                              case "consumable":
+                                classPrefix = "c";
+                                //@ts-ignore: The inspector can take more than JokerData
+                                key = joker.consumableKey || "";
+                                break;
+                              case "card":
+                                classPrefix = "m";
+                                //@ts-ignore: The inspector can take more than JokerData
+                                key = joker.sealKey || joker.enhancementKey || "";
+                                break;
+                              default:
+                                classPrefix = "j";
+                                key = joker.jokerKey || "";
+                            }
+                            const modPrefix = getModPrefix()
+
+                            return `${classPrefix}_${modPrefix}_${key}`
+                          }
+                        )()}
+                        label="Custom Probability key"
+                        type="text"
+                        size="sm"
+                      />
+                    }
+                </div>
+              </div>
+            </div>
+          </div>
+          }
 
           <div className="bg-black-darker border border-black-lighter rounded-lg p-3">
             <div className="text-white-light text-sm font-medium mb-2">

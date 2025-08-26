@@ -256,6 +256,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       discovered: true,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
+      weight: 5,
     };
     setEnhancements([...enhancements, newEnhancement]);
     setEditingEnhancement(newEnhancement);

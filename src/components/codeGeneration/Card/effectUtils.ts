@@ -1,4 +1,4 @@
-import type { Effect } from "../../ruleBuilder/types";
+import type { Effect, RandomGroup } from "../../ruleBuilder/types";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
 import { generateAddChipsReturn } from "./effects/AddChipsEffect";
 import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
@@ -43,13 +43,6 @@ export interface ReturnStatementResult {
   isRandomChance?: boolean;
   configVariables?: string[];
   customCanUse?: string;
-}
-
-export interface RandomGroup {
-  id: string;
-  chance_numerator: number;
-  chance_denominator: number;
-  effects: Effect[];
 }
 
 const generateSingleEffect = (
@@ -136,6 +129,7 @@ export function generateEffectReturnStatement(
   regularEffects: Effect[] = [],
   randomGroups: RandomGroup[] = [],
   modprefix: string,
+  cardKey: string,
   trigger?: string,
   itemType: "enhancement" | "seal" = "enhancement"
 ): ReturnStatementResult {
@@ -260,7 +254,7 @@ export function generateEffectReturnStatement(
 
   if (randomGroups.length > 0) {
     const denominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator)),
+      ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
     ];
     const denominatorToOddsVar: Record<number, string> = {};
     const abilityPath =
@@ -314,7 +308,7 @@ export function generateEffectReturnStatement(
 
       if (effectReturns.length === 0) return;
 
-      const oddsVar = denominatorToOddsVar[group.chance_denominator];
+      const oddsVar = denominatorToOddsVar[group.chance_denominator as number];
       const probabilityIdentifier = `group_${groupIndex}_${group.id.substring(
         0,
         8
@@ -358,7 +352,11 @@ export function generateEffectReturnStatement(
         groupContent = groupEffectCalls.join("\n                ");
       }
 
-      const groupStatement = `if SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, 'm_${modprefix}') then
+      const probabilityStatement = group.respect_probability_effects !== false ?
+        `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `m_${modprefix}_${cardKey}`}')`
+        : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`
+
+      const groupStatement = `if ${probabilityStatement} then
                 ${groupContent}
             end`;
 

@@ -232,6 +232,7 @@ export interface EnhancementData {
   discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
+  weight?: number;
   userVariables?: UserVariable[];
   placeholderCreditIndex?: number;
   hasUserUploadedImage?: boolean;
