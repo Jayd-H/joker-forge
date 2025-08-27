@@ -55,6 +55,8 @@ interface BalatroCardProps {
 
   isSeal?: boolean;
   sealBadgeColor?: string;
+
+  enhancementReplaceBase?: boolean
 }
 
 const BalatroCard: React.FC<BalatroCardProps> = ({
@@ -72,6 +74,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
   edition,
   isSeal = false,
   sealBadgeColor,
+  enhancementReplaceBase = false,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [placeholderError, setPlaceholderError] = useState(false);
@@ -367,13 +370,14 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
               <PhotoIcon className="h-16 w-16 text-white-darker" />
             </div>
           )}
-
-          <img
-            src={`/images/aces/${selectedAce}.png`}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover pixelated pointer-events-none"
-            draggable="false"
-          />
+          {!enhancementReplaceBase &&
+            <img
+              src={`/images/aces/${selectedAce}.png`}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover pixelated pointer-events-none"
+              draggable="false"
+            />
+          }
         </div>
       );
     } else {

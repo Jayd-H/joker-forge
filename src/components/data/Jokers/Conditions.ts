@@ -32,6 +32,7 @@ import {
   VOUCHERS,
   STICKERS,
   BOSS_BLINDS,
+  TAGS,
 } from "../BalatroUtils";
 
 export const GENERIC_TRIGGERS: string[] = [
@@ -64,6 +65,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "playing_card_added",
   "game_over",
   "probability_result",
+  "tag_added",
 ];
 
 export const PROBABILITY_IDENTIFIERS: {
@@ -1111,6 +1113,32 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         type: "text",
         label: "Flag Name",
         default: "custom_flag",
+      },
+    ],
+    category: "Special",
+  },
+  {
+    id: "which_tag",
+    label: "Check Which Tag Got Added",
+    description: "Check Which Tag Got Added",
+    applicableTriggers: ["tag_added"],
+    params: [
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [
+          { value: "equals", label: "Equals" },
+          { value: "not_equals", label: "Not Equals" },
+        ],
+        default: "equals",
+      },
+      {
+        id: "value",
+        type: "select",
+        label: "Tag Key",
+        options: [...TAGS],
+        default: "double",
       },
     ],
     category: "Special",

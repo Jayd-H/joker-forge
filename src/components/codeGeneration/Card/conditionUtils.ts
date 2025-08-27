@@ -23,7 +23,10 @@ import { generateInternalVariableConditionCode } from "./conditions/InternalVari
 import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 
-export const generateConditionChain = (rule: Rule): string => {
+export const generateConditionChain = (
+  rule: Rule,
+  itemType: "enhancement" | "seal" = "enhancement"
+): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
     return "";
   }
@@ -31,7 +34,7 @@ export const generateConditionChain = (rule: Rule): string => {
   const groupConditions: string[] = [];
 
   rule.conditionGroups.forEach((group) => {
-    const conditions = generateConditionGroupCode(group, rule);
+    const conditions = generateConditionGroupCode(group, rule, itemType);
     if (conditions) {
       groupConditions.push(conditions);
     }
@@ -50,7 +53,8 @@ export const generateConditionChain = (rule: Rule): string => {
 
 const generateConditionGroupCode = (
   group: ConditionGroup,
-  rule: Rule
+  rule: Rule,
+  itemType: "enhancement" | "seal" = "enhancement"
 ): string => {
   if (!group.conditions || group.conditions.length === 0) {
     return "";
@@ -59,7 +63,7 @@ const generateConditionGroupCode = (
   const conditionCodes: string[] = [];
 
   group.conditions.forEach((condition) => {
-    const code = generateSingleConditionCode(condition, rule);
+    const code = generateSingleConditionCode(condition, rule, itemType);
     if (code) {
       let finalCode = code;
 
@@ -91,7 +95,8 @@ const generateConditionGroupCode = (
 
 const generateSingleConditionCode = (
   condition: Condition,
-  rule: Rule
+  rule: Rule,
+  itemType: "enhancement" | "seal" = "enhancement"
 ): string | null => {
   const singleConditionRule = {
     ...rule,
@@ -165,10 +170,10 @@ const generateSingleConditionCode = (
       return generateTriggeredBossBlindConditionCode();
 
     case "internal_variable":
-      return generateInternalVariableConditionCode([singleConditionRule]);
+      return generateInternalVariableConditionCode([singleConditionRule], itemType);
       
     case "generic_compare":
-      return generateGenericCompareConditionCode([singleConditionRule]);
+      return generateGenericCompareConditionCode([singleConditionRule], itemType);
 
     case "check_flag": 
       return generateCheckFlagConditionCode([singleConditionRule]);    

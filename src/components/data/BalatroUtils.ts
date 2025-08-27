@@ -81,7 +81,6 @@ export interface UserVariable {
     | "Four of a Kind"
     | "Five of a Kind"
     | "Straight Flush"
-    | "Royal Flush"
     | "Flush House"
     | "Flush Five";
 }

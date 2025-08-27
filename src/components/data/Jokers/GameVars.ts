@@ -997,14 +997,6 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             code: "G.GAME.hands['Straight Flush'].played",
           },
           {
-            id: "royal_flush_played",
-            label: "Royal Flush Played",
-            description: "Number of times Royal Flush has been played",
-            category: "poker_hands",
-            subcategory: "hand_play_counts",
-            code: "G.GAME.hands['Royal Flush'].played",
-          },
-          {
             id: "five_of_a_kind_played",
             label: "Five of a Kind Played",
             description: "Number of times Five of a Kind has been played",
@@ -1105,14 +1097,6 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             category: "poker_hands",
             subcategory: "hand_levels",
             code: "G.GAME.hands['Straight Flush'].level",
-          },
-          {
-            id: "royal_flush_level",
-            label: "Royal Flush Level",
-            description: "Current level of Royal Flush",
-            category: "poker_hands",
-            subcategory: "hand_levels",
-            code: "G.GAME.hands['Royal Flush'].level",
           },
           {
             id: "five_of_a_kind_level",

@@ -1251,7 +1251,6 @@ const Inspector: React.FC<InspectorProps> = ({
               />
             </div>
           </div>
-          {selectedRule.trigger !== "change_probability" &&
             <div className="space-y-3">
               <h5 className="text-white-light font-medium text-sm flex items-center gap-2">
                 <div className="w-2 h-2 bg-mint rounded-full"></div>
@@ -1264,60 +1263,58 @@ const Inspector: React.FC<InspectorProps> = ({
                     <Checkbox
                       id="respect_probability_effects"
                       label="Affected by Probability Effects"
-                      checked={selectedRandomGroup.respect_probability_effects !== false}
+                      checked={selectedRule.trigger === "change_probability" ? false : selectedRandomGroup.respect_probability_effects !== false}
+                      disabled={selectedRule.trigger === "change_probability"}
                       onChange={(checked) => {
                         onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
                           respect_probability_effects: checked,
                         });
                       }}
                     />
-                    {selectedRandomGroup.respect_probability_effects !== false && 
-                      <InputField
-                        key="custom_key"
-                        value={selectedRandomGroup.custom_key}
-                        onChange={(e) =>{
-                          onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
-                            custom_key: e.target.value,
-                          });
-                        }}
-                        placeholder={(
-                          () => {
-                            let classPrefix: string;
-                            let key: string;
-                            switch (itemType) {
-                              case "joker":
-                                classPrefix = "j";
-                                key = joker.jokerKey || "";
-                                break;
-                              case "consumable":
-                                classPrefix = "c";
-                                //@ts-ignore: The inspector can take more than JokerData
-                                key = joker.consumableKey || "";
-                                break;
-                              case "card":
-                                classPrefix = "m";
-                                //@ts-ignore: The inspector can take more than JokerData
-                                key = joker.sealKey || joker.enhancementKey || "";
-                                break;
-                              default:
-                                classPrefix = "j";
-                                key = joker.jokerKey || "";
-                            }
-                            const modPrefix = getModPrefix()
-
-                            return `${classPrefix}_${modPrefix}_${key}`
+                    <InputField
+                      key="custom_key"
+                      value={selectedRandomGroup.custom_key}
+                      onChange={(e) =>{
+                        onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
+                          custom_key: e.target.value,
+                        });
+                      }}
+                      placeholder={(
+                        () => {
+                          let classPrefix: string;
+                          let key: string;
+                          switch (itemType) {
+                            case "joker":
+                              classPrefix = "j";
+                              key = joker.jokerKey || "";
+                              break;
+                            case "consumable":
+                              classPrefix = "c";
+                              //@ts-ignore: The inspector can take more than JokerData
+                              key = joker.consumableKey || "";
+                              break;
+                            case "card":
+                              classPrefix = "m";
+                              //@ts-ignore: The inspector can take more than JokerData
+                              key = joker.sealKey || joker.enhancementKey || "";
+                              break;
+                            default:
+                              classPrefix = "j";
+                              key = joker.jokerKey || "";
                           }
-                        )()}
-                        label="Custom Probability key"
-                        type="text"
-                        size="sm"
-                      />
-                    }
+                          const modPrefix = getModPrefix()
+
+                          return `${classPrefix}_${modPrefix}_${key}`
+                        }
+                      )()}
+                      label="Custom Probability key"
+                      type="text"
+                      size="sm"
+                    />
                 </div>
               </div>
             </div>
           </div>
-          }
 
           <div className="bg-black-darker border border-black-lighter rounded-lg p-3">
             <div className="text-white-light text-sm font-medium mb-2">

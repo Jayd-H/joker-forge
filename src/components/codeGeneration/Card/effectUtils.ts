@@ -109,7 +109,7 @@ const generateSingleEffect = (
       return generateSwapChipsMultReturn(effect);
 
     case "modify_internal_variable":
-      return generateModifyInternalVariableReturn(effect, trigger || "");
+      return generateModifyInternalVariableReturn(effect, trigger || "", itemType);
 
     case "emit_flag":
       return generateEmitFlagReturn(effect, getModPrefix());
@@ -352,9 +352,7 @@ export function generateEffectReturnStatement(
         groupContent = groupEffectCalls.join("\n                ");
       }
 
-      const probabilityStatement = group.respect_probability_effects !== false ?
-        `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `m_${modprefix}_${cardKey}`}')`
-        : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`
+      const probabilityStatement = `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `m_${modprefix}_${cardKey}`}', ${group.respect_probability_effects === false})`
 
       const groupStatement = `if ${probabilityStatement} then
                 ${groupContent}

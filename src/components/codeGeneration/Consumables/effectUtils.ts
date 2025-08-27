@@ -201,9 +201,7 @@ export function generateEffectReturnStatement(
                 ${groupPreReturnCode}${groupContent}`;
       }
 
-      const probabilityStatement = group.respect_probability_effects !== false ?
-        `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `c_${modprefix}_${consumableKey}`}')`
-        : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`
+      const probabilityStatement = `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `c_${modprefix}_${consumableKey}`}', ${group.respect_probability_effects === false})`
       
       const groupStatement = `if ${probabilityStatement} then
                 ${fullGroupContent}
