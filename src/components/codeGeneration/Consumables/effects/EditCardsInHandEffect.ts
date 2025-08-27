@@ -1,5 +1,6 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
   const enhancement = effect.params?.enhancement || "none";
@@ -7,7 +8,7 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
   const edition = effect.params?.edition || "none";
   const suit = effect.params?.suit || "none";
   const rank = effect.params?.rank || "none";
-  const amount = effect.params?.amount;
+  const amount = generateGameVariableCode(effect.params?.amount ?? 1);
   const customMessage = effect.customMessage;
 
   // Check if any modifications are actually being made
