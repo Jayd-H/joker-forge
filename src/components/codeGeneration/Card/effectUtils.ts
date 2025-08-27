@@ -352,9 +352,7 @@ export function generateEffectReturnStatement(
         groupContent = groupEffectCalls.join("\n                ");
       }
 
-      const probabilityStatement = group.respect_probability_effects !== false ?
-        `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `m_${modprefix}_${cardKey}`}')`
-        : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`
+      const probabilityStatement = `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `m_${modprefix}_${cardKey}`}', ${group.respect_probability_effects === false})`
 
       const groupStatement = `if ${probabilityStatement} then
                 ${groupContent}
