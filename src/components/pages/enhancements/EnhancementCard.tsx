@@ -262,12 +262,14 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
                   draggable="false"
                   onError={() => setImageLoadError(true)}
                 />
+                { !enhancement.replace_base_card &&
                 <img
                   src="/images/aces/HC_A_hearts.png"
                   alt=""
                   className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                   draggable="false"
                 />
+                }
               </div>
             ) : (
               <div className="relative w-full h-full">
