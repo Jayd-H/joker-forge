@@ -64,6 +64,13 @@ export const generateTriggerContext = (
         comment: "-- After boss blind is defeated",
       };
 
+    case "tag_added":
+      return {
+        check:
+          `context.tag_added ${isBlueprintCompatible ? '' : 'and not context.blueprint'}`,
+        comment: "-- When you obtain a Tag",
+      };
+
     case "booster_opened":
       return {
         check: `context.open_booster ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,

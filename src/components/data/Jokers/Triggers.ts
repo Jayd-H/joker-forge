@@ -144,6 +144,12 @@ export const TRIGGERS: TriggerDefinition[] = [
     category: "Round Events",
   },
   {
+    id: "tag_added",
+    label: "When a Tag is Added",
+    description: "Triggers when you obtain a Tag.",
+    category: "Round Events",
+  },
+  {
     id: "selling_self",
     label: "When This Card is Sold",
     description: "Triggers when this specific joker is sold.",
