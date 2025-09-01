@@ -103,7 +103,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS.map((edition) => ({
+          ...EDITIONS().map((edition) => ({
             value: edition.key,
             label: edition.label,
           })),
@@ -215,7 +215,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "Keep Original Edition" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS.map((edition) => ({
+          ...EDITIONS().map((edition) => ({
             value: edition.key,
             label: edition.label,
           })),
@@ -637,7 +637,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Edition" },
-          ...EDITIONS.map((edition) => ({
+          ...EDITIONS().map((edition) => ({
             value: edition.key,
             label: edition.label,
           })),
@@ -1079,7 +1079,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Change" },
-          ...EDITIONS.map((edition) => ({
+          ...EDITIONS().map((edition) => ({
             value: edition.key,
             label: edition.label,
           })),
@@ -1167,7 +1167,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS],
+        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
         default: "none",
       },
       {
@@ -1211,7 +1211,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "Keep Original Edition" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS.map((edition) => ({
+          ...EDITIONS().map((edition) => ({
             value: edition.key,
             label: edition.label,
           })),
@@ -1259,7 +1259,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Edition to Apply",
         options: [
-          ...EDITIONS.map((edition) => ({
+          ...EDITIONS().map((edition) => ({
             value: edition.key,
             label: edition.label,
           })),

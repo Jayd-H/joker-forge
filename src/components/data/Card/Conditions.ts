@@ -160,7 +160,7 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
-          ...EDITIONS,
+          ...EDITIONS(),
         ],
       },
     ],
@@ -348,7 +348,7 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "contains", label: "contains" },
           { value: "equals", label: "equals" },
         ],
-        default: "contains"
+        default: "contains",
       },
       {
         id: "value",

@@ -234,7 +234,7 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
   const editionOptions = [
     { value: "", label: "Any Edition" },
     { value: "none", label: "No Edition" },
-    ...EDITIONS.map((ed: Edition) => ({ value: ed.key, label: ed.label })),
+    ...EDITIONS().map((ed: Edition) => ({ value: ed.key, label: ed.label })),
   ];
 
   const editionOptionsConsumable = [
