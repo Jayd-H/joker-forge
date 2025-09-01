@@ -5,6 +5,7 @@ import {
   BoosterData,
   EnhancementData,
   SealData,
+  EditionData,
   ModMetadata,
 } from "./data/BalatroUtils";
 import { RarityData } from "./data/BalatroUtils";
@@ -19,6 +20,7 @@ export interface ExportedMod {
   boosters: BoosterData[];
   enhancements: EnhancementData[];
   seals: SealData[];
+  editions: EditionData[];
   version: string;
   exportedAt: string;
 }
@@ -31,6 +33,7 @@ interface ImportableModData {
   boosters?: BoosterData[];
   enhancements?: EnhancementData[];
   seals?: SealData[];
+  editions?: EditionData[];
 }
 
 export const normalizeImportedModData = (data: ImportableModData) => {
@@ -57,9 +60,10 @@ export const normalizeImportedModData = (data: ImportableModData) => {
     normalizeEnhancementData
   );
   const normalizedSeals = (data.seals || []).map(normalizeSealData);
+  const normalizedEditions = (data.editions || []).map(normalizeEditionData);
 
   console.log(
-    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals`
+    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions`
   );
 
   return {
@@ -71,6 +75,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
     boosters: normalizedBoosters,
     enhancements: normalizedEnhancements,
     seals: normalizedSeals,
+    editions: normalizedEditions,
   };
 };
 
@@ -218,6 +223,28 @@ const normalizeSealData = (seal: SealData): SealData => {
   };
 };
 
+const normalizeEditionData = (edition: EditionData): EditionData => {
+  return {
+    id: edition.id || "",
+    name: edition.name || "",
+    description: edition.description || "",
+    editionKey: edition.editionKey || "",
+    shader: edition.shader || false,
+    unlocked: edition.unlocked,
+    discovered: edition.discovered,
+    no_collection: edition.no_collection,
+    in_shop: edition.in_shop,
+    weight: edition.weight ?? 0,
+    extra_cost: edition.extra_cost,
+    apply_to_float: edition.apply_to_float,
+    badge_colour: edition.badge_colour || "#FFAA00",
+    sound: edition.sound || "foil1",
+    disable_shadow: edition.disable_shadow,
+    disable_base_shader: edition.disable_base_shader,
+    rules: edition.rules || [],
+  };
+};
+
 const normalizeRarityData = (rarity: RarityData): RarityData => {
   return {
     id: rarity.id || "",
@@ -252,7 +279,8 @@ export const modToJson = (
   consumableSets: ConsumableSetData[] = [],
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
-  seals: SealData[] = []
+  seals: SealData[] = [],
+  editions: EditionData[] = []
 ): { filename: string; jsonString: string } => {
   const exportData: ExportedMod = {
     metadata,
@@ -263,6 +291,7 @@ export const modToJson = (
     boosters,
     enhancements,
     seals,
+    editions,
     version: "1.0.0",
     exportedAt: new Date().toISOString(),
   };
@@ -283,7 +312,8 @@ export const exportModAsJSON = (
   consumableSets: ConsumableSetData[] = [],
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
-  seals: SealData[] = []
+  seals: SealData[] = [],
+  editions: EditionData[] = []
 ): void => {
   const ret = modToJson(
     metadata,
@@ -293,7 +323,8 @@ export const exportModAsJSON = (
     consumableSets,
     boosters,
     enhancements,
-    seals
+    seals,
+    editions
   );
   const blob = new Blob([ret.jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -316,6 +347,7 @@ export const importModFromJSON = (): Promise<{
   boosters: BoosterData[];
   enhancements: EnhancementData[];
   seals: SealData[];
+  editions: EditionData[];
 } | null> => {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input");
@@ -364,9 +396,12 @@ export const importModFromJSON = (): Promise<{
           const normalizedSeals = (importData.seals || []).map(
             normalizeSealData
           );
+          const normalizedEditions = (importData.editions || []).map(
+            normalizeEditionData
+          );
 
           console.log(
-            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals`
+            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions`
           );
 
           resolve({
@@ -378,6 +413,7 @@ export const importModFromJSON = (): Promise<{
             boosters: normalizedBoosters,
             enhancements: normalizedEnhancements,
             seals: normalizedSeals,
+            editions: normalizedEditions,
           });
         } catch (error) {
           console.error("Error parsing mod file:", error);
