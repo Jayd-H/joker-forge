@@ -7,6 +7,7 @@ import {
   EnhancementData,
   SealData,
   ModMetadata,
+  EditionData,
 } from "../data/BalatroUtils";
 import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
@@ -14,7 +15,11 @@ import { generateConsumablesCode } from "./Consumables/index";
 import { generateBoostersCode } from "./boosters";
 import { ConsumableSetData, slugify, getModPrefix } from "../data/BalatroUtils";
 import { modToJson } from "../JSONImportExport";
-import { generateEnhancementsCode, generateSealsCode } from "./Card/index";
+import {
+  generateEnhancementsCode,
+  generateSealsCode,
+  generateEditionsCode,
+} from "./Card/index";
 
 const sortForExport = <T extends { id: string; name: string }>(
   items: T[]
@@ -104,7 +109,8 @@ export const exportModCode = async (
   consumableSets: ConsumableSetData[] = [],
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
-  seals: SealData[] = []
+  seals: SealData[] = [],
+  editions: EditionData[] = []
 ): Promise<boolean> => {
   try {
     console.log("Generating mod code...");
@@ -125,9 +131,10 @@ export const exportModCode = async (
     const validBoosters = boosters.filter((b) => b.id && b.name);
     const validEnhancements = enhancements.filter((e) => e.id && e.name);
     const validSeals = seals.filter((s) => s.id && s.name);
+    const validEditions = editions.filter((e) => e.id && e.name);
 
     console.log(
-      `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}`
+      `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}, Editions: ${validEditions.length}`
     );
 
     const zip = new JSZip();
@@ -137,6 +144,7 @@ export const exportModCode = async (
     const sortedBoosters = sortForExport(validBoosters);
     const sortedEnhancements = sortForExport(validEnhancements);
     const sortedSeals = sortForExport(validSeals);
+    const sortedEditions = sortForExport(validEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
 
@@ -147,6 +155,7 @@ export const exportModCode = async (
       sortedBoosters,
       sortedEnhancements,
       sortedSeals,
+      sortedEditions,
       hasModIcon,
       metadata
     );
@@ -160,7 +169,8 @@ export const exportModCode = async (
       consumableSets,
       sortedBoosters,
       sortedEnhancements,
-      sortedSeals
+      sortedSeals,
+      sortedEditions
     );
     zip.file(ret.filename, ret.jsonString);
 
@@ -232,6 +242,17 @@ export const exportModCode = async (
       });
     }
 
+    if (sortedEditions.length > 0) {
+      const { editionsCode } = generateEditionsCode(sortedEditions, {
+        modPrefix: metadata.prefix,
+      });
+
+      const editionsFolder = zip.folder("editions");
+      Object.entries(editionsCode).forEach(([filename, code]) => {
+        editionsFolder!.file(filename, code);
+      });
+    }
+
     zip.file(`${metadata.id}.json`, generateModJson(metadata));
 
     let modIconData: string | undefined;
@@ -286,6 +307,7 @@ const generateMainLuaCode = (
   boosters: BoosterData[],
   enhancements: EnhancementData[],
   seals: SealData[],
+  editions: EditionData[],
   hasModIcon: boolean,
   metadata: ModMetadata
 ): string => {
@@ -433,6 +455,22 @@ end
 `;
   }
 
+  if (editions.length > 0) {
+    output += `local function load_editions_folder()
+    local mod_path = SMODS.current_mod.path
+    local editions_path = mod_path .. "/editions"
+    local files = NFS.getDirectoryItemsInfo(editions_path)
+    for i = 1, #files do
+        local file_name = files[i].name
+        if file_name:sub(-4) == ".lua" then
+            assert(SMODS.load_file("editions/" .. file_name))()
+        end
+    end
+end
+
+`;
+  }
+
   if (metadata.disable_vanilla) {
     output += `function SMODS.current_mod.reset_game_globals(run_start)
       local jokerPool = {}
@@ -485,6 +523,11 @@ load_boosters_file()
 
   if (seals.length > 0) {
     output += `load_seals_folder()
+`;
+  }
+
+  if (editions.length > 0) {
+    output += `load_editions_folder()
 `;
   }
 
