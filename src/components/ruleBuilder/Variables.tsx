@@ -128,7 +128,11 @@ const Variables: React.FC<VariablesProps> = ({
       };
 
   const usageDetails = useMemo(() => getVariableUsageDetails(item), [item]);
-  const userVariables = item.userVariables || [];
+  const userVariables =
+    "userVariables" in item &&
+    Array.isArray((item as { userVariables: UserVariable[] }).userVariables)
+      ? (item as { userVariables: UserVariable[] }).userVariables
+      : [];
 
   const getUsageInfo = (variableName: string) => {
     const usages = usageDetails.filter(
@@ -148,7 +152,9 @@ const Variables: React.FC<VariablesProps> = ({
       return false;
     }
 
-    const existingNames = userVariables.map((v) => v.name.toLowerCase());
+    const existingNames = userVariables.map((v: UserVariable) =>
+      v.name.toLowerCase()
+    );
     if (existingNames.includes(name.trim().toLowerCase())) {
       setNameValidationError("Variable name already exists");
       return false;
@@ -169,8 +175,8 @@ const Variables: React.FC<VariablesProps> = ({
     }
 
     const existingNames = userVariables
-      .filter((v) => v.id !== currentVariableId)
-      .map((v) => v.name.toLowerCase());
+      .filter((v: UserVariable) => v.id !== currentVariableId)
+      .map((v: UserVariable) => v.name.toLowerCase());
 
     if (existingNames.includes(name.toLowerCase())) {
       setEditValidationError("Variable name already exists");
@@ -216,7 +222,9 @@ const Variables: React.FC<VariablesProps> = ({
   };
 
   const handleDeleteVariable = (variableId: string) => {
-    const updatedVariables = userVariables.filter((v) => v.id !== variableId);
+    const updatedVariables = userVariables.filter(
+      (v: UserVariable) => v.id !== variableId
+    );
     onUpdateItem({ userVariables: updatedVariables });
   };
 
@@ -254,7 +262,7 @@ const Variables: React.FC<VariablesProps> = ({
       updatedVariable.initialPokerHand = editingPokerHand;
     }
 
-    const updatedVariables = userVariables.map((v) =>
+    const updatedVariables = userVariables.map((v: UserVariable) =>
       v.id === variableId ? updatedVariable : v
     );
     onUpdateItem({ userVariables: updatedVariables });
