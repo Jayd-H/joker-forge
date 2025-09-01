@@ -19,6 +19,7 @@ import {
   ChevronDownIcon,
   EllipsisHorizontalIcon,
   KeyIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -103,6 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "boosters", label: "Booster Packs", icon: GiftIcon },
     { id: "enhancements", label: "Enhancements", icon: StarIcon },
     { id: "seals", label: "Seals", icon: CpuChipIcon },
+    { id: "editions", label: "Editions", icon: SparklesIcon },
   ];
 
   const visibleResourceItems = [
