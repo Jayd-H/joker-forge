@@ -31,14 +31,19 @@ interface BoosterCardData extends BaseCardData {
   booster_type: string;
 }
 
+interface EditionCardData extends BaseCardData {
+  shader?: string;
+}
+
 type CardData =
   | JokerCardData
   | ConsumableCardData
   | BoosterCardData
-  | BaseCardData;
+  | BaseCardData
+  | EditionCardData;
 
 interface BalatroCardProps {
-  type: "joker" | "consumable" | "booster" | "card";
+  type: "joker" | "consumable" | "booster" | "card" | "edition";
   data: CardData;
   onClick?: () => void;
   className?: string;
@@ -55,6 +60,7 @@ interface BalatroCardProps {
 
   isSeal?: boolean;
   sealBadgeColor?: string;
+  editionBadgeColor?: string;
 }
 
 const BalatroCard: React.FC<BalatroCardProps> = ({
@@ -72,6 +78,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
   edition,
   isSeal = false,
   sealBadgeColor,
+  editionBadgeColor,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [placeholderError, setPlaceholderError] = useState(false);
@@ -113,6 +120,32 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     ],
   ];
 
+  const editionAceOptions = [
+    [
+      {
+        key: "HC_A_hearts",
+        name: "♥",
+        color: "text-red-500",
+      },
+      {
+        key: "HC_A_diamonds",
+        name: "♦",
+        color: "text-yellow-400",
+      },
+      { key: "HC_A_clubs", name: "♣", color: "text-blue-500" },
+      { key: "HC_A_spades", name: "♠", color: "text-white-lighter" },
+    ],
+  ];
+
+  const currentAceOptions = type === "edition" ? editionAceOptions : aceOptions;
+  const aceImageFolder = type === "edition" ? "acesbg" : "aces";
+
+  useEffect(() => {
+    if (type === "edition") {
+      setSelectedAce("HC_A_hearts");
+    }
+  }, [type]);
+
   useEffect(() => {
     setImageError(false);
   }, [data.imagePreview]);
@@ -137,6 +170,14 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       return {
         bg: shadowColor,
         shadow: sealBadgeColor,
+      };
+    }
+
+    if (type === "edition" && editionBadgeColor) {
+      const shadowColor = darkenColor(editionBadgeColor, 0.4);
+      return {
+        bg: shadowColor,
+        shadow: editionBadgeColor,
       };
     }
 
@@ -196,6 +237,13 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       };
     }
 
+    if (type === "edition") {
+      return {
+        bg: "bg-balatro-goldshadow",
+        shadow: "bg-balatro-gold",
+      };
+    }
+
     return {
       bg: "bg-balatro-greenshadow",
       shadow: "bg-balatro-green",
@@ -235,6 +283,8 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
         return "/images/placeholder-booster.png";
       case "card":
         return "/images/placeholder-enhancement.png";
+      case "edition":
+        return "/images/placeholder-edition.png";
       default:
         return "/images/placeholder-joker.png";
     }
@@ -268,6 +318,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     if (type === "card") {
       return data.name || "New Card";
     }
+    if (type === "edition") {
+      return data.name || "New Edition";
+    }
     return "";
   };
 
@@ -295,8 +348,48 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     return `${contrast} Ace of ${suit}`;
   };
 
+  const getShaderDisplayName = (shader?: string) => {
+    if (!shader) return "";
+
+    const shaderNames: Record<string, string> = {
+      foil: "Foil",
+      holo: "Holographic",
+      polychrome: "Polychrome",
+      booster: "Booster",
+      debuff: "Debuff",
+      voucher: "Voucher",
+      negative: "Negative",
+      negative_shine: "Negative Shine",
+    };
+
+    return (
+      shaderNames[shader] || shader.charAt(0).toUpperCase() + shader.slice(1)
+    );
+  };
+
   const renderCardImage = () => {
-    if (type === "card" && isSeal) {
+    if (type === "edition") {
+      const editionData = data as EditionCardData;
+      const shaderName = getShaderDisplayName(editionData.shader);
+
+      return (
+        <div className="relative w-full h-full">
+          <img
+            src={`/images/${aceImageFolder}/${selectedAce}.png`}
+            alt=""
+            className="w-full h-full object-cover pixelated"
+            draggable="false"
+          />
+          {shaderName && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-black/80 text-white px-3 py-1 rounded-lg text-sm font-bold border-2 border-white/50">
+                {shaderName}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    } else if (type === "card" && isSeal) {
       return (
         <div className="relative w-full h-full">
           <img
@@ -307,7 +400,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
           />
 
           <img
-            src={`/images/aces/${selectedAce}.png`}
+            src={`/images/${aceImageFolder}/${selectedAce}.png`}
             alt=""
             className="absolute inset-0 w-full h-full object-cover pixelated pointer-events-none"
             draggable="false"
@@ -369,7 +462,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
           )}
 
           <img
-            src={`/images/aces/${selectedAce}.png`}
+            src={`/images/${aceImageFolder}/${selectedAce}.png`}
             alt=""
             className="absolute inset-0 w-full h-full object-cover pixelated pointer-events-none"
             draggable="false"
@@ -431,9 +524,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
           </div>
         )}
 
-        {type === "card" && (
+        {(type === "card" || type === "edition") && (
           <div className="mb-3 space-y-2">
-            {aceOptions.map((row, rowIndex) => (
+            {currentAceOptions.map((row, rowIndex) => (
               <div key={rowIndex} className="flex gap-2 justify-center">
                 {row.map((ace) => (
                   <Tooltip
@@ -491,7 +584,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
             <div className="relative">
               <div className="bg-balatro-lightgrey rounded-2xl p-1">
                 <div className="bg-balatro-black rounded-xl p-3">
-                  {type !== "card" && (
+                  {type !== "card" && type !== "edition" && (
                     <h3 className="text-2xl mb-2 text-center text-balatro-white text-shadow-pixel">
                       {data.name || `New ${type}`}
                     </h3>
@@ -529,7 +622,22 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
                           </span>
                         </div>
                       </>
-                    ) : type === "card" ? (
+                    ) : type === "edition" && editionBadgeColor ? (
+                      <>
+                        <div
+                          className="absolute inset-0 rounded-xl translate-y-1"
+                          style={{ backgroundColor: badgeStyles.bg }}
+                        />
+                        <div
+                          className="rounded-xl text-center text-lg py-1 relative"
+                          style={{ backgroundColor: badgeStyles.shadow }}
+                        >
+                          <span className="relative text-shadow-pixel text-[#fff]">
+                            {getBadgeText()}
+                          </span>
+                        </div>
+                      </>
+                    ) : type === "card" || type === "edition" ? (
                       <>
                         <div
                           className="absolute inset-0 rounded-xl translate-y-1"
