@@ -236,7 +236,7 @@ const Variables: React.FC<VariablesProps> = ({
     setEditingSuit((variable.initialSuit as SuitValue) || SUIT_VALUES[0]);
     setEditingRank((variable.initialRank as RankLabel) || "Ace");
     setEditingPokerHand(
-      (variable.initialPokerHand as PokerHandValue) || POKER_HAND_VALUES[0]
+      (variable.initialPokerHand) || POKER_HAND_VALUES[0]
     );
     setEditValidationError("");
   };

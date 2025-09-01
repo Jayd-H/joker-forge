@@ -62,6 +62,7 @@ import { generateJokerKeyConditionCode } from "./conditions/JokerKeyCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 import { generateBossBlindTypeConditionCode } from "./conditions/BossBlindTypeCondition";
 import { generateJokerFlippedConditionCode, generateThisJokerFlippedConditionCode } from "./conditions/JokerFlippedCondition";
+import { generateWhichTagConditionCode } from "./conditions/WhichTagCondition";
 
 export const generateConditionChain = (
   rule: Rule,
@@ -313,6 +314,9 @@ const generateSingleConditionCode = (
 
     case "boss_blind_type":
       return generateBossBlindTypeConditionCode([singleConditionRule]);
+
+    case "which_tag":
+      return generateWhichTagConditionCode([singleConditionRule]);
 
     default:
       return null;

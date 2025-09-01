@@ -850,6 +850,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                 imagePreview: formData.imagePreview,
               }}
               size="lg"
+              enhancementReplaceBase={formData.replace_base_card === true}
             />
           </div>
         </div>

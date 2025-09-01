@@ -109,7 +109,11 @@ const generateSingleEffect = (
       return generateSwapChipsMultReturn(effect);
 
     case "modify_internal_variable":
-      return generateModifyInternalVariableReturn(effect, trigger || "");
+      return generateModifyInternalVariableReturn(
+        effect,
+        trigger || "",
+        itemType
+      );
 
     case "emit_flag":
       return generateEmitFlagReturn(effect, getModPrefix());
