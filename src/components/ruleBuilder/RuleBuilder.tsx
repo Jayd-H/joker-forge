@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import {
   TransformWrapper,
   TransformComponent,
@@ -48,12 +54,18 @@ import {
   ConsumableData,
   EnhancementData,
   SealData,
+  EditionData,
 } from "../data/BalatroUtils";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 import { UserConfigContext } from "../Contexts";
 
-export type ItemData = JokerData | ConsumableData | EnhancementData | SealData;
+export type ItemData =
+  | JokerData
+  | ConsumableData
+  | EnhancementData
+  | SealData
+  | EditionData;
 type ItemType = "joker" | "consumable" | "card";
 
 interface RuleBuilderProps {
@@ -91,7 +103,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   onUpdateItem,
   itemType,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
 
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -116,7 +128,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);
   const [panState, setPanState] = useState({ x: 0, y: 0, scale: 1 });
   const [backgroundOffset, setBackgroundOffset] = useState({ x: 0, y: 0 });
-  const [gridSnapping, setGridSnapping] = useState<boolean>(userConfig.defaultGridSnap ?? false)
+  const [gridSnapping, setGridSnapping] = useState<boolean>(
+    userConfig.defaultGridSnap ?? false
+  );
   const [panels, setPanels] = useState<Record<string, PanelState>>(() => {
     const basePanels = {
       blockPalette: {
@@ -198,12 +212,12 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       setBackgroundOffset({ x: 0, y: 0 });
     }
   };
-  
+
   const handleResetPosition = () => {
     rules.forEach((rule, index) => {
-      rule.position = { x: 800 + index * 340, y: 300 }
+      rule.position = { x: 800 + index * 340, y: 300 };
     });
-    handleRecenter() // why would you look elsewhere if the windows are at the center
+    handleRecenter(); // why would you look elsewhere if the windows are at the center
   };
 
   const getCenterPosition = () => {
@@ -222,10 +236,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const togglePanel = useCallback(
     (panelId: string) => {
       // Don't allow toggling variables panel for consumables
-      if (
-        panelId === "variables" &&
-        (itemType === "consumable")
-      ) {
+      if (panelId === "variables" && itemType === "consumable") {
         return;
       }
 
@@ -440,7 +451,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
             togglePanel("inspector");
             break;
           case "s":
-            setGridSnapping((prev) => !prev)
+            setGridSnapping((prev) => !prev);
         }
       };
 
@@ -701,14 +712,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     position: { x: number; y: number }
   ) => {
     const snappedPosition = gridSnapping
-    ? {
-        x: Math.round(position.x / 20) * 20,
-        y: Math.round(position.y / 20) * 20,
-      }
-    : position;
+      ? {
+          x: Math.round(position.x / 20) * 20,
+          y: Math.round(position.y / 20) * 20,
+        }
+      : position;
     setRules((prev) =>
-      prev.map((rule) => 
-        (rule.id === ruleId ? { ...rule, position: snappedPosition } : rule))
+      prev.map((rule) =>
+        rule.id === ruleId ? { ...rule, position: snappedPosition } : rule
+      )
     );
   };
 
@@ -1472,15 +1484,16 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
             </button>
             <button
               onClick={() => {
-                setUserConfig(prevConfig => ({
+                setUserConfig((prevConfig) => ({
                   ...prevConfig,
-                  defaultGridSnap: !gridSnapping
-                }))
-                setGridSnapping((prev) => !prev)
+                  defaultGridSnap: !gridSnapping,
+                }));
+                setGridSnapping((prev) => !prev);
               }}
-              className={gridSnapping 
-                ? "p-1 text-mint-light hover:text-mint-lighter transition-colors cursor-pointer" 
-                : "p-1 text-white-darker hover:text-white transition-colors cursor-pointer"
+              className={
+                gridSnapping
+                  ? "p-1 text-mint-light hover:text-mint-lighter transition-colors cursor-pointer"
+                  : "p-1 text-white-darker hover:text-white transition-colors cursor-pointer"
               }
               title="Toggle Grid Snapping (S)"
             >
@@ -1688,9 +1701,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
               <Variables
                 position={panels.variables.position}
                 item={item as Exclude<ItemData, ConsumableData>}
-                onUpdateItem={
-                  onUpdateItem
-                }
+                onUpdateItem={onUpdateItem}
                 onClose={() => togglePanel("variables")}
                 onPositionChange={(position) =>
                   updatePanelPosition("variables", position)
