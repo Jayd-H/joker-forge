@@ -25,7 +25,7 @@ import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition"
 
 export const generateConditionChain = (
   rule: Rule,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
     return "";
@@ -54,7 +54,7 @@ export const generateConditionChain = (
 const generateConditionGroupCode = (
   group: ConditionGroup,
   rule: Rule,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): string => {
   if (!group.conditions || group.conditions.length === 0) {
     return "";
@@ -96,7 +96,7 @@ const generateConditionGroupCode = (
 const generateSingleConditionCode = (
   condition: Condition,
   rule: Rule,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): string | null => {
   const singleConditionRule = {
     ...rule,
@@ -170,13 +170,19 @@ const generateSingleConditionCode = (
       return generateTriggeredBossBlindConditionCode();
 
     case "internal_variable":
-      return generateInternalVariableConditionCode([singleConditionRule], itemType);
-      
-    case "generic_compare":
-      return generateGenericCompareConditionCode([singleConditionRule], itemType);
+      return generateInternalVariableConditionCode(
+        [singleConditionRule],
+        itemType
+      );
 
-    case "check_flag": 
-      return generateCheckFlagConditionCode([singleConditionRule]);    
+    case "generic_compare":
+      return generateGenericCompareConditionCode(
+        [singleConditionRule],
+        itemType
+      );
+
+    case "check_flag":
+      return generateCheckFlagConditionCode([singleConditionRule]);
 
     default:
       return null;

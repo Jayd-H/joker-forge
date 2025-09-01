@@ -3,7 +3,7 @@ import { generateGameVariableCode } from "../../Jokers/gameVariableUtils";
 
 export const generateInternalVariableConditionCode = (
   rules: Rule[],
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const variableName = (condition.params.variable_name as string) || "var1";
@@ -11,7 +11,7 @@ export const generateInternalVariableConditionCode = (
   const value = generateGameVariableCode(condition.params.value) || "0";
 
   const abilityPath =
-      itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
+    itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
   let comparison = "";
   switch (operator) {
     case "equals":
