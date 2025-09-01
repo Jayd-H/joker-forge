@@ -12,6 +12,7 @@ import {
   CogIcon,
 } from "@heroicons/react/24/outline";
 import InputField from "../../generic/InputField";
+import InputDropdown from "../../generic/InputDropdown";
 import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
@@ -51,6 +52,14 @@ const vanillaSounds = [
   { value: "card1", label: "Card 1" },
   { value: "chips1", label: "Chips 1" },
   { value: "generic1", label: "Generic 1" },
+];
+
+const shaderOptions = [
+  { value: "", label: "None" },
+  ...VANILLA_SHADERS.map((shader) => ({
+    value: shader.key,
+    label: shader.label,
+  })),
 ];
 
 const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
@@ -255,6 +264,13 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
       ...formData,
       [field]: checked,
     });
+  };
+
+  const handleShaderChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      shader: value === "" ? false : value,
+    }));
   };
 
   const handleDelete = () => {
@@ -471,27 +487,18 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                           name.
                         </p>
 
-                        <div>
-                          <label className="block text-sm font-medium text-white-light mb-3">
-                            Shader
-                          </label>
-                          <select
-                            value={formData.shader || ""}
-                            onChange={(e) =>
-                              setFormData((prev) => ({
-                                ...prev,
-                                shader: e.target.value || false,
-                              }))
-                            }
-                            className="w-full bg-black-darker border-2 border-black-lighter rounded-lg px-4 py-3 text-white-light focus:outline-none focus:border-mint transition-colors"
-                          >
-                            {VANILLA_SHADERS.map((shader) => (
-                              <option key={shader.key} value={shader.key}>
-                                {shader.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
+                        <InputDropdown
+                          label="Shader"
+                          value={
+                            formData.shader === false
+                              ? ""
+                              : formData.shader || ""
+                          }
+                          onChange={handleShaderChange}
+                          options={shaderOptions}
+                          placeholder="Select a shader"
+                          size="md"
+                        />
 
                         <InputField
                           type="number"
