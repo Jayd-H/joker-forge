@@ -1,6 +1,8 @@
 import {
   EditionData,
   EnhancementData,
+  isCustomShader,
+  isVanillaShader,
   SealData,
   slugify,
 } from "../../data/BalatroUtils";
@@ -1027,17 +1029,31 @@ export const generateSingleEditionCode = (
     }
   });
 
-  let editionCode = `SMODS.Edition {
+  let editionCode = "";
+
+  if (typeof edition.shader === "string" && isCustomShader(edition.shader)) {
+    editionCode += `SMODS.Shader({ key = '${edition.shader}', path = '${edition.shader}.fs' })
+
+`;
+  }
+
+  editionCode += `SMODS.Edition {
     key = '${editionKey}',`;
 
   if (typeof edition.shader === "string" && edition.shader !== "false") {
+    const isVanilla = isVanillaShader(edition.shader);
+
     editionCode += `
-    shader = '${edition.shader}', 
+    shader = '${edition.shader}',`;
+
+    if (isVanilla) {
+      editionCode += `
     prefix_config = {
         -- This allows using the vanilla shader
         -- Not needed when using your own
         shader = false
     },`;
+    }
   } else if (edition.shader === false || edition.shader === "false") {
     editionCode += `
     shader = false,`;

@@ -8,6 +8,8 @@ import {
   SealData,
   ModMetadata,
   EditionData,
+  isCustomShader,
+  getCustomShaderFilepath,
 } from "../data/BalatroUtils";
 import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
@@ -101,6 +103,45 @@ const generateObjectTypes = (
   return output;
 };
 
+const collectCustomShaders = (editions: EditionData[]): string[] => {
+  const usedShaders = new Set<string>();
+
+  editions.forEach((edition) => {
+    if (typeof edition.shader === "string" && isCustomShader(edition.shader)) {
+      usedShaders.add(edition.shader);
+    }
+  });
+
+  return Array.from(usedShaders);
+};
+
+const addCustomShadersToZip = async (
+  zip: JSZip,
+  customShaders: string[]
+): Promise<void> => {
+  if (customShaders.length === 0) return;
+
+  const assetsFolder = zip.folder("assets");
+  const shadersFolder = assetsFolder!.folder("shaders");
+
+  for (const shaderKey of customShaders) {
+    const filepath = getCustomShaderFilepath(shaderKey);
+    if (filepath) {
+      try {
+        const response = await fetch(filepath);
+        if (response.ok) {
+          const shaderContent = await response.text();
+          shadersFolder!.file(`${shaderKey}.fs`, shaderContent);
+        } else {
+          console.warn(`Failed to fetch shader file: ${filepath}`);
+        }
+      } catch (error) {
+        console.warn(`Error loading shader file ${filepath}:`, error);
+      }
+    }
+  }
+};
+
 export const exportModCode = async (
   jokers: JokerData[],
   consumables: ConsumableData[],
@@ -145,6 +186,7 @@ export const exportModCode = async (
     const sortedEnhancements = sortForExport(validEnhancements);
     const sortedSeals = sortForExport(validSeals);
     const sortedEditions = sortForExport(validEditions);
+    const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
 
@@ -252,7 +294,6 @@ export const exportModCode = async (
         editionsFolder!.file(filename, code);
       });
     }
-
     zip.file(`${metadata.id}.json`, generateModJson(metadata));
 
     let modIconData: string | undefined;
@@ -272,6 +313,8 @@ export const exportModCode = async (
         modIconData = undefined;
       }
     }
+
+    await addCustomShadersToZip(zip, customShaders);
 
     await addAtlasToZip(
       zip,

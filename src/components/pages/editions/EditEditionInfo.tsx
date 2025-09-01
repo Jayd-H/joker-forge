@@ -17,7 +17,12 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { EditionData, slugify, VANILLA_SHADERS } from "../../data/BalatroUtils";
+import {
+  CUSTOM_SHADERS,
+  EditionData,
+  slugify,
+  VANILLA_SHADERS,
+} from "../../data/BalatroUtils";
 import {
   validateJokerName,
   validateDescription,
@@ -57,6 +62,10 @@ const vanillaSounds = [
 const shaderOptions = [
   { value: "", label: "None" },
   ...VANILLA_SHADERS.map((shader) => ({
+    value: shader.key,
+    label: shader.label,
+  })),
+  ...CUSTOM_SHADERS.map((shader) => ({
     value: shader.key,
     label: shader.label,
   })),

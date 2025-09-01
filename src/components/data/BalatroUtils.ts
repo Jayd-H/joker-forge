@@ -527,6 +527,62 @@ export const VANILLA_SHADERS = [
   { label: "Negative Shine", key: "negative_shine" },
 ];
 
+export const CUSTOM_SHADERS = [
+  {
+    label: "Anaglyphic (SMODS)",
+    key: "anaglyphic",
+    filepath: "/shaders/anaglyphic.fs",
+  },
+  {
+    label: "Flipped (stupxd)",
+    key: "flipped",
+    filepath: "/shaders/flipped.fs",
+  },
+  {
+    label: "Fluorescent (SMODS)",
+    key: "fluorescent",
+    filepath: "/shaders/fluorescent.fs",
+  },
+  { label: "Gilded (SMODS)", key: "gilded", filepath: "/shaders/gilded.fs" },
+  { label: "Gold (stupxd)", key: "gold", filepath: "/shaders/gold.fs" },
+  {
+    label: "Greyscale (SMODS)",
+    key: "greyscale",
+    filepath: "/shaders/greyscale.fs",
+  },
+  { label: "Ionized (SMODS)", key: "ionized", filepath: "/shaders/ionized.fs" },
+  {
+    label: "Laminated (SMODS)",
+    key: "laminated",
+    filepath: "/shaders/laminated.fs",
+  },
+  {
+    label: "Monochrome (SMODS)",
+    key: "monochrome",
+    filepath: "/shaders/monochrome.fs",
+  },
+  {
+    label: "Overexposed (SMODS)",
+    key: "overexposed",
+    filepath: "/shaders/overexposed.fs",
+  },
+  { label: "Sepia (SMODS)", key: "sepia", filepath: "/shaders/sepia.fs" },
+] as const;
+
+export const isVanillaShader = (shaderKey: string): boolean => {
+  return VANILLA_SHADERS.some((shader) => shader.key === shaderKey);
+};
+
+export const isCustomShader = (shaderKey: string): boolean => {
+  return CUSTOM_SHADERS.some((shader) => shader.key === shaderKey);
+};
+
+export const getCustomShaderFilepath = (
+  shaderKey: string
+): string | undefined => {
+  return CUSTOM_SHADERS.find((shader) => shader.key === shaderKey)?.filepath;
+};
+
 // =============================================================================
 // EDITIONS SECTIONS
 // =============================================================================
