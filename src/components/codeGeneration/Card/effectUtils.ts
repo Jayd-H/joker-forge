@@ -48,7 +48,7 @@ export interface ReturnStatementResult {
 const generateSingleEffect = (
   effect: Effect,
   trigger?: string,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): EffectReturn => {
   switch (effect.type) {
     case "add_mult":
@@ -131,7 +131,7 @@ export function generateEffectReturnStatement(
   modprefix: string,
   cardKey: string,
   trigger?: string,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): ReturnStatementResult {
   if (regularEffects.length === 0 && randomGroups.length === 0) {
     return {
@@ -254,7 +254,9 @@ export function generateEffectReturnStatement(
 
   if (randomGroups.length > 0) {
     const denominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
+      ...new Set(
+        randomGroups.map((group) => group.chance_denominator as number)
+      ),
     ];
     const denominatorToOddsVar: Record<number, string> = {};
     const abilityPath =
@@ -352,9 +354,14 @@ export function generateEffectReturnStatement(
         groupContent = groupEffectCalls.join("\n                ");
       }
 
-      const probabilityStatement = group.respect_probability_effects !== false ?
-        `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `m_${modprefix}_${cardKey}`}')`
-        : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`
+      const probabilityStatement =
+        group.respect_probability_effects !== false
+          ? `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${
+              group.chance_numerator
+            }, ${oddsVar}, '${
+              group.custom_key || `m_${modprefix}_${cardKey}`
+            }')`
+          : `pseudorandom('${probabilityIdentifier}') < ${group.chance_numerator} / ${oddsVar}`;
 
       const groupStatement = `if ${probabilityStatement} then
                 ${groupContent}

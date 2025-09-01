@@ -5,7 +5,7 @@ import type { EffectReturn } from "../effectUtils";
 export const generateRetriggerReturn = (
   effect: Effect,
   sameTypeCount: number = 0,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): EffectReturn => {
   const effectValue = effect.params?.value ?? 1;
   const variableName =
