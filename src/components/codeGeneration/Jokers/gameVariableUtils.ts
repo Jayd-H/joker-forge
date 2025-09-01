@@ -66,7 +66,7 @@ export const parseRangeVariable = (value: unknown): ParsedRangeVariable => {
 
 export const generateGameVariableCode = (
   value: unknown,
-  itemType: "seal" | "enhancement" | "hook" = "enhancement"
+  itemType: "seal" | "enhancement" | "hook" | "edition" = "enhancement"
 ): string => {
   const parsed = parseGameVariable(value);
 
@@ -81,7 +81,10 @@ export const generateGameVariableCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    const startsFromCode = itemType === "hook" ? parsed.startsFrom.toString() : `card.ability.extra.${configVarName}`
+    const startsFromCode =
+      itemType === "hook"
+        ? parsed.startsFrom.toString()
+        : `card.ability.extra.${configVarName}`;
 
     if (parsed.multiplier === 1 && parsed.startsFrom === 0) {
       return parsed.code;
@@ -105,14 +108,20 @@ export const generateConfigVariables = (
   effectValue: unknown,
   effectId: string,
   variableName: string,
-  itemType: "enhancement" | "seal" | "hook" = "enhancement"
+  itemType: "enhancement" | "seal" | "hook" | "edition" = "enhancement"
 ): ConfigVariablesReturn => {
   effectValue = effectValue ?? 1;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
 
-  const abilityPath =
-    itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
+  let abilityPath: string;
+  if (itemType === "seal") {
+    abilityPath = "card.ability.seal.extra";
+  } else if (itemType === "edition") {
+    abilityPath = "card.edition";
+  } else {
+    abilityPath = "card.ability.extra";
+  }
 
   let valueCode: string;
   const configVariables: ConfigExtraVariable[] = [];
@@ -128,7 +137,7 @@ export const generateConfigVariables = (
       { name: `${variableName}_max`, value: rangeParsed.max ?? 5 }
     );
   } else if (itemType === "hook") {
-    valueCode = `${effectValue}`
+    valueCode = `${effectValue}`;
   } else if (typeof effectValue === "string") {
     if (effectValue.endsWith("_value")) {
       valueCode = effectValue;

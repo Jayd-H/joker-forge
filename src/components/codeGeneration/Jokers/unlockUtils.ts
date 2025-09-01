@@ -41,7 +41,7 @@ export const sealOptions = [
 
 export const editionOptions = [
   { value: "any", label: "Any Edition" },
-  ...EDITIONS.map(({ key, label }) => ({ value: key, label })),
+  ...EDITIONS().map(({ key, label }) => ({ value: key, label })),
 ];
 
 export const stickerOptions = [
@@ -349,7 +349,7 @@ export const generateUnlockFunction = (jokerData: JokerData) => {
         targetCard = `args.cards[i]`;
         break;
 
-      case "modify_deck": 
+      case "modify_deck":
         unlockFunction += `
         if deck_initialized == nil then
           local deck_initialized = false
