@@ -1,4 +1,9 @@
-import { EnhancementData, SealData, slugify } from "../../data/BalatroUtils";
+import {
+  EditionData,
+  EnhancementData,
+  SealData,
+  slugify,
+} from "../../data/BalatroUtils";
 import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { generateTriggerCondition } from "./triggerUtils";
@@ -57,7 +62,7 @@ const generateCalculateFunction = (
   hasNonDiscardDestroy: boolean,
   hasRetrigger: boolean,
   cardKey: string,
-  itemType: "enhancement" | "seal"
+  itemType: "enhancement" | "seal" | "edition"
 ): string => {
   if (rules.length === 0 && !hasNonDiscardDestroy && !hasRetrigger) {
     return "";
@@ -210,7 +215,7 @@ ${indentLevel}return ${effectResult.statement}`;
 };
 
 const generateLocVarsFunction = (
-  item: EnhancementData | SealData,
+  item: EnhancementData | SealData | EditionData,
   gameVariables: Array<{
     name: string;
     code: string;
@@ -218,7 +223,7 @@ const generateLocVarsFunction = (
     multiplier: number;
   }>,
   modPrefix: string,
-  itemType: "enhancement" | "seal",
+  itemType: "enhancement" | "seal" | "edition",
   unconditionalEffects: UnconditionalEffect[] = []
 ): string | null => {
   const descriptionHasVariables = item.description.includes("#");
@@ -441,6 +446,27 @@ export const generateSealsCode = (
   });
 
   return { sealsCode };
+};
+
+export const generateEditionsCode = (
+  editions: EditionData[],
+  options: { modPrefix?: string } = {}
+): { editionsCode: Record<string, string> } => {
+  const { modPrefix = "" } = options;
+
+  const editionsWithKeys = editions.map((edition) => ({
+    ...edition,
+    editionKey: edition.editionKey || slugify(edition.name),
+  }));
+
+  const editionsCode: Record<string, string> = {};
+
+  editionsWithKeys.forEach((edition) => {
+    const result = generateSingleEditionCode(edition, modPrefix);
+    editionsCode[`${edition.editionKey}.lua`] = result.code;
+  });
+
+  return { editionsCode };
 };
 
 const generateSingleEnhancementCode = (
@@ -716,7 +742,7 @@ const generateSingleEnhancementCode = (
   enhancementCode += `
     loc_txt = {
         name = '${enhancement.name}',
-        text = ${formatEnhancementDescription(enhancement)}
+        text = ${formatDescription(enhancement)}
     },`;
 
   if (enhancement.atlas) {
@@ -774,7 +800,7 @@ const generateSingleEnhancementCode = (
 
   if (enhancement.weight !== undefined) {
     enhancementCode += `
-    weight = ${enhancement.weight},`
+    weight = ${enhancement.weight},`;
   }
 
   const locVarsCode = generateLocVarsFunction(
@@ -828,9 +854,9 @@ const generateSingleSealCode = (
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
     const varName = gameVar.name
-    .replace(/\s+/g, "")
-    .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
-    .toLowerCase();
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase();
     configItems.push(`${varName} = ${gameVar.startsFrom}`);
   });
 
@@ -897,7 +923,7 @@ const generateSingleSealCode = (
    loc_txt = {
         name = '${seal.name}',
         label = '${seal.name}',
-        text = ${formatSealDescription(seal)}
+        text = ${formatDescription(seal)}
     },`;
 
   if (seal.atlas) {
@@ -957,6 +983,176 @@ const generateSingleSealCode = (
   };
 };
 
+export const generateSingleEditionCode = (
+  edition: EditionData,
+  modPrefix: string = ""
+): { code: string; nextPosition: number } => {
+  const editionKey = edition.editionKey || slugify(edition.name);
+  const activeRules = edition.rules || [];
+
+  const configItems: string[] = [];
+
+  const gameVariables = extractGameVariablesFromRules(activeRules);
+  gameVariables.forEach((gameVar) => {
+    const varName = gameVar.name
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1")
+      .toLowerCase();
+    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+  });
+
+  activeRules.forEach((rule) => {
+    const regularEffects = rule.effects || [];
+    const randomGroups = (rule.randomGroups || []).map((group) => ({
+      ...group,
+      chance_numerator:
+        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
+      chance_denominator:
+        typeof group.chance_denominator === "string"
+          ? 1
+          : group.chance_denominator,
+    }));
+
+    const effectResult = generateEffectReturnStatement(
+      regularEffects,
+      randomGroups,
+      modPrefix,
+      editionKey,
+      rule.trigger,
+      "edition"
+    );
+
+    if (effectResult.configVariables) {
+      configItems.push(...effectResult.configVariables);
+    }
+  });
+
+  let editionCode = `SMODS.Edition {
+    key = '${editionKey}',`;
+
+  if (typeof edition.shader === "string" && edition.shader !== "false") {
+    editionCode += `
+    shader = '${edition.shader}', 
+    prefix_config = {
+        -- This allows using the vanilla shader
+        -- Not needed when using your own
+        shader = false
+    },`;
+  } else if (edition.shader === false || edition.shader === "false") {
+    editionCode += `
+    shader = false,`;
+  }
+
+  const hasConfig = configItems.length > 0;
+  if (hasConfig) {
+    editionCode += `
+    config = {
+        ${configItems.join(",\n        ")}
+    },`;
+  }
+
+  if (edition.in_shop !== undefined) {
+    editionCode += `
+    in_shop = ${edition.in_shop},`;
+  }
+
+  if (edition.weight !== undefined && edition.weight > 0) {
+    editionCode += `
+    weight = ${edition.weight},`;
+  }
+
+  if (edition.extra_cost !== undefined && edition.extra_cost > 0) {
+    editionCode += `
+    extra_cost = ${edition.extra_cost},`;
+  }
+
+  if (edition.apply_to_float !== undefined) {
+    editionCode += `
+    apply_to_float = ${edition.apply_to_float},`;
+  }
+
+  if (edition.badge_colour && edition.badge_colour !== "#FFAA00") {
+    editionCode += `
+    badge_colour = HEX('${edition.badge_colour.replace("#", "")}'),`;
+  }
+
+  if (edition.sound && edition.sound !== "foil1") {
+    editionCode += `
+    sound = { sound = "${edition.sound}", per = 1.2, vol = 0.4 },`;
+  }
+
+  if (edition.disable_shadow !== undefined) {
+    editionCode += `
+    disable_shadow = ${edition.disable_shadow},`;
+  }
+
+  if (edition.disable_base_shader !== undefined) {
+    editionCode += `
+    disable_base_shader = ${edition.disable_base_shader},`;
+  }
+
+  editionCode += `
+    loc_txt = {
+        name = '${edition.name}',
+        label = '${edition.name}',
+        text = ${formatDescription(edition)}
+    },`;
+
+  if (edition.unlocked !== undefined) {
+    editionCode += `
+    unlocked = ${edition.unlocked},`;
+  }
+
+  if (edition.discovered !== undefined) {
+    editionCode += `
+    discovered = ${edition.discovered},`;
+  }
+
+  if (edition.no_collection !== undefined) {
+    editionCode += `
+    no_collection = ${edition.no_collection},`;
+  }
+
+  const locVarsCode = generateLocVarsFunction(
+    edition,
+    gameVariables,
+    modPrefix,
+    "edition"
+  );
+  if (locVarsCode) {
+    editionCode += `
+    ${locVarsCode},`;
+  }
+
+  editionCode += `
+    get_weight = function(self)
+        return G.GAME.edition_rate * self.weight
+    end,
+  `;
+
+  const calculateCode = generateCalculateFunction(
+    activeRules,
+    modPrefix,
+    false,
+    false,
+    editionKey,
+    "edition"
+  );
+  if (calculateCode) {
+    editionCode += `
+    ${calculateCode},`;
+  }
+
+  editionCode = editionCode.replace(/,$/, "");
+  editionCode += `
+}`;
+
+  return {
+    code: editionCode,
+    nextPosition: 0,
+  };
+};
+
 export const exportSingleEnhancement = (enhancement: EnhancementData): void => {
   try {
     const enhancementWithKey = enhancement.enhancementKey
@@ -1010,30 +1206,34 @@ export const exportSingleSeal = (seal: SealData): void => {
   }
 };
 
-function formatEnhancementDescription(enhancement: EnhancementData): string {
-  const formatted = enhancement.description.replace(/<br\s*\/?>/gi, "[s]");
-  const escaped = formatted.replace(/\n/g, "[s]");
-  const lines = escaped.split("[s]").map((line) => line.trim());
+export const exportSingleEdition = (edition: EditionData): void => {
+  try {
+    const editionWithKey = edition.editionKey
+      ? edition
+      : { ...edition, editionKey: slugify(edition.name) };
 
-  if (lines.length === 0) {
-    lines.push(escaped.trim());
+    const result = generateSingleEditionCode(editionWithKey);
+    const editionCode = result.code;
+
+    const blob = new Blob([editionCode], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${editionWithKey.editionKey}.lua`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Failed to export edition:", error);
+    throw error;
   }
+};
 
-  return `{
-${lines
-  .map(
-    (line, i) =>
-      `        [${i + 1}] = '${line
-        .replace(/\\/g, "\\\\")
-        .replace(/"/g, '\\"')
-        .replace(/'/g, "\\'")}'`
-  )
-  .join(",\n")}
-    }`;
-}
-
-function formatSealDescription(seal: SealData): string {
-  const formatted = seal.description.replace(/<br\s*\/?>/gi, "[s]");
+function formatDescription(
+  enhancement: EnhancementData | SealData | EditionData
+): string {
+  const formatted = enhancement.description.replace(/<br\s*\/?>/gi, "[s]");
   const escaped = formatted.replace(/\n/g, "[s]");
   const lines = escaped.split("[s]").map((line) => line.trim());
 
