@@ -1,5 +1,3 @@
-import type { Rule } from "../../ruleBuilder/types";
-
 interface TriggerDefinition {
   condition: string;
   context: string;
@@ -31,34 +29,12 @@ const TRIGGER_DEFINITIONS: Record<string, TriggerDefinition> = {
   },
 };
 
-export const generateTriggerCondition = (trigger: string): string => {
+export const generateTriggerCondition = (
+  trigger: string,
+  itemType?: "enhancement" | "seal" | "edition"
+): string => {
+  if (trigger === "card_scored" && itemType === "edition") {
+    return "context.pre_joker or (context.main_scoring and context.cardarea == G.play)";
+  }
   return TRIGGER_DEFINITIONS[trigger]?.condition || "";
-};
-
-export const getTriggerContext = (trigger: string): string => {
-  return TRIGGER_DEFINITIONS[trigger]?.context || "general context";
-};
-
-export const getTriggerDescription = (trigger: string): string => {
-  return TRIGGER_DEFINITIONS[trigger]?.description || "";
-};
-
-export const isValidCardTrigger = (trigger: string): boolean => {
-  return trigger in TRIGGER_DEFINITIONS;
-};
-
-export const getValidCardTriggers = (): string[] => {
-  return Object.keys(TRIGGER_DEFINITIONS);
-};
-
-export const getAllTriggerDefinitions = (): Record<
-  string,
-  TriggerDefinition
-> => {
-  return { ...TRIGGER_DEFINITIONS };
-};
-
-// Convenience function for rules
-export const generateTriggerCheck = (rule: Rule): string => {
-  return generateTriggerCondition(rule.trigger);
 };

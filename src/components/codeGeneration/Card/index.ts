@@ -104,7 +104,7 @@ const generateCalculateFunction = (
   }
 
   rules.forEach((rule) => {
-    const triggerCondition = generateTriggerCondition(rule.trigger);
+    const triggerCondition = generateTriggerCondition(rule.trigger, itemType);
     const conditionCode = generateConditionChain(rule, itemType);
 
     const ruleHasDestroyCardEffects =
