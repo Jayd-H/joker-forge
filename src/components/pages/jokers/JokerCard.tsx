@@ -17,6 +17,7 @@ import {
   CurrencyDollarIcon,
   WrenchIcon,
   SparklesIcon,
+  CameraIcon,
 } from "@heroicons/react/24/solid";
 
 import Tooltip from "../../generic/Tooltip";
@@ -39,6 +40,7 @@ interface JokerCardProps {
   onDelete: () => void;
   onDuplicate: () => void;
   onExport: () => void;
+  onShowcase: () => void;
   onQuickUpdate: (updates: Partial<JokerData>) => void;
   customRarities?: RarityData[];
   modPrefix: string;
@@ -106,6 +108,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
   onQuickUpdate,
   customRarities = [],
   showConfirmation,
+  onShowcase,
 }) => {
   const [showRarityMenu, setShowRarityMenu] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -240,7 +243,9 @@ const JokerCard: React.FC<JokerCardProps> = ({
     },
     {
       icon: <SparklesIcon className="w-full h-full" />,
-      tooltip: perishableCompat ? "Perishable Compatibility" : "Cannot be made Perishable",
+      tooltip: perishableCompat
+        ? "Perishable Compatibility"
+        : "Cannot be made Perishable",
       variant: "disabled" as const,
       isEnabled: perishableCompat,
       onClick: () => onQuickUpdate({ perishable_compat: !perishableCompat }),
@@ -595,6 +600,19 @@ const JokerCard: React.FC<JokerCardProps> = ({
               >
                 <div className="flex-1 flex items-center justify-center py-3 px-3">
                   <DocumentDuplicateIcon className="h-6 w-6 text-white group-hover:text-mint-lighter transition-colors" />
+                </div>
+              </div>
+            </Tooltip>
+            <div className="w-px bg-black-lighter py-3"></div>
+            <Tooltip content="Showcase" show={hoveredButton === "showcase"}>
+              <div
+                className="flex flex-1 transition-colors cursor-pointer group"
+                onClick={onShowcase}
+                onMouseEnter={() => handleButtonHover("showcase")}
+                onMouseLeave={handleButtonLeave}
+              >
+                <div className="flex-1 flex items-center justify-center py-3 px-3">
+                  <CameraIcon className="h-6 w-6 text-white group-hover:text-mint-lighter transition-colors" />
                 </div>
               </div>
             </Tooltip>

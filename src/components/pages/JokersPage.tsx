@@ -16,6 +16,7 @@ import { exportSingleJoker } from "../codeGeneration/Jokers/index";
 import type { Rule } from "../ruleBuilder/types";
 import { RarityData, JokerData } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import ShowcaseModal from "../generic/ShowcaseModal";
 
 interface JokersPageProps {
   modName: string;
@@ -169,7 +170,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
   modPrefix,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [editingJoker, setEditingJoker] = useState<JokerData | null>(null);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentJokerForRules, setCurrentJokerForRules] =
@@ -177,7 +178,9 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState(userConfig.filters.jokersFilter ?? "name-asc");
+  const [sortBy, setSortBy] = useState(
+    userConfig.filters.jokersFilter ?? "name-asc"
+  );
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -194,6 +197,19 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
   const filtersMenuRef = React.useRef<HTMLDivElement>(null);
+
+  const [showShowcase, setShowShowcase] = useState(false);
+  const [showcaseJoker, setShowcaseJoker] = useState<JokerData | null>(null);
+
+  const handleShowcase = (joker: JokerData) => {
+    setShowcaseJoker(joker);
+    setShowShowcase(true);
+  };
+
+  const handleCloseShowcase = () => {
+    setShowShowcase(false);
+    setShowcaseJoker(null);
+  };
 
   const sortOptions: SortOption[] = useMemo(
     () => [
@@ -323,7 +339,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
         rta: true,
         sou: true,
         uta: true,
-        wra: true
+        wra: true,
       },
       appearFlags: "",
     };
@@ -598,6 +614,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
                 onDelete={() => handleDeleteJoker(joker.id)}
                 onDuplicate={() => handleDuplicateJoker(joker)}
                 onExport={() => handleExportJoker(joker)}
+                onShowcase={() => handleShowcase(joker)}
                 onQuickUpdate={(updates) => handleQuickUpdate(joker, updates)}
                 customRarities={customRarities}
                 modPrefix={modPrefix}
@@ -636,6 +653,15 @@ const JokersPage: React.FC<JokersPageProps> = ({
             />
           </Suspense>
         )}
+
+        {showShowcase && showcaseJoker && (
+          <ShowcaseModal
+            isOpen={showShowcase}
+            joker={showcaseJoker}
+            onClose={handleCloseShowcase}
+            customRarities={customRarities}
+          />
+        )}
       </div>
 
       {showSortMenu &&
@@ -660,13 +686,13 @@ const JokersPage: React.FC<JokersPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig(prevConfig => ({
+                      setUserConfig((prevConfig) => ({
                         ...prevConfig,
                         filters: {
                           ...prevConfig.filters,
-                          jokersFilter: option.value
-                        }
-                      }))
+                          jokersFilter: option.value,
+                        },
+                      }));
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}
