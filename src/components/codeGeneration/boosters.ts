@@ -209,17 +209,19 @@ const formatRarityForCode = (rarity: string, modPrefix: string): string => {
   if (!rarity || rarity === "" || rarity === "any") return "";
 
   if (["1", "2", "3", "4"].includes(rarity)) {
-    return rarity;
-  }
-
-  if (["common", "uncommon", "rare", "legendary"].includes(rarity)) {
     const rarityMap: Record<string, string> = {
-      common: "1",
-      uncommon: "2",
-      rare: "3",
-      legendary: "4",
+      "1": "Common",
+      "2": "Uncommon",
+      "3": "Rare",
+      "4": "Legendary",
     };
     return rarityMap[rarity];
+  }
+
+  if (
+    ["common", "uncommon", "rare", "legendary"].includes(rarity.toLowerCase())
+  ) {
+    return rarity.charAt(0).toUpperCase() + rarity.slice(1).toLowerCase();
   }
 
   return `${modPrefix}_${rarity}`;
@@ -238,7 +240,6 @@ const generateCardConfigFromRule = (
   }
 
   if (boosterType === "joker") {
-    // Use custom pool if specified in the rule, otherwise default to "Joker"
     if (rule.pool && rule.pool.trim()) {
       const finalPool = modPrefix
         ? `${modPrefix}_${rule.pool.trim()}`
@@ -251,13 +252,7 @@ const generateCardConfigFromRule = (
     if (rule.rarity && rule.rarity !== "" && rule.rarity !== "any") {
       const formattedRarity = formatRarityForCode(rule.rarity, modPrefix);
       if (formattedRarity) {
-        // For numeric rarities (1,2,3,4), don't quote them
-        if (/^\d+$/.test(formattedRarity)) {
-          config += `${indent}rarity = ${formattedRarity},\n`;
-        } else {
-          // For custom rarities, quote them
-          config += `${indent}rarity = "${formattedRarity}",\n`;
-        }
+        config += `${indent}rarity = "${formattedRarity}",\n`;
       }
     }
   } else if (boosterType === "playing_card") {
