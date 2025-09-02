@@ -48,20 +48,18 @@ interface BalatroCardProps {
   onClick?: () => void;
   className?: string;
   size?: "sm" | "md" | "lg";
-
   rarityName?: string;
   rarityColor?: string;
   setName?: string;
   setColor?: string;
-
   enhancement?: string;
   seal?: string;
   edition?: string;
-
   isSeal?: boolean;
   sealBadgeColor?: string;
   editionBadgeColor?: string;
   enhancementReplaceBase?: boolean;
+  showCost?: boolean;
 }
 
 const BalatroCard: React.FC<BalatroCardProps> = ({
@@ -81,6 +79,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
   sealBadgeColor,
   editionBadgeColor,
   enhancementReplaceBase = false,
+  showCost = true,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [placeholderError, setPlaceholderError] = useState(false);
@@ -157,11 +156,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-
     const newR = Math.max(0, Math.floor(r * (1 - amount)));
     const newG = Math.max(0, Math.floor(g * (1 - amount)));
     const newB = Math.max(0, Math.floor(b * (1 - amount)));
-
     const toHex = (n: number) => n.toString(16).padStart(2, "0");
     return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
   };
@@ -174,7 +171,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
         shadow: sealBadgeColor,
       };
     }
-
     if (type === "edition" && editionBadgeColor) {
       const shadowColor = darkenColor(editionBadgeColor, 0.4);
       return {
@@ -182,14 +178,12 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
         shadow: editionBadgeColor,
       };
     }
-
     if (enhancement || seal || edition) {
       return {
         bg: "bg-black-darker",
         shadow: "bg-black-lighter",
       };
     }
-
     if (type === "joker" && rarityColor) {
       const vanillaStyles: Record<string, { bg: string; shadow: string }> = {
         "#009dff": { bg: "bg-balatro-blueshadow", shadow: "bg-balatro-blue" },
@@ -200,18 +194,15 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
           shadow: "bg-balatro-purple",
         },
       };
-
       if (vanillaStyles[rarityColor]) {
         return vanillaStyles[rarityColor];
       }
-
       const shadowColor = darkenColor(rarityColor, 0.4);
       return {
         bg: shadowColor,
         shadow: rarityColor,
       };
     }
-
     if (type === "consumable" && setColor) {
       const vanillaStyles: Record<string, { bg: string; shadow: string }> = {
         "#b26cbb": {
@@ -227,25 +218,21 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
           shadow: "bg-balatro-spectral",
         },
       };
-
       if (vanillaStyles[setColor]) {
         return vanillaStyles[setColor];
       }
-
       const shadowColor = darkenColor(setColor, 0.4);
       return {
         bg: shadowColor,
         shadow: setColor,
       };
     }
-
     if (type === "edition") {
       return {
         bg: "bg-balatro-goldshadow",
         shadow: "bg-balatro-gold",
       };
     }
-
     return {
       bg: "bg-balatro-greenshadow",
       shadow: "bg-balatro-green",
@@ -302,7 +289,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     if (edition) {
       return edition;
     }
-
     if (type === "joker") {
       return rarityName || "Common";
     }
@@ -352,7 +338,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
 
   const getShaderDisplayName = (shader?: string) => {
     if (!shader) return "";
-
     const shaderNames: Record<string, string> = {
       foil: "Foil",
       holo: "Holographic",
@@ -363,7 +348,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       negative: "Negative",
       negative_shine: "Negative Shine",
     };
-
     return (
       shaderNames[shader] || shader.charAt(0).toUpperCase() + shader.slice(1)
     );
@@ -373,7 +357,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     if (type === "edition") {
       const editionData = data as EditionCardData;
       const shaderName = getShaderDisplayName(editionData.shader);
-
       return (
         <div className="relative w-full h-full">
           <img
@@ -400,14 +383,12 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
             className="absolute inset-0 w-full h-full object-cover pixelated"
             draggable="false"
           />
-
           <img
             src={`/images/${aceImageFolder}/${selectedAce}.png`}
             alt=""
             className="absolute inset-0 w-full h-full object-cover pixelated pointer-events-none"
             draggable="false"
           />
-
           {!imageError && data.imagePreview && (
             <img
               src={data.imagePreview}
@@ -417,7 +398,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
               onError={handleImageError}
             />
           )}
-
           {data.overlayImagePreview && (
             <img
               src={data.overlayImagePreview}
@@ -519,14 +499,13 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       onClick={onClick}
     >
       <div className="flex flex-col items-center">
-        {data.cost !== undefined && (
+        {showCost && data.cost !== undefined && (
           <div className="bg-cost-bg border-4 border-cost-border rounded-t-2xl px-4 py-1 -mb-1 z-10 relative">
             <span className="text-cost-text font-bold text-shadow-cost text-2xl">
               ${data.cost}
             </span>
           </div>
         )}
-
         {(type === "card" || type === "edition") && (
           <div className="mb-3 space-y-2">
             {currentAceOptions.map((row, rowIndex) => (
@@ -568,17 +547,15 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
             ))}
           </div>
         )}
-
         <div
           className={`${
             currentSize.image
           } mb-2 flex items-center justify-center overflow-hidden relative z-10 ${
-            data.cost !== undefined ? "rounded-t-none" : ""
+            showCost && data.cost !== undefined ? "rounded-t-none" : ""
           } `}
         >
           {renderCardImage()}
         </div>
-
         <div
           className={`${currentSize.infoWidth} flex-shrink-0 absolute top-full left-1/2 transform -translate-x-1/2 z-20`}
         >
@@ -592,7 +569,6 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
                       {data.name || `New ${type}`}
                     </h3>
                   )}
-
                   <div className="relative mb-3">
                     <div className="absolute inset-0 bg-balatro-whiteshadow rounded-xl translate-y-1" />
                     <div className="bg-balatro-white text-balatro-black font-thin px-3 py-2 rounded-xl relative overflow-visible">
@@ -608,81 +584,80 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
                       </div>
                     </div>
                   </div>
-
-                  <div className="relative mx-6 mt-3">
+                  <div className="relative flex justify-center mt-3">
                     {isSeal && sealBadgeColor ? (
-                      <>
+                      <div className="relative">
                         <div
                           className="absolute inset-0 rounded-xl translate-y-1"
                           style={{ backgroundColor: badgeStyles.bg }}
                         />
                         <div
-                          className="rounded-xl text-center text-lg py-1 relative"
+                          className="rounded-xl text-center text-lg py-1 px-12 relative"
                           style={{ backgroundColor: badgeStyles.shadow }}
                         >
                           <span className="relative text-shadow-pixel text-[#fff]">
                             {getBadgeText()}
                           </span>
                         </div>
-                      </>
+                      </div>
                     ) : type === "edition" && editionBadgeColor ? (
-                      <>
+                      <div className="relative">
                         <div
                           className="absolute inset-0 rounded-xl translate-y-1"
                           style={{ backgroundColor: badgeStyles.bg }}
                         />
                         <div
-                          className="rounded-xl text-center text-lg py-1 relative"
+                          className="rounded-xl text-center text-lg py-1 px-12 relative"
                           style={{ backgroundColor: badgeStyles.shadow }}
                         >
                           <span className="relative text-shadow-pixel text-[#fff]">
                             {getBadgeText()}
                           </span>
                         </div>
-                      </>
+                      </div>
                     ) : type === "card" || type === "edition" ? (
-                      <>
+                      <div className="relative">
                         <div
                           className="absolute inset-0 rounded-xl translate-y-1"
                           style={{ backgroundColor: "#474C8F" }}
                         />
                         <div
-                          className="rounded-xl text-center text-lg text-balatro-white py-1 relative"
+                          className="rounded-xl text-center text-lg text-balatro-white py-1 px-12 relative"
                           style={{ backgroundColor: "#757CDC" }}
                         >
                           <span className="relative text-shadow-pixel">
                             {getBadgeText()}
                           </span>
                         </div>
-                      </>
+                      </div>
                     ) : isVanillaBadge ? (
-                      <>
+                      <div className="relative">
                         <div
                           className={`absolute inset-0 ${badgeStyles.bg} rounded-xl translate-y-1`}
                         />
                         <div
-                          className={`${badgeStyles.shadow} rounded-xl text-center text-lg text-balatro-white py-1 relative`}
+                          className={`${badgeStyles.shadow} rounded-xl text-center text-lg text-balatro-white py-1 px-12 relative`}
                         >
                           <span className="relative text-shadow-pixel">
                             {getBadgeText()}
                           </span>
                         </div>
-                      </>
+                      </div>
                     ) : (
-                      <>
+                      <div className="relative">
                         <div
                           className="absolute inset-0 rounded-xl translate-y-1"
                           style={{ backgroundColor: badgeStyles.bg }}
                         />
                         <div
-                          className="rounded-xl text-center text-lg text-balatro-white py-1 relative"
+                          className="rounded-xl text-center text-lg text-balatro-white py-1 px-12 relative"
                           style={{ backgroundColor: badgeStyles.shadow }}
                         >
                           <span className="relative text-shadow-pixel">
                             {getBadgeText()}
                           </span>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
