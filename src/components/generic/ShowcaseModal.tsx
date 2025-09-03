@@ -40,7 +40,7 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
     if (!showcaseRef.current) return;
 
     try {
-      const { toPng } = await import("html-to-image");
+      const { toPng } = await require("html-to-image");
 
       const dataUrl = await toPng(showcaseRef.current, {
         quality: 1,

@@ -15,8 +15,8 @@ export const generatePassiveAllowDebt = (
     variableName
   )
 
-  const addToDeck = `G.GAME.bankrupt_at = G.GAME.bankrupt_at - (${valueCode})`;
-  const removeFromDeck = `G.GAME.bankrupt_at = G.GAME.bankrupt_at + (${valueCode})`;
+  const addToDeck = `G.GAME.bankrupt_at = G.GAME.bankrupt_at - ${valueCode}`;
+  const removeFromDeck = `G.GAME.bankrupt_at = G.GAME.bankrupt_at + ${valueCode}`;
 
   return {
     addToDeck,
