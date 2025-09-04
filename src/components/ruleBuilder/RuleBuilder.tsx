@@ -378,6 +378,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         existingRules.map((rule) => ({
           ...rule,
           randomGroups: rule.randomGroups || [],
+          loops: rule.loops || [],
         }))
       );
       setSelectedItem(null);
