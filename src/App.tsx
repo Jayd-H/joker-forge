@@ -82,6 +82,7 @@ import {
   SealData,
   ModMetadata,
   EditionData,
+  SoundData,
 } from "./components/data/BalatroUtils";
 import Alert from "./components/generic/Alert";
 import ConfirmationPopup from "./components/generic/ConfirmationPopup";
@@ -91,6 +92,7 @@ import RestoreProgressModal from "./components/generic/RestoreProgressModal";
 import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
+import SoundsPage from "./components/pages/SoundPage";
 interface AlertState {
   isVisible: boolean;
   type: "success" | "warning" | "error";
@@ -114,6 +116,7 @@ interface ConfirmationState {
 interface AutoSaveData {
   modMetadata: ModMetadata;
   jokers: JokerData[];
+  sounds: SoundData[];
   consumables: ConsumableData[];
   customRarities: RarityData[];
   consumableSets: ConsumableSetData[];
@@ -259,6 +262,7 @@ function AppContent() {
     useState<ModMetadata>(DEFAULT_MOD_METADATA);
 
   const [jokers, setJokers] = useState<JokerData[]>([]);
+  const [sounds, setSounds] = useState<SoundData[]>([]);
   const [consumables, setConsumables] = useState<ConsumableData[]>([]);
   const [customRarities, setCustomRarities] = useState<RarityData[]>([]);
   const [consumableSets, setConsumableSets] = useState<ConsumableSetData[]>([]);
@@ -308,6 +312,7 @@ function AppContent() {
   const prevDataRef = useRef<{
     modMetadata: ModMetadata;
     jokers: JokerData[];
+    sounds: SoundData[];
     consumables: ConsumableData[];
     customRarities: RarityData[];
     consumableSets: ConsumableSetData[];
@@ -409,6 +414,7 @@ function AppContent() {
     (
       metadata: ModMetadata,
       jokerData: JokerData[],
+      soundData: SoundData[],
       consumableData: ConsumableData[],
       raritiesData: RarityData[],
       setsData: ConsumableSetData[],
@@ -421,6 +427,7 @@ function AppContent() {
         const data: AutoSaveData = {
           modMetadata: metadata,
           jokers: jokerData,
+          sounds: soundData,
           consumables: consumableData,
           customRarities: raritiesData,
           consumableSets: setsData,
@@ -513,6 +520,7 @@ function AppContent() {
   const loadFromLocalStorage = useCallback((): {
     modMetadata: ModMetadata;
     jokers: JokerData[];
+    sounds: SoundData[];
     consumables: ConsumableData[];
     customRarities: RarityData[];
     consumableSets: ConsumableSetData[];
@@ -537,6 +545,7 @@ function AppContent() {
       return {
         modMetadata: data.modMetadata,
         jokers: data.jokers,
+        sounds: data.sounds,
         consumables: data.consumables || [],
         customRarities: data.customRarities || [],
         consumableSets: data.consumableSets || [],
@@ -585,6 +594,7 @@ function AppContent() {
     (
       metadata: ModMetadata,
       jokerData: JokerData[],
+      soundData: SoundData[],
       consumableData: ConsumableData[],
       raritiesData: RarityData[],
       setsData: ConsumableSetData[],
@@ -599,6 +609,7 @@ function AppContent() {
       return (
         JSON.stringify(prevData.modMetadata) !== JSON.stringify(metadata) ||
         JSON.stringify(prevData.jokers) !== JSON.stringify(jokerData) ||
+        JSON.stringify(prevData.sounds) !== JSON.stringify(soundData) ||
         JSON.stringify(prevData.consumables) !==
           JSON.stringify(consumableData) ||
         JSON.stringify(prevData.customRarities) !==
@@ -618,6 +629,7 @@ function AppContent() {
     (
       metadata: ModMetadata,
       jokerData: JokerData[],
+      soundData: SoundData[],
       consumableData: ConsumableData[],
       raritiesData: RarityData[],
       setsData: ConsumableSetData[],
@@ -628,6 +640,7 @@ function AppContent() {
     ) => {
       if (
         jokerData.length > 0 ||
+        soundData.length > 0 ||
         consumableData.length > 0 ||
         raritiesData.length > 0 ||
         setsData.length > 0 ||
@@ -666,6 +679,7 @@ function AppContent() {
     (
       metadata: ModMetadata,
       jokerData: JokerData[],
+      soundData: SoundData[],
       consumableData: ConsumableData[],
       raritiesData: RarityData[],
       setsData: ConsumableSetData[],
@@ -682,6 +696,7 @@ function AppContent() {
         saveToLocalStorage(
           metadata,
           jokerData,
+          soundData,
           consumableData,
           raritiesData,
           setsData,
@@ -714,6 +729,7 @@ function AppContent() {
       !isDataDifferentFromDefaults(
         modMetadata,
         jokers,
+        sounds,
         consumables,
         customRarities,
         consumableSets,
@@ -729,6 +745,7 @@ function AppContent() {
       !hasDataChanged(
         modMetadata,
         jokers,
+        sounds,
         consumables,
         customRarities,
         consumableSets,
@@ -743,6 +760,7 @@ function AppContent() {
     prevDataRef.current = {
       modMetadata,
       jokers,
+      sounds,
       consumables,
       customRarities,
       consumableSets,
@@ -757,6 +775,7 @@ function AppContent() {
     debouncedSave(
       modMetadata,
       jokers,
+      sounds,
       consumables,
       customRarities,
       consumableSets,
@@ -792,6 +811,7 @@ function AppContent() {
   }, [
     modMetadata,
     jokers,
+    sounds,
     consumables,
     customRarities,
     consumableSets,
@@ -835,6 +855,7 @@ function AppContent() {
         const normalizedData = normalizeImportedModData({
           metadata: savedData.modMetadata,
           jokers: savedData.jokers,
+          sounds: savedData.sounds,
           consumables: savedData.consumables,
           customRarities: savedData.customRarities,
           consumableSets: savedData.consumableSets,
@@ -846,6 +867,7 @@ function AppContent() {
 
         setModMetadata(normalizedData.metadata);
         setJokers(normalizedData.jokers);
+        setSounds(normalizedData.sounds)
         setConsumables(normalizedData.consumables);
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
@@ -864,6 +886,7 @@ function AppContent() {
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
           jokers: normalizedData.jokers,
+          sounds: normalizedData.sounds,
           consumables: normalizedData.consumables,
           customRarities: normalizedData.customRarities,
           consumableSets: normalizedData.consumableSets,
@@ -972,6 +995,7 @@ function AppContent() {
 
       await exportModCode(
         jokers,
+        sounds,
         consumables,
         modMetadata,
         customRarities,
@@ -1009,6 +1033,7 @@ function AppContent() {
       exportModAsJSON(
         modMetadata,
         jokers,
+        sounds,
         customRarities,
         consumables,
         consumableSets,
@@ -1061,6 +1086,7 @@ function AppContent() {
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
           jokers: normalizedData.jokers,
+          sounds: normalizedData.sounds,
           consumables: normalizedData.consumables,
           customRarities: normalizedData.customRarities,
           consumableSets: normalizedData.consumableSets,
@@ -1183,6 +1209,27 @@ function AppContent() {
                     showConfirmation={showConfirmation}
                   />
                 )}
+              </Suspense>
+            }
+          />
+          <Route
+            path="/sounds"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={false}
+                    showFilters={true}
+                  />
+                }
+              >
+                <SoundsPage
+                  modName={modMetadata.name}
+                  sounds={sounds}
+                  setSounds={setSounds}
+                  showConfirmation={showConfirmation}
+                />
               </Suspense>
             }
           />
