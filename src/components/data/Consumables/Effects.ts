@@ -1308,6 +1308,21 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+      id: "play_sound",
+      label: "Play a sound",
+      description: "Play a specific sound defined in the Sound Tab",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "sound_key",
+          type: "text",
+          label: "Sound Key (modprefix_key)",
+          default: "",
+        },
+      ],
+      category: "Special",
+    },
 ];
 
 export function getConsumableEffectsForTrigger(

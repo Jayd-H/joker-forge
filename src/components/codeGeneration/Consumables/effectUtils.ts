@@ -33,6 +33,7 @@ import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
+import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 
 export interface EffectReturn {
   statement: string;
@@ -426,6 +427,9 @@ const generateSingleEffect = (
     
     case "emit_flag":
       return generateEmitFlagReturn(effect, modprefix);
+          
+    case "play_sound":
+      return generatePlaySoundReturn(effect, modprefix);
 
     default:
       return {

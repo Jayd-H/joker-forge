@@ -2119,6 +2119,21 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Special",
   },
   {
+    id: "play_sound",
+    label: "Play a sound",
+    description: "Play a specific sound defined in the Sound Tab",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "sound_key",
+        type: "text",
+        label: "Sound Key (modprefix_key)",
+        default: "",
+      },
+    ],
+    category: "Special",
+  },
+  {
     id: "fix_probability",
     label: "Set Probability",
     description: "Set the Numerator or the Denominator of a chance roll",
