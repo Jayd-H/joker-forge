@@ -1063,10 +1063,18 @@ export const generateSingleEditionCode = (
           ? 1
           : group.chance_denominator,
     }));
+    const loopGroups = (rule.loops || []).map((group) => ({
+      ...group,
+      repetitions:
+        typeof group.repetitions === "string"
+          ? 1
+          : group.repetitions,
+    }));
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix,
       editionKey,
       rule.trigger,
