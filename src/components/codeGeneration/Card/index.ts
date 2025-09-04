@@ -26,6 +26,9 @@ const hasRetriggerEffects = (rules: Rule[]): boolean => {
       rule.effects?.some((effect) => effect.type === "retrigger_card") ||
       rule.randomGroups?.some((group) =>
         group.effects.some((effect) => effect.type === "retrigger_card")
+      ) ||
+      rule.loops?.some((group) =>
+        group.effects.some((effect) => effect.type === "retrigger_card")
       )
   );
 };
@@ -35,6 +38,9 @@ const hasDestroyCardEffects = (rules: Rule[]): boolean => {
     (rule) =>
       rule.effects?.some((effect) => effect.type === "destroy_card") ||
       rule.randomGroups?.some((group) =>
+        group.effects.some((effect) => effect.type === "destroy_card")
+      ) ||
+      rule.loops?.some((group) =>
         group.effects.some((effect) => effect.type === "destroy_card")
       )
   );
@@ -47,7 +53,11 @@ const hasNonDiscardDestroyEffects = (rules: Rule[]): boolean => {
       (rule.effects?.some((effect) => effect.type === "destroy_card") ||
         rule.randomGroups?.some((group) =>
           group.effects.some((effect) => effect.type === "destroy_card")
-        ))
+        ) ||
+        rule.loops?.some((group) =>
+          group.effects.some((effect) => effect.type === "destroy_card")
+        )
+      )
   );
 };
 
@@ -104,11 +114,17 @@ const generateCalculateFunction = (
       rule.effects?.some((effect) => effect.type === "destroy_card") ||
       rule.randomGroups?.some((group) =>
         group.effects.some((effect) => effect.type === "destroy_card")
+      ) ||
+      rule.loops?.some((group) =>
+        group.effects.some((effect) => effect.type === "destroy_card")
       );
 
     const ruleHasRetriggerEffects =
       rule.effects?.some((effect) => effect.type === "retrigger_card") ||
       rule.randomGroups?.some((group) =>
+        group.effects.some((effect) => effect.type === "retrigger_card")
+      ) ||
+      rule.loops?.some((group) =>
         group.effects.some((effect) => effect.type === "retrigger_card")
       );
 
@@ -160,10 +176,18 @@ const generateCalculateFunction = (
           ? 1
           : group.chance_denominator,
     }));
+    const loopGroups = (rule.loops || []).map((group) => ({
+      ...group,
+      repetitions:
+        typeof group.repetitions === "string"
+          ? 1
+          : group.repetitions,
+    }));
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix,
       cardKey,
       rule.trigger,
@@ -617,6 +641,13 @@ const generateSingleEnhancementCode = (
         };
       }
 
+      if (rule.loops && rule.loops.length > 0) {
+        return {
+          ...rule,
+          effects: conditionalEffects || [],
+        };
+      }
+
       if (conditionalEffects && conditionalEffects.length > 0) {
         return {
           ...rule,
@@ -632,7 +663,9 @@ const generateSingleEnhancementCode = (
         (!isUnconditionalRule(rule) ||
           !allowsBaseConfigConversion(rule.trigger) ||
           (rule.effects && rule.effects.length > 0) ||
-          (rule.randomGroups && rule.randomGroups.length > 0))
+          (rule.randomGroups && rule.randomGroups.length > 0) ||
+          (rule.loops && rule.loops.length > 0)
+        )
     );
 
   const configItems: string[] = [];
@@ -665,10 +698,18 @@ const generateSingleEnhancementCode = (
           ? 1
           : group.chance_denominator,
     }));
+    const loopGroups = (rule.loops || []).map((group) => ({
+      ...group,
+      repetitions:
+        typeof group.repetitions === "string"
+          ? 1
+          : group.repetitions,
+    }));
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix,
       rule.trigger,
       "enhancement"
@@ -845,10 +886,18 @@ const generateSingleSealCode = (
           ? 1
           : group.chance_denominator,
     }));
+    const loopGroups = (rule.loops || []).map((group) => ({
+      ...group,
+      repetitions:
+        typeof group.repetitions === "string"
+          ? 1
+          : group.repetitions,
+    }));
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix,
       rule.trigger,
       "seal"

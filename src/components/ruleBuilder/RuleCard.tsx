@@ -12,6 +12,8 @@ import type {
   Condition,
   Effect,
   RandomGroup,
+  SelectedItem,
+  LoopGroup,
 } from "./types";
 
 import { getTriggerById } from "../data/Jokers/Triggers";
@@ -44,19 +46,14 @@ import { getCardEffectTypeById } from "../data/Card/Effects";
 interface RuleCardProps {
   rule: Rule;
   ruleIndex: number;
-  selectedItem: {
-    type: "trigger" | "condition" | "effect" | "randomgroup";
-    ruleId: string;
-    itemId?: string;
-    groupId?: string;
-    randomGroupId?: string;
-  } | null;
+  selectedItem: SelectedItem
   onSelectItem: (item: {
-    type: "trigger" | "condition" | "effect" | "randomgroup";
+    type: "trigger" | "condition" | "effect" | "randomgroup" | "loopgroup";
     ruleId: string;
     itemId?: string;
     groupId?: string;
     randomGroupId?: string;
+    loopGroupId?: string
   }) => void;
   onDeleteRule: (ruleId: string) => void;
   onDuplicateRule: (ruleId: string) => void;
@@ -65,8 +62,10 @@ interface RuleCardProps {
   onDeleteEffect: (ruleId: string, effectId: string) => void;
   onAddConditionGroup: (ruleId: string) => void;
   onAddRandomGroup: (ruleId: string) => void;
+  onAddLoop: (ruleId: string) => void;
   onToggleBlueprintCompatibility: (ruleId: string) => void;
   onDeleteRandomGroup: (ruleId: string, randomGroupId: string) => void;
+  onDeleteLoopGroup: (ruleId: string, randomGroupId: string) => void;
   onToggleGroupOperator?: (ruleId: string, groupId: string) => void;
   onUpdatePosition: (
     ruleId: string,
@@ -257,6 +256,46 @@ const RandomGroupContainer: React.FC<{
   );
 };
 
+const LoopGroupContainer: React.FC<{
+  group: LoopGroup;
+  children: React.ReactNode;
+  isSelected: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
+}> = ({ group, children, isSelected, onSelect, onDelete }) => {
+  return (
+    <div
+      className={`border-2 border-dashed rounded-lg p-4 bg-mint/5 relative transition-all min-h-[120px] w-full max-w-full ${
+        isSelected ? "border-balatro-blue" : "border-balatro-blue/30"
+      }`}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelect();
+      }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-balatro-blue text-xs tracking-wider font-medium">
+          Loop {group.repetitions} times{" "}
+          {isSelected && "(SELECTED)"}
+        </div>
+        <div onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="w-full h-full flex items-center rounded justify-center"
+            title="Delete the Loop"
+          >
+            <XMarkIcon className="h-4 w-4 text-balatro-blue/60 hover:text-balatro-blue cursor-pointer transition-colors" />
+          </button>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+};
+
 const RuleCard: React.FC<RuleCardProps> = ({
   rule,
   ruleIndex,
@@ -270,7 +309,9 @@ const RuleCard: React.FC<RuleCardProps> = ({
   onAddConditionGroup,
   onToggleBlueprintCompatibility,
   onAddRandomGroup,
+  onAddLoop,
   onDeleteRandomGroup,
+  onDeleteLoopGroup,
   onToggleGroupOperator,
   onUpdatePosition,
   isRuleSelected,
@@ -357,7 +398,8 @@ const RuleCard: React.FC<RuleCardProps> = ({
   const totalConditions = allConditions.length;
   const totalEffects =
     rule.effects.length +
-    rule.randomGroups.reduce((sum, group) => sum + group.effects.length, 0);
+    rule.randomGroups.reduce((sum, group) => sum + group.effects.length, 0) +
+    rule.loops.reduce((sum, group) => sum + group.effects.length, 0);
 
   const snapFadeUp = {
     initial: { opacity: 0, y: 15 },
@@ -385,10 +427,11 @@ const RuleCard: React.FC<RuleCardProps> = ({
   };
 
   const isItemSelected = (
-    type: "trigger" | "condition" | "effect" | "randomgroup",
+    type: "trigger" | "condition" | "effect" | "randomgroup" | "loopgroup",
     itemId?: string,
     groupId?: string,
-    randomGroupId?: string
+    randomGroupId?: string,
+    loopGroupId?: string
   ) => {
     if (!selectedItem || selectedItem.ruleId !== rule.id) return false;
     if (selectedItem.type !== type) return false;
@@ -401,11 +444,20 @@ const RuleCard: React.FC<RuleCardProps> = ({
       selectedItem.randomGroupId !== randomGroupId
     )
       return false;
+    if (
+      type === "loopgroup" &&
+      loopGroupId &&
+      selectedItem.loopGroupId !== loopGroupId
+    )
+      return false;
     if (type === "effect") {
       if (selectedItem.itemId !== itemId) return false;
       if (randomGroupId && selectedItem.randomGroupId !== randomGroupId)
         return false;
       if (!randomGroupId && selectedItem.randomGroupId) return false;
+      if (loopGroupId && selectedItem.loopGroupId !== loopGroupId)
+        return false;
+      if (!loopGroupId && selectedItem.loopGroupId) return false;
       return true;
     }
     return selectedItem.itemId === itemId;
@@ -420,6 +472,12 @@ const RuleCard: React.FC<RuleCardProps> = ({
     return (
       selectedItem?.ruleId === rule.id &&
       selectedItem?.randomGroupId === randomGroupId
+    );
+  };
+  const isLoopGroupSelected = (loopGroupId: string) => {
+    return (
+      selectedItem?.ruleId === rule.id &&
+      selectedItem?.loopGroupId === loopGroupId
     );
   };
 
@@ -620,6 +678,61 @@ const RuleCard: React.FC<RuleCardProps> = ({
     );
   };
 
+  const renderLoopGroup = (group: LoopGroup) => {
+    return (
+      <motion.div
+        key={`rg-motion-${group.id}`}
+        className="relative"
+        variants={popIn}
+        initial="initial"
+        animate="animate"
+        transition={{ duration: 0.15, delay: 0.03 }}
+      >
+        <LoopGroupContainer
+          group={group}
+          isSelected={isLoopGroupSelected(group.id)}
+          onSelect={() =>
+            onSelectItem({
+              type: "loopgroup",
+              ruleId: rule.id,
+              loopGroupId: group.id, ///////
+            })
+          }
+          onDelete={() => onDeleteLoopGroup(rule.id, group.id)}
+        >
+          <SortableContext
+            id={group.id}
+            items={group.effects.map((e) => e.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {group.effects.map((effect) => (
+                <div key={effect.id} onClick={(e) => e.stopPropagation()}>
+                  <SortableEffect
+                    effect={effect}
+                    ruleId={rule.id}
+                    isSelected={isItemSelected("effect", effect.id)}
+                    onSelect={() =>
+                      onSelectItem({
+                        type: "effect",
+                        ruleId: rule.id,
+                        itemId: effect.id,
+                      })
+                    }
+                    onDelete={() => onDeleteEffect(rule.id, effect.id)}
+                    parameterCount={getParameterCount(effect.params)}
+                    dynamicTitle={generateEffectTitle(effect)}
+                    itemType={itemType}
+                  />
+                </div>
+              ))}
+            </div>
+          </SortableContext>
+        </LoopGroupContainer>
+      </motion.div>
+    );
+  };
+
   return (
     <div
       className="w-80 relative pl-8 select-none"
@@ -792,6 +905,15 @@ const RuleCard: React.FC<RuleCardProps> = ({
                   )}
                   <div onClick={(e) => e.stopPropagation()}>
                     <button
+                      onClick={() => onAddLoop(rule.id)}
+                      className="w-6 h-6 bg-black-darker rounded-lg flex items-center justify-center border-2 border-balatro-blue hover:bg-effect/20 transition-colors cursor-pointer"
+                      title="Add a Loop"
+                    >
+                      <PlusIcon className="h-3 w-3 text-balatro-blue" />
+                    </button>
+                  </div>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <button
                       onClick={() => onAddRandomGroup(rule.id)}
                       className="w-6 h-6 bg-black-darker rounded-lg flex items-center justify-center border-2 border-effect hover:bg-effect/20 transition-colors cursor-pointer"
                       title="Add Random Group"
@@ -857,7 +979,9 @@ const RuleCard: React.FC<RuleCardProps> = ({
 
             {(rule.conditionGroups.length > 0 ||
               rule.effects.length > 0 ||
-              rule.randomGroups.length > 0) && (
+              rule.randomGroups.length > 0 ||
+              rule.loops.length > 0
+            ) && (
               <motion.div
                 className="flex justify-center"
                 variants={quickFade}
@@ -883,7 +1007,7 @@ const RuleCard: React.FC<RuleCardProps> = ({
               </motion.div>
             )}
 
-            {(rule.effects.length > 0 || rule.randomGroups.length > 0) &&
+            {(rule.effects.length > 0 || rule.randomGroups.length > 0 || rule.loops.length > 0) &&
               rule.conditionGroups.length > 0 && (
                 <motion.div
                   className="flex justify-center"
@@ -940,6 +1064,15 @@ const RuleCard: React.FC<RuleCardProps> = ({
               transition={{ duration: 0.1, delay: 0.24 }}
             >
               {rule.randomGroups.map((group) => renderRandomGroup(group))}
+            </motion.div>
+            <motion.div
+              className="space-y-3"
+              variants={quickFade}
+              initial="initial"
+              animate="animate"
+              transition={{ duration: 0.1, delay: 0.24 }}
+            >
+              {rule.loops.map((group) => renderLoopGroup(group))}
             </motion.div>
           </motion.div>
         </motion.div>

@@ -1,4 +1,4 @@
-import type { Effect, RandomGroup } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import { generateLevelUpHandReturn } from "./effects/LevelUpHandEffect";
 import { generateDestroySelectedCardsReturn } from "./effects/DestroySelectedCardsEffect";
 import { generateDestroyRandomCardsReturn } from "./effects/DestroyRandomCardsEffect";
@@ -54,10 +54,11 @@ export interface ReturnStatementResult {
 export function generateEffectReturnStatement(
   regularEffects: Effect[] = [],
   randomGroups: RandomGroup[] = [],
+  loopGroups: LoopGroup[] = [],
   modprefix: string,
   consumableKey?: string
 ): ReturnStatementResult {
-  if (regularEffects.length === 0 && randomGroups.length === 0) {
+  if (regularEffects.length === 0 && randomGroups.length === 0 && loopGroups.length === 0) {
     return {
       statement: "",
       colour: "G.C.WHITE",
@@ -206,6 +207,100 @@ export function generateEffectReturnStatement(
       const groupStatement = `if ${probabilityStatement} then
                 ${fullGroupContent}
             end`;
+
+      combinedPreReturnCode +=
+        (combinedPreReturnCode ? "\n            " : "") + groupStatement;
+    });
+  }
+  
+  if (loopGroups.length > 0) {
+    const repetitions = [
+      ...new Set(loopGroups.map((group) => group.repetitions as number)),
+    ];
+    const repetitionsToVar: Record<number, string> = {};
+
+    if (repetitions.length === 1) {
+      repetitionsToVar[repetitions[0]] = "card.ability.extra.repetitions";
+      const repetitionsVar = "repetitions = " + repetitions[0];
+      if (!configVariableSet.has(repetitionsVar)) {
+        configVariableSet.add(repetitionsVar);
+        allConfigVariables.push(repetitionsVar);
+      }
+    } else {
+      repetitions.forEach((denom, index) => {
+        if (index === 0) {
+          repetitionsToVar[denom] = "card.ability.extra.repetitions";
+          const repetitionsVar = "repetitions = " + denom;
+          if (!configVariableSet.has(repetitionsVar)) {
+            configVariableSet.add(repetitionsVar);
+            allConfigVariables.push(repetitionsVar);
+          }
+        } else {
+          repetitionsToVar[denom] = `card.ability.extra.repetitions${index + 1}`;
+          const repetitionsVar = `repetitions${index + 1} = ${denom}`;
+          if (!configVariableSet.has(repetitionsVar)) {
+            configVariableSet.add(repetitionsVar);
+            allConfigVariables.push(repetitionsVar);
+          }
+        }
+      });
+    }
+
+    loopGroups.forEach((group, _groupIndex) => {
+      const effectReturns: EffectReturn[] = group.effects
+        .map((effect) => generateSingleEffect(effect, modprefix))
+        .filter((ret) => ret.statement || ret.message);
+
+      effectReturns.forEach((effectReturn) => {
+        if (effectReturn.configVariables) {
+          effectReturn.configVariables.forEach((configVar) => {
+            if (!configVariableSet.has(configVar)) {
+              configVariableSet.add(configVar);
+              allConfigVariables.push(configVar);
+            }
+          });
+        }
+        if (effectReturn.customCanUse) {
+          customCanUseConditions.push(effectReturn.customCanUse);
+        }
+      });
+
+      if (effectReturns.length === 0) return;
+
+      const repetitionsVar = repetitionsToVar[group.repetitions as number];
+
+      let groupContent = "";
+      let groupPreReturnCode = "";
+
+      effectReturns.forEach((effect) => {
+        if (effect.statement && effect.statement.trim()) {
+          const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+            effect.statement
+          );
+
+          if (preReturnCode) {
+            groupPreReturnCode +=
+              (groupPreReturnCode ? "\n                " : "") + preReturnCode;
+          }
+
+          if (cleanedStatement.trim()) {
+            groupContent += `
+                ${cleanedStatement}`;
+          }
+        }
+      });
+
+      let fullGroupContent = groupContent;
+      if (groupPreReturnCode) {
+        fullGroupContent = `
+                ${groupPreReturnCode}${groupContent}`;
+      }
+
+      const loopStatement =  `for i = 1, ${repetitionsVar} do`;
+      
+      const groupStatement = `${loopStatement}
+              ${fullGroupContent}
+          end`;
 
       combinedPreReturnCode +=
         (combinedPreReturnCode ? "\n            " : "") + groupStatement;
