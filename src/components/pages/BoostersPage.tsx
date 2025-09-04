@@ -326,8 +326,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <input
                       type="range"
                       min="0"
-                      max="2"
-                      step="0.1"
+                      max="5"
+                      step="0.05"
                       value={rule.weight ?? 1}
                       onChange={(e) =>
                         handleUpdateRule(index, {
@@ -337,7 +337,7 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                       className="flex-1 h-2 bg-black-lighter rounded appearance-none cursor-pointer"
                     />
                     <span className="text-mint font-mono w-12 text-sm">
-                      {(rule.weight ?? 1).toFixed(1)}
+                      {(rule.weight ?? 1).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -359,8 +359,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <input
                       type="range"
                       min="0"
-                      max="2"
-                      step="0.1"
+                      max="5"
+                      step="0.05"
                       value={rule.weight ?? 1}
                       onChange={(e) =>
                         handleUpdateRule(index, {
@@ -370,7 +370,7 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                       className="flex-1 h-2 bg-black-lighter rounded appearance-none cursor-pointer"
                     />
                     <span className="text-mint font-mono w-12 text-sm">
-                      {(rule.weight ?? 1).toFixed(1)}
+                      {(rule.weight ?? 1).toFixed(2)}
                     </span>
                   </div>
                 </div>

@@ -14354,10 +14354,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14385,10 +14391,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14416,10 +14428,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14447,10 +14465,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14478,10 +14502,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14509,10 +14539,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14540,10 +14576,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14571,10 +14613,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14834,8 +14882,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14863,8 +14917,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14892,8 +14952,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14921,8 +14987,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -15271,7 +15343,7 @@
                   "id": "ff9f5c6a-b0b6-4319-ac81-8e1828857e0a",
                   "type": "destroy_card",
                   "params": {
-                    "setGlassTrigger": "false"
+                    "setGlassTrigger": "true"
                   }
                 }
               ]
