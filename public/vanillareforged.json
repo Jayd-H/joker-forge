@@ -12622,7 +12622,9 @@
                 "joker_type": "random",
                 "rarity": "random",
                 "joker_key": "j_joker",
-                "edition": "none"
+                "edition": "none",
+                "sticker": "none",
+                "ignore_slots": "respect"
               }
             }
           ],
@@ -13749,7 +13751,9 @@
                 "joker_type": "random",
                 "rarity": "legendary",
                 "joker_key": "j_joker",
-                "edition": "none"
+                "edition": "none",
+                "sticker": "none",
+                "ignore_slots": "respect"
               }
             }
           ],
@@ -13789,7 +13793,9 @@
                 "joker_type": "random",
                 "rarity": "rare",
                 "joker_key": "j_joker",
-                "edition": "none"
+                "edition": "none",
+                "sticker": "none",
+                "ignore_slots": "respect"
               }
             },
             {
