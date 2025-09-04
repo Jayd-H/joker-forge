@@ -39,6 +39,7 @@ export interface UserConfig {
     boostersFilter?: string;
     enhancementsFilter?: string;
     sealsFilter?: string;
+    editionsFilter?: string;
   };
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
@@ -255,6 +256,26 @@ export interface SealData {
   hasUserUploadedImage?: boolean;
 }
 
+export interface EditionData {
+  id: string;
+  name: string;
+  description: string;
+  editionKey: string;
+  shader: string | false;
+  unlocked?: boolean;
+  discovered?: boolean;
+  no_collection?: boolean;
+  in_shop?: boolean;
+  weight?: number;
+  extra_cost?: number;
+  apply_to_float?: boolean;
+  badge_colour?: string;
+  sound?: string;
+  disable_shadow?: boolean;
+  disable_base_shader?: boolean;
+  rules?: Rule[];
+}
+
 // =============================================================================
 // DATA REGISTRY SYSTEM
 // =============================================================================
@@ -266,6 +287,7 @@ interface RegistryState {
   boosters: BoosterData[];
   enhancements: EnhancementData[];
   seals: SealData[];
+  editions: EditionData[];
   modPrefix: string;
 }
 
@@ -276,6 +298,7 @@ let registryState: RegistryState = {
   boosters: [],
   enhancements: [],
   seals: [],
+  editions: [],
   modPrefix: "",
 };
 
@@ -344,6 +367,7 @@ export const DataRegistry = {
     boosters: BoosterData[],
     enhancements: EnhancementData[],
     seals: SealData[],
+    editions: EditionData[],
     modPrefix: string
   ) => {
     registryState = {
@@ -353,6 +377,7 @@ export const DataRegistry = {
       boosters,
       enhancements,
       seals,
+      editions,
       modPrefix,
     };
   },
@@ -442,6 +467,22 @@ export const DataRegistry = {
     return [...vanilla, ...custom];
   },
 
+  getEditions: (): Array<{ key: string; value: string; label: string }> => {
+    const vanilla = VANILLA_EDITIONS.map((edition) => ({
+      key: edition.key,
+      value: edition.value,
+      label: edition.label,
+    }));
+
+    const custom = registryState.editions.map((edition) => ({
+      key: `e_${registryState.modPrefix}_${edition.editionKey}`,
+      value: `e_${registryState.modPrefix}_${edition.editionKey}`,
+      label: edition.name || "Unnamed Edition",
+    }));
+
+    return [...vanilla, ...custom];
+  },
+
   getState: () => ({ ...registryState }),
 };
 
@@ -456,12 +497,9 @@ export const updateDataRegistry = (
   boosters: BoosterData[],
   enhancements: EnhancementData[],
   seals: SealData[],
+  editions: EditionData[],
   modPrefix: string
 ) => {
-  console.log("updateDataRegistry called");
-  console.log("seals:", seals);
-  console.log("modPrefix:", modPrefix);
-  console.log("enhancements:", enhancements);
   DataRegistry.update(
     customRarities,
     consumableSets,
@@ -469,8 +507,114 @@ export const updateDataRegistry = (
     boosters,
     enhancements,
     seals,
+    editions,
     modPrefix
   );
+};
+
+// =============================================================================
+// SHADERS SECTIONS
+// =============================================================================
+
+export const VANILLA_SHADERS = [
+  { label: "Foil", key: "foil" },
+  { label: "Holo", key: "holo" },
+  { label: "Polychrome", key: "polychrome" },
+  { label: "Booster", key: "booster" },
+  { label: "Debuff", key: "debuff" },
+  { label: "Voucher", key: "voucher" },
+  { label: "Negative", key: "negative" },
+  { label: "Negative Shine", key: "negative_shine" },
+];
+
+export const CUSTOM_SHADERS = [
+  {
+    label: "Anaglyphic (SMODS)",
+    key: "anaglyphic",
+    filepath: "/shaders/anaglyphic.fs",
+  },
+  {
+    label: "Flipped (stupxd)",
+    key: "flipped",
+    filepath: "/shaders/flipped.fs",
+  },
+  {
+    label: "Fluorescent (SMODS)",
+    key: "fluorescent",
+    filepath: "/shaders/fluorescent.fs",
+  },
+  { label: "Gilded (SMODS)", key: "gilded", filepath: "/shaders/gilded.fs" },
+  { label: "Gold (stupxd)", key: "gold", filepath: "/shaders/gold.fs" },
+  {
+    label: "Greyscale (SMODS)",
+    key: "greyscale",
+    filepath: "/shaders/greyscale.fs",
+  },
+  { label: "Ionized (SMODS)", key: "ionized", filepath: "/shaders/ionized.fs" },
+  {
+    label: "Laminated (SMODS)",
+    key: "laminated",
+    filepath: "/shaders/laminated.fs",
+  },
+  {
+    label: "Monochrome (SMODS)",
+    key: "monochrome",
+    filepath: "/shaders/monochrome.fs",
+  },
+  {
+    label: "Overexposed (SMODS)",
+    key: "overexposed",
+    filepath: "/shaders/overexposed.fs",
+  },
+  { label: "Sepia (SMODS)", key: "sepia", filepath: "/shaders/sepia.fs" },
+] as const;
+
+export const isVanillaShader = (shaderKey: string): boolean => {
+  return VANILLA_SHADERS.some((shader) => shader.key === shaderKey);
+};
+
+export const isCustomShader = (shaderKey: string): boolean => {
+  return CUSTOM_SHADERS.some((shader) => shader.key === shaderKey);
+};
+
+export const getCustomShaderFilepath = (
+  shaderKey: string
+): string | undefined => {
+  return CUSTOM_SHADERS.find((shader) => shader.key === shaderKey)?.filepath;
+};
+
+// =============================================================================
+// EDITIONS SECTIONS
+// =============================================================================
+
+export const EDITIONS = () => DataRegistry.getEditions();
+export const EDITION_KEYS = () => DataRegistry.getEditions().map((e) => e.key);
+export const EDITION_VALUES = () =>
+  DataRegistry.getEditions().map((e) => e.value);
+export const EDITION_LABELS = () =>
+  DataRegistry.getEditions().map((e) => e.label);
+
+export const isCustomEdition = (
+  value: string,
+  customEditions: EditionData[] = registryState.editions,
+  modPrefix: string = registryState.modPrefix
+): boolean => {
+  return (
+    value.includes("_") &&
+    customEditions.some((e) => `e_${modPrefix}_${e.editionKey}` === value)
+  );
+};
+
+export const getEditionByValue = (
+  value: string
+): { key: string; value: string; label: string } | undefined => {
+  return EDITIONS().find((edition) => edition.value === value);
+};
+
+export const getEditionByKey = (
+  key: string
+): { key: string; value: string; label: string } | undefined => {
+  return EDITIONS().find((edition) => edition.key === key);
 };
 
 // =============================================================================
@@ -1133,7 +1277,7 @@ export const POKER_HAND_VALUES = POKER_HANDS.map((hand) => hand.value);
 export const POKER_HAND_LABELS = POKER_HANDS.map((hand) => hand.label);
 
 // Editions
-export const EDITIONS = [
+export const VANILLA_EDITIONS = [
   { key: "e_foil", value: "e_foil", label: "Foil (+50 Chips)" },
   { key: "e_holo", value: "e_holo", label: "Holographic (+10 Mult)" },
   {
@@ -1144,11 +1288,6 @@ export const EDITIONS = [
   { key: "e_negative", value: "e_negative", label: "Negative (+1 Joker slot)" },
 ] as const;
 
-export const EDITION_KEYS = EDITIONS.map((edition) => edition.key);
-export const EDITION_VALUES = EDITIONS.map((edition) => edition.value);
-export const EDITION_LABELS = EDITIONS.map((edition) => edition.label);
-
-// Editions
 export const STICKERS = [
   { key: "eternal", value: "eternal", label: "Eternal" },
   { key: "rental", value: "rental", label: "Rental" },
@@ -1445,10 +1584,6 @@ export const getRankById = (id: number) => {
 // Get suit data by value
 export const getSuitByValue = (value: string) => {
   return SUITS.find((suit) => suit.value === value);
-};
-// Get edition data by key
-export const getEditionByKey = (key: string) => {
-  return EDITIONS.find((edition) => edition.key === key);
 };
 
 // Get tarot card data by key

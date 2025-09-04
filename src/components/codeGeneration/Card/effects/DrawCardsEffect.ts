@@ -5,7 +5,7 @@ import type { EffectReturn } from "../effectUtils";
 export const generateDrawCardsReturn = (
   effect: Effect,
   sameTypeCount: number = 0,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): EffectReturn => {
   const variableName =
     sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;

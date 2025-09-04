@@ -36,6 +36,7 @@ import {
   ConsumableData,
   EnhancementData,
   SealData,
+  EditionData,
 } from "../data/BalatroUtils";
 import { WrenchIcon } from "@heroicons/react/24/solid";
 
@@ -72,7 +73,7 @@ interface RuleCardProps {
     position: { x: number; y: number }
   ) => void;
   isRuleSelected: boolean;
-  item: JokerData | ConsumableData | EnhancementData | SealData;
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData;
   itemType: "joker" | "consumable" | "card";
   generateConditionTitle: (condition: Condition) => string;
   generateEffectTitle: (effect: Effect) => string;

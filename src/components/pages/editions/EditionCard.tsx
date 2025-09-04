@@ -3,46 +3,30 @@ import {
   PencilIcon,
   PuzzlePieceIcon,
   DocumentDuplicateIcon,
-  StarIcon,
   TrashIcon,
-  ArrowDownTrayIcon,
   LockOpenIcon,
   LockClosedIcon,
   EyeIcon,
   EyeSlashIcon,
-  ExclamationCircleIcon,
-  BuildingStorefrontIcon,
-  NoSymbolIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  WrenchIcon,
-  SparklesIcon,
-  CameraIcon,
+  ArrowDownTrayIcon,
+  EyeSlashIcon as HiddenIcon,
+  ShoppingBagIcon,
+  StarIcon,
 } from "@heroicons/react/24/solid";
 
 import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
+import { EditionData, slugify } from "../../data/BalatroUtils";
 
-import {
-  getRarityDisplayName,
-  getRarityBadgeColor,
-  getAllRarities,
-  RarityData,
-  type JokerData,
-  slugify,
-} from "../../data/BalatroUtils";
-
-interface JokerCardProps {
-  joker: JokerData;
+interface EditionCardProps {
+  edition: EditionData;
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
   onDuplicate: () => void;
   onExport: () => void;
-  onShowcase: () => void;
-  onQuickUpdate: (updates: Partial<JokerData>) => void;
-  customRarities?: RarityData[];
+  onQuickUpdate: (updates: Partial<EditionData>) => void;
   modPrefix: string;
   showConfirmation: (options: {
     type?: "default" | "warning" | "danger" | "success";
@@ -98,48 +82,52 @@ const PropertyIcon: React.FC<{
   );
 };
 
-const JokerCard: React.FC<JokerCardProps> = ({
-  joker,
+const EditionCard: React.FC<EditionCardProps> = ({
+  edition,
   onEditInfo,
   onEditRules,
-  onDelete,
   onDuplicate,
   onExport,
   onQuickUpdate,
-  customRarities = [],
   showConfirmation,
-  onShowcase,
+  onDelete,
 }) => {
-  const [showRarityMenu, setShowRarityMenu] = useState(false);
+  const rulesCount = edition.rules?.length || 0;
+
   const [editingName, setEditingName] = useState(false);
-  const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [tempName, setTempName] = useState(joker.name);
-  const [tempCost, setTempCost] = useState(joker.cost || 4);
-  const [tempDescription, setTempDescription] = useState(joker.description);
+  const [tempName, setTempName] = useState(edition.name);
+  const [tempDescription, setTempDescription] = useState(edition.description);
+
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
-  const [imageLoadError, setImageLoadError] = useState(false);
-  const [fallbackAttempted, setFallbackAttempted] = useState(false);
-
-  const safeRarity =
-    typeof joker.rarity === "number" && joker.rarity >= 1
-      ? joker.rarity
-      : typeof joker.rarity === "string"
-      ? joker.rarity
-      : 1;
-
-  const rarityText = getRarityDisplayName(safeRarity, customRarities);
-  const rarityColor = getRarityBadgeColor(safeRarity, customRarities);
-
-  const allRarities = getAllRarities(customRarities);
-
-  const rulesCount = joker.rules?.length || 0;
-
   const [nameValidationError, setNameValidationError] = useState<string>("");
+
+  const getShaderDisplayName = (shader?: string | false) => {
+    if (!shader) return "";
+
+    const shaderNames: Record<string, string> = {
+      foil: "Foil",
+      holo: "Holographic",
+      polychrome: "Polychrome",
+      booster: "Booster",
+      debuff: "Debuff",
+      voucher: "Voucher",
+      negative: "Negative",
+      negative_shine: "Negative Shine",
+    };
+
+    return (
+      shaderNames[shader] || shader.charAt(0).toUpperCase() + shader.slice(1)
+    );
+  };
+
+  const handleEditRules = () => {
+    onEditRules();
+  };
 
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
@@ -149,33 +137,14 @@ const JokerCard: React.FC<JokerCardProps> = ({
       return;
     }
 
-    onQuickUpdate({ name: tempName, jokerKey: slugify(tempName) });
+    onQuickUpdate({ name: tempName, editionKey: slugify(tempName) });
     setEditingName(false);
     setNameValidationError("");
-  };
-
-  const handleCostSave = () => {
-    onQuickUpdate({ cost: tempCost });
-    setEditingCost(false);
   };
 
   const handleDescriptionSave = () => {
     onQuickUpdate({ description: tempDescription });
     setEditingDescription(false);
-  };
-
-  const handleRarityChange = (value: string) => {
-    const parsedValue = parseInt(value, 10);
-
-    // If it's a valid vanilla rarity number (1-4), use as number
-    if (!isNaN(parsedValue) && parsedValue >= 1 && parsedValue <= 4) {
-      onQuickUpdate({ rarity: parsedValue });
-    } else {
-      // Otherwise it's a custom rarity, use as string
-      onQuickUpdate({ rarity: value });
-    }
-
-    setShowRarityMenu(false);
   };
 
   const handleButtonHover = (buttonType: string) => {
@@ -214,42 +183,12 @@ const JokerCard: React.FC<JokerCardProps> = ({
     setHoveredTrash(false);
   };
 
-  const blueprintCompat = joker.blueprint_compat !== false;
-  const eternalCompat = joker.eternal_compat !== false;
-  const perishableCompat = joker.perishable_compat !== false;
-  const isUnlocked = joker.unlocked !== false;
-  const isDiscovered = joker.discovered !== false;
-  const forceEternal = joker.force_eternal === true;
-  const forcePerishable = joker.force_perishable === true;
-  const forceRental = joker.force_rental === true;
-  const appearsInShop = joker.appears_in_shop !== false;
+  const isUnlocked = edition.unlocked !== false;
+  const isDiscovered = edition.discovered !== false;
+  const noCollection = edition.no_collection === true;
+  const inShop = edition.in_shop === true;
 
   const propertyIcons = [
-    {
-      icon: <WrenchIcon className="w-full h-full" />,
-      tooltip: blueprintCompat
-        ? "Visually Blueprint Compatbile"
-        : "Visually Blueprint Incompatible",
-      variant: "disabled" as const,
-      isEnabled: blueprintCompat,
-      onClick: () => onQuickUpdate({ blueprint_compat: !blueprintCompat }),
-    },
-    {
-      icon: <StarIcon className="w-full h-full" />,
-      tooltip: eternalCompat ? "Eternal Compatible" : "Cannot be made Eternal",
-      variant: "disabled" as const,
-      isEnabled: eternalCompat,
-      onClick: () => onQuickUpdate({ eternal_compat: !eternalCompat }),
-    },
-    {
-      icon: <SparklesIcon className="w-full h-full" />,
-      tooltip: perishableCompat
-        ? "Perishable Compatibility"
-        : "Cannot be made Perishable",
-      variant: "disabled" as const,
-      isEnabled: perishableCompat,
-      onClick: () => onQuickUpdate({ perishable_compat: !perishableCompat }),
-    },
     {
       icon: isUnlocked ? (
         <LockOpenIcon className="w-full h-full" />
@@ -273,155 +212,60 @@ const JokerCard: React.FC<JokerCardProps> = ({
       onClick: () => onQuickUpdate({ discovered: !isDiscovered }),
     },
     {
-      icon: <ExclamationCircleIcon className="w-full h-full" />,
-      tooltip: forceEternal
-        ? "Always Spawns Eternal"
-        : "Normal Eternal Spawning",
+      icon: <HiddenIcon className="w-full h-full" />,
+      tooltip: noCollection ? "Hidden from Collection" : "Shows in Collection",
+      variant: "disabled" as const,
+      isEnabled: noCollection,
+      onClick: () => onQuickUpdate({ no_collection: !noCollection }),
+    },
+    {
+      icon: <ShoppingBagIcon className="w-full h-full" />,
+      tooltip: inShop ? "Appears in Shop" : "Doesn't Appear in Shop",
+      variant: "success" as const,
+      isEnabled: inShop,
+      onClick: () => onQuickUpdate({ in_shop: !inShop }),
+    },
+    {
+      icon: <StarIcon className="w-full h-full" />,
+      tooltip: edition.shader ? "Has Shader" : "No Shader",
       variant: "special" as const,
-      isEnabled: forceEternal,
-      onClick: () => onQuickUpdate({ force_eternal: !forceEternal }),
-    },
-    {
-      icon: <ClockIcon className="w-full h-full" />,
-      tooltip: forcePerishable
-        ? "Always Spawns Perishable"
-        : "Normal Perishable Spawning",
-      variant: "warning" as const,
-      isEnabled: forcePerishable,
-      onClick: () => onQuickUpdate({ force_perishable: !forcePerishable }),
-    },
-    {
-      icon: <CurrencyDollarIcon className="w-full h-full" />,
-      tooltip: forceRental ? "Always Spawns Rental" : "Normal Rental Spawning",
-      variant: "info" as const,
-      isEnabled: forceRental,
-      onClick: () => onQuickUpdate({ force_rental: !forceRental }),
-    },
-    {
-      icon: appearsInShop ? (
-        <BuildingStorefrontIcon className="w-full h-full" />
-      ) : (
-        <NoSymbolIcon className="w-full h-full" />
-      ),
-      tooltip: appearsInShop
-        ? joker.rarity === 4
-          ? "Forced Shop Appearance"
-          : "Appears in Shop"
-        : "Doesn't Appear in Shop",
-      variant:
-        appearsInShop && joker.rarity === 4
-          ? ("special" as const)
-          : ("success" as const),
-      isEnabled: appearsInShop,
-      onClick: () => onQuickUpdate({ appears_in_shop: !appearsInShop }),
+      isEnabled: !!edition.shader,
+      onClick: () => {},
     },
   ];
+
+  const shaderName = getShaderDisplayName(edition.shader);
 
   return (
     <div className="flex gap-4 relative">
       <div className="relative flex flex-col items-center">
-        <div className="px-4 -mb-6 z-20 py-1 rounded-md border-2 font-bold cursor-pointer transition-all bg-black  tracking-widest border-balatro-money text-balatro-money w-18 text-center">
-          {editingCost ? (
-            <input
-              type="number"
-              value={tempCost}
-              onChange={(e) => setTempCost(parseInt(e.target.value))}
-              onBlur={handleCostSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleCostSave();
-                if (e.key === "Escape") {
-                  setTempCost(joker.cost || 4);
-                  setEditingCost(false);
-                }
-              }}
-              className="w-full bg-transparent text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-            />
-          ) : (
-            <span
-              onClick={() => {
-                setTempCost(joker.cost || 4);
-                setEditingCost(true);
-              }}
-            >
-              ${joker.cost || 4}
-            </span>
-          )}
-        </div>
-
         <div className="w-42 z-10 relative">
           <div className="relative">
-            {joker.imagePreview && !imageLoadError ? (
-              <>
-                <img
-                  src={joker.imagePreview}
-                  alt={joker.name}
-                  className="w-full h-full object-contain"
-                  draggable="false"
-                  onError={() => setImageLoadError(true)}
-                />
-                {joker.overlayImagePreview && (
-                  <img
-                    src={joker.overlayImagePreview}
-                    alt={`${joker.name} overlay`}
-                    className="absolute inset-0 w-full h-full object-contain"
-                    draggable="false"
-                  />
-                )}
-              </>
-            ) : (
-              <img
-                src={
-                  !fallbackAttempted
-                    ? "/images/placeholderjokers/placeholder-joker.png"
-                    : "/images/placeholder-joker.png"
-                }
-                alt="Default Joker"
-                className="w-full h-full object-contain"
-                draggable="false"
-                onError={() => {
-                  if (!fallbackAttempted) {
-                    setFallbackAttempted(true);
-                  }
-                }}
-              />
+            <img
+              src="/images/acesbg/HC_A_hearts.png"
+              alt="Base Edition Card"
+              className="w-full h-full object-contain"
+              draggable="false"
+            />
+            {shaderName && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-black/80 text-white px-3 py-1 rounded-lg text-sm font-bold border-2 border-white/50">
+                  {shaderName}
+                </div>
+              </div>
             )}
           </div>
         </div>
 
         <div className="relative z-30">
-          <div
-            className="px-6 py-1 -mt-6 rounded-md border-2 text-sm tracking-wide font-medium cursor-pointer transition-all bg-black"
-            style={{
-              borderColor: rarityColor,
-              color: rarityColor,
-            }}
-            onClick={() => setShowRarityMenu(!showRarityMenu)}
-          >
-            {rarityText}
+          <div className="px-6 py-1 -mt-6 rounded-md border-2 text-sm tracking-wide font-medium bg-black border-balatro-gold text-balatro-gold">
+            Edition
           </div>
-
-          {showRarityMenu && (
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 border-2 border-black-lighter rounded-lg shadow-lg z-50 overflow-hidden">
-              {allRarities.map((rarity) => (
-                <div
-                  key={rarity.value.toString()}
-                  className="px-3 py-1 text-xs font-medium cursor-pointer transition-all hover:bg-opacity-20 bg-black border-b border-black-lighter last:border-b-0"
-                  style={{
-                    color: getRarityBadgeColor(rarity.value, customRarities),
-                  }}
-                  onClick={() => handleRarityChange(rarity.value.toString())}
-                >
-                  {rarity.label}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content="Delete Joker" show={hoveredTrash}>
+        <Tooltip content="Delete Edition" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
             onMouseEnter={handleTrashHover}
@@ -432,8 +276,8 @@ const JokerCard: React.FC<JokerCardProps> = ({
                 e.stopPropagation();
                 showConfirmation({
                   type: "danger",
-                  title: "Delete Joker",
-                  description: `Are you sure you want to delete "${joker.name}"? This action cannot be undone.`,
+                  title: "Delete Edition",
+                  description: `Are you sure you want to delete "${edition.name}"? This action cannot be undone.`,
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
@@ -474,7 +318,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
                         handleNameSave();
                       }
                       if (e.key === "Escape") {
-                        setTempName(joker.name);
+                        setTempName(edition.name);
                         setEditingName(false);
                         setNameValidationError("");
                       }
@@ -489,13 +333,13 @@ const JokerCard: React.FC<JokerCardProps> = ({
                 <h3
                   className="text-white-lighter text-xl tracking-wide leading-tight cursor-pointer line-clamp-1"
                   onClick={() => {
-                    setTempName(joker.name);
+                    setTempName(edition.name);
                     setEditingName(true);
                     setNameValidationError("");
                   }}
                   style={{ lineHeight: "1.75rem" }}
                 >
-                  {joker.name}
+                  {edition.name}
                 </h3>
               )}
             </div>
@@ -509,7 +353,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && e.ctrlKey) handleDescriptionSave();
                     if (e.key === "Escape") {
-                      setTempDescription(joker.description);
+                      setTempDescription(edition.description);
                       setEditingDescription(false);
                     }
                   }}
@@ -520,17 +364,17 @@ const JokerCard: React.FC<JokerCardProps> = ({
                 <div
                   className="text-white-darker text-sm leading-relaxed cursor-pointer w-full line-clamp-3"
                   onClick={() => {
-                    setTempDescription(joker.description);
+                    setTempDescription(edition.description);
                     setEditingDescription(true);
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: formatBalatroText(joker.description),
+                    __html: formatBalatroText(edition.description),
                   }}
                 />
               )}
             </div>
 
-            <div className="flex items-center justify-between mb-4 h-8 flex-wrap">
+            <div className="flex items-center justify-between mb-4 px-4 h-8 flex-wrap">
               {propertyIcons.map((iconConfig, index) => (
                 <PropertyIcon
                   key={index}
@@ -544,7 +388,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between overflow-hidden">
+          <div className="flex items-center justify-between px-8 overflow-hidden">
             <Tooltip content="Edit Info" show={hoveredButton === "edit"}>
               <div
                 className="flex flex-1 transition-colors cursor-pointer group"
@@ -561,7 +405,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
             <Tooltip content="Edit Rules" show={hoveredButton === "rules"}>
               <div
                 className="flex flex-1 hover:text-mint-light transition-colors cursor-pointer group"
-                onClick={onEditRules}
+                onClick={handleEditRules}
                 onMouseEnter={() => handleButtonHover("rules")}
                 onMouseLeave={handleButtonLeave}
               >
@@ -578,7 +422,8 @@ const JokerCard: React.FC<JokerCardProps> = ({
               </div>
             </Tooltip>
             <div className="w-px bg-black-lighter py-3"></div>
-            <Tooltip content="Export Joker" show={hoveredButton === "export"}>
+
+            <Tooltip content="Export Edition" show={hoveredButton === "export"}>
               <div
                 className="flex flex-1 transition-colors cursor-pointer group"
                 onClick={onExport}
@@ -591,6 +436,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
               </div>
             </Tooltip>
             <div className="w-px bg-black-lighter py-3"></div>
+
             <Tooltip content="Duplicate" show={hoveredButton === "duplicate"}>
               <div
                 className="flex flex-1 transition-colors cursor-pointer group"
@@ -603,19 +449,6 @@ const JokerCard: React.FC<JokerCardProps> = ({
                 </div>
               </div>
             </Tooltip>
-            <div className="w-px bg-black-lighter py-3"></div>
-            <Tooltip content="Showcase" show={hoveredButton === "showcase"}>
-              <div
-                className="flex flex-1 transition-colors cursor-pointer group"
-                onClick={onShowcase}
-                onMouseEnter={() => handleButtonHover("showcase")}
-                onMouseLeave={handleButtonLeave}
-              >
-                <div className="flex-1 flex items-center justify-center py-3 px-3">
-                  <CameraIcon className="h-6 w-6 text-white group-hover:text-mint-lighter transition-colors" />
-                </div>
-              </div>
-            </Tooltip>
           </div>
         </div>
       </div>
@@ -623,4 +456,4 @@ const JokerCard: React.FC<JokerCardProps> = ({
   );
 };
 
-export default JokerCard;
+export default EditionCard;

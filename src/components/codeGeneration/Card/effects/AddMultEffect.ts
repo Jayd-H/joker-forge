@@ -5,7 +5,7 @@ import type { EffectReturn } from "../effectUtils";
 export const generateAddMultReturn = (
   effect: Effect,
   sameTypeCount: number = 0,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): EffectReturn => {
   const variableName =
     sameTypeCount === 0 ? "mult" : `mult${sameTypeCount + 1}`;

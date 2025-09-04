@@ -5,7 +5,7 @@ import type { EffectReturn } from "../effectUtils";
 export const generateLevelUpHandReturn = (
   effect: Effect,
   sameTypeCount: number = 0,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): EffectReturn => {
   const customMessage = effect?.customMessage;
 

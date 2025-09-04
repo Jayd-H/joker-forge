@@ -19,6 +19,7 @@ import {
   ChevronDownIcon,
   EllipsisHorizontalIcon,
   KeyIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -51,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const version: string = "v0.5.8";
+  const version: string = "v0.6.1";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
@@ -103,6 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "boosters", label: "Booster Packs", icon: GiftIcon },
     { id: "enhancements", label: "Enhancements", icon: StarIcon },
     { id: "seals", label: "Seals", icon: CpuChipIcon },
+    { id: "editions", label: "Editions", icon: SparklesIcon },
   ];
 
   const visibleResourceItems = [

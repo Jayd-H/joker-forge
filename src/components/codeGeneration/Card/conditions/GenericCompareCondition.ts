@@ -3,12 +3,14 @@ import { generateGameVariableCode } from "../../Jokers/gameVariableUtils";
 
 export const generateGenericCompareConditionCode = (
   rules: Rule[],
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const value1 = generateGameVariableCode(condition.params.value1, itemType) || "0";
+  const value1 =
+    generateGameVariableCode(condition.params.value1, itemType) || "0";
   const operator = (condition.params.operator as string) || "equals";
-  const value2 = generateGameVariableCode(condition.params.value2, itemType) || "0";
+  const value2 =
+    generateGameVariableCode(condition.params.value2, itemType) || "0";
 
   let comparison = "";
   switch (operator) {

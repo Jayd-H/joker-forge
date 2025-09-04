@@ -537,7 +537,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                 type="range"
                                 min="0"
                                 max="10"
-                                step="0.1"
+                                step="0.05"
                                 value={formData.weight ?? 1}
                                 onChange={(e) =>
                                   onFormDataChange({
@@ -547,7 +547,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                 className="flex-1 h-2 bg-black-lighter rounded appearance-none cursor-pointer"
                               />
                               <span className="text-mint font-mono w-16 text-sm">
-                                {(formData.weight ?? 1).toFixed(1)}
+                                {(formData.weight ?? 1).toFixed(2)}
                               </span>
                             </div>
                           </div>

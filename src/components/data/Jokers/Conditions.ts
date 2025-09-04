@@ -155,7 +155,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "contains", label: "contains" },
           { value: "equals", label: "equals" },
         ],
-        default: "contains"
+        default: "contains",
       },
       {
         id: "value",
@@ -186,7 +186,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         type: "select",
         label: "Card Scope",
         options: [
-          ...CARD_SCOPES, 
+          ...CARD_SCOPES,
           { value: "unscored", label: "Unscored Cards" },
         ],
         default: "scoring",
@@ -628,7 +628,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
-          ...EDITIONS,
+          ...EDITIONS(),
         ],
       },
     ],
@@ -777,7 +777,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition Type",
-        options: [{ value: "any", label: "Any Edition" }, ...EDITIONS],
+        options: [{ value: "any", label: "Any Edition" }, ...EDITIONS()],
       },
       {
         id: "operator",
@@ -1763,7 +1763,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
-          ...EDITIONS,
+          ...EDITIONS(),
         ],
         showWhen: {
           parameter: "property_type",

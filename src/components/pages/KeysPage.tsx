@@ -148,7 +148,7 @@ const SECTIONS = {
   editions: {
     title: "Editions",
     icon: SparklesIcon,
-    items: EDITIONS.map((edition) => ({
+    items: EDITIONS().map((edition) => ({
       key: edition.key,
       label: edition.label,
     })),

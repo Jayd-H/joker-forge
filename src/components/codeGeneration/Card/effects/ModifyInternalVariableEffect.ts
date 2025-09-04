@@ -3,13 +3,13 @@ import type { Effect } from "../../../ruleBuilder/types";
 import {
   generateGameVariableCode,
   parseGameVariable,
-  parseRangeVariable
+  parseRangeVariable,
 } from "../../Jokers/gameVariableUtils";
 
 export const generateModifyInternalVariableReturn = (
   effect: Effect,
   triggerType: string,
-  itemType: "enhancement" | "seal" = "enhancement"
+  itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): EffectReturn => {
   const variableName = (effect.params?.variable_name as string) || "var1";
   const operation = (effect.params?.operation as string) || "increment";
@@ -19,9 +19,10 @@ export const generateModifyInternalVariableReturn = (
 
   let valueCode: string;
   const abilityPath =
-      itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
+    itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
 
-  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
+  if (parsed.isGameVariable) {
+    /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
     valueCode = generateGameVariableCode(effectValue);
   } else if (rangeParsed.isRangeVariable) {
     const seedName = `${variableName}_${effect.id.substring(0, 8)}`;

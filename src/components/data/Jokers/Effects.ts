@@ -222,7 +222,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     applicableTriggers: ["passive"],
     params: [
       {
-        id: "debt_amount",
+        id: "value",
         type: "number",
         label: "Debt Amount",
         default: 20,
@@ -550,7 +550,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...EDITIONS,
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -685,7 +685,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Edition" },
           { value: "random", label: "Random" },
-          ...EDITIONS,
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -741,7 +741,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...EDITIONS,
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -891,7 +891,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS],
+        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
         default: "none",
       },
       {
@@ -973,7 +973,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition for Copy",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS],
+        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
         default: "none",
       },
       {

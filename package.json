@@ -16,6 +16,7 @@
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.4",
     "framer-motion": "^12.15.0",
+    "html-to-image": "^1.11.13",
     "jszip": "^3.10.1",
     "react": "^19.0.0",
     "react-color": "^2.19.3",
