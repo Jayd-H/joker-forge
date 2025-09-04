@@ -398,7 +398,7 @@ export const importModFromJSON = (): Promise<{
           }
 
           const normalizedJokers = importData.jokers.map(normalizeJokerData);
-          const normalizedSounds = importData.sounds.map(normalizeSoundData);
+          const normalizedSounds = importData.sounds?.map(normalizeSoundData) || [];
           const normalizedConsumables = (importData.consumables || []).map(
             normalizeConsumableData
           );
