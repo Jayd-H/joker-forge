@@ -174,6 +174,8 @@ const extractExplicitVariablesFromEffect = (effect: Effect): string[] => {
     "suit_type",
     "rank_type",
     "poker_hand_type",
+    "set",
+    "specific_hand"
   ]);
 
   Object.entries(effect.params).forEach(([paramName, value]) => {
