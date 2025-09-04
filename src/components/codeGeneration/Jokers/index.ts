@@ -28,6 +28,7 @@ import {
 import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
+import { generateGameVariableCode } from "./gameVariableUtils";
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -79,11 +80,25 @@ const convertRandomGroupsForCodegen = (
   return randomGroups.map((group) => ({
     ...group,
     chance_numerator:
-      typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
+      typeof group.chance_numerator === "string"
+      ? generateGameVariableCode(group.chance_numerator)
+      : group.chance_numerator,
     chance_denominator:
       typeof group.chance_denominator === "string"
-        ? 1
+        ? generateGameVariableCode(group.chance_denominator)
         : group.chance_denominator,
+  }));
+};
+
+const convertLoopGroupsForCodegen = (
+  loopGroups: import("../../ruleBuilder/types").LoopGroup[]
+) => {
+  return loopGroups.map((group) => ({
+    ...group,
+    repetitions:
+      typeof group.repetitions === "string"
+        ? generateGameVariableCode(group.repetitions)
+        : group.repetitions,
   }));
 };
 
@@ -570,6 +585,7 @@ const generateCalculateFunction = (
       [
         ...(rule.effects || []),
         ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
+        ...(rule.loops?.flatMap((g) => g.effects) || []),
       ].some((effect) => effect.type === "retrigger_cards")
     );
 
@@ -579,6 +595,7 @@ const generateCalculateFunction = (
         [
           ...(rule.effects || []),
           ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
+          ...(rule.loops?.flatMap((g) => g.effects) || []),
         ].some((effect) => effect.type === "delete_triggered_card")
       );
 
@@ -586,6 +603,7 @@ const generateCalculateFunction = (
       [
         ...(rule.effects || []),
         ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
+        ...(rule.loops?.flatMap((g) => g.effects) || []),
       ].some((effect) => effect.type === "fix_probability")
     );
 
@@ -593,6 +611,7 @@ const generateCalculateFunction = (
       [
         ...(rule.effects || []),
         ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
+        ...(rule.loops?.flatMap((g) => g.effects) || []),
       ].some((effect) => effect.type === "mod_probability")
     );
 
@@ -632,10 +651,14 @@ const generateCalculateFunction = (
         const randomRetriggerEffects = (rule.randomGroups || []).filter(
           (group) => group.effects.some((e) => e.type === "retrigger_cards")
         );
+        const loopRetriggerEffects = (rule.loops || []).filter(
+          (group) => group.effects.some((e) => e.type === "retrigger_cards")
+        );
 
         if (
           regularRetriggerEffects.length === 0 &&
-          randomRetriggerEffects.length === 0
+          randomRetriggerEffects.length === 0 &&
+          loopRetriggerEffects.length === 0
         )
           return;
 
@@ -656,6 +679,7 @@ const generateCalculateFunction = (
         const effectResult = generateEffectReturnStatement(
           regularRetriggerEffects,
           convertRandomGroupsForCodegen(randomRetriggerEffects),
+          convertLoopGroupsForCodegen(loopRetriggerEffects),
           triggerType,
           modprefix,
           jokerKey,
@@ -696,10 +720,18 @@ const generateCalculateFunction = (
             effects: group.effects.filter((e) => e.type !== "retrigger_cards"),
           }))
           .filter((group) => group.effects.length > 0);
+        
+        const loopNonRetriggerGroups = (rule.loops || [])
+          .map((group) => ({
+            ...group,
+            effects: group.effects.filter((e) => e.type !== "retrigger_cards"),
+          }))
+          .filter((group) => group.effects.length > 0);
 
         return (
           regularNonRetriggerEffects.length > 0 ||
-          randomNonRetriggerGroups.length > 0
+          randomNonRetriggerGroups.length > 0 ||
+          loopNonRetriggerGroups.length > 0
         );
       });
 
@@ -747,10 +779,20 @@ const generateCalculateFunction = (
               ),
             }))
             .filter((group) => group.effects.length > 0);
+          
+          const loopNonRetriggerGroups = (rule.loops || [])
+            .map((group) => ({
+              ...group,
+              effects: group.effects.filter(
+                (e) => e.type !== "retrigger_cards"
+              ),
+            }))
+            .filter((group) => group.effects.length > 0);
 
           if (
             regularNonRetriggerEffects.length === 0 &&
-            randomNonRetriggerGroups.length === 0
+            randomNonRetriggerGroups.length === 0 &&
+            loopNonRetriggerGroups.length === 0
           )
             return;
 
@@ -773,6 +815,7 @@ const generateCalculateFunction = (
           const effectResult = generateEffectReturnStatement(
             regularNonRetriggerEffects,
             convertRandomGroupsForCodegen(randomNonRetriggerGroups),
+            convertLoopGroupsForCodegen(loopNonRetriggerGroups),
             triggerType,
             modprefix,
             jokerKey,
@@ -796,16 +839,17 @@ const generateCalculateFunction = (
         });
 
         if (rulesWithoutConditions.length > 0) {
-          const rulesWithRandomGroups = rulesWithoutConditions.filter(
-            (rule) => (rule.randomGroups || []).length > 0
+          const rulesWithGroups = rulesWithoutConditions.filter(
+            (rule) => (rule.randomGroups || []).length > 0 || (rule.loops || []).length > 0
           );
-          const rulesWithoutRandomGroups = rulesWithoutConditions.filter(
+          const rulesWithoutAnyGroups = rulesWithoutConditions.filter(
             (rule) =>
               (rule.randomGroups || []).length === 0 &&
+              (rule.loops || []).length === 0 &&
               (rule.effects || []).length > 0
           );
 
-          rulesWithRandomGroups.forEach((rule) => {
+          rulesWithGroups.forEach((rule) => {
             const regularNonRetriggerEffects = (rule.effects || []).filter(
               (e) => e.type !== "retrigger_cards"
             );
@@ -817,10 +861,19 @@ const generateCalculateFunction = (
                 ),
               }))
               .filter((group) => group.effects.length > 0);
+            const loopNonRetriggerGroups = (rule.loops || [])
+              .map((group) => ({
+                ...group,
+                effects: group.effects.filter(
+                  (e) => e.type !== "retrigger_cards"
+                ),
+              }))
+              .filter((group) => group.effects.length > 0);
 
             if (
               regularNonRetriggerEffects.length === 0 &&
-              randomNonRetriggerGroups.length === 0
+              randomNonRetriggerGroups.length === 0 &&
+              loopNonRetriggerGroups.length === 0
             )
               return;
 
@@ -841,6 +894,7 @@ const generateCalculateFunction = (
             const effectResult = generateEffectReturnStatement(
               regularNonRetriggerEffects,
               convertRandomGroupsForCodegen(randomNonRetriggerGroups),
+              convertLoopGroupsForCodegen(loopNonRetriggerGroups),
               triggerType,
               modprefix,
               jokerKey,
@@ -863,13 +917,13 @@ const generateCalculateFunction = (
             }
           });
 
-          if (rulesWithoutRandomGroups.length > 0) {
+          if (rulesWithoutAnyGroups.length > 0) {
             if (hasAnyConditions) {
               calculateFunction += `
             else`;
             }
 
-            rulesWithoutRandomGroups.forEach((rule) => {
+            rulesWithoutAnyGroups.forEach((rule) => {
               const regularNonRetriggerEffects = (rule.effects || []).filter(
                 (e) => e.type !== "retrigger_cards"
               );
@@ -887,6 +941,7 @@ const generateCalculateFunction = (
 
               const effectResult = generateEffectReturnStatement(
                 regularNonRetriggerEffects,
+                [],
                 [],
                 triggerType,
                 modprefix,
@@ -955,6 +1010,9 @@ const generateCalculateFunction = (
         const randomDeleteGroups = (rule.randomGroups || []).filter((group) =>
           group.effects.some((e) => e.type === "delete_triggered_card")
         );
+        const loopDeleteGroups = (rule.loops || []).filter((group) =>
+          group.effects.some((e) => e.type === "delete_triggered_card")
+        );
 
         const regularNonDeleteEffects = (rule.effects || []).filter(
           (e) => e.type !== "delete_triggered_card"
@@ -967,12 +1025,22 @@ const generateCalculateFunction = (
             ),
           }))
           .filter((group) => group.effects.length > 0);
+        const loopNonDeleteGroups = (rule.loops || [])
+          .map((group) => ({
+            ...group,
+            effects: group.effects.filter(
+              (e) => e.type !== "delete_triggered_card"
+            ),
+          }))
+          .filter((group) => group.effects.length > 0);
 
         if (
           regularDeleteEffects.length === 0 &&
           randomDeleteGroups.length === 0 &&
+          loopDeleteGroups.length === 0 &&
           regularNonDeleteEffects.length === 0 &&
-          randomNonDeleteGroups.length === 0
+          randomNonDeleteGroups.length === 0 &&
+          loopNonDeleteGroups.length === 0
         )
           return;
 
@@ -992,12 +1060,14 @@ const generateCalculateFunction = (
           ...regularNonDeleteEffects,
           ...regularDeleteEffects,
         ];
-        const allGroups = [...randomNonDeleteGroups, ...randomDeleteGroups];
+        const allRandomGroups = [...randomNonDeleteGroups, ...randomDeleteGroups];
+        const allLoopGroups = [...loopDeleteGroups, ...loopNonDeleteGroups];
 
-        if (allEffects.length > 0 || allGroups.length > 0) {
+        if (allEffects.length > 0 || allRandomGroups.length > 0 || allLoopGroups.length > 0) {
           const effectResult = generateEffectReturnStatement(
             allEffects,
-            convertRandomGroupsForCodegen(allGroups),
+            convertRandomGroupsForCodegen(allRandomGroups),
+            convertLoopGroupsForCodegen(allLoopGroups),
             triggerType,
             modprefix,
             jokerKey,
@@ -1022,20 +1092,24 @@ const generateCalculateFunction = (
       });
 
       if (rulesWithoutConditions.length > 0) {
-        const rulesWithRandomGroups = rulesWithoutConditions.filter(
-          (rule) => (rule.randomGroups || []).length > 0
+        const rulesWithGroups = rulesWithoutConditions.filter(
+          (rule) => (rule.randomGroups || []).length > 0 || (rule.loops || []).length > 0
         );
-        const rulesWithoutRandomGroups = rulesWithoutConditions.filter(
+        const rulesWithoutAnyGroups = rulesWithoutConditions.filter(
           (rule) =>
             (rule.randomGroups || []).length === 0 &&
+            (rule.loops || []).length === 0 &&
             (rule.effects || []).length > 0
         );
 
-        rulesWithRandomGroups.forEach((rule) => {
+        rulesWithGroups.forEach((rule) => {
           const regularDeleteEffects = (rule.effects || []).filter(
             (e) => e.type === "delete_triggered_card"
           );
           const randomDeleteGroups = (rule.randomGroups || []).filter((group) =>
+            group.effects.some((e) => e.type === "delete_triggered_card")
+          );
+          const loopDeleteGroups = (rule.loops || []).filter((group) =>
             group.effects.some((e) => e.type === "delete_triggered_card")
           );
 
@@ -1050,12 +1124,22 @@ const generateCalculateFunction = (
               ),
             }))
             .filter((group) => group.effects.length > 0);
+          const loopNonDeleteGroups = (rule.loops || [])
+            .map((group) => ({
+              ...group,
+              effects: group.effects.filter(
+                (e) => e.type !== "delete_triggered_card"
+              ),
+            }))
+            .filter((group) => group.effects.length > 0);
 
           if (
             regularDeleteEffects.length === 0 &&
             randomDeleteGroups.length === 0 &&
+            loopDeleteGroups.length === 0 &&
             regularNonDeleteEffects.length === 0 &&
-            randomNonDeleteGroups.length === 0
+            randomNonDeleteGroups.length === 0 && 
+            loopNonDeleteGroups.length === 0
           )
             return;
 
@@ -1073,12 +1157,14 @@ const generateCalculateFunction = (
             ...regularNonDeleteEffects,
             ...regularDeleteEffects,
           ];
-          const allGroups = [...randomNonDeleteGroups, ...randomDeleteGroups];
+          const allRandomGroups = [...randomNonDeleteGroups, ...randomDeleteGroups];
+          const allLoopGroups = [...loopDeleteGroups, ...loopNonDeleteGroups];
 
-          if (allEffects.length > 0 || allGroups.length > 0) {
+          if (allEffects.length > 0 || allRandomGroups.length > 0 || allLoopGroups.length > 0) {
             const effectResult = generateEffectReturnStatement(
               allEffects,
-              convertRandomGroupsForCodegen(allGroups),
+              convertRandomGroupsForCodegen(allRandomGroups),
+              convertLoopGroupsForCodegen(allLoopGroups),
               triggerType,
               modprefix,
               jokerKey,
@@ -1102,13 +1188,13 @@ const generateCalculateFunction = (
           }
         });
 
-        if (rulesWithoutRandomGroups.length > 0) {
+        if (rulesWithoutAnyGroups.length > 0) {
           if (hasAnyConditions) {
             calculateFunction += `
             else`;
           }
 
-          rulesWithoutRandomGroups.forEach((rule) => {
+          rulesWithoutAnyGroups.forEach((rule) => {
             const regularDeleteEffects = (rule.effects || []).filter(
               (e) => e.type === "delete_triggered_card"
             );
@@ -1135,6 +1221,7 @@ const generateCalculateFunction = (
             if (allEffects.length > 0) {
               const effectResult = generateEffectReturnStatement(
                 allEffects,
+                [],
                 [],
                 triggerType,
                 modprefix,
@@ -1185,10 +1272,14 @@ const generateCalculateFunction = (
           const randomFixProbablityEffects = (rule.randomGroups || []).filter(
             (group) => group.effects.some((e) => e.type === "fix_probability")
           );
+          const loopFixProbablityEffects = (rule.loops || []).filter(
+            (group) => group.effects.some((e) => e.type === "fix_probability")
+          );
 
           if (
             regularFixProbablityEffects.length === 0 &&
-            randomFixProbablityEffects.length === 0
+            randomFixProbablityEffects.length === 0 &&
+            loopFixProbablityEffects.length === 0
           )
             return;
 
@@ -1209,6 +1300,7 @@ const generateCalculateFunction = (
           const effectResult = generateEffectReturnStatement(
             regularFixProbablityEffects,
             convertRandomGroupsForCodegen(randomFixProbablityEffects),
+            convertLoopGroupsForCodegen(loopFixProbablityEffects),
             triggerType,
             modprefix,
             jokerKey,
@@ -1259,10 +1351,14 @@ const generateCalculateFunction = (
           const randomModProbablityEffects = (rule.randomGroups || []).filter(
             (group) => group.effects.some((e) => e.type === "mod_probability")
           );
+          const loopModProbablityEffects = (rule.loops || []).filter(
+            (group) => group.effects.some((e) => e.type === "mod_probability")
+          );
 
           if (
             regularModProbablityEffects.length === 0 &&
-            randomModProbablityEffects.length === 0
+            randomModProbablityEffects.length === 0 &&
+            loopModProbablityEffects.length === 0
           )
             return;
 
@@ -1283,6 +1379,7 @@ const generateCalculateFunction = (
           const effectResult = generateEffectReturnStatement(
             regularModProbablityEffects,
             convertRandomGroupsForCodegen(randomModProbablityEffects),
+            convertLoopGroupsForCodegen(loopModProbablityEffects),
             triggerType,
             modprefix,
             jokerKey,
@@ -1339,10 +1436,10 @@ const generateCalculateFunction = (
         calculateFunction += `
             ${conditional} ${conditionCode} then`;
         hasAnyConditions = true;
-
         const effectResult = generateEffectReturnStatement(
           rule.effects || [],
           convertRandomGroupsForCodegen(rule.randomGroups || []),
+          convertLoopGroupsForCodegen(rule.loops || []),
           triggerType,
           modprefix,
           jokerKey,
@@ -1364,18 +1461,18 @@ const generateCalculateFunction = (
                 ${effectResult.statement}`;
         }
       });
-
       if (rulesWithoutConditions.length > 0) {
-        const rulesWithRandomGroups = rulesWithoutConditions.filter(
-          (rule) => (rule.randomGroups || []).length > 0
+        const rulesWithGroups = rulesWithoutConditions.filter(
+          (rule) => (rule.randomGroups || []).length > 0 || (rule.loops || []).length > 0
         );
-        const rulesWithoutRandomGroups = rulesWithoutConditions.filter(
+        const rulesWithoutAnyGroups = rulesWithoutConditions.filter(
           (rule) =>
             (rule.randomGroups || []).length === 0 &&
+            (rule.loops || []).length === 0 &&
             (rule.effects || []).length > 0
         );
 
-        rulesWithRandomGroups.forEach((rule) => {
+        rulesWithGroups.forEach((rule) => {
           const conditional = hasAnyConditions ? "elseif" : "if";
           calculateFunction += `
             ${conditional} true then`;
@@ -1384,6 +1481,7 @@ const generateCalculateFunction = (
           const effectResult = generateEffectReturnStatement(
             rule.effects || [],
             convertRandomGroupsForCodegen(rule.randomGroups || []),
+            convertLoopGroupsForCodegen(rule.loops || []),
             triggerType,
             modprefix,
             jokerKey,
@@ -1406,15 +1504,16 @@ const generateCalculateFunction = (
           }
         });
 
-        if (rulesWithoutRandomGroups.length > 0) {
+        if (rulesWithoutAnyGroups.length > 0) {
           if (hasAnyConditions) {
             calculateFunction += `
             else`;
           }
 
-          rulesWithoutRandomGroups.forEach((rule) => {
+          rulesWithoutAnyGroups.forEach((rule) => {
             const effectResult = generateEffectReturnStatement(
               rule.effects || [],
+              [],
               [],
               triggerType,
               modprefix,

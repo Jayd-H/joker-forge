@@ -7,6 +7,7 @@ export interface Rule {
   conditionGroups: ConditionGroup[];
   effects: Effect[];
   randomGroups: RandomGroup[];
+  loops: LoopGroup[]
 }
 
 // A group of effects with shared random chance
@@ -16,6 +17,12 @@ export interface RandomGroup {
   chance_denominator: number | string;
   respect_probability_effects: boolean;
   custom_key: string;
+  effects: Effect[];
+}
+
+export interface LoopGroup {
+  id: string;
+  repetitions: number | string;
   effects: Effect[];
 }
 
@@ -129,11 +136,12 @@ export interface LogicalOperator {
 
 // Interface for selected items in the rule builder
 export type SelectedItem = {
-  type: "trigger" | "condition" | "effect" | "randomgroup";
+  type: "trigger" | "condition" | "effect" | "randomgroup" | "loopgroup";
   ruleId: string;
   itemId?: string;
   groupId?: string;
   randomGroupId?: string;
+  loopGroupId?: string;
 } | null;
 
 // Export logical operators

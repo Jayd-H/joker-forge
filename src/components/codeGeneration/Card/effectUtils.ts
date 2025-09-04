@@ -1,4 +1,4 @@
-import type { Effect, RandomGroup } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
 import { generateAddChipsReturn } from "./effects/AddChipsEffect";
 import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
@@ -132,12 +132,13 @@ const generateSingleEffect = (
 export function generateEffectReturnStatement(
   regularEffects: Effect[] = [],
   randomGroups: RandomGroup[] = [],
+  loopGroups: LoopGroup[] = [],
   modprefix: string,
   cardKey: string,
   trigger?: string,
   itemType: "enhancement" | "seal" | "edition" = "enhancement"
 ): ReturnStatementResult {
-  if (regularEffects.length === 0 && randomGroups.length === 0) {
+  if (regularEffects.length === 0 && randomGroups.length === 0 && loopGroups.length === 0) {
     return {
       statement: "",
       colour: "G.C.WHITE",
@@ -370,6 +371,113 @@ export function generateEffectReturnStatement(
       const groupStatement = `if ${probabilityStatement} then
                 ${groupContent}
             end`;
+
+      combinedPreReturnCode +=
+        (combinedPreReturnCode ? "\n            " : "") + groupStatement;
+    });
+  }
+  
+  if (loopGroups.length > 0) {
+    const repetitions = [
+      ...new Set(loopGroups.map((group) => group.repetitions as number)),
+    ];
+    const repetitionsToVar: Record<number, string> = {};
+    const abilityPath =
+      itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
+
+    if (repetitions.length === 1) {
+      repetitionsToVar[repetitions[0]] = `${abilityPath}.repetitions`;
+      const repetitionsVar = "repetitions = " + repetitions[0];
+      if (!(typeof repetitions[0] === "string") && !configVariableSet.has(repetitionsVar)) {
+        configVariableSet.add(repetitionsVar);
+        allConfigVariables.push(repetitionsVar);
+      }
+    } else {
+      repetitions.forEach((denom, index) => {
+        if (index === 0) {
+          repetitionsToVar[denom] = `${abilityPath}.repetitions`;
+          const repetitionsVar = "repetitions = " + denom;
+          if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
+            configVariableSet.add(repetitionsVar);
+            allConfigVariables.push(repetitionsVar);
+          }
+        } else {
+          repetitionsToVar[denom] = `${abilityPath}.repetitions${index + 1}`;
+          const repetitionsVar = `repetitions${index + 1} = ${denom}`;
+          if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
+            configVariableSet.add(repetitionsVar);
+            allConfigVariables.push(repetitionsVar);
+          }
+        }
+      });
+    }
+
+    loopGroups.forEach((group, _groupIndex) => {
+      const effectReturns: EffectReturn[] = group.effects
+        .map((effect) => generateSingleEffect(effect, trigger, itemType))
+        .filter((ret) => ret.statement || ret.message);
+
+      effectReturns.forEach((effectReturn) => {
+        if (effectReturn.configVariables) {
+          effectReturn.configVariables.forEach((configVar) => {
+            if (!configVariableSet.has(configVar)) {
+              configVariableSet.add(configVar);
+              allConfigVariables.push(configVar);
+            }
+          });
+        }
+        if (effectReturn.customCanUse) {
+          customCanUseConditions.push(effectReturn.customCanUse);
+        }
+      });
+
+      if (effectReturns.length === 0) return;
+
+      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
+
+      let groupContent = "";
+      let groupPreReturnCode = "";
+      const groupEffectCalls: string[] = [];
+
+      effectReturns.forEach((effect) => {
+        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+          effect.statement
+        );
+
+        if (preReturnCode) {
+          groupPreReturnCode +=
+            (groupPreReturnCode ? "\n                " : "") + preReturnCode;
+        }
+
+        if (cleanedStatement && cleanedStatement.trim()) {
+          const effectObj = `{${cleanedStatement.trim()}}`;
+          groupEffectCalls.push(`SMODS.calculate_effect(${effectObj}, card)`);
+        }
+
+        if (effect.message) {
+          groupEffectCalls.push(
+            `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+              effect.message
+            }, colour = ${effect.colour || "G.C.WHITE"}})`
+          );
+        }
+      });
+
+      if (groupPreReturnCode) {
+        groupContent += groupPreReturnCode;
+        if (groupEffectCalls.length > 0) {
+          groupContent +=
+            "\n                " + groupEffectCalls.join("\n                ");
+        }
+      } else if (groupEffectCalls.length > 0) {
+        groupContent = groupEffectCalls.join("\n                ");
+      }
+
+      const loopStatement =  `for i = 1, ${repetitionsVar} do`;
+      
+      const groupStatement = `${loopStatement}
+              ${groupContent}
+          end`;
 
       combinedPreReturnCode +=
         (combinedPreReturnCode ? "\n            " : "") + groupStatement;
