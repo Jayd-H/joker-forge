@@ -24,7 +24,7 @@ import { getConsumableConditionTypeById } from "../data/Consumables/Conditions";
 import { getConsumableEffectTypeById } from "../data/Consumables/Effects";
 
 import BlockComponent from "./BlockComponent";
-import { ChevronDownIcon, Bars3Icon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, Bars3Icon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import {
   TrashIcon,
   PlusIcon,
@@ -910,7 +910,7 @@ const RuleCard: React.FC<RuleCardProps> = ({
                       className="w-6 h-6 bg-black-darker rounded-lg flex items-center justify-center border-2 border-balatro-blue hover:bg-effect/20 transition-colors cursor-pointer"
                       title="Add a Loop"
                     >
-                      <PlusIcon className="h-3 w-3 text-balatro-blue" />
+                      <ArrowPathIcon className="h-3 w-3 text-balatro-blue" />
                     </button>
                   </div>
                   <div onClick={(e) => e.stopPropagation()}>

@@ -39,6 +39,7 @@ import {
   ExclamationTriangleIcon,
   ArrowsRightLeftIcon,
   PlayCircleIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import { ChartPieIcon, PercentBadgeIcon } from "@heroicons/react/16/solid";
 import {
@@ -1461,9 +1462,9 @@ const Inspector: React.FC<InspectorProps> = ({
                 )
               }
               className="absolute top-4 right-16 p-2 rounded-lg border-2 transition-colors cursor-pointer z-10 bg-black-darker border-balatro-blue text-balatro-blue hover:bg-balatro-blue/20"
-              title="Create Random Group"
+              title="Create Loop Group"
             >
-              <PlayCircleIcon className="h-4 w-4" />
+              <ArrowPathIcon className="h-4 w-4" />
             </button>
           )}
 
