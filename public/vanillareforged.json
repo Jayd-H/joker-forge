@@ -1902,7 +1902,7 @@
               ]
             }
           ],
-          "blueprintCompatible": true
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -2083,7 +2083,7 @@
       "overlayImagePreview": "",
       "rarity": 1,
       "cost": 4,
-      "blueprint_compat": true,
+      "blueprint_compat": false,
       "eternal_compat": true,
       "unlocked": true,
       "discovered": true,
@@ -2109,7 +2109,8 @@
           "position": {
             "x": 800,
             "y": 300
-          }
+          },
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -2267,7 +2268,7 @@
       "overlayImagePreview": "",
       "rarity": 2,
       "cost": 7,
-      "blueprint_compat": true,
+      "blueprint_compat": false,
       "eternal_compat": true,
       "unlocked": true,
       "discovered": true,
@@ -2295,7 +2296,7 @@
             "x": 800,
             "y": 300
           },
-          "blueprintCompatible": true
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -2572,7 +2573,7 @@
       "overlayImagePreview": "",
       "rarity": 1,
       "cost": 1,
-      "blueprint_compat": true,
+      "blueprint_compat": false,
       "eternal_compat": true,
       "unlocked": true,
       "discovered": true,
@@ -2598,7 +2599,8 @@
           "position": {
             "x": 800,
             "y": 300
-          }
+          },
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -3813,7 +3815,7 @@
       "overlayImagePreview": "",
       "rarity": 2,
       "cost": 7,
-      "blueprint_compat": true,
+      "blueprint_compat": false,
       "eternal_compat": true,
       "unlocked": true,
       "discovered": true,
@@ -3840,7 +3842,7 @@
             "x": 800,
             "y": 300
           },
-          "blueprintCompatible": true
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -4098,7 +4100,7 @@
       "overlayImagePreview": "",
       "rarity": 1,
       "cost": 6,
-      "blueprint_compat": true,
+      "blueprint_compat": false,
       "eternal_compat": true,
       "unlocked": true,
       "discovered": true,
@@ -4126,7 +4128,7 @@
             "y": 300
           },
           "randomGroups": [],
-          "blueprintCompatible": true
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -4481,7 +4483,7 @@
               ]
             }
           ],
-          "blueprintCompatible": true
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -8344,7 +8346,7 @@
       "imagePreview": "data:image/png;base64,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",
       "rarity": 2,
       "cost": 6,
-      "blueprint_compat": true,
+      "blueprint_compat": false,
       "eternal_compat": true,
       "unlocked": true,
       "discovered": true,
@@ -8390,7 +8392,7 @@
             "y": 300
           },
           "randomGroups": [],
-          "blueprintCompatible": true
+          "blueprintCompatible": false
         }
       ],
       "userVariables": [],
@@ -12620,7 +12622,9 @@
                 "joker_type": "random",
                 "rarity": "random",
                 "joker_key": "j_joker",
-                "edition": "none"
+                "edition": "none",
+                "sticker": "none",
+                "ignore_slots": "respect"
               }
             }
           ],
@@ -13747,7 +13751,9 @@
                 "joker_type": "random",
                 "rarity": "legendary",
                 "joker_key": "j_joker",
-                "edition": "none"
+                "edition": "none",
+                "sticker": "none",
+                "ignore_slots": "respect"
               }
             }
           ],
@@ -13787,7 +13793,9 @@
                 "joker_type": "random",
                 "rarity": "rare",
                 "joker_key": "j_joker",
-                "edition": "none"
+                "edition": "none",
+                "sticker": "none",
+                "ignore_slots": "respect"
               }
             },
             {
@@ -14346,10 +14354,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14377,10 +14391,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14408,10 +14428,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14439,10 +14465,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14470,10 +14502,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14501,10 +14539,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14532,10 +14576,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14563,10 +14613,16 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Tarot",
           "specific_type": "",
           "specific_key": "",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14826,8 +14882,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14855,8 +14917,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14884,8 +14952,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -14913,8 +14987,14 @@
       },
       "card_rules": [
         {
-          "weight": 1,
+          "weight": 2.99,
           "set": "Spectral",
+          "edition": "none"
+        },{
+          "weight": 0.01,
+          "set": "Spectral",
+          "specific_type": "consumable",
+          "specific_key": "c_soul",
           "edition": "none"
         }
       ],
@@ -15263,7 +15343,7 @@
                   "id": "ff9f5c6a-b0b6-4319-ac81-8e1828857e0a",
                   "type": "destroy_card",
                   "params": {
-                    "setGlassTrigger": "false"
+                    "setGlassTrigger": "true"
                   }
                 }
               ]
