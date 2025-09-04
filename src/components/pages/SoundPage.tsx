@@ -212,7 +212,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
     const isEditing =
       editingSound && sounds.find((r) => r.id === editingSound.id);
 
-    const rarityToSave: SoundData = {
+    const soundToSave: SoundData = {
       id: editingSound?.id || crypto.randomUUID(),
       key: formData.key,
       soundString: formData.soundString || "",
@@ -222,10 +222,10 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
 
     if (isEditing) {
       setSounds((prev) =>
-        prev.map((r) => (r.id === editingSound.id ? rarityToSave : r))
+        prev.map((r) => (r.id === editingSound.id ? soundToSave : r))
       );
     } else {
-      setSounds((prev) => [...prev, rarityToSave]);
+      setSounds((prev) => [...prev, soundToSave]);
     }
 
     closeModal();
@@ -245,7 +245,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
     });
   };
 
-  const handleDuplicateRarity = (sound: SoundData) => {
+  const handleDuplicateSound = (sound: SoundData) => {
     const duplicated: SoundData = {
       ...sound,
       id: crypto.randomUUID(),
@@ -258,9 +258,9 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
     sound: SoundData,
     updates: Partial<SoundData>
   ) => {
-    const updatedRarity = { ...sound, ...updates };
+    const updatedSound = { ...sound, ...updates };
     setSounds((prev) =>
-      prev.map((r) => (r.id === sound.id ? updatedRarity : r))
+      prev.map((r) => (r.id === sound.id ? updatedSound : r))
     );
   };
 
@@ -293,7 +293,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
           <div className="flex items-center gap-6 text-white-darker text-sm">
             <div className="flex items-center">
               <SwatchIcon className="h-4 w-4 mr-2 text-mint" />
-              {modName} • {filteredSounds.length} of {sounds.length} rarity
+              {modName} • {filteredSounds.length} of {sounds.length} sound
             </div>
           </div>
         </div>
@@ -303,7 +303,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
             <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white-darker group-focus-within:text-mint transition-colors" />
             <input
               type="text"
-              placeholder="Search rarities by name or key..."
+              placeholder="Search sounds by name or key..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-black-darker shadow-2xl border-2 border-black-lighter rounded-lg pl-12 pr-4 py-4 text-white-light tracking-wider placeholder-white-darker focus:outline-none focus:border-mint transition-all duration-200"
@@ -360,7 +360,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
                 onEdit={() => handleEditSound(sound)}
                 onDownload={() => handleDownloadSound(sound)}
                 onDelete={() => handleDeleteSound(sound)}
-                onDuplicate={() => handleDuplicateRarity(sound)}
+                onDuplicate={() => handleDuplicateSound(sound)}
                 onQuickUpdate={(updates) => handleQuickUpdate(sound, updates)}
               />
             ))}
