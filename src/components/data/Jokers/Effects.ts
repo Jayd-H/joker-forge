@@ -222,7 +222,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     applicableTriggers: ["passive"],
     params: [
       {
-        id: "debt_amount",
+        id: "value",
         type: "number",
         label: "Debt Amount",
         default: 20,
@@ -1556,7 +1556,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     applicableTriggers: ["passive"],
     params: [
       {
-        id: "reroll_amount",
+        id: "value",
         type: "number",
         label: "Number of Free Rerolls",
         default: 1,

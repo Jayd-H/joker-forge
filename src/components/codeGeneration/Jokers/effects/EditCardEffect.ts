@@ -57,7 +57,7 @@ export const generateEditCardReturn = (
                 context.other_card:set_seal(nil)`;
   } else if (newSeal === "random") {
     modificationCode += `
-                local random_seal = SMODS.poll_seal({mod = 10})
+                local random_seal = SMODS.poll_seal({mod = 10, guaranteed = true})
                 if random_seal then
                     context.other_card:set_seal(random_seal, true)
                 end`;

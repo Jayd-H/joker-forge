@@ -5,6 +5,7 @@ import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules } from "./gameVariableUtils";
 import type { Rule } from "../../ruleBuilder/types";
+import { generateGameVariableCode } from "./gameVariableUtils";
 
 interface ConsumableGenerationOptions {
   modPrefix?: string;
@@ -27,11 +28,25 @@ const convertRandomGroupsForCodegen = (
   return randomGroups.map((group) => ({
     ...group,
     chance_numerator:
-      typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
+      typeof group.chance_numerator === "string"
+      ? generateGameVariableCode(group.chance_numerator)
+      : group.chance_numerator,
     chance_denominator:
       typeof group.chance_denominator === "string"
-        ? 1
+        ? generateGameVariableCode(group.chance_denominator)
         : group.chance_denominator,
+  }));
+};
+
+const convertLoopGroupsForCodegen = (
+  loopGroups: import("../../ruleBuilder/types").LoopGroup[]
+) => {
+  return loopGroups.map((group) => ({
+    ...group,
+    repetitions:
+      typeof group.repetitions === "string"
+        ? generateGameVariableCode(group.repetitions)
+        : group.repetitions,
   }));
 };
 
@@ -160,10 +175,12 @@ const generateSingleConsumableCode = (
   activeRules.forEach((rule) => {
     const regularEffects = rule.effects || [];
     const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix,
       consumable.consumableKey
     );
@@ -326,10 +343,12 @@ const generateUseFunction = (
 
     const regularEffects = rule.effects || [];
     const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix,
       consumableKey
     );
@@ -376,10 +395,12 @@ const generateCanUseFunction = (rules: Rule[], modPrefix: string): string => {
 
     const regularEffects = rule.effects || [];
     const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
+      loopGroups,
       modPrefix
     );
 

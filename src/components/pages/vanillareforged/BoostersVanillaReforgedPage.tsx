@@ -524,7 +524,7 @@ const BoostersVanillaReforgedPage: React.FC<
           <EditBoosterRulesModal
             isOpen={showBoosterRulesModal}
             onClose={handleCloseBoosterRulesModal}
-            onSave={() => {}}
+            onSave={handleCloseBoosterRulesModal}
             cardRules={currentItemForRules.card_rules || []}
             boosterType={currentItemForRules.booster_type}
             consumableSets={[] as ConsumableSetData[]}

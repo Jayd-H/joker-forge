@@ -8,6 +8,7 @@ import type {
   ConditionParameter,
   EffectParameter,
   ShowWhenCondition,
+  LoopGroup,
 } from "./types";
 import { getModPrefix, JokerData } from "../data/BalatroUtils";
 import {
@@ -37,6 +38,8 @@ import {
   PlusIcon,
   ExclamationTriangleIcon,
   ArrowsRightLeftIcon,
+  PlayCircleIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import { ChartPieIcon, PercentBadgeIcon } from "@heroicons/react/16/solid";
 import {
@@ -59,6 +62,7 @@ interface InspectorProps {
   selectedCondition: Condition | null;
   selectedEffect: Effect | null;
   selectedRandomGroup: RandomGroup | null;
+  selectedLoopGroup: LoopGroup | null;
   onUpdateCondition: (
     ruleId: string,
     conditionId: string,
@@ -74,12 +78,18 @@ interface InspectorProps {
     randomGroupId: string,
     updates: Partial<RandomGroup>
   ) => void;
+  onUpdateLoopGroup: (
+    ruleId: string,
+    randomGroupId: string,
+    updates: Partial<LoopGroup>
+  ) => void;
   onUpdateJoker: (updates: Partial<JokerData>) => void;
   onClose: () => void;
   onPositionChange: (position: { x: number; y: number }) => void;
   onToggleVariablesPanel: () => void;
   onToggleGameVariablesPanel: () => void;
   onCreateRandomGroupFromEffect: (ruleId: string, effectId: string) => void;
+  onCreateLoopGroupFromEffect: (ruleId: string, effectId: string) => void;
   selectedGameVariable: GameVariable | null;
   onGameVariableApplied: () => void;
   selectedItem: SelectedItem;
@@ -868,14 +878,17 @@ const Inspector: React.FC<InspectorProps> = ({
   selectedCondition,
   selectedEffect,
   selectedRandomGroup,
+  selectedLoopGroup,
   onUpdateCondition,
   onUpdateEffect,
   onUpdateRandomGroup,
+  onUpdateLoopGroup,
   onUpdateJoker,
   onClose,
   onToggleVariablesPanel,
   onToggleGameVariablesPanel,
   onCreateRandomGroupFromEffect,
+  onCreateLoopGroupFromEffect,
   selectedGameVariable,
   onGameVariableApplied,
   selectedItem,
@@ -1012,6 +1025,11 @@ const Inspector: React.FC<InspectorProps> = ({
           chance_numerator: `GAMEVAR:${selectedGameVariable.id}|1|0`,
         });
         onGameVariableApplied();
+      } else if (selectedItem.type === "loopgroup" && selectedLoopGroup) {
+        onUpdateLoopGroup(selectedRule?.id || "", selectedLoopGroup.id, {
+          repetitions: `GAMEVAR:${selectedGameVariable.id}|1|0`,
+        });
+        onGameVariableApplied();
       }
     }
   }, [
@@ -1024,6 +1042,7 @@ const Inspector: React.FC<InspectorProps> = ({
     onUpdateCondition,
     onUpdateEffect,
     onUpdateRandomGroup,
+    onUpdateLoopGroup,
     onGameVariableApplied,
   ]);
 
@@ -1072,6 +1091,9 @@ const Inspector: React.FC<InspectorProps> = ({
             <div className="text-mint text-2xl font-bold">
               {selectedRule.effects.length +
                 selectedRule.randomGroups.reduce(
+                  (sum, group) => sum + group.effects.length,
+                  0
+                ) + selectedRule.loops.reduce(
                   (sum, group) => sum + group.effects.length,
                   0
                 )}
@@ -1329,6 +1351,72 @@ const Inspector: React.FC<InspectorProps> = ({
     );
   };
 
+  const renderLoopGroupEditor = () => {
+    if (!selectedLoopGroup || !selectedRule) return null;
+
+    return (
+      <div className="space-y-4">
+        <div className="bg-gradient-to-r from-balatro-blue/20 to-transparent border border-balatro-blue/30 rounded-lg p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-balatro-blue/20 rounded-lg flex items-center justify-center">
+              <PlayCircleIcon className="h-5 w-5 text-balatro-blue" />
+            </div>
+            <div>
+              <h4 className="text-balatro-blue font-medium text-lg">Loop Group</h4>
+              <span className="text-white-darker text-xs uppercase tracking-wider">
+                Repeat Effects
+              </span>
+            </div>
+          </div>
+          <p className="text-white-light text-sm leading-relaxed">
+            Effects in this group will all be triggered together for the
+            amount of repetitions you set.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h5 className="text-white-light font-medium text-sm flex items-center gap-2">
+            <div className="w-2 h-2 bg-balatro-blue rounded-full"></div>
+            Loop Configuration
+          </h5>
+
+          <div className="bg-balatro-blue/10 border border-balatro-blue/30 rounded-lg p-4">
+            <div className="flex flex-col items-center gap-4">
+              <span className="text-white-light text-sm">Loop</span>
+              <ChanceInput
+                key="repetitions"
+                label=""
+                value={selectedLoopGroup.repetitions}
+                onChange={(value) => {
+                  onUpdateLoopGroup(selectedRule.id, selectedLoopGroup.id, {
+                    repetitions: value,
+                  });
+                }}
+                availableVariables={availableVariables}
+                onCreateVariable={handleCreateVariable}
+                onOpenVariablesPanel={onToggleVariablesPanel}
+                onOpenGameVariablesPanel={onToggleGameVariablesPanel}
+                selectedGameVariable={selectedGameVariable}
+                onGameVariableApplied={onGameVariableApplied}
+                itemType={itemType}
+              />
+              <span className="text-white-light text-sm">Time(s)</span>
+            </div>
+          </div>
+
+          <div className="bg-black-darker border border-black-lighter rounded-lg p-3">
+            <div className="text-white-light text-sm font-medium mb-2">
+              Effects in this group
+            </div>
+            <div className="text-balatro-blue text-lg font-bold">
+              {selectedLoopGroup.effects.length}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderEffectEditor = () => {
     if (!selectedEffect || !selectedRule) return null;
     const effectType = getEffectType(selectedEffect.type);
@@ -1344,11 +1432,14 @@ const Inspector: React.FC<InspectorProps> = ({
     const isInRandomGroup = selectedRule.randomGroups.some((group) =>
       group.effects.some((effect) => effect.id === selectedEffect.id)
     );
+    const isInLoopGroup = selectedRule.loops.some((group) =>
+      group.effects.some((effect) => effect.id === selectedEffect.id)
+    );
 
     return (
       <div className="space-y-4">
         <div className="bg-gradient-to-r from-effect/20 to-transparent border border-effect/30 rounded-lg p-4 relative">
-          {!isInRandomGroup && (
+          {!isInRandomGroup && !isInLoopGroup && (
             <button
               onClick={() =>
                 onCreateRandomGroupFromEffect(
@@ -1360,6 +1451,20 @@ const Inspector: React.FC<InspectorProps> = ({
               title="Create Random Group"
             >
               <PercentBadgeIcon className="h-4 w-4" />
+            </button>
+          )}
+          {!isInRandomGroup && !isInLoopGroup && (
+            <button
+              onClick={() =>
+                onCreateLoopGroupFromEffect(
+                  selectedRule.id,
+                  selectedEffect.id
+                )
+              }
+              className="absolute top-4 right-16 p-2 rounded-lg border-2 transition-colors cursor-pointer z-10 bg-black-darker border-balatro-blue text-balatro-blue hover:bg-balatro-blue/20"
+              title="Create Loop Group"
+            >
+              <ArrowPathIcon className="h-4 w-4" />
             </button>
           )}
 
@@ -1504,10 +1609,12 @@ const Inspector: React.FC<InspectorProps> = ({
           !selectedCondition &&
           !selectedEffect &&
           !selectedRandomGroup &&
+          !selectedLoopGroup &&
           renderTriggerInfo()}
         {selectedCondition && renderConditionEditor()}
         {selectedEffect && renderEffectEditor()}
         {selectedRandomGroup && renderRandomGroupEditor()}
+        {selectedLoopGroup && renderLoopGroupEditor()}
       </div>
     </div>
   );

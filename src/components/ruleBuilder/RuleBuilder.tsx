@@ -29,6 +29,8 @@ import type {
   Effect,
   RandomGroup,
   ConditionTypeDefinition,
+  LoopGroup,
+  SelectedItem,
 } from "./types";
 import RuleCard from "./RuleCard";
 import FloatingDock from "./FloatingDock";
@@ -77,14 +79,6 @@ interface RuleBuilderProps {
   onUpdateItem: (updates: Partial<ItemData>) => void;
   itemType: ItemType;
 }
-
-type SelectedItem = {
-  type: "trigger" | "condition" | "effect" | "randomgroup";
-  ruleId: string;
-  itemId?: string;
-  groupId?: string;
-  randomGroupId?: string;
-} | null;
 
 interface PanelState {
   id: string;
@@ -755,6 +749,10 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
           ...group,
           id: crypto.randomUUID(),
         })),
+        loops: ruleToDuplicate.loops.map((group) => ({
+          ...group,
+          id: crypto.randomUUID(),
+        }))
       };
       setSelectedItem({ type: "trigger", ruleId: newRuleId });
       return [...prevRules, newRule];
@@ -770,6 +768,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       conditionGroups: [],
       effects: [],
       randomGroups: [],
+      loops: [],
       position: centerPos,
     };
     setRules((prev) => [...prev, newRule]);
@@ -947,6 +946,30 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     });
   };
 
+  const addLoopGroup = (ruleId: string) => {
+    const newLoop: LoopGroup = {
+      id: crypto.randomUUID(),
+      repetitions: 1,
+      effects: [],
+    };
+    setRules((prev) =>
+      prev.map((rule) => {
+        if (rule.id === ruleId) {
+          return {
+            ...rule,
+            loops: [...rule.loops, newLoop],
+          };
+        }
+        return rule;
+      })
+    );
+    setSelectedItem({
+      type: "loopgroup",
+      ruleId: ruleId,
+      loopGroupId: newLoop.id,
+    });
+  };
+
   const toggleBlueprintCompatibility = (ruleId: string) => {
     setRules((prev) =>
       prev.map((rule) => {
@@ -986,6 +1009,31 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     }
   };
 
+  const deleteLoopGroup = (ruleId: string, loopGroupId: string) => {
+    setRules((prev) =>
+      prev.map((rule) => {
+        if (rule.id === ruleId) {
+          const groupToDelete = rule.loops.find(
+            (g) => g.id === loopGroupId
+          );
+          return {
+            ...rule,
+            loops: rule.loops.filter(
+              (group) => group.id !== loopGroupId
+            ),
+            effects: groupToDelete
+              ? [...rule.effects, ...groupToDelete.effects]
+              : rule.effects,
+          };
+        }
+        return rule;
+      })
+    );
+    if (selectedItem && selectedItem.loopGroupId === loopGroupId) {
+      setSelectedItem({ type: "trigger", ruleId });
+    }
+  };
+
   const updateRandomGroup = (
     ruleId: string,
     randomGroupId: string,
@@ -998,6 +1046,26 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
             ...rule,
             randomGroups: rule.randomGroups.map((group) =>
               group.id === randomGroupId ? { ...group, ...updates } : group
+            ),
+          };
+        }
+        return rule;
+      })
+    );
+  };
+
+  const updateLoopGroup = (
+    ruleId: string,
+    loopGroupId: string,
+    updates: Partial<LoopGroup>
+  ) => {
+    setRules((prev) =>
+      prev.map((rule) => {
+        if (rule.id === ruleId) {
+          return {
+            ...rule,
+            loops: rule.loops.map((group) =>
+              group.id === loopGroupId ? { ...group, ...updates } : group
             ),
           };
         }
@@ -1055,6 +1123,52 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     });
   };
 
+  const createLoopGroupFromEffect = (ruleId: string, effectId: string) => {
+    const newGroup: LoopGroup = {
+      id: crypto.randomUUID(),
+      repetitions: 1,
+      effects: [],
+    };
+    setRules((prev) =>
+      prev.map((rule) => {
+        if (rule.id !== ruleId) return rule;
+        let movedEffect: Effect | null = null;
+        const updatedRule = { ...rule };
+
+        updatedRule.effects = rule.effects.filter((effect) => {
+          if (effect.id === effectId) {
+            movedEffect = effect;
+            return false;
+          }
+          return true;
+        });
+
+        updatedRule.loops = rule.loops.map((group) => ({
+          ...group,
+          effects: group.effects.filter((effect) => {
+            if (effect.id === effectId) {
+              movedEffect = effect;
+              return false;
+            }
+            return true;
+          }),
+        }));
+
+        if (movedEffect) {
+          newGroup.effects = [movedEffect];
+          updatedRule.loops = [...updatedRule.loops, newGroup];
+        }
+
+        return updatedRule;
+      })
+    );
+    setSelectedItem({
+      type: "randomgroup",
+      ruleId: ruleId,
+      randomGroupId: newGroup.id,
+    });
+  };
+
   const addEffect = (effectType: string) => {
     if (!selectedItem) return;
 
@@ -1082,6 +1196,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
               ...rule,
               randomGroups: rule.randomGroups.map((group) =>
                 group.id === selectedItem.randomGroupId
+                  ? { ...group, effects: [...group.effects, newEffect] }
+                  : group
+              ),
+            };
+          } else if (selectedItem.loopGroupId) {
+            return {
+              ...rule,
+              loops: rule.loops.map((group) =>
+                group.id === selectedItem.loopGroupId
                   ? { ...group, effects: [...group.effects, newEffect] }
                   : group
               ),
@@ -1196,6 +1319,10 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
               ...group,
               effects: group.effects.filter((effect) => effect.id !== effectId),
             })),
+            loops: rule.loops.map((group) => ({
+              ...group,
+              effects: group.effects.filter((effect) => effect.id !== effectId),
+            })),
           };
         }
         return rule;
@@ -1244,6 +1371,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       );
       if (effectInGroup) return effectInGroup;
     }
+    
+    for (const group of rule.loops) {
+      const effectInGroup = group.effects.find(
+        (e) => e.id === selectedItem.itemId
+      );
+      if (effectInGroup) return effectInGroup;
+    }
     return null;
   };
 
@@ -1258,6 +1392,20 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     if (!rule) return null;
     return (
       rule.randomGroups.find((g) => g.id === selectedItem.randomGroupId) || null
+    );
+  };
+
+  const getSelectedLoopGroup = () => {
+    if (
+      !selectedItem ||
+      selectedItem.type !== "loopgroup" ||
+      !selectedItem.loopGroupId
+    )
+      return null;
+    const rule = getSelectedRule();
+    if (!rule) return null;
+    return (
+      rule.loops.find((g) => g.id === selectedItem.loopGroupId) || null
     );
   };
 
@@ -1640,10 +1788,12 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
                             onDeleteEffect={deleteEffect}
                             onAddConditionGroup={addConditionGroup}
                             onAddRandomGroup={addRandomGroup}
+                            onAddLoop={addLoopGroup}
                             onToggleBlueprintCompatibility={
                               toggleBlueprintCompatibility
                             }
                             onDeleteRandomGroup={deleteRandomGroup}
+                            onDeleteLoopGroup={deleteLoopGroup}
                             onToggleGroupOperator={toggleGroupOperator}
                             onUpdatePosition={updateRulePosition}
                             isRuleSelected={selectedItem?.ruleId === rule.id}
@@ -1716,9 +1866,11 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
                 selectedCondition={getSelectedCondition()}
                 selectedEffect={getSelectedEffect()}
                 selectedRandomGroup={getSelectedRandomGroup()}
+                selectedLoopGroup={getSelectedLoopGroup()}
                 onUpdateCondition={updateCondition}
                 onUpdateEffect={updateEffect}
                 onUpdateRandomGroup={updateRandomGroup}
+                onUpdateLoopGroup={updateLoopGroup}
                 onUpdateJoker={
                   onUpdateItem as (updates: Partial<JokerData>) => void
                 }
@@ -1729,6 +1881,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
                 onToggleVariablesPanel={() => togglePanel("variables")}
                 onToggleGameVariablesPanel={() => togglePanel("gameVariables")}
                 onCreateRandomGroupFromEffect={createRandomGroupFromEffect}
+                onCreateLoopGroupFromEffect={createLoopGroupFromEffect}
                 selectedGameVariable={selectedGameVariable}
                 onGameVariableApplied={handleGameVariableApplied}
                 selectedItem={selectedItem}
