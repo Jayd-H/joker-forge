@@ -222,7 +222,7 @@ export function generateEffectReturnStatement(
     if (repetitions.length === 1) {
       repetitionsToVar[repetitions[0]] = "card.ability.extra.repetitions";
       const repetitionsVar = "repetitions = " + repetitions[0];
-      if (!configVariableSet.has(repetitionsVar)) {
+      if (!(typeof repetitions[0] === "string") && !configVariableSet.has(repetitionsVar)) {
         configVariableSet.add(repetitionsVar);
         allConfigVariables.push(repetitionsVar);
       }
@@ -231,14 +231,14 @@ export function generateEffectReturnStatement(
         if (index === 0) {
           repetitionsToVar[denom] = "card.ability.extra.repetitions";
           const repetitionsVar = "repetitions = " + denom;
-          if (!configVariableSet.has(repetitionsVar)) {
+          if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
             configVariableSet.add(repetitionsVar);
             allConfigVariables.push(repetitionsVar);
           }
         } else {
           repetitionsToVar[denom] = `card.ability.extra.repetitions${index + 1}`;
           const repetitionsVar = `repetitions${index + 1} = ${denom}`;
-          if (!configVariableSet.has(repetitionsVar)) {
+          if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
             configVariableSet.add(repetitionsVar);
             allConfigVariables.push(repetitionsVar);
           }
@@ -267,7 +267,7 @@ export function generateEffectReturnStatement(
 
       if (effectReturns.length === 0) return;
 
-      const repetitionsVar = repetitionsToVar[group.repetitions as number];
+      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
 
       let groupContent = "";
       let groupPreReturnCode = "";

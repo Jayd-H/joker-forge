@@ -456,29 +456,35 @@ export function generateEffectReturnStatement(
 
     if (repetitions.length === 1) {
       repetitionsToVar[repetitions[0]] = "card.ability.extra.repetitions";
-      allConfigVariables.push({
-        name: "repetitions",
-        value: repetitions[0],
-        description: "Loop repetitions",
-      });
+      if (!(typeof repetitions[0] === "string")) {
+        allConfigVariables.push({
+          name: "repetitions",
+          value: repetitions[0],
+          description: "Loop repetitions",
+        });
+      }
     } else {
       repetitions.forEach((denom, index) => {
         if (index === 0) {
           repetitionsToVar[denom] = "card.ability.extra.repetitions";
-          allConfigVariables.push({
-            name: "odds",
-            value: denom,
-            description: "First loop repetitions",
-          });
+          if (!(typeof denom === "string")) {
+            allConfigVariables.push({
+              name: "repetitions",
+              value: denom,
+              description: "First loop repetitions",
+            });
+          }
         } else {
           repetitionsToVar[denom] = `card.ability.extra.repetitions${index + 1}`;
-          allConfigVariables.push({
-            name: `repetitions${index + 1}`,
-            value: denom,
-            description: `${index + 1}${getOrdinalSuffix(
-              index + 1
-            )} loop repetitions`,
-          });
+          if (!(typeof denom === "string")) {
+            allConfigVariables.push({
+              name: `repetitions${index + 1}`,
+              value: denom,
+              description: `${index + 1}${getOrdinalSuffix(
+                index + 1
+              )} loop repetitions`,
+            });
+          }
         }
       });
     }
@@ -541,7 +547,7 @@ export function generateEffectReturnStatement(
         });
       });
 
-      const repetitionsVar = repetitionsToVar[group.repetitions as number];
+      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
 
       let groupContent = "";
 

@@ -9,7 +9,7 @@ import {
 import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { generateTriggerCondition } from "./triggerUtils";
-import { extractGameVariablesFromRules } from "../Consumables/gameVariableUtils";
+import { extractGameVariablesFromRules, generateGameVariableCode } from "../Consumables/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
 
 interface EnhancementGenerationOptions {
@@ -187,7 +187,7 @@ const generateCalculateFunction = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? 1
+          ? generateGameVariableCode(group.repetitions)
           : group.repetitions,
     }));
 
@@ -730,7 +730,7 @@ const generateSingleEnhancementCode = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? 1
+          ? generateGameVariableCode(group.repetitions)
           : group.repetitions,
     }));
 
@@ -918,7 +918,7 @@ const generateSingleSealCode = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? 1
+          ? generateGameVariableCode(group.repetitions)
           : group.repetitions,
     }));
 
@@ -1067,7 +1067,7 @@ export const generateSingleEditionCode = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? 1
+          ? generateGameVariableCode(group.repetitions)
           : group.repetitions,
     }));
 
