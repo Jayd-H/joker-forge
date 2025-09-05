@@ -49,7 +49,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   }
 
   const normalizedJokers = data.jokers.map(normalizeJokerData);
-  const normalizedSounds = data.sounds.map(normalizeSoundData)
+  const normalizedSounds = (data.sounds || []).map(normalizeSoundData)
   const normalizedConsumables = (data.consumables || []).map(
     normalizeConsumableData
   );
