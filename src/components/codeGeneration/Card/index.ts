@@ -9,8 +9,9 @@ import {
 import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { generateTriggerCondition } from "./triggerUtils";
-import { extractGameVariablesFromRules, generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { extractGameVariablesFromRules, generateGameVariableCode, parseGameVariable } from "../Consumables/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
+import { parseRangeVariable } from "../Jokers/gameVariableUtils";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;
@@ -187,7 +188,18 @@ const generateCalculateFunction = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? generateGameVariableCode(group.repetitions)
+          ? (() => {
+              const parsed = parseGameVariable(group.repetitions);
+              const rangeParsed = parseRangeVariable(group.repetitions);
+              if (parsed.isGameVariable) {
+                return generateGameVariableCode(group.repetitions);
+              } else if (rangeParsed.isRangeVariable) {
+                const seedName = `repetitions_${group.id.substring(0, 8)}`;
+                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+              } else {
+                return `card.ability.extra.${group.repetitions}`
+              }
+            })()
           : group.repetitions,
     }));
 
@@ -730,7 +742,18 @@ const generateSingleEnhancementCode = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? generateGameVariableCode(group.repetitions)
+          ? (() => {
+              const parsed = parseGameVariable(group.repetitions);
+              const rangeParsed = parseRangeVariable(group.repetitions);
+              if (parsed.isGameVariable) {
+                return generateGameVariableCode(group.repetitions);
+              } else if (rangeParsed.isRangeVariable) {
+                const seedName = `repetitions_${group.id.substring(0, 8)}`;
+                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+              } else {
+                return `card.ability.extra.${group.repetitions}`
+              }
+            })()
           : group.repetitions,
     }));
 
@@ -918,7 +941,18 @@ const generateSingleSealCode = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? generateGameVariableCode(group.repetitions)
+          ? (() => {
+              const parsed = parseGameVariable(group.repetitions);
+              const rangeParsed = parseRangeVariable(group.repetitions);
+              if (parsed.isGameVariable) {
+                return generateGameVariableCode(group.repetitions);
+              } else if (rangeParsed.isRangeVariable) {
+                const seedName = `repetitions_${group.id.substring(0, 8)}`;
+                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+              } else {
+                return `card.ability.extra.${group.repetitions}`
+              }
+            })()
           : group.repetitions,
     }));
 
@@ -1067,7 +1101,18 @@ export const generateSingleEditionCode = (
       ...group,
       repetitions:
         typeof group.repetitions === "string"
-          ? generateGameVariableCode(group.repetitions)
+          ? (() => {
+              const parsed = parseGameVariable(group.repetitions);
+              const rangeParsed = parseRangeVariable(group.repetitions);
+              if (parsed.isGameVariable) {
+                return generateGameVariableCode(group.repetitions);
+              } else if (rangeParsed.isRangeVariable) {
+                const seedName = `repetitions_${group.id.substring(0, 8)}`;
+                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+              } else {
+                return `card.ability.extra.${group.repetitions}`
+              }
+            })()
           : group.repetitions,
     }));
 
