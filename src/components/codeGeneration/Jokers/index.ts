@@ -28,7 +28,7 @@ import {
 import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
-import { generateGameVariableCode } from "./gameVariableUtils";
+import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -97,7 +97,18 @@ const convertLoopGroupsForCodegen = (
     ...group,
     repetitions:
       typeof group.repetitions === "string"
-        ? generateGameVariableCode(group.repetitions)
+        ? (() => {
+          const parsed = parseGameVariable(group.repetitions);
+          const rangeParsed = parseRangeVariable(group.repetitions);
+          if (parsed.isGameVariable) {
+            return generateGameVariableCode(group.repetitions);
+          } else if (rangeParsed.isRangeVariable) {
+            const seedName = `repetitions_${group.id.substring(0, 8)}`;
+            return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+          } else {
+            return `card.ability.extra.${group.repetitions}`
+          }
+        })()
         : group.repetitions,
   }));
 };

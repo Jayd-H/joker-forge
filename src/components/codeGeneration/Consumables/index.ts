@@ -3,9 +3,10 @@ import { ConsumableSetData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
-import { extractGameVariablesFromRules } from "./gameVariableUtils";
+import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
+import { parseRangeVariable } from "../Jokers/gameVariableUtils";
 
 interface ConsumableGenerationOptions {
   modPrefix?: string;
@@ -45,7 +46,18 @@ const convertLoopGroupsForCodegen = (
     ...group,
     repetitions:
       typeof group.repetitions === "string"
-        ? generateGameVariableCode(group.repetitions)
+        ? (() => {
+          const parsed = parseGameVariable(group.repetitions);
+          const rangeParsed = parseRangeVariable(group.repetitions);
+          if (parsed.isGameVariable) {
+            return generateGameVariableCode(group.repetitions);
+          } else if (rangeParsed.isRangeVariable) {
+            const seedName = `repetitions_${group.id.substring(0, 8)}`;
+            return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+          } else {
+            return `card.ability.extra.${group.repetitions}`
+          }
+        })()
         : group.repetitions,
   }));
 };
