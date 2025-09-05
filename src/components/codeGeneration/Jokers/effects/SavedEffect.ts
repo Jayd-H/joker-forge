@@ -1,10 +1,5 @@
 import type { Effect } from "../../../ruleBuilder/types";
-
-export interface EffectReturn {
-  statement: string;
-  message?: string;
-  colour: string;
-}
+import { EffectReturn } from "../effectUtils";
 
 export const generateSavedReturn = (effect: Effect): EffectReturn => {
   const customMessage = effect.customMessage;

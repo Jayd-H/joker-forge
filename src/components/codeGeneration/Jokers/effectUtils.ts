@@ -92,6 +92,7 @@ import { generateUnlockJokerReturn } from "./effects/UnlockJokerEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
 import { generateShuffleJokerReturn } from "./effects/ShuffleJokersEffect";
+import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -778,6 +779,8 @@ const generateSingleEffect = (
       return generateJuiceUpReturn(effect, sameTypeCount, "joker");
     case "emit_flag":
       return generateEmitFlagReturn(effect, modprefix);
+    case "play_sound":
+      return generatePlaySoundReturn(effect, modprefix);
     case "juice_up_card":
       return generateJuiceUpReturn(effect, sameTypeCount, "card");
     case "edit_play_size":

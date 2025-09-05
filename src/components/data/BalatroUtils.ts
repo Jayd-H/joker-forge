@@ -276,6 +276,14 @@ export interface EditionData {
   rules?: Rule[];
 }
 
+export interface SoundData {
+  id: string;
+  key: string;
+  pitch?: number;
+  volume?: number;
+  soundString: string;
+}
+
 // =============================================================================
 // DATA REGISTRY SYSTEM
 // =============================================================================

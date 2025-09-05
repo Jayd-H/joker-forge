@@ -20,6 +20,7 @@ import {
   EllipsisHorizontalIcon,
   KeyIcon,
   SparklesIcon,
+  MusicalNoteIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -105,6 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "enhancements", label: "Enhancements", icon: StarIcon },
     { id: "seals", label: "Seals", icon: CpuChipIcon },
     { id: "editions", label: "Editions", icon: SparklesIcon },
+    { id: "sounds", label: "Sounds", icon: MusicalNoteIcon },
   ];
 
   const visibleResourceItems = [

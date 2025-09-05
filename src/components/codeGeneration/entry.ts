@@ -10,6 +10,7 @@ import {
   EditionData,
   isCustomShader,
   getCustomShaderFilepath,
+  SoundData,
 } from "../data/BalatroUtils";
 import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
@@ -144,6 +145,7 @@ const addCustomShadersToZip = async (
 
 export const exportModCode = async (
   jokers: JokerData[],
+  sounds: SoundData[],
   consumables: ConsumableData[],
   metadata: ModMetadata,
   customRarities: RarityData[] = [],
@@ -192,6 +194,7 @@ export const exportModCode = async (
 
     const mainLuaCode = generateMainLuaCode(
       sortedJokers,
+      sounds,
       sortedConsumables,
       customRarities,
       sortedBoosters,
@@ -206,6 +209,7 @@ export const exportModCode = async (
     const ret = modToJson(
       metadata,
       sortedJokers,
+      sounds,
       customRarities,
       sortedConsumables,
       consumableSets,
@@ -234,6 +238,20 @@ export const exportModCode = async (
       Object.entries(jokersCode).forEach(([filename, code]) => {
         jokersFolder!.file(filename, code);
       });
+    }
+    
+    if (sounds.length > 0) {
+      let soundsCode = ""
+      sounds.forEach((sound) => {
+        soundsCode += `SMODS.Sound{
+    key="${sound.key}",
+    path="${sound.key}.ogg",
+    pitch=${sound.pitch ?? 0.7},
+    volume=${sound.volume ?? 0.6}
+}\n\n`
+      })
+
+      zip.file("sounds.lua", soundsCode.trim());
     }
 
     if (sortedConsumables.length > 0 || consumableSets.length > 0) {
@@ -326,6 +344,15 @@ export const exportModCode = async (
       modIconData
     );
 
+    if (sounds.length > 0) {
+      const soundsFolder = zip.folder("assets")!.folder("sounds");
+
+      sounds.forEach((sound) => {
+        const soundData = sound.soundString.replace("data:audio/ogg;base64,", "") 
+        soundsFolder!.file(`${sound.key}.ogg`, soundData, { base64: true });
+      })
+    }
+
     const content = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
@@ -345,6 +372,7 @@ export const exportModCode = async (
 
 const generateMainLuaCode = (
   jokers: JokerData[],
+  sounds: SoundData[],
   consumables: ConsumableData[],
   customRarities: RarityData[],
   boosters: BoosterData[],
@@ -547,6 +575,10 @@ end
 
 load_boosters_file()
 `;
+  }
+
+  if (sounds.length > 0) {
+    output += `assert(SMODS.load_file("sounds.lua"))()\n`;
   }
 
   if (jokers.length > 0) {

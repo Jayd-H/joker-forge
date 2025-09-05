@@ -7,6 +7,7 @@ import {
   SealData,
   EditionData,
   ModMetadata,
+  SoundData,
 } from "./data/BalatroUtils";
 import { RarityData } from "./data/BalatroUtils";
 
@@ -14,6 +15,7 @@ import { RarityData } from "./data/BalatroUtils";
 export interface ExportedMod {
   metadata: ModMetadata;
   jokers: JokerData[];
+  sounds: SoundData[];
   consumables: ConsumableData[];
   customRarities: RarityData[];
   consumableSets: ConsumableSetData[];
@@ -27,6 +29,7 @@ export interface ExportedMod {
 interface ImportableModData {
   metadata: ModMetadata;
   jokers: JokerData[];
+  sounds: SoundData[];
   consumables?: ConsumableData[];
   customRarities?: RarityData[];
   consumableSets?: ConsumableSetData[];
@@ -46,6 +49,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   }
 
   const normalizedJokers = data.jokers.map(normalizeJokerData);
+  const normalizedSounds = data.sounds.map(normalizeSoundData)
   const normalizedConsumables = (data.consumables || []).map(
     normalizeConsumableData
   );
@@ -69,6 +73,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   return {
     metadata: data.metadata,
     jokers: normalizedJokers,
+    sounds: normalizedSounds,
     consumables: normalizedConsumables,
     customRarities: normalizedRarities,
     consumableSets: normalizedConsumableSets,
@@ -125,6 +130,16 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
+  };
+};
+
+const normalizeSoundData = (sound: Partial<SoundData>): SoundData => {
+  return {
+    id: sound.id || "",
+    key: sound.key || "",
+    soundString: sound.soundString || "",
+    volume: sound.volume || 0.6,
+    pitch: sound.pitch || 0.7,
   };
 };
 
@@ -274,6 +289,7 @@ const normalizeConsumableSetData = (
 export const modToJson = (
   metadata: ModMetadata,
   jokers: JokerData[],
+  sounds: SoundData[],
   customRarities: RarityData[] = [],
   consumables: ConsumableData[] = [],
   consumableSets: ConsumableSetData[] = [],
@@ -285,6 +301,7 @@ export const modToJson = (
   const exportData: ExportedMod = {
     metadata,
     jokers,
+    sounds,
     consumables,
     customRarities,
     consumableSets,
@@ -307,6 +324,7 @@ export const modToJson = (
 export const exportModAsJSON = (
   metadata: ModMetadata,
   jokers: JokerData[],
+  sounds: SoundData[],
   customRarities: RarityData[] = [],
   consumables: ConsumableData[] = [],
   consumableSets: ConsumableSetData[] = [],
@@ -318,6 +336,7 @@ export const exportModAsJSON = (
   const ret = modToJson(
     metadata,
     jokers,
+    sounds,
     customRarities,
     consumables,
     consumableSets,
@@ -341,6 +360,7 @@ export const exportModAsJSON = (
 export const importModFromJSON = (): Promise<{
   metadata: ModMetadata;
   jokers: JokerData[];
+  sounds: SoundData[];
   consumables: ConsumableData[];
   customRarities: RarityData[];
   consumableSets: ConsumableSetData[];
@@ -378,6 +398,7 @@ export const importModFromJSON = (): Promise<{
           }
 
           const normalizedJokers = importData.jokers.map(normalizeJokerData);
+          const normalizedSounds = importData.sounds?.map(normalizeSoundData) || [];
           const normalizedConsumables = (importData.consumables || []).map(
             normalizeConsumableData
           );
@@ -407,6 +428,7 @@ export const importModFromJSON = (): Promise<{
           resolve({
             metadata: importData.metadata,
             jokers: normalizedJokers,
+            sounds: normalizedSounds,
             consumables: normalizedConsumables,
             customRarities: normalizedRarities,
             consumableSets: normalizedConsumableSets,

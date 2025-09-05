@@ -22,6 +22,7 @@ import { generateModifyInternalVariableReturn } from "./effects/ModifyInternalVa
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateEditPlayingCardReturn } from "./effects/EditPlayingCardEffect";
 import { getModPrefix } from "../../data/BalatroUtils";
+import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 
 export interface ConfigExtraVariable {
   name: string;
@@ -117,6 +118,9 @@ const generateSingleEffect = (
 
     case "emit_flag":
       return generateEmitFlagReturn(effect, getModPrefix());
+    
+    case "play_sound":
+      return generatePlaySoundReturn(effect, getModPrefix());
 
     case "edit_playing_card":
       return generateEditPlayingCardReturn(effect, trigger);
