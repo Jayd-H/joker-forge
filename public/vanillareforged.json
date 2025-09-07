@@ -13498,7 +13498,7 @@
             },
             {
               "id": "90121e3c-785c-447b-a533-74056f5c114a",
-              "type": "set_dollars",
+              "type": "edit_dollars",
               "params": {
                 "operation": "add",
                 "value": 20
@@ -13841,7 +13841,7 @@
               "type": "copy_random_joker",
               "params": {
                 "amount": 1,
-                "edition": "remove"
+                "edition": "none"
               }
             },
             {
