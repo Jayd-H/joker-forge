@@ -49,7 +49,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   }
 
   const normalizedJokers = data.jokers.map(normalizeJokerData);
-  const normalizedSounds = (data.sounds || []).map(normalizeSoundData)
+  const normalizedSounds = (data.sounds || []).map(normalizeSoundData);
   const normalizedConsumables = (data.consumables || []).map(
     normalizeConsumableData
   );
@@ -188,6 +188,7 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     placeholderCreditIndex: booster.placeholderCreditIndex,
     boosterKey: booster.boosterKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
+    instant_use: booster.instant_use || false,
   };
 };
 
@@ -398,7 +399,8 @@ export const importModFromJSON = (): Promise<{
           }
 
           const normalizedJokers = importData.jokers.map(normalizeJokerData);
-          const normalizedSounds = importData.sounds?.map(normalizeSoundData) || [];
+          const normalizedSounds =
+            importData.sounds?.map(normalizeSoundData) || [];
           const normalizedConsumables = (importData.consumables || []).map(
             normalizeConsumableData
           );
