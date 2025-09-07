@@ -592,6 +592,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   setSelectedBoosterId,
   consumableSets,
   showConfirmation,
+  modPrefix,
 }) => {
   const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [editingBooster, setEditingBooster] = useState<BoosterData | null>(
@@ -694,7 +695,8 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   }, [showSortMenu]);
 
   const handleAddNewBooster = async () => {
-    const placeholderResult = await getRandomPlaceholderBooster();
+    const placeholderResult = await getRandomPlaceholderBooster(); 
+    const key = modPrefix + '_boosters'
 
     const newBooster: BoosterData = {
       id: crypto.randomUUID(),
@@ -711,6 +713,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       discovered: true,
       placeholderCreditIndex: placeholderResult.creditIndex,
       boosterKey: slugify("New Booster Pack"),
+      group_key:key
     };
     setBoosters([...boosters, newBooster]);
     setEditingBooster(newBooster);
