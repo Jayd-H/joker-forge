@@ -315,6 +315,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
 
   const handleAddNewJoker = async () => {
     const placeholderResult = await getRandomPlaceholderJoker();
+    const modPool = modPrefix+'_jokers'
 
     const newJoker: JokerData = {
       id: crypto.randomUUID(),
@@ -342,6 +343,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
         wra: true,
       },
       appearFlags: "",
+      pools: [modPool],
     };
     setJokers([...jokers, newJoker]);
     setEditingJoker(newJoker);

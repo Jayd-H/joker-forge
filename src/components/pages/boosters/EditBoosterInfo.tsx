@@ -644,6 +644,25 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                     </label>
                                   </div>
                                 </div>
+                                  <div className="flex items-center gap-3">
+                                    <input
+                                      type="checkbox"
+                                      id="instant_use"
+                                      checked={formData.instant_use || false}
+                                      onChange={(e) =>
+                                        onFormDataChange({
+                                          instant_use: e.target.checked,
+                                        })
+                                      }
+                                      className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
+                                    />
+                                    <label
+                                      htmlFor="draw_hand"
+                                      className="text-white-light text-sm"
+                                    >
+                                      Use Selected Card Instantly
+                                    </label>
+                                  </div>
                               </div>
                             </div>
                           </div>
@@ -653,7 +672,6 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                   </div>
                 </div>
               )}
-
               {activeTab === "description" && (
                 <div className="p-6 space-y-6">
                   <DocumentTextIcon className="absolute top-12 right-16 h-28 w-28 text-black-lighter/20 -rotate-6 pointer-events-none" />

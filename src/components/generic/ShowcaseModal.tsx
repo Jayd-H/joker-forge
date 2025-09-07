@@ -13,7 +13,8 @@ import {
   RarityData,
   UserVariable,
 } from "../data/BalatroUtils";
-import { getAllVariables } from "../codeGeneration/Jokers/variableUtils";
+import { getAllVariables, } from "../codeGeneration/Jokers/variableUtils";
+import { useState } from "react";
 
 interface ShowcaseModalProps {
   isOpen: boolean;
@@ -21,6 +22,48 @@ interface ShowcaseModalProps {
   onClose: () => void;
   customRarities?: RarityData[];
 }
+
+const isStrInt = function(str:string){
+  const num = Number(str);
+  return !isNaN(num) && Number.isInteger(num);
+  }
+
+  const VariableDisplay = (variable: UserVariable) => {
+    if (variable.type === "suit") return variable.initialSuit || "Spades";
+    if (variable.type === "rank") return variable.initialRank || "Ace";
+    if (variable.type === "pokerhand")
+      return variable.initialPokerHand || "High Card";
+    return variable.initialValue?.toString() || "0";
+  };
+
+const getVars = function(joker:JokerData){
+    let Varlist:Array <any> = [""]
+    const [formData, pass] = useState<JokerData>(joker)
+    Varlist = getAllVariables(formData)
+    const varValues = Varlist.map(VariableDisplay)
+    return varValues}
+    
+const parse_string = function(joker:JokerData){
+  const line = joker.description
+  let listofVars = getVars(joker)
+  let parsed_line:string = ""
+  let char1: string,char2:string,char3:string
+  let inVar = false
+  for (let i = 0;i<line.length;i++){
+    char1 = line.substring(i,i+1)||'',
+    char2 = line.substring(i+1,i+2)||'',//Change range later to work for vars with 2 or more digits
+    char3 = line.substring(i+2,i+3)||''
+    if (inVar && isStrInt(char1)){}
+    else if (inVar && char1 == '#'){inVar = false}
+    else {if (char1 == '#' && isStrInt(char2) && char3 == '#'){
+        parsed_line += listofVars[Number(char2)-1]
+        inVar = true}
+        else 
+          {parsed_line+=char1}}
+    }
+  return parsed_line}
+
+  
 
 const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
   isOpen,
@@ -147,7 +190,7 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
                   data={{
                     id: joker.id,
                     name: joker.name,
-                    description: joker.description,
+                    description: parse_string(joker),
                     imagePreview: joker.imagePreview,
                     overlayImagePreview: joker.overlayImagePreview,
                     cost: joker.cost,

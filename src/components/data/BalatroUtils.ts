@@ -196,6 +196,7 @@ export interface BoosterData {
   cost: number;
   weight: number;
   draw_hand: boolean;
+  instant_use: boolean;
   booster_type: BoosterType;
   kind?: string;
   group_key?: string;
