@@ -81,7 +81,7 @@ const generateSingleBooster = (
     code += `    draw_hand = true,\n`;
   }
 
-  if (booster.booster_type === "consumable") {
+  if (booster.booster_type === "consumable" && booster.instant_use == false) {
     code += `    select_card = "consumeables",\n`;
   }
 

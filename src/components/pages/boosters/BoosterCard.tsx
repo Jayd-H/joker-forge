@@ -208,6 +208,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const rulesCount = booster.card_rules?.length || 0;
   const isDiscovered = booster.discovered ?? true;
   const drawToHand = booster.draw_hand === true;
+  const instantUse = booster.instant_use === false;
 
   const propertyIcons = [
     {
@@ -234,6 +235,13 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       variant: "success" as const,
       isEnabled: drawToHand,
       onClick: () => onQuickUpdate({ draw_hand: !drawToHand }),
+    },
+    {
+      icon: <PlayIcon className="w-full h-full" />,
+      tooltip: instantUse ? "Adds to Hand" : "Instant Use",
+      variant: "success" as const,
+      isEnabled: !instantUse,
+      onClick: () => onQuickUpdate({ instant_use: !instantUse }),
     },
   ];
 
