@@ -1269,8 +1269,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
             ...group,
             effects: group.effects.map((effect) =>
               effect.id === effectId ? { ...effect, ...updates } : effect
-            ),
-          }));
+            )
+          }),
+          updatedRule.loops = rule.loops.map((group) => ({
+            ...group,
+            effects: group.effects.map((effect) =>
+              effect.id === effectId ? { ...effect, ...updates } : effect
+          )})));
           return updatedRule;
         }
         return rule;
