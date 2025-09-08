@@ -8,6 +8,7 @@ import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeem
 import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateConsumableCountConditionCode } from "./conditions/ConsumableCountCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
+import { generateSystemConditionCode } from "./conditions/SystemCondition";
 
 export const generateConditionChain = (rule: Rule): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
@@ -116,6 +117,9 @@ const generateSingleConditionCode = (
     
     case "check_flag":
       return generateCheckFlagConditionCode([singleConditionRule]);
+
+    case "system_condition":
+      return generateSystemConditionCode([singleConditionRule]);
 
     default:
       return null;
