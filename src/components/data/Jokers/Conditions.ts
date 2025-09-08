@@ -1634,6 +1634,28 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Game State",
   },
   {
+    id: "system_condition",
+    label: "Player OS",
+    description: "Check on what Operating System the player is on",
+    applicableTriggers: GENERIC_TRIGGERS,
+    params: [
+      {
+        id: "system",
+        type: "select",
+        label: "OS",
+        options: [
+          {value: "Windows",label: "Windows"},
+          {value: "OS X",label: "OS X"},
+          {value: "Linux",label: "Linux"},
+          {value: "Android",label: "Android"},
+          {value: "iOS",label: "iOS"},
+        ],
+        default: "Windows",
+      },
+    ],
+    category: "Game State",
+  },
+  {
     id: "hand_size",
     label: "Hand Size",
     description: "Check the current hand size",
