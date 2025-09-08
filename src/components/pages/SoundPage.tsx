@@ -151,12 +151,12 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
   const [editingSound, setEditingSound] = useState<SoundData | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [formData, setFormData] = useState<Partial<SoundData>>({});
-
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSoundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    if (file) {
+    if (file && file.name.endsWith('.ogg')) {
       const reader = new FileReader();
       reader.onload = () => {
         setFormData((prev) => ({
@@ -165,8 +165,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
         }))
       };
       reader.readAsDataURL(file);
-    }
-  }
+}};
 
   const filteredSounds = useMemo(() => {
     return sounds.filter(
@@ -403,6 +402,9 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
                           >
                             Upload a Sound
                           </Button>
+                          <p className="text-xs text-white-darker ml-97.75 w-40">
+                          Only accepts .ogg giles                          
+                          </p>
                         </div>
                         <InputField
                           label="Sound Key"
