@@ -179,7 +179,7 @@ export const validateDescription = (description: string): ValidationResult => {
     if (tagContent === "" || tagContent === "s") continue;
 
     // Check for valid tag patterns (C:color, X:type, s:scale, E:effect, V:variable)
-    const validTagPattern = /^(C|X|s|E|V):[a-zA-Z0-9_,.\s]+$/;
+    const validTagPattern = /^(C|X|s|E|V):[a-zA-Z0-9_,.\s]/;
     if (!validTagPattern.test(tagContent)) {
       warnings.push(`Potentially invalid formatting tag: {${tagContent}}`);
     }
