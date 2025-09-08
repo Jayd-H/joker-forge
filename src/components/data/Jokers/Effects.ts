@@ -1318,14 +1318,14 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "specific_card",
           values: ["random"],
         },
-        default:"n",
+        default:"nil",
       },{
         id: "is_negative",
         type: "select",
         label: "Edition",
         options: [
-          { value: "none", label: "No Edition" },
-          { value: "negative", label: "Negative Edition" },
+          { value: "y", label: "No Edition" },
+          { value: "n", label: "Negative Edition" },
         ],
         default: "none",
       },

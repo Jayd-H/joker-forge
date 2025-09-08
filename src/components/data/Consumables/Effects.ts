@@ -848,8 +848,29 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         },
 
         default: "random",
-      },
-      {
+      },{
+        id: "soulable",
+        type: "select",
+        label: "Soulable",
+        options: [
+          { value: "y", label: "Yes" },
+          { value: "n", label: "No" },
+        ],
+        showWhen: {
+          parameter: "specific_card",
+          values: ["random"],
+        },
+        default:"nil",
+      },{
+        id: "is_negative",
+        type: "select",
+        label: "Edition",
+        options: [
+          { value: "n", label: "No Edition" },
+          { value: "y", label: "Negative Edition" },
+        ],
+        default: "none",
+      },{
         id: "count",
         type: "number",
         label: "Number of Cards",
