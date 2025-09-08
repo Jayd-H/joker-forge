@@ -1167,7 +1167,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
                                   <Checkbox
                                     id="ignoreSlotLimit"
-                                    label="Ignore Slot Limit When Bought"
+                                    label="Ignore Slot Limit When Obtained"
                                     checked={formData.ignoreSlotLimit === true}
                                     onChange={(checked) =>
                                       handleCheckboxChange(
