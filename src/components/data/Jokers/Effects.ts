@@ -1494,10 +1494,27 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Destroy Self",
     description: "Destroy this joker",
     applicableTriggers: [...GENERIC_TRIGGERS],
-    params: [],
+    params: [{
+      id: "animation",
+      type: "select",
+      label: "Animation",
+      options: [
+          { value: "start_dissolve", label: "Dissolve" },
+          { value: "shatter", label: "Shatter" },
+          { value: "explode", label: "Explode" },
+        ],
+      default : "start_dissolve",},{
+      id: "display_message",
+      type: "select",
+      label: "Show Message",
+      options: [
+          { value: "y", label: "Yes" },
+          { value: "n", label: "No" },
+        ],
+      default : "n",
+    }],
     category: "Jokers",
-  },
-  {
+  },{
     id: "disable_boss_blind",
     label: "Disable Boss Blind",
     description: "Disable the current boss blind, removing its effect",
@@ -2115,6 +2132,16 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         ],
         default: "true",
       },
+      {
+      id: "display_message",
+      type: "select",
+      label: "Show Message",
+      options: [
+          { value: "y", label: "Yes" },
+          { value: "n", label: "No" },
+        ],
+      default : "n",
+    },
     ],
     category: "Special",
   },
