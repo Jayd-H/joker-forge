@@ -93,6 +93,8 @@ import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
 import { generateShuffleJokerReturn } from "./effects/ShuffleJokersEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateApplyHyperChipsReturn } from "./effects/ApplyHyperChipsEffect";
+import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -727,6 +729,10 @@ const generateSingleEffect = (
       return generateApplyExpMultReturn(effect, sameTypeCount);
     case "apply_exp_chips":
       return generateApplyExpChipsReturn(effect, sameTypeCount);
+    case "apply_hyper_mult":
+      return generateApplyHyperMultReturn(effect, sameTypeCount);
+    case "apply_hyper_chips":
+      return generateApplyHyperChipsReturn(effect, sameTypeCount);
     case "show_message":
       return generateShowMessageReturn(effect);
     case "set_dollars":

@@ -129,6 +129,33 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Scoring",
   },
   {
+    id: "apply_hyper_chips",
+    label: "Apply HyperChips",
+    description: "Apply (n)^ chips - REQUIRES TALISMAN MOD",
+    applicableTriggers: [
+      "hand_played",
+      "card_scored",
+      "card_held_in_hand",
+      "joker_evaluated",
+    ],
+    params: [
+      {
+        id: "arrows",
+        type: "number",
+        label: "Number of Arrows",
+        default: 1,
+        min: 1
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Hyper Chips Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
     id: "add_mult",
     label: "Add Mult",
     description: "Add a flat amount of mult to the hand score",
@@ -184,6 +211,33 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "value",
         type: "number",
         label: "Exponential Mult Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_hyper_mult",
+    label: "Apply HyperMult",
+    description: "Apply (n)^ mult - REQUIRES TALISMAN MOD",
+    applicableTriggers: [
+      "hand_played",
+      "card_scored",
+      "card_held_in_hand",
+      "joker_evaluated",
+    ],
+    params: [
+      {
+        id: "arrows",
+        type: "number",
+        label: "Number of Arrows",
+        default: 1,
+        min: 1
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Hyper Mult Value",
         default: 1.1,
       },
     ],
