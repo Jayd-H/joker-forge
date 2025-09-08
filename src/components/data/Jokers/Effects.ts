@@ -1218,8 +1218,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           ...CONSUMABLE_SETS(),
         ],
         default: "random",
-      },
-      {
+      },{
         id: "specific_card",
         type: "select",
         label: "Specific Card",
@@ -1307,8 +1306,20 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           ];
         },
         default: "random",
-      },
-      {
+      },{
+        id: "soulable",
+        type: "select",
+        label: "Soulable",
+        options: [
+          { value: "true", label: "Yes" },
+          { value: "nil", label: "No" },
+        ],
+        showWhen: {
+          parameter: "specific_card",
+          values: ["random"],
+        },
+        default:"n",
+      },{
         id: "is_negative",
         type: "select",
         label: "Edition",
