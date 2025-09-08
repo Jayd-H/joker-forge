@@ -1077,6 +1077,7 @@ function AppContent() {
         setEnhancements(normalizedData.enhancements || []);
         setSeals(normalizedData.seals || []);
         setEditions(normalizedData.editions || []);
+        setSounds(normalizedData.sounds)
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
         setSelectedBoosterId(null);
