@@ -54,6 +54,7 @@ import { getCardTriggerById } from "../data/Card/Triggers";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 import Checkbox from "../generic/Checkbox";
+import { getDefaultValueType } from "framer-motion";
 
 interface InspectorProps {
   position: { x: number; y: number };
@@ -974,27 +975,52 @@ const Inspector: React.FC<InspectorProps> = ({
   React.useEffect(() => {
     if (selectedGameVariable && selectedItem) {
       if (selectedItem.type === "condition" && selectedCondition) {
-        const valueParam = selectedCondition.params.value;
-        if (valueParam !== undefined) {
-          const currentValue = valueParam;
-          const isAlreadyGameVar =
-            typeof currentValue === "string" &&
-            currentValue.startsWith("GAMEVAR:");
-          const multiplier = isAlreadyGameVar
-            ? parseFloat(currentValue.split("|")[1] || "1")
-            : 1;
-          const startsFrom = isAlreadyGameVar
-            ? parseFloat(currentValue.split("|")[2] || "0")
-            : 0;
+        if (selectedCondition.id == "Generic Compare"){
+          const valueParam = selectedCondition.params.value;
+          if (valueParam !== undefined) {
+            const currentValue = valueParam;
+            const isAlreadyGameVar =
+              typeof currentValue === "string" &&
+              currentValue.startsWith("GAMEVAR:");
+            const multiplier = isAlreadyGameVar
+              ? parseFloat(currentValue.split("|")[1] || "1")
+              : 1;
+            const startsFrom = isAlreadyGameVar
+              ? parseFloat(currentValue.split("|")[2] || "0")
+              : 0;
 
-          onUpdateCondition(selectedRule?.id || "", selectedCondition.id, {
-            params: {
-              ...selectedCondition.params,
-              value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
-            },
-          });
+            onUpdateCondition(selectedRule?.id || "", selectedCondition.id, {
+              params: {
+                ...selectedCondition.params,
+                value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+              },
+            });}
           onGameVariableApplied();
         }
+        else{
+          let valueParam,item
+          if (selectedCondition.params.value1 === 0){
+           valueParam = selectedCondition.params.value1, item='value1';}
+          else {valueParam = selectedCondition.params.value2, item='value2';}
+          if (valueParam !== undefined) {
+            const currentValue = valueParam;
+            const isAlreadyGameVar =
+              typeof currentValue === "string" &&
+              currentValue.startsWith("GAMEVAR:");
+            const multiplier = isAlreadyGameVar
+              ? parseFloat(currentValue.split("|")[1] || "1")
+              : 1;
+            const startsFrom = isAlreadyGameVar
+              ? parseFloat(currentValue.split("|")[2] || "0")
+              : 0;
+
+            onUpdateCondition(selectedRule?.id || "", selectedCondition.id, {
+              params: {
+                ...selectedCondition.params,
+                [item]: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+              },
+            });}
+          onGameVariableApplied();}
       } else if (selectedItem.type === "effect" && selectedEffect) {
         const valueParam =
           selectedEffect.params.value || selectedEffect.params.repetitions;
