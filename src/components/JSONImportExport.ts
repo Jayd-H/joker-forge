@@ -189,7 +189,6 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     placeholderCreditIndex: booster.placeholderCreditIndex,
     boosterKey: booster.boosterKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
-    instant_use: booster.instant_use || false,
   };
 };
 
