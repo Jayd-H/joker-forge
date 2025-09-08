@@ -7,78 +7,69 @@ export const generateCreateConsumableReturn = (
 ): EffectReturn => {
   const set = effect.params?.set || "random";
   const specificCard = effect.params?.specific_card || "random";
+  const isNegative = effect.params?.is_negative || "n";
+
   const count = effect.params?.count || 1;
   const customMessage = effect.customMessage;
+  const isSoulable = effect.params?.soulable;
+
 
   const countCode = generateGameVariableCode(count);
 
-  let createCode = "";
-
-  if (set === "random") {
-    createCode = `
-            __PRE_RETURN_CODE__
-            for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.4,
-                    func = function()
-                        if G.consumeables.config.card_limit > #G.consumeables.cards then
-                            play_sound('timpani')
-                            local sets = {'Tarot', 'Planet', 'Spectral'}
-                            local random_set = pseudorandom_element(sets, 'random_consumable_set')
-                            SMODS.add_card({ set = random_set })
-                            used_card:juice_up(0.3, 0.5)
-                        end
-                        return true
-                    end
-                }))
-            end
-            delay(0.6)
-            __PRE_RETURN_CODE_END__`;
-  } else if (specificCard === "random") {
-    createCode = `
-            __PRE_RETURN_CODE__
-            for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.4,
-                    func = function()
-                        if G.consumeables.config.card_limit > #G.consumeables.cards then
-                            play_sound('timpani')
-                            SMODS.add_card({ set = '${set}' })
-                            used_card:juice_up(0.3, 0.5)
-                        end
-                        return true
-                    end
-                }))
-            end
-            delay(0.6)
-            __PRE_RETURN_CODE_END__`;
-  } else {
-    createCode = `
-            __PRE_RETURN_CODE__
-            for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.4,
-                    func = function()
-                        if G.consumeables.config.card_limit > #G.consumeables.cards then
-                            play_sound('timpani')
-                            SMODS.add_card({ key = '${specificCard}' })
-                            used_card:juice_up(0.3, 0.5)
-                        end
-                        return true
-                    end
-                }))
-            end
-            delay(0.6)
-            __PRE_RETURN_CODE_END__`;
+  let createCode = `
+    __PRE_RETURN_CODE__`
+  
+  if (isNegative !== 'y'){createCode += `
+    for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
+  }else{createCode += `
+    for i = 1, ${countCode} do`
   }
+  
+  createCode += `
+            G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.4,
+            func = function()`
+  if (isNegative == 'y'){createCode += `
+            if G.consumeables.config.card_limit > #G.consumeables.cards then`}
+
+  createCode +=`
+            play_sound('timpani')`
+                 
+  if (set === "random"){createCode += `
+            local sets = {'Tarot', 'Planet', 'Spectral'}
+            local random_set = pseudorandom_element(sets, 'random_consumable_set')`
+  }
+
+  createCode += `
+            SMODS.add_card({ `
+
+  if (set == "random"){createCode += `set = random_set, `}
+  else if (specificCard == "random"){createCode += `set = ${set}, `}
+
+  if (isNegative == 'y'){createCode += `edition = 'e_negative', `}
+  if (isSoulable == 'y' && specificCard == "random"){createCode += `soulable = true, `}
+  if (set !== "random" && specificCard !== "random"){createCode += `key = '${specificCard}'`}
+
+  createCode += `})                            
+            used_card:juice_up(0.3, 0.5)`
+
+  if (isNegative == 'y'){createCode += `
+            end`}
+
+  createCode +=`
+            return true
+        end
+        }))
+    end
+    delay(0.6)
+    __PRE_RETURN_CODE_END__`
 
   const configVariables =
     typeof count === "string" && count.startsWith("GAMEVAR:")
       ? []
-      : [`consumable_count = ${count}`];
+      : [`
+        consumable_count = ${count}`];
 
   const result: EffectReturn = {
     statement: createCode,

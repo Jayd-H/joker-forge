@@ -9,6 +9,7 @@ export const generateCreateConsumableReturn = (
   const specificCard = (effect.params?.specific_card as string) || "random";
   const isNegative = (effect.params?.is_negative as string) === "negative";
   const customMessage = effect.customMessage;
+  const soulable = effect.params?.soulable;
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -27,7 +28,7 @@ export const generateCreateConsumableReturn = (
                     func = function()
                         local random_sets = {'Tarot', 'Planet', 'Spectral'}
                         local random_set = random_sets[math.random(1, #random_sets)]
-                        SMODS.add_card{set=random_set, edition = 'e_negative', key_append='joker_forge_' .. random_set:lower()}
+                        SMODS.add_card{set=random_set, edition = 'e_negative', soulable = ${soulable}, key_append='joker_forge_' .. random_set:lower()}
                         return true
                     end
                 }))`;
@@ -40,7 +41,7 @@ export const generateCreateConsumableReturn = (
                         func = function()
                             local random_sets = {'Tarot', 'Planet', 'Spectral'}
                             local random_set = random_sets[math.random(1, #random_sets)]
-                            SMODS.add_card{set=random_set, key_append='joker_forge_' .. random_set:lower()}
+                            SMODS.add_card{set=random_set, soulable = ${soulable}, key_append='joker_forge_' .. random_set:lower()}
                             G.GAME.consumeable_buffer = 0
                             return true
                         end
@@ -79,7 +80,7 @@ export const generateCreateConsumableReturn = (
       consumableCreationCode = `local created_consumable = true
                 G.E_MANAGER:add_event(Event({
                     func = function()
-                        SMODS.add_card{set = ${setName}, key = ${consumableKey}, edition = 'e_negative', key_append = 'joker_forge_${set.toLowerCase()}'}
+                        SMODS.add_card{set = ${setName}, key = ${consumableKey}, edition = 'e_negative', soulable = ${soulable}, key_append = 'joker_forge_${set.toLowerCase()}'}
                         return true
                     end
                 }))`;
@@ -90,7 +91,7 @@ export const generateCreateConsumableReturn = (
                     G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
                     G.E_MANAGER:add_event(Event({
                         func = function()
-                            SMODS.add_card{set = ${setName}, key = ${consumableKey}, key_append = 'joker_forge_${set.toLowerCase()}'}
+                            SMODS.add_card{set = ${setName}, soulable = ${soulable}, key = ${consumableKey}, key_append = 'joker_forge_${set.toLowerCase()}'}
                             G.GAME.consumeable_buffer = 0
                             return true
                         end
