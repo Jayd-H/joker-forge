@@ -174,6 +174,7 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     cost: booster.cost ?? 4,
     weight: booster.weight ?? 1,
     draw_hand: booster.draw_hand || false,
+    instant_use: booster.instant_use || false,
     booster_type: booster.booster_type || "joker",
     kind: booster.kind,
     group_key: booster.group_key,
