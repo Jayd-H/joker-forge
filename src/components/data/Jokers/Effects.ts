@@ -8,7 +8,7 @@ import {
   SparklesIcon,
   CakeIcon,
   UserGroupIcon,
-  DocumentIcon,
+  VariableIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "./Triggers";
 import { GENERIC_TRIGGERS } from "./Conditions";
@@ -55,7 +55,7 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   },
   {
     label: "Game Rules",
-    icon: DocumentIcon,
+    icon: Cog6ToothIcon,
   },
   {
     label: "Probability",
@@ -63,7 +63,7 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   },
   {
     label: "Variables",
-    icon: Cog6ToothIcon,
+    icon: VariableIcon,
   },
   {
     label: "Special",

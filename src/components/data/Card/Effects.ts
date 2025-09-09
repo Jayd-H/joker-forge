@@ -5,7 +5,7 @@ import {
   ChartBarIcon,
   UserGroupIcon,
   CakeIcon,
-  Cog6ToothIcon,
+  VariableIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
 import {
@@ -44,7 +44,7 @@ export const CARD_EFFECT_CATEGORIES: CategoryDefinition[] = [
   },
   {
     label: "Variables",
-    icon: Cog6ToothIcon,
+    icon: VariableIcon,
   },
   {
     label: "Special",
