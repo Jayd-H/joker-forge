@@ -17,6 +17,7 @@ import type { Rule } from "../ruleBuilder/types";
 import { RarityData, JokerData } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
 import ShowcaseModal from "../generic/ShowcaseModal";
+import { number } from "framer-motion";
 
 interface JokersPageProps {
   modName: string;
@@ -179,7 +180,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState(
-    userConfig.filters.jokersFilter ?? "name-asc"
+    userConfig.filters.jokersFilter ?? "id-desc"
   );
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
@@ -213,6 +214,16 @@ const JokersPage: React.FC<JokersPageProps> = ({
 
   const sortOptions: SortOption[] = useMemo(
     () => [
+      {
+        value: "id-desc",
+        label: "Id Value (Most to Least)",
+        sortFn: (a, b) => b.orderValue - a.orderValue,
+      },
+      {
+        value: "id-asc",
+        label: "Id Value (Least to Most)",
+        sortFn: (a, b) => a.orderValue - b.orderValue,
+      },
       {
         value: "name-asc",
         label: "Name (A-Z)",
@@ -331,6 +342,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
       unlocked: true,
       discovered: true,
       rules: [],
+      orderValue: jokers.length+1,
       placeholderCreditIndex: placeholderResult.creditIndex,
       appears_in_shop: true,
       cardAppearance: {
@@ -357,34 +369,72 @@ const JokersPage: React.FC<JokersPageProps> = ({
 
   const handleDeleteJoker = (jokerId: string) => {
     setJokers((prev) => prev.filter((joker) => joker.id !== jokerId));
-
+    let deletedOrderValue = jokers.length+1
+    for (let i = 0; i < jokers.length; i++) {
+            if (jokers[i].orderValue !== i+1) {
+                deletedOrderValue = jokers[i].orderValue; 
+                break}};
     if (selectedJokerId === jokerId) {
       const remainingJokers = jokers.filter((joker) => joker.id !== jokerId);
       setSelectedJokerId(
         remainingJokers.length > 0 ? remainingJokers[0].id : null
       );
-    }
+    for (let i=0; i<jokers.length;){
+      if (jokers[i].orderValue >= deletedOrderValue){
+        jokers[i].orderValue -=1
+      }}}
   };
 
   const handleDuplicateJoker = async (joker: JokerData) => {
     if (isPlaceholderJoker(joker.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderJoker();
+      let newNumber:number|boolean|string
+      let dupeName:string
+      let tempName=joker.name
+      let count:number = 0
+      let looping = true
+      let match
+      while (looping == true){
+        match = tempName.match(/\d+$/) 
+        if (match){
+          tempName=tempName.slice(0,-1)
+          count +=1}
+        else{looping=false
+           break}}
+      if (count>0)
+        {newNumber = Number(joker.name.substring(joker.name.length-Number(count),joker.name.length))+1
+      } else {newNumber = false} 
+      if (newNumber !== false){
+        dupeName = joker.name.slice(0,-count)+String(newNumber)}
+      else {dupeName= joker.name+'2'}
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
-        name: `${joker.name} Copy`,
+        name: `${dupeName}`,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
+        orderValue: joker.orderValue+1
       };
       setJokers([...jokers, duplicatedJoker]);
+      for (let i=0; i<jokers.length;i++){
+      const currentJoker = jokers[i]
+      if (currentJoker.orderValue >= duplicatedJoker.orderValue && currentJoker.id !== duplicatedJoker.id){
+        currentJoker.orderValue +=1
+      }}
     } else {
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
         name: `${joker.name} Copy`,
+        orderValue: joker.orderValue+1,
       };
       setJokers([...jokers, duplicatedJoker]);
-    }
+      for (let i=0; i<jokers.length;i++){
+      const currentJoker = jokers[i]
+      if (currentJoker.orderValue >= duplicatedJoker.orderValue && currentJoker.id !== duplicatedJoker.id){
+        currentJoker.orderValue +=1
+      }
+    }}
   };
 
   const handleExportJoker = (joker: JokerData) => {
@@ -499,7 +549,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    "id-desc";
 
   return (
     <div className="min-h-screen">
@@ -611,6 +661,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
               <JokerCard
                 key={joker.id}
                 joker={joker}
+                jokers={jokers}
                 onEditInfo={() => handleEditInfo(joker)}
                 onEditRules={() => handleEditRules(joker)}
                 onDelete={() => handleDeleteJoker(joker.id)}

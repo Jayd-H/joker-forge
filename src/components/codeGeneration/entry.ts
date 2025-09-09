@@ -39,6 +39,15 @@ const sortForExport = <T extends { id: string; name: string }>(
   });
 };
 
+const sortJokersForExport = (
+  items: JokerData[]
+): JokerData[] => {
+  return [...items].sort((a, b) => 
+    a.orderValue - b.orderValue
+  );
+};
+
+
 const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
   const poolsMap: Record<string, string[]> = {};
 
@@ -182,7 +191,7 @@ export const exportModCode = async (
 
     const zip = new JSZip();
 
-    const sortedJokers = sortForExport(validJokers);
+    const sortedJokers = sortJokersForExport(validJokers);
     const sortedConsumables = sortForExport(validConsumables);
     const sortedBoosters = sortForExport(validBoosters);
     const sortedEnhancements = sortForExport(validEnhancements);
@@ -459,16 +468,33 @@ const generateMainLuaCode = (
   output += `local NFS = require("nativefs")
 to_big = to_big or function(a) return a end
 lenient_bignum = lenient_bignum or function(a) return a end
-
 `;
 
+const createJokerIndexList = function(jokers:JokerData[]){
+  const alphabetOrder = jokers.sort((a,b)=>a.name.localeCompare(b.name))
+  console.log(String(alphabetOrder))
+  let order:Array<Array<number>>= []
+  jokers.forEach(joker=>{
+    order.push([alphabetOrder.indexOf(joker)+1,joker.orderValue
+  ])})
+  const indexOrder = order.sort((a,b)=>a[1]-b[1])
+  let  indexArray:Array<number> = []
+  indexOrder.forEach(step=>{
+    indexArray.push(step[0])})
+  return indexArray
+}
+
   if (jokers.length > 0) {
-    output += `local function load_jokers_folder()
+    const indexArray= createJokerIndexList(jokers)
+    output += `
+local indexList = {${indexArray}}
+
+local function load_jokers_folder()
     local mod_path = SMODS.current_mod.path
     local jokers_path = mod_path .. "/jokers"
     local files = NFS.getDirectoryItemsInfo(jokers_path)
     for i = 1, #files do
-        local file_name = files[i].name
+        local file_name = files[indexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("jokers/" .. file_name))()
         end

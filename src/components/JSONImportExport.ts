@@ -47,7 +47,6 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   if (!data.jokers || !Array.isArray(data.jokers)) {
     throw new Error("Invalid mod data - missing or invalid jokers data");
   }
-
   const normalizedJokers = data.jokers.map(normalizeJokerData);
   const normalizedSounds = (data.sounds || []).map(normalizeSoundData);
   const normalizedConsumables = (data.consumables || []).map(
@@ -130,6 +129,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
+    orderValue: joker.orderValue || 0,
   };
 };
 

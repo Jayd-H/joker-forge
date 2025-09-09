@@ -93,6 +93,7 @@ export interface JokerData {
   imagePreview: string;
   overlayImagePreview?: string;
   rarity: number | string;
+  orderValue: number;
   cost?: number;
   blueprint_compat?: boolean;
   eternal_compat?: boolean;
