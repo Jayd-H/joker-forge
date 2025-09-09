@@ -8,14 +8,6 @@ import {
   SparklesIcon,
   CakeIcon,
   UserGroupIcon,
-  Cog8ToothIcon,
-  TvIcon,
-  MapIcon,
-  RssIcon,
-  BoltIcon,
-  LinkIcon,
-  DocumentMagnifyingGlassIcon,
-  DocumentArrowUpIcon,
   DocumentIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "./Triggers";
