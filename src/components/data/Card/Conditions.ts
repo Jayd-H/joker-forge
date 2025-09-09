@@ -538,6 +538,28 @@ export const CARD_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Game Context",
   },
   {
+    id: "system_condition",
+    label: "Player OS",
+    description: "Check on what Operating System the player is on",
+    applicableTriggers: GENERIC_TRIGGERS,
+    params: [
+      {
+        id: "system",
+        type: "select",
+        label: "OS",
+        options: [
+          {value: "Windows",label: "Windows"},
+          {value: "OS X",label: "OS X"},
+          {value: "Linux",label: "Linux"},
+          {value: "Android",label: "Android"},
+          {value: "iOS",label: "iOS"},
+        ],
+        default: "Windows",
+      },
+    ],
+    category: "Game Context",
+  },
+  {
     id: "generic_compare",
     label: "Generic Compare",
     description: "Compare two custom values with an operator",

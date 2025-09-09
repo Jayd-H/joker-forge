@@ -118,6 +118,80 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Scoring",
   },
   {
+    id: "add_exp_mult",
+    label: "Apply ^Mult (Exponential)",
+    description: "Apply exponential mult (emult) - REQUIRES TALISMAN MOD",
+    applicableTriggers: SCORING_TRIGGERS,
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Exponential Mult Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "add_exp_chips",
+    label: "Apply ^Chips (Exponential)",
+    description: "Apply exponential chips (echips) - REQUIRES TALISMAN MOD",
+    applicableTriggers: SCORING_TRIGGERS,
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Exponential Chips Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "add_hyper_mult",
+    label: "Apply HyperMult",
+    description: "Apply (n)^ mult - REQUIRES TALISMAN MOD",
+    applicableTriggers: SCORING_TRIGGERS,
+    params: [
+      {
+        id: "arrows",
+        type: "number",
+        label: "Number of Arrows",
+        default: 1,
+        min: 1
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Hyper Mult Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "add_hyper_chips",
+    label: "Apply HyperChips",
+    description: "Apply (n)^ chips - REQUIRES TALISMAN MOD",
+    applicableTriggers: SCORING_TRIGGERS,
+    params: [
+      {
+        id: "arrows",
+        type: "number",
+        label: "Number of Arrows",
+        default: 1,
+        min: 1
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Hyper Chips Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
     id: "edit_dollars",
     label: "Edit Dollars",
     description: "Modify the player's money",

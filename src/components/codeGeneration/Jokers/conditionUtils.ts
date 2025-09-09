@@ -63,6 +63,7 @@ import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition"
 import { generateBossBlindTypeConditionCode } from "./conditions/BossBlindTypeCondition";
 import { generateJokerFlippedConditionCode, generateThisJokerFlippedConditionCode } from "./conditions/JokerFlippedCondition";
 import { generateWhichTagConditionCode } from "./conditions/WhichTagCondition";
+import { generateSystemConditionCode } from "./conditions/SystemCondition";
 
 export const generateConditionChain = (
   rule: Rule,
@@ -317,6 +318,9 @@ const generateSingleConditionCode = (
 
     case "which_tag":
       return generateWhichTagConditionCode([singleConditionRule]);
+    
+    case "system_condition":
+      return generateSystemConditionCode([singleConditionRule]);
 
     default:
       return null;

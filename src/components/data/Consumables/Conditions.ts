@@ -222,6 +222,28 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Game Context",
   },
   {
+    id: "system_condition",
+    label: "Player OS",
+    description: "Check on what Operating System the player is on",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "system",
+        type: "select",
+        label: "OS",
+        options: [
+          {value: "Windows",label: "Windows"},
+          {value: "OS X",label: "OS X"},
+          {value: "Linux",label: "Linux"},
+          {value: "Android",label: "Android"},
+          {value: "iOS",label: "iOS"},
+        ],
+        default: "Windows",
+      },
+    ],
+    category: "Game Context",
+  },
+  {
     id: "consumable_count",
     label: "Consumable Count",
     description: "Check how many of a consumable a player has",
