@@ -614,6 +614,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     card_rules: [],
     discovered: true,
     boosterKey: "",
+    instant_use: false,
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(
@@ -695,8 +696,8 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   }, [showSortMenu]);
 
   const handleAddNewBooster = async () => {
-    const placeholderResult = await getRandomPlaceholderBooster(); 
-    const key = modPrefix + '_boosters'
+    const placeholderResult = await getRandomPlaceholderBooster();
+    const key = modPrefix + "_boosters";
 
     const newBooster: BoosterData = {
       id: crypto.randomUUID(),
@@ -713,7 +714,8 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       discovered: true,
       placeholderCreditIndex: placeholderResult.creditIndex,
       boosterKey: slugify("New Booster Pack"),
-      group_key:key
+      group_key: key,
+      instant_use: false,
     };
     setBoosters([...boosters, newBooster]);
     setEditingBooster(newBooster);
@@ -781,6 +783,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       card_rules: [],
       discovered: true,
       boosterKey: "",
+      instant_use: false,
     });
   };
 

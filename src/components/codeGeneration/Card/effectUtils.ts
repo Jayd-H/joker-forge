@@ -31,8 +31,6 @@ import { generateChangeRankVariableReturn } from "./effects/ChangeRankVariableEf
 import { generateChangeSuitVariableReturn } from "./effects/ChangeSuitVariableEffect";
 import { generateChangePokerHandVariableReturn } from "./effects/ChangePokerHandVariableEffect";
 
-
-
 export interface ConfigExtraVariable {
   name: string;
   value: number;
@@ -72,6 +70,18 @@ const generateSingleEffect = (
 
     case "add_x_mult":
       return generateAddXMultReturn(effect, 0, itemType);
+
+    case "add_exp_chips":
+      return generateAddExpChipsReturn(effect, 0, itemType);
+
+    case "add_exp_mult":
+      return generateAddExpMultReturn(effect, 0, itemType);
+
+    case "add_hyper_chips":
+      return generateAddHyperChipsReturn(effect, 0, itemType);
+
+    case "add_hyper_mult":
+      return generateAddHyperMultReturn(effect, 0, itemType);
 
     case "edit_dollars":
       return generateEditDollarsReturn(effect, 0, itemType);

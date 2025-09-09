@@ -54,7 +54,6 @@ import { getCardTriggerById } from "../data/Card/Triggers";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 import Checkbox from "../generic/Checkbox";
-import { getDefaultValueType } from "framer-motion";
 
 interface InspectorProps {
   position: { x: number; y: number };
@@ -975,7 +974,7 @@ const Inspector: React.FC<InspectorProps> = ({
   React.useEffect(() => {
     if (selectedGameVariable && selectedItem) {
       if (selectedItem.type === "condition" && selectedCondition) {
-        if (selectedCondition.id == "Generic Compare"){
+        if (selectedCondition.id == "Generic Compare") {
           const valueParam = selectedCondition.params.value;
           if (valueParam !== undefined) {
             const currentValue = valueParam;
@@ -994,14 +993,18 @@ const Inspector: React.FC<InspectorProps> = ({
                 ...selectedCondition.params,
                 value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
               },
-            });}
+            });
+          }
           onGameVariableApplied();
-        }
-        else{
-          let valueParam,item
-          if (selectedCondition.params.value1 === 0){
-           valueParam = selectedCondition.params.value1, item='value1';}
-          else {valueParam = selectedCondition.params.value2, item='value2';}
+        } else {
+          let valueParam, item;
+          if (selectedCondition.params.value1 === 0) {
+            valueParam = selectedCondition.params.value1;
+            item = "value1";
+          } else {
+            valueParam = selectedCondition.params.value2;
+            item = "value2";
+          }
           if (valueParam !== undefined) {
             const currentValue = valueParam;
             const isAlreadyGameVar =
@@ -1019,8 +1022,10 @@ const Inspector: React.FC<InspectorProps> = ({
                 ...selectedCondition.params,
                 [item]: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
               },
-            });}
-          onGameVariableApplied();}
+            });
+          }
+          onGameVariableApplied();
+        }
       } else if (selectedItem.type === "effect" && selectedEffect) {
         const valueParam =
           selectedEffect.params.value || selectedEffect.params.repetitions;
@@ -1064,6 +1069,7 @@ const Inspector: React.FC<InspectorProps> = ({
     selectedCondition,
     selectedEffect,
     selectedRandomGroup,
+    selectedLoopGroup,
     selectedRule?.id,
     onUpdateCondition,
     onUpdateEffect,
@@ -1119,7 +1125,8 @@ const Inspector: React.FC<InspectorProps> = ({
                 selectedRule.randomGroups.reduce(
                   (sum, group) => sum + group.effects.length,
                   0
-                ) + selectedRule.loops.reduce(
+                ) +
+                selectedRule.loops.reduce(
                   (sum, group) => sum + group.effects.length,
                   0
                 )}
@@ -1168,7 +1175,7 @@ const Inspector: React.FC<InspectorProps> = ({
               selectedCondition.negate ? "Remove negation" : "Negate condition"
             }
           >
-          <ExclamationTriangleIcon className="h-4 w-4 text-balatro-red" />
+            <ExclamationTriangleIcon className="h-4 w-4 text-balatro-red" />
           </button>
 
           <div className="flex items-center gap-3 mb-3">
@@ -1299,66 +1306,77 @@ const Inspector: React.FC<InspectorProps> = ({
               />
             </div>
           </div>
-            <div className="space-y-3">
-              <h5 className="text-white-light font-medium text-sm flex items-center gap-2">
-                <div className="w-2 h-2 bg-mint rounded-full"></div>
-                Advanced Configuration
-              </h5>
+          <div className="space-y-3">
+            <h5 className="text-white-light font-medium text-sm flex items-center gap-2">
+              <div className="w-2 h-2 bg-mint rounded-full"></div>
+              Advanced Configuration
+            </h5>
 
-              <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="space-y-6 p-2">
-                    <Checkbox
-                      id="respect_probability_effects"
-                      label="Affected by Probability Effects"
-                      checked={selectedRule.trigger === "change_probability" ? false : selectedRandomGroup.respect_probability_effects !== false}
-                      disabled={selectedRule.trigger === "change_probability"}
-                      onChange={(checked) => {
-                        onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
+            <div className="bg-mint/10 border border-mint/30 rounded-lg p-4">
+              <div className="flex flex-col items-center gap-4">
+                <div className="space-y-6 p-2">
+                  <Checkbox
+                    id="respect_probability_effects"
+                    label="Affected by Probability Effects"
+                    checked={
+                      selectedRule.trigger === "change_probability"
+                        ? false
+                        : selectedRandomGroup.respect_probability_effects !==
+                          false
+                    }
+                    disabled={selectedRule.trigger === "change_probability"}
+                    onChange={(checked) => {
+                      onUpdateRandomGroup(
+                        selectedRule.id,
+                        selectedRandomGroup.id,
+                        {
                           respect_probability_effects: checked,
-                        });
-                      }}
-                    />
-                    <InputField
-                      key="custom_key"
-                      value={selectedRandomGroup.custom_key}
-                      onChange={(e) =>{
-                        onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
-                          custom_key: e.target.value,
-                        });
-                      }}
-                      placeholder={(
-                        () => {
-                          let classPrefix: string;
-                          let key: string;
-                          switch (itemType) {
-                            case "joker":
-                              classPrefix = "j";
-                              key = joker.jokerKey || "";
-                              break;
-                            case "consumable":
-                              classPrefix = "c";
-                              //@ts-ignore: The inspector can take more than JokerData
-                              key = joker.consumableKey || "";
-                              break;
-                            case "card":
-                              classPrefix = "m";
-                              //@ts-ignore: The inspector can take more than JokerData
-                              key = joker.sealKey || joker.enhancementKey || "";
-                              break;
-                            default:
-                              classPrefix = "j";
-                              key = joker.jokerKey || "";
-                          }
-                          const modPrefix = getModPrefix()
-
-                          return `${classPrefix}_${modPrefix}_${key}`
                         }
-                      )()}
-                      label="Custom Probability key"
-                      type="text"
-                      size="sm"
-                    />
+                      );
+                    }}
+                  />
+                  <InputField
+                    key="custom_key"
+                    value={selectedRandomGroup.custom_key}
+                    onChange={(e) => {
+                      onUpdateRandomGroup(
+                        selectedRule.id,
+                        selectedRandomGroup.id,
+                        {
+                          custom_key: e.target.value,
+                        }
+                      );
+                    }}
+                    placeholder={(() => {
+                      let classPrefix: string;
+                      let key: string;
+                      switch (itemType) {
+                        case "joker":
+                          classPrefix = "j";
+                          key = joker.jokerKey || "";
+                          break;
+                        case "consumable":
+                          classPrefix = "c";
+                          // @ts-expect-error: The inspector can take more than JokerData
+                          key = joker.consumableKey || "";
+                          break;
+                        case "card":
+                          classPrefix = "m";
+                          // @ts-expect-error: The inspector can take more than JokerData
+                          key = joker.sealKey || joker.enhancementKey || "";
+                          break;
+                        default:
+                          classPrefix = "j";
+                          key = joker.jokerKey || "";
+                      }
+                      const modPrefix = getModPrefix();
+
+                      return `${classPrefix}_${modPrefix}_${key}`;
+                    })()}
+                    label="Custom Probability key"
+                    type="text"
+                    size="sm"
+                  />
                 </div>
               </div>
             </div>
@@ -1388,15 +1406,17 @@ const Inspector: React.FC<InspectorProps> = ({
               <PlayCircleIcon className="h-5 w-5 text-balatro-blue" />
             </div>
             <div>
-              <h4 className="text-balatro-blue font-medium text-lg">Loop Group</h4>
+              <h4 className="text-balatro-blue font-medium text-lg">
+                Loop Group
+              </h4>
               <span className="text-white-darker text-xs uppercase tracking-wider">
                 Repeat Effects
               </span>
             </div>
           </div>
           <p className="text-white-light text-sm leading-relaxed">
-            Effects in this group will all be triggered together for the
-            amount of repetitions you set.
+            Effects in this group will all be triggered together for the amount
+            of repetitions you set.
           </p>
         </div>
 
@@ -1482,10 +1502,7 @@ const Inspector: React.FC<InspectorProps> = ({
           {!isInRandomGroup && !isInLoopGroup && (
             <button
               onClick={() =>
-                onCreateLoopGroupFromEffect(
-                  selectedRule.id,
-                  selectedEffect.id
-                )
+                onCreateLoopGroupFromEffect(selectedRule.id, selectedEffect.id)
               }
               className="absolute top-4 right-16 p-2 rounded-lg border-2 transition-colors cursor-pointer z-10 bg-black-darker border-balatro-blue text-balatro-blue hover:bg-balatro-blue/20"
               title="Create Loop Group"

@@ -22,6 +22,7 @@ import { generateTriggeredBossBlindConditionCode } from "./conditions/TriggeredB
 import { generateInternalVariableConditionCode } from "./conditions/InternalVariableCondition";
 import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
+import { generateSystemConditionCode } from "./conditions/SystemCondition";
 
 export const generateConditionChain = (
   rule: Rule,
@@ -183,6 +184,9 @@ const generateSingleConditionCode = (
 
     case "check_flag":
       return generateCheckFlagConditionCode([singleConditionRule]);
+
+    case "system_condition":
+      return generateSystemConditionCode([singleConditionRule]);
 
     default:
       return null;
