@@ -5,6 +5,7 @@ import {
   ChartBarIcon,
   UserGroupIcon,
   CakeIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
 import {
@@ -40,6 +41,10 @@ export const CARD_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Jokers",
     icon: UserGroupIcon,
+  },
+  {
+    label: "Variables",
+    icon: Cog6ToothIcon,
   },
   {
     label: "Special",
@@ -138,8 +143,7 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
       },
     ],
     category: "Economy",
-  },
-  {
+  },{
     id: "modify_internal_variable",
     label: "Modify Internal Variable",
     description: "Change an internal variable value for this joker",
@@ -170,9 +174,116 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
         default: 1,
       },
     ],
-    category: "Special",
+    category: "Variables",
+  },{
+      id: "change_suit_variable",
+      label: "Change Suit Variable",
+      description:
+        "Change the value of a suit variable to a specific suit or random suit",
+      applicableTriggers: [...GENERIC_TRIGGERS],
+      params: [
+        {
+          id: "variable_name",
+          type: "select",
+          label: "Suit Variable",
+          options: [], // Will be populated dynamically with suit variables
+        },
+        {
+          id: "change_type",
+          type: "select",
+          label: "Change Type",
+          options: [
+            { value: "random", label: "Random Suit" },
+            { value: "specific", label: "Specific Suit" },
+          ],
+          default: "random",
+        },
+        {
+          id: "specific_suit",
+          type: "select",
+          label: "Suit",
+          options: [...SUITS],
+          showWhen: {
+            parameter: "change_type",
+            values: ["specific"],
+          },
+        },
+      ],
+      category: "Variables",
+    },{
+    id: "change_rank_variable",
+    label: "Change Rank Variable",
+    description:
+      "Change the value of a rank variable to a specific rank or random rank",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Rank Variable",
+        options: [], // Will be populated dynamically with rank variables
+      },
+      {
+        id: "change_type",
+        type: "select",
+        label: "Change Type",
+        options: [
+          { value: "random", label: "Random Rank" },
+          { value: "specific", label: "Specific Rank" },
+        ],
+        default: "random",
+      },
+      {
+        id: "specific_rank",
+        type: "select",
+        label: "Rank",
+        options: [...RANKS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Variables",
   },
   {
+    id: "change_pokerhand_variable",
+    label: "Change Poker Hand Variable",
+    description:
+      "Change the value of a poker hand variable to a specific poker hand or random poker hand",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Poker Hand Variable",
+        options: [],
+      },
+      {
+        id: "change_type",
+        type: "select",
+        label: "Change Type",
+        options: [
+          { value: "random", label: "Random Poker Hand" },
+          { value: "specific", label: "Specific Poker Hand" },
+          { value: "most_played", label: "Most Played Hand" },
+          { value: "least_played", label: "Least Played Hand" },
+        ],
+        default: "random",
+      },
+      {
+        id: "specific_pokerhand",
+        type: "select",
+        label: "Poker Hand",
+        options: [...POKER_HANDS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Variables",
+  },{
     id: "destroy_card",
     label: "Destroy Card",
     description: "Destroy this card",

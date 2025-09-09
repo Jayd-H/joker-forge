@@ -61,9 +61,13 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
     icon: ReceiptPercentIcon,
   },
   {
+    label: "Variables",
+    icon: Cog6ToothIcon,
+  },
+  {
     label: "Special",
     icon: SparklesIcon,
-  },
+  },  
 ];
 
 export const EFFECT_TYPES: EffectTypeDefinition[] = [
@@ -1760,7 +1764,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "card_held_in_hand_end_of_round",
     ],
     params: [],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "change_suit_variable",
@@ -1796,7 +1800,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "reduce_flush_straight_requirements",
@@ -1866,7 +1870,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "change_pokerhand_variable",
@@ -1904,7 +1908,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "combine_ranks",

@@ -275,6 +275,7 @@ export interface EditionData {
   disable_shadow?: boolean;
   disable_base_shader?: boolean;
   rules?: Rule[];
+  userVariables?: UserVariable[];
 }
 
 export interface SoundData {

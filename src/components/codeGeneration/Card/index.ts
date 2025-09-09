@@ -1137,6 +1137,20 @@ export const generateSingleEditionCode = (
     editionCode += `SMODS.Shader({ key = '${edition.shader}', path = '${edition.shader}.fs' })
 
 `;
+  }  
+  if (edition.userVariables && edition.userVariables.length > 0) {
+    edition.userVariables.forEach((variable) => {
+      if (variable.type === "number" || !variable.type) {
+        configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
+      }
+      else if (variable.type === "rank"){
+        configItems.push(`${variable.name} = ${variable.initialValue || "Ace"}`);}
+      else if (variable.type === "suit"){
+        configItems.push(`${variable.name} = ${variable.initialValue || "Hearts"}`)}
+      else if (variable.type === "pokerhand"){
+        configItems.push(`${variable.name} = ${variable.initialValue || "High Card"}`);
+      }
+    });
   }
 
   editionCode += `SMODS.Edition {

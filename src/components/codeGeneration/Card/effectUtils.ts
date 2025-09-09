@@ -23,6 +23,11 @@ import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateEditPlayingCardReturn } from "./effects/EditPlayingCardEffect";
 import { getModPrefix } from "../../data/BalatroUtils";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateChangeRankVariableReturn } from "./effects/ChangeRankVariableEffect";
+import { generateChangeSuitVariableReturn } from "./effects/ChangeSuitVariableEffect";
+import { generateChangePokerHandVariableReturn } from "./effects/ChangePokerHandVariableEffect";
+
+
 
 export interface ConfigExtraVariable {
   name: string;
@@ -115,6 +120,15 @@ const generateSingleEffect = (
         trigger || "",
         itemType
       );
+    
+    case "change_rank_variable":
+      return generateChangeRankVariableReturn(effect);
+
+    case "change_suit_variable":
+      return generateChangeSuitVariableReturn(effect);
+    
+      case "change_poker_hand_variable":
+      return generateChangePokerHandVariableReturn(effect);
 
     case "emit_flag":
       return generateEmitFlagReturn(effect, getModPrefix());
