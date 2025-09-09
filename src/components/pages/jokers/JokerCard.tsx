@@ -32,7 +32,6 @@ import {
   type JokerData,
   slugify,
 } from "../../data/BalatroUtils";
-import { kMaxLength } from "buffer";
 
 interface JokerCardProps {
   joker: JokerData;
