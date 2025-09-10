@@ -47,7 +47,7 @@ import {
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
-import { getJokerName } from "../JokersPage";
+import { updateJokerIds, getJokerName } from "../JokersPage";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
@@ -652,6 +652,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       onConfirm: () => {
         onDelete(joker.id);
         onClose();
+        jokers = updateJokerIds(joker, jokers, 'remove', joker.orderValue) 
       },
     });
   };

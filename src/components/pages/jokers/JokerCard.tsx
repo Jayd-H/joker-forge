@@ -33,7 +33,7 @@ import {
   slugify,
 } from "../../data/BalatroUtils";
 import { getJokerName } from "../JokersPage";
-
+import { updateJokerIds } from "../JokersPage";
 
 interface JokerCardProps {
   joker: JokerData;
@@ -171,16 +171,10 @@ const JokerCard: React.FC<JokerCardProps> = ({
   const handleIdSave = () => {
     const priorValue = joker.orderValue
     const newValue = tempId
-    onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,jokers.length+1)) });
+    onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,jokers.length)) });
     setEditingId(false);
-    for (let i=0; i<jokers.length;i++){
-      const currentJoker = jokers[i]
-      if (currentJoker.orderValue >= newValue && currentJoker.orderValue < priorValue && currentJoker.id !== joker.id){
-        currentJoker.orderValue +=1
-      }else if (currentJoker.orderValue <= newValue && currentJoker.orderValue > priorValue && currentJoker.id !== joker.id){
-        currentJoker.orderValue -=1
-      }
-    }
+    const direction = (priorValue>newValue)?'decrease':'increase'
+    jokers = updateJokerIds(joker, jokers, 'change', newValue, direction, priorValue)
   };
 
   const handleDescriptionSave = () => {
@@ -511,7 +505,9 @@ const JokerCard: React.FC<JokerCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => onDelete(),
+                  onConfirm: () => {onDelete()
+                  jokers = updateJokerIds(joker, jokers, 'remove', joker.orderValue)}
+                  ,
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

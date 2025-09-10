@@ -74,6 +74,32 @@ const upscaleImage = (imageSrc: string): Promise<string> => {
   });
 };
 
+export const updateJokerIds = function(
+  changedJoker:JokerData,
+  jokers:JokerData[],
+  changeType:string,
+  newId:number,
+  direction?:string,
+  oldId?:number,
+){jokers.forEach(joker =>{
+    const currentId = joker.orderValue
+    if (changeType == 'insert'){
+      if (currentId >= newId && joker.id !== changedJoker.id){
+        joker.orderValue += 1 }}
+    if (changeType == 'change'){
+      if (direction == 'increase'){
+        if (currentId <= newId && currentId > (oldId||0) && joker.id !== changedJoker.id){
+          joker.orderValue -= 1 }}
+      else if (direction == 'decrease'){
+        if (currentId >= newId && currentId < (oldId||0) && joker.id !== changedJoker.id){
+          joker.orderValue += 1 }}}
+    if (changeType == 'remove'){
+      if (currentId >= newId && joker.id !== changedJoker.id){
+        joker.orderValue -= 1 }}
+  })
+  return jokers
+}
+
 export const getJokerName = function(joker:JokerData,jokers:JokerData[],value?:string){
   let newNumber:number|boolean|string
   let tempName:string = ''
@@ -396,22 +422,14 @@ const JokersPage: React.FC<JokersPageProps> = ({
   };
 
   const handleDeleteJoker = (jokerId: string) => {
+    const removedJoker = jokers.filter(joker => joker.id !== jokerId)[0]
     setJokers((prev) => prev.filter((joker) => joker.id !== jokerId));
-    let deletedOrderValue = jokers.length+1
-    for (let i = 0; i < jokers.length; i++) {
-            if (jokers[i].orderValue !== i+1) {
-                deletedOrderValue = jokers[i].orderValue; 
-                break}};
     if (selectedJokerId === jokerId) {
       const remainingJokers = jokers.filter((joker) => joker.id !== jokerId);
       setSelectedJokerId(
-        remainingJokers.length > 0 ? remainingJokers[0].id : null
-      );
-    for (let i=0; i<jokers.length;){
-      if (jokers[i].orderValue >= deletedOrderValue){
-        jokers[i].orderValue -=1
-      }}}
-  };
+        remainingJokers.length > 0 ? remainingJokers[0].id : null);
+    jokers = updateJokerIds(removedJoker, jokers, 'remove', removedJoker.orderValue)
+  }};
 
   const handleDuplicateJoker = async (joker: JokerData) => {
     if (isPlaceholderJoker(joker.imagePreview)) {
@@ -426,11 +444,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
         orderValue: joker.orderValue+1
       };
       setJokers([...jokers, duplicatedJoker]);
-      for (let i=0; i<jokers.length;i++){
-      const currentJoker = jokers[i]
-      if (currentJoker.orderValue >= duplicatedJoker.orderValue && currentJoker.id !== duplicatedJoker.id){
-        currentJoker.orderValue +=1
-      }}
+      jokers = updateJokerIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
     } else {
       const dupeName = getJokerName(joker,jokers)
       const duplicatedJoker: JokerData = {
@@ -440,12 +454,8 @@ const JokersPage: React.FC<JokersPageProps> = ({
         orderValue: joker.orderValue+1,
       };
       setJokers([...jokers, duplicatedJoker]);
-      for (let i=0; i<jokers.length;i++){
-      const currentJoker = jokers[i]
-      if (currentJoker.orderValue >= duplicatedJoker.orderValue && currentJoker.id !== duplicatedJoker.id){
-        currentJoker.orderValue +=1
-      }
-    }}
+      jokers = updateJokerIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
+    }
   };
 
   const handleExportJoker = (joker: JokerData) => {
