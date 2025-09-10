@@ -14,7 +14,7 @@ import {
   UserVariable,
 } from "../data/BalatroUtils";
 import { getAllVariables } from "../codeGeneration/Jokers/variableUtils";
-import { toPng } from "html-to-image";
+// import { toPng } from "html-to-image";
 
 interface ShowcaseModalProps {
   isOpen: boolean;
@@ -86,7 +86,7 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
   const handleDownload = async () => {
     if (!showcaseRef.current) return;
 
-    try {
+    /*try {
       const dataUrl = await toPng(showcaseRef.current, {
         quality: 1,
         pixelRatio: 2,
@@ -103,7 +103,7 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
       alert(
         "Screenshot failed. Please use your browser's screenshot feature instead."
       );
-    }
+    }*/
   };
 
   const allVariables = getAllVariables(joker);

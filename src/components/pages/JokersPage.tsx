@@ -17,7 +17,6 @@ import type { Rule } from "../ruleBuilder/types";
 import { RarityData, JokerData } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
 import ShowcaseModal from "../generic/ShowcaseModal";
-import { number } from "framer-motion";
 
 interface JokersPageProps {
   modName: string;
@@ -74,6 +73,35 @@ const upscaleImage = (imageSrc: string): Promise<string> => {
     img.src = imageSrc;
   });
 };
+
+export const getJokerName = function(joker:JokerData,jokers:JokerData[],value?:string){
+  let newNumber:number|boolean|string
+  let tempName:string = ''
+  let currentName 
+  let dupeName:string|null = value||null
+  if (dupeName && !jokers.some(listJoker => listJoker.name == dupeName && joker.id !== listJoker.id)){
+    return dupeName}
+  while (true){
+    let count:number = 0
+    let looping = true
+    let match     
+    currentName = dupeName || joker.name
+    tempName = currentName
+    while (looping == true){
+      match = tempName.match(/\d+$/) 
+      if (match){
+        tempName=tempName.slice(0,-1)
+        count +=1}
+      else{looping=false}}
+    if (count>0)
+      {newNumber = Number(currentName.substring(currentName.length-Number(count),currentName.length))+1}
+    else {newNumber = false} 
+    if (newNumber !== false){
+      dupeName = currentName.slice(0,-count)+String(newNumber)}
+    else {dupeName = currentName+'2'}
+    if (dupeName && !jokers.some(listJoker => listJoker.name == dupeName && joker.id !== listJoker.id)){
+      return dupeName
+}}}
 
 const getRandomPlaceholderJoker = async (): Promise<{
   imageData: string;
@@ -388,25 +416,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const handleDuplicateJoker = async (joker: JokerData) => {
     if (isPlaceholderJoker(joker.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderJoker();
-      let newNumber:number|boolean|string
-      let dupeName:string
-      let tempName=joker.name
-      let count:number = 0
-      let looping = true
-      let match
-      while (looping == true){
-        match = tempName.match(/\d+$/) 
-        if (match){
-          tempName=tempName.slice(0,-1)
-          count +=1}
-        else{looping=false
-           break}}
-      if (count>0)
-        {newNumber = Number(joker.name.substring(joker.name.length-Number(count),joker.name.length))+1
-      } else {newNumber = false} 
-      if (newNumber !== false){
-        dupeName = joker.name.slice(0,-count)+String(newNumber)}
-      else {dupeName= joker.name+'2'}
+      const dupeName = getJokerName(joker,jokers)
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
@@ -422,10 +432,11 @@ const JokersPage: React.FC<JokersPageProps> = ({
         currentJoker.orderValue +=1
       }}
     } else {
+      const dupeName = getJokerName(joker,jokers)
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
-        name: `${joker.name} Copy`,
+        name: `${dupeName}`,
         orderValue: joker.orderValue+1,
       };
       setJokers([...jokers, duplicatedJoker]);
@@ -681,6 +692,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
           <EditJokerInfo
             isOpen={!!editingJoker}
             joker={editingJoker}
+            jokers={jokers}
             onClose={() => setEditingJoker(null)}
             onSave={handleSaveJoker}
             onDelete={handleDeleteJoker}

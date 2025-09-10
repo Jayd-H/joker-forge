@@ -47,10 +47,12 @@ import {
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
+import { getJokerName } from "../JokersPage";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
   joker: JokerData;
+  jokers: JokerData[];
   onClose: () => void;
   onSave: (joker: JokerData) => void;
   onDelete: (jokerId: string) => void;
@@ -77,6 +79,7 @@ type UnlockTrigger = keyof typeof unlockOptions;
 const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   isOpen,
   joker,
+  jokers,
   onClose,
   onSave,
   onDelete,
@@ -393,6 +396,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      value = getJokerName(joker, jokers, value)
       setFormData({
         ...formData,
         [field]: value,

@@ -32,6 +32,8 @@ import {
   type JokerData,
   slugify,
 } from "../../data/BalatroUtils";
+import { getJokerName } from "../JokersPage";
+
 
 interface JokerCardProps {
   joker: JokerData;
@@ -154,7 +156,9 @@ const JokerCard: React.FC<JokerCardProps> = ({
       return;
     }
 
-    onQuickUpdate({ name: tempName, jokerKey: slugify(tempName) });
+    const finalName = getJokerName(joker,jokers, tempName)
+
+    onQuickUpdate({ name: finalName, jokerKey: slugify(finalName) });
     setEditingName(false);
     setNameValidationError("");
   };
