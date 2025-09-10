@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import {
+  GameObjectData,
   JokerData,
   BoosterData,
   RarityData,
@@ -24,7 +25,9 @@ import {
   generateEditionsCode,
 } from "./Card/index";
 
-const sortForExport = <T extends { id: string; name: string }>(
+// Old Export Method
+//
+/* const sortForExport = <T extends { id: string; name: string }>(
   items: T[]
 ): T[] => {
   return [...items].sort((a, b) => {
@@ -38,13 +41,14 @@ const sortForExport = <T extends { id: string; name: string }>(
     return idA.localeCompare(idB);
   });
 };
+*/
 
-const sortJokersForExport = (
-  items: JokerData[]
-): JokerData[] => {
-  return [...items].sort((a, b) => 
-    a.orderValue - b.orderValue
-  );
+const sortGameObjectForExport = (
+  items: GameObjectData[]
+)=>{
+  const sortedItems = [...items].sort((a, b) => 
+    a.orderValue - b.orderValue)
+  return sortedItems as any;
 };
 
 
@@ -191,12 +195,12 @@ export const exportModCode = async (
 
     const zip = new JSZip();
 
-    const sortedJokers = sortJokersForExport(validJokers);
-    const sortedConsumables = sortForExport(validConsumables);
-    const sortedBoosters = sortForExport(validBoosters);
-    const sortedEnhancements = sortForExport(validEnhancements);
-    const sortedSeals = sortForExport(validSeals);
-    const sortedEditions = sortForExport(validEditions);
+    const sortedJokers = sortGameObjectForExport(validJokers);
+    const sortedConsumables = sortGameObjectForExport(validConsumables);
+    const sortedBoosters = sortGameObjectForExport(validBoosters);
+    const sortedEnhancements = sortGameObjectForExport(validEnhancements);
+    const sortedSeals = sortGameObjectForExport(validSeals);
+    const sortedEditions = sortGameObjectForExport(validEditions);
     const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
@@ -470,12 +474,12 @@ to_big = to_big or function(a) return a end
 lenient_bignum = lenient_bignum or function(a) return a end
 `;
 
-const createJokerIndexList = function(jokers:JokerData[]){
-  const alphabetOrder = jokers.sort((a,b)=>a.name.localeCompare(b.name))
+const createIndexList = function(objects:GameObjectData[]){
+  const alphabetOrder = objects.sort((a,b)=>a.name.localeCompare(b.name))
   console.log(String(alphabetOrder))
   let order:Array<Array<number>>= []
-  jokers.forEach(joker=>{
-    order.push([alphabetOrder.indexOf(joker)+1,joker.orderValue
+  objects.forEach(object=>{
+    order.push([alphabetOrder.indexOf(object)+1,object.orderValue
   ])})
   const indexOrder = order.sort((a,b)=>a[1]-b[1])
   let  indexArray:Array<number> = []
@@ -485,16 +489,16 @@ const createJokerIndexList = function(jokers:JokerData[]){
 }
 
   if (jokers.length > 0) {
-    const indexArray= createJokerIndexList(jokers)
+    const indexArray= createIndexList(jokers)
     output += `
-local indexList = {${indexArray}}
+local jokerIndexList = {${indexArray}}
 
 local function load_jokers_folder()
     local mod_path = SMODS.current_mod.path
     local jokers_path = mod_path .. "/jokers"
     local files = NFS.getDirectoryItemsInfo(jokers_path)
     for i = 1, #files do
-        local file_name = files[indexList[i]].name
+        local file_name = files[jokerIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("jokers/" .. file_name))()
         end
@@ -505,12 +509,16 @@ end
   }
 
   if (consumables.length > 0) {
-    output += `local function load_consumables_folder()
+    const indexArray= createIndexList(consumables)
+    output += `
+local consumableIndexList = {${indexArray}}
+
+local function load_consumables_folder()
     local mod_path = SMODS.current_mod.path
     local consumables_path = mod_path .. "/consumables"
     local files = NFS.getDirectoryItemsInfo(consumables_path)
     for i = 1, #files do
-        local file_name = files[i].name
+        local file_name = files[consumableIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("consumables/" .. file_name))()
         end
@@ -521,12 +529,16 @@ end
   }
 
   if (enhancements.length > 0) {
-    output += `local function load_enhancements_folder()
+    const indexArray= createIndexList(enhancements)
+    output += `
+local enhancementIndexList = {${indexArray}}
+
+local function load_enhancements_folder()
     local mod_path = SMODS.current_mod.path
     local enhancements_path = mod_path .. "/enhancements"
     local files = NFS.getDirectoryItemsInfo(enhancements_path)
     for i = 1, #files do
-        local file_name = files[i].name
+        local file_name = files[enhancementIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("enhancements/" .. file_name))()
         end
@@ -537,12 +549,16 @@ end
   }
 
   if (seals.length > 0) {
-    output += `local function load_seals_folder()
+    const indexArray= createIndexList(seals)
+    output += `
+local sealIndexList = {${indexArray}}
+
+local function load_seals_folder()
     local mod_path = SMODS.current_mod.path
     local seals_path = mod_path .. "/seals"
     local files = NFS.getDirectoryItemsInfo(seals_path)
     for i = 1, #files do
-        local file_name = files[i].name
+        local file_name = files[sealIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("seals/" .. file_name))()
         end
@@ -553,12 +569,16 @@ end
   }
 
   if (editions.length > 0) {
-    output += `local function load_editions_folder()
+    const indexArray= createIndexList(editions)
+    output += `
+local editionIndexList = {${indexArray}}
+
+local function load_editions_folder()
     local mod_path = SMODS.current_mod.path
     local editions_path = mod_path .. "/editions"
     local files = NFS.getDirectoryItemsInfo(editions_path)
     for i = 1, #files do
-        local file_name = files[i].name
+        local file_name = files[editionIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("editions/" .. file_name))()
         end
@@ -594,7 +614,8 @@ load_rarities_file()
   }
 
   if (boosters.length > 0) {
-    output += `local function load_boosters_file()
+    output += `
+local function load_boosters_file()
     local mod_path = SMODS.current_mod.path
     assert(SMODS.load_file("boosters.lua"))()
 end
