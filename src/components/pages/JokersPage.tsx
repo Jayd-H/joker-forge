@@ -14,7 +14,7 @@ import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
 import { exportSingleJoker } from "../codeGeneration/Jokers/index";
 import type { Rule } from "../ruleBuilder/types";
-import { RarityData, JokerData } from "../data/BalatroUtils";
+import { RarityData, JokerData, GameObjectData } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
 import ShowcaseModal from "../generic/ShowcaseModal";
 
@@ -74,59 +74,61 @@ const upscaleImage = (imageSrc: string): Promise<string> => {
   });
 };
 
-export const updateJokerIds = function(
-  changedJoker:JokerData,
-  jokers:JokerData[],
+export const updateGameObjectIds = function(
+  changedObject:GameObjectData,
+  data:GameObjectData[],
   changeType:string,
   newId:number,
   direction?:string,
   oldId?:number,
-){jokers.forEach(joker =>{
-    const currentId = joker.orderValue
+){data.forEach(object =>{
+    const currentId = object.orderValue
     if (changeType == 'insert'){
-      if (currentId >= newId && joker.id !== changedJoker.id){
-        joker.orderValue += 1 }}
+      if (currentId >= newId && object.id !== changedObject.id){
+        object.orderValue += 1 }}
     if (changeType == 'change'){
       if (direction == 'increase'){
-        if (currentId <= newId && currentId > (oldId||0) && joker.id !== changedJoker.id){
-          joker.orderValue -= 1 }}
+        if (currentId <= newId && currentId > (oldId||0) && object.id !== changedObject.id){
+          object.orderValue -= 1 }}
       else if (direction == 'decrease'){
-        if (currentId >= newId && currentId < (oldId||0) && joker.id !== changedJoker.id){
-          joker.orderValue += 1 }}}
+        if (currentId >= newId && currentId < (oldId||0) && object.id !== changedObject.id){
+          object.orderValue += 1 }}}
     if (changeType == 'remove'){
-      if (currentId >= newId && joker.id !== changedJoker.id){
-        joker.orderValue -= 1 }}
+      if (currentId >= newId && object.id !== changedObject.id){
+        object.orderValue -= 1 }}
   })
-  return jokers
+  return data as any
 }
 
-export const getJokerName = function(joker:JokerData,jokers:JokerData[],value?:string){
+export const getObjectName = function(
+  object:GameObjectData,
+  data:GameObjectData[],
+  value?:string,
+){
   let newNumber:number|boolean|string
   let tempName:string = ''
   let currentName 
   let dupeName:string|null = value||null
-  if (dupeName && !jokers.some(listJoker => listJoker.name == dupeName && joker.id !== listJoker.id)){
+  if (dupeName && !data.some(dataObject => dataObject.name == dupeName && object.id !== dataObject.id)){
     return dupeName}
   while (true){
     let count:number = 0
     let looping = true
     let match     
-    currentName = dupeName || joker.name
+    currentName = dupeName || object.name
     tempName = currentName
     while (looping == true){
       match = tempName.match(/\d+$/) 
-      if (match){
-        tempName=tempName.slice(0,-1)
-        count +=1}
-      else{looping=false}}
+      if (match){tempName=tempName.slice(0,-1), count +=1}
+      else {looping=false}}
     if (count>0)
       {newNumber = Number(currentName.substring(currentName.length-Number(count),currentName.length))+1}
     else {newNumber = false} 
     if (newNumber !== false){
       dupeName = currentName.slice(0,-count)+String(newNumber)}
     else {dupeName = currentName+'2'}
-    if (dupeName && !jokers.some(listJoker => listJoker.name == dupeName && joker.id !== listJoker.id)){
-      return dupeName
+    if (dupeName && !data.some(dataObject => dataObject.name == dupeName && object.id !== dataObject.id)){
+      return dupeName as any
 }}}
 
 const getRandomPlaceholderJoker = async (): Promise<{
@@ -428,13 +430,13 @@ const JokersPage: React.FC<JokersPageProps> = ({
       const remainingJokers = jokers.filter((joker) => joker.id !== jokerId);
       setSelectedJokerId(
         remainingJokers.length > 0 ? remainingJokers[0].id : null);
-    jokers = updateJokerIds(removedJoker, jokers, 'remove', removedJoker.orderValue)
+    jokers = updateGameObjectIds(removedJoker, jokers, 'remove', removedJoker.orderValue)
   }};
 
   const handleDuplicateJoker = async (joker: JokerData) => {
     if (isPlaceholderJoker(joker.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderJoker();
-      const dupeName = getJokerName(joker,jokers)
+      const dupeName = getObjectName(joker,jokers)
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
@@ -444,9 +446,9 @@ const JokersPage: React.FC<JokersPageProps> = ({
         orderValue: joker.orderValue+1
       };
       setJokers([...jokers, duplicatedJoker]);
-      jokers = updateJokerIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
+      jokers = updateGameObjectIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
     } else {
-      const dupeName = getJokerName(joker,jokers)
+      const dupeName = getObjectName(joker,jokers)
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
@@ -454,7 +456,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
         orderValue: joker.orderValue+1,
       };
       setJokers([...jokers, duplicatedJoker]);
-      jokers = updateJokerIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
+      jokers = updateGameObjectIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
     }
   };
 

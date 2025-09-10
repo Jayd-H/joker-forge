@@ -86,14 +86,17 @@ export interface UserVariable {
     | "Flush Five";
 }
 
-export interface JokerData {
+export interface GameObjectData {
   id: string;
   name: string;
   description: string;
   imagePreview: string;
+  orderValue: number;
+}
+
+export interface JokerData extends GameObjectData {
   overlayImagePreview?: string;
   rarity: number | string;
-  orderValue: number;
   cost?: number;
   blueprint_compat?: boolean;
   eternal_compat?: boolean;
@@ -143,11 +146,7 @@ export interface RarityData {
   default_weight: number;
 }
 
-export interface ConsumableData {
-  id: string;
-  name: string;
-  description: string;
-  imagePreview: string;
+export interface ConsumableData extends GameObjectData{
   overlayImagePreview?: string;
   set: "Tarot" | "Planet" | "Spectral" | string;
   cost?: number;
@@ -189,11 +188,7 @@ export interface BoosterCardRule {
   pool?: string;
 }
 
-export interface BoosterData {
-  id: string;
-  name: string;
-  description: string;
-  imagePreview: string;
+export interface BoosterData extends GameObjectData{
   cost: number;
   weight: number;
   draw_hand: boolean;
@@ -217,11 +212,7 @@ export interface BoosterData {
   hasUserUploadedImage?: boolean;
 }
 
-export interface EnhancementData {
-  id: string;
-  name: string;
-  description: string;
-  imagePreview: string;
+export interface EnhancementData extends GameObjectData{
   enhancementKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
@@ -240,11 +231,7 @@ export interface EnhancementData {
   hasUserUploadedImage?: boolean;
 }
 
-export interface SealData {
-  id: string;
-  name: string;
-  description: string;
-  imagePreview: string;
+export interface SealData extends GameObjectData{
   sealKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
@@ -258,10 +245,7 @@ export interface SealData {
   hasUserUploadedImage?: boolean;
 }
 
-export interface EditionData {
-  id: string;
-  name: string;
-  description: string;
+export interface EditionData extends GameObjectData{
   editionKey: string;
   shader: string | false;
   unlocked?: boolean;

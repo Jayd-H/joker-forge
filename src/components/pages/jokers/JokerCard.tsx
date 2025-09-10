@@ -32,8 +32,8 @@ import {
   type JokerData,
   slugify,
 } from "../../data/BalatroUtils";
-import { getJokerName } from "../JokersPage";
-import { updateJokerIds } from "../JokersPage";
+import { getObjectName } from "../JokersPage";
+import { updateGameObjectIds } from "../JokersPage";
 
 interface JokerCardProps {
   joker: JokerData;
@@ -156,7 +156,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
       return;
     }
 
-    const finalName = getJokerName(joker,jokers, tempName)
+    const finalName = getObjectName(joker, jokers, tempName)
 
     onQuickUpdate({ name: finalName, jokerKey: slugify(finalName) });
     setEditingName(false);
@@ -174,7 +174,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
     onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,jokers.length)) });
     setEditingId(false);
     const direction = (priorValue>newValue)?'decrease':'increase'
-    jokers = updateJokerIds(joker, jokers, 'change', newValue, direction, priorValue)
+    jokers = updateGameObjectIds(joker, jokers, 'change', newValue, direction, priorValue)
   };
 
   const handleDescriptionSave = () => {
@@ -506,7 +506,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
                   cancelText: "Keep It",
                   confirmVariant: "danger",
                   onConfirm: () => {onDelete()
-                  jokers = updateJokerIds(joker, jokers, 'remove', joker.orderValue)}
+                  jokers = updateGameObjectIds(joker, jokers, 'remove', joker.orderValue)}
                   ,
                 });
               }}

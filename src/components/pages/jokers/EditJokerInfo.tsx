@@ -47,7 +47,7 @@ import {
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
-import { updateJokerIds, getJokerName } from "../JokersPage";
+import { updateGameObjectIds, getObjectName } from "../JokersPage";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
@@ -396,7 +396,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      value = getJokerName(joker, jokers, value)
+      value = getObjectName(joker, jokers, value)
       setFormData({
         ...formData,
         [field]: value,
@@ -652,7 +652,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       onConfirm: () => {
         onDelete(joker.id);
         onClose();
-        jokers = updateJokerIds(joker, jokers, 'remove', joker.orderValue) 
+        jokers = updateGameObjectIds(joker, jokers, 'remove', joker.orderValue) 
       },
     });
   };
