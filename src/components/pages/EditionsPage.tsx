@@ -78,6 +78,16 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
+        value: "id-desc",
+        label: "Id Value (Most to Least)",
+        sortFn: (a, b) => b.orderValue - a.orderValue,
+      },
+      {
+        value: "id-asc",
+        label: "Id Value (Least to Most)",
+        sortFn: (a, b) => a.orderValue - b.orderValue,
+      },
+      {
         value: "name-asc",
         label: "Name (A-Z)",
         sortFn: (a, b) => a.name.localeCompare(b.name),
@@ -152,7 +162,9 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
       rules: [],
       weight: 0,
       sound: "foil1",
+      orderValue: editions.length+1,
     };
+    newEdition.name = getObjectName(newEdition,editions,"New Edition")
     setEditions([...editions, newEdition]);
     setEditingEdition(newEdition);
   };
@@ -166,26 +178,25 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
   };
 
   const handleDeleteEdition = (editionId: string) => {
+    const removedEdition = editions.filter(edition => edition.id !== editionId)[0]
     setEditions((prev) => prev.filter((edition) => edition.id !== editionId));
 
     if (selectedEditionId === editionId) {
-      const remainingEditions = editions.filter(
-        (edition) => edition.id !== editionId
-      );
-      setSelectedEditionId(
-        remainingEditions.length > 0 ? remainingEditions[0].id : null
-      );
-    }
-  };
+      const remainingEditions = editions.filter((edition) => edition.id !== editionId);
+      setSelectedEditionId(remainingEditions.length > 0 ? remainingEditions[0].id : null);
+    editions = updateGameObjectIds(removedEdition, editions, 'remove', removedEdition.orderValue)
+    }};
 
   const handleDuplicateEdition = async (edition: EditionData) => {
+    const dupeName = getObjectName(edition,editions)
     const duplicatedEdition: EditionData = {
       ...edition,
       id: crypto.randomUUID(),
-      name: `${edition.name} Copy`,
-      editionKey: slugify(`${edition.name} Copy`),
+      name: `${dupeName}`,
+      editionKey: slugify(`${dupeName}`),
     };
     setEditions([...editions, duplicatedEdition]);
+    editions = updateGameObjectIds(duplicatedEdition, editions, 'insert', duplicatedEdition.orderValue)
   };
 
   const handleExportEdition = (edition: EditionData) => {
@@ -256,7 +267,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    "Id Value (Most to Least)";
 
   return (
     <div className="min-h-screen">
@@ -366,6 +377,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
               <EditionCard
                 key={edition.id}
                 edition={edition}
+                editions={editions}
                 onEditInfo={() => handleEditInfo(edition)}
                 onEditRules={() => handleEditRules(edition)}
                 onDelete={() => handleDeleteEdition(edition.id)}
@@ -383,6 +395,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
           <EditEditionInfo
             isOpen={!!editingEdition}
             edition={editingEdition}
+            editions={editions}
             onClose={() => setEditingEdition(null)}
             onSave={handleSaveEdition}
             onDelete={handleDeleteEdition}
