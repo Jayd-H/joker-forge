@@ -1175,11 +1175,13 @@ export const generateSingleEditionCode = (
     shader = false,`;
   }
 
-  const hasConfig = configItems.length > 0;
-  if (hasConfig) {
+  const hasExtraConfig = configItems.length > 0;
+    if (hasExtraConfig) {
     editionCode += `
     config = {
-        ${configItems.join(",\n        ")}
+        extra = {
+            ${configItems.join(",\n            ")}
+        }
     },`;
   }
 
