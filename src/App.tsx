@@ -72,7 +72,6 @@ import Sidebar from "./components/Sidebar";
 
 // Data and Utils
 import {
-  GameObjectData,
   ConsumableData,
   JokerData,
   RarityData,
@@ -428,15 +427,15 @@ function AppContent() {
       try {
         const data: AutoSaveData = {
           modMetadata: metadata,
-          jokers: jokerData,
+          jokers: scanGameObjectIds(jokerData),
           sounds: soundData,
-          consumables: consumableData,
+          consumables: scanGameObjectIds(consumableData),
           customRarities: raritiesData,
           consumableSets: setsData,
-          boosters: boosterData,
-          enhancements: enhancementsData,
-          seals: sealsData,
-          editions: editionsData,
+          boosters: scanGameObjectIds(boosterData),
+          enhancements: scanGameObjectIds(enhancementsData),
+          seals: scanGameObjectIds(sealsData),
+          editions: scanGameObjectIds(editionsData),
           timestamp: Date.now(),
         };
         localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));
@@ -542,9 +541,6 @@ function AppContent() {
         localStorage.removeItem(AUTO_SAVE_KEY);
         return null;
       }
-
-      const gameObjects = [jokers,consumables,boosters,enhancements,seals,editions]
-      gameObjects.forEach(type => type = scanGameObjectIds(type))
 
       console.log("Loaded auto-saved project state");
       return {

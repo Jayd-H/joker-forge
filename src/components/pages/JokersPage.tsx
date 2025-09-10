@@ -91,7 +91,7 @@ export const updateGameObjectIds = function(
         if (currentId <= newId && currentId > (oldId||0) && object.id !== changedObject.id){
           object.orderValue -= 1 }}
       else if (direction == 'decrease'){
-        if (currentId >= newId && currentId < (oldId||0) && object.id !== changedObject.id){
+        if (currentId >= newId && currentId < (oldId||data.length+1) && object.id !== changedObject.id){
           object.orderValue += 1 }}}
     if (changeType == 'remove'){
       if (currentId >= newId && object.id !== changedObject.id){
@@ -101,14 +101,49 @@ export const updateGameObjectIds = function(
 }
 
 export const scanGameObjectIds = function(
-  data:GameObjectData[],
-){data.forEach(object =>{
-  if (!object.orderValue){
-    object.orderValue = 1
-    data = updateGameObjectIds(object,data,'insert',1)
-}})
-  return data as any
+  data:GameObjectData[]){
+  const missingValues = locateMissingIds(data)
+  const objectData = data
+  if (missingValues.length == 0){return data}
+  missingValues.forEach(value=>{
+    const objectIndex:number = locateWrongId(data)
+    objectData[objectIndex].orderValue = value
+  })
+  return objectData as any
 }
+
+export const locateMissingIds = function(
+  data:GameObjectData[]){
+  const objectData = data
+  let listOfValues:Array <number> = []
+  objectData.forEach(object => listOfValues.push(object.orderValue))
+  listOfValues.sort((a,b)=>a-b)
+  let missingValues:Array <number> =[]
+  for (let i=0;i<listOfValues.length;i++){ 
+    if (listOfValues[i]!==i+1){
+      missingValues.push(i+1)
+  }}
+  return missingValues
+}
+
+export const locateWrongId = function(
+  data:GameObjectData[]){
+  const objectData = data
+  let wrongIndex = NaN
+  objectData.forEach(object => {
+    if (isNaN(wrongIndex)){
+      if (!object.orderValue){
+        wrongIndex = objectData.indexOf(object)}
+      else if (!(object.orderValue <= objectData.length && object.orderValue>0)){
+        wrongIndex = objectData.indexOf(object)}
+      else if (Number.isNaN(object.orderValue)){
+        wrongIndex = objectData.indexOf(object)}
+      else if (data.some((item) => item.orderValue == object.orderValue && item.name !== object.name)){
+        wrongIndex = objectData.indexOf(object)}}})
+  return wrongIndex
+}
+
+
 
 export const getObjectName = function(
   object:GameObjectData,
