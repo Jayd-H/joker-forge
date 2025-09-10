@@ -155,8 +155,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
 
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
-      return;
-    }
+      return;}
 
     const finalName = getObjectName(joker, jokers, tempName)
 

@@ -105,8 +105,6 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [hoveredId, setHoveredId] = useState(false);
-
-  const [nameValidationError, setNameValidationError] = useState<string>("");
   
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
@@ -114,17 +112,11 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
 
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
-    if (!validation.isValid) {
-        setNameValidationError(validation.error || "Invalid name");
-        return}
-
-    const finalName = getObjectName(booster, boosters, tempName)
-      
-    onQuickUpdate({ name: finalName, boosterKey: slugify(finalName) });
-    setEditingName(false)
-    setNameValidationError("");
-    
-  };
+    if (validation.isValid) {
+      const finalName = getObjectName(booster, boosters, tempName)
+      onQuickUpdate({ name: finalName, boosterKey: slugify(finalName) });
+      setEditingName(false)    
+  }};
 
   const handleCostSave = () => {
     onQuickUpdate({ cost: tempCost });
