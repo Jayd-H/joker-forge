@@ -9,8 +9,9 @@ export const generateSetSellValueReturn = (
   triggerType: string,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const target = (effect.params?.target as string) || "self";
-  const operation = (effect.params?.operation as string) || "add";
+  const target = (effect.params?.target as string) || "specific";
+  const operation:string = (effect.params?.operation as string) || "add";
+  const specificTarget = (effect.params?.specific_target as string) || "self";
 
   const variableName =
     sameTypeCount === 0 ? "sell_value" : `sell_value${sameTypeCount + 1}`;
@@ -28,150 +29,86 @@ export const generateSetSellValueReturn = (
 
   let sellValueCode = "";
   let messageText = "";
+  let targetJokerLogic = ''
 
-  if (target === "self") {
-    switch (operation) {
+  if (target == "specific") {
+    if (specificTarget == "left"||"right"||"self"){
+      targetJokerLogic += `local my_pos = nil
+        for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == card then
+                my_pos = i
+                break
+            end
+        end
+        local `}
+    switch (specificTarget) {
+    case "right":
+      targetJokerLogic += `target_card = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
+      break;
+    case "left":
+      targetJokerLogic += `target_card = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
+      break;
+    case "self":
+      targetJokerLogic += `target_card = G.jokers.cards[my_post]`;
+      break;
+    case "first":
+      targetJokerLogic += `target_card = G.jokers.cards[1]`;
+      break
+    case "last":
+      targetJokerLogic += `target_card = G.jokers.cards[#G.jokers]`;
+      break
+    case "random":
+      targetJokerLogic += `chosenTarget = pseudorandom(3456543, 1, #G.jokers.cards) or nil
+        target_card = G.jokers.cards[chosenTarget]
+        end`;
+      break;}
+    sellValueCode += `${targetJokerLogic}`}
+  if (target === "all_jokers"||"all") {
+    sellValueCode += ``
+    if (target === "all") {
+       sellValueCode += `for _, area in ipairs({ G.jokers, G.consumeables }) do
+       `}
+    sellValueCode += `for i, target_card in ipairs(`
+    if (target === "all_jokers") {sellValueCode += `G.jokers.cards`}
+    else {sellValueCode += `area.cards`}
+    sellValueCode += `) do
+                if target_card.set_cost then`            
+  switch (operation) {
       case "add":
-        sellValueCode = `
-            card.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
-            card:set_cost()`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"+"..tostring(${valueCode}).." Sell Value"`;
+        sellValueCode += `
+            target_joker.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
+            target_joker:set_cost()`;
         break;
       case "subtract":
-        sellValueCode = `
-            card.ability.extra_value = math.max(0, (card.ability.extra_value or 0) - ${valueCode})
-            card:set_cost()`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"-"..tostring(${valueCode}).." Sell Value"`;
+        sellValueCode += `
+            target_joker.ability.extra_value = math.max(0, (card.ability.extra_value or 0) - ${valueCode})
+            target_joker:set_cost()`;
         break;
       case "set":
-        sellValueCode = `
-            card.ability.extra_value = ${valueCode}
-            card:set_cost()`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"Sell Value: $"..tostring(${valueCode})`;
-        break;
-      default:
-        sellValueCode = `
-            card.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
-            card:set_cost()`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"+"..tostring(${valueCode}).." Sell Value"`;
-    }
-  } else if (target === "all_jokers") {
-    switch (operation) {
-      case "add":
-        sellValueCode = `
-            for i, other_card in ipairs(G.jokers.cards) do
-                if other_card.set_cost then
-                    other_card.ability.extra_value = (other_card.ability.extra_value or 0) + ${valueCode}
-                    other_card:set_cost()
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Jokers +"..tostring(${valueCode}).." Sell Value"`;
-        break;
-      case "subtract":
-        sellValueCode = `
-            for i, other_card in ipairs(G.jokers.cards) do
-                if other_card.set_cost then
-                    other_card.ability.extra_value = math.max(0, (other_card.ability.extra_value or 0) - ${valueCode})
-                    other_card:set_cost()
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Jokers -"..tostring(${valueCode}).." Sell Value"`;
-        break;
-      case "set":
-        sellValueCode = `
-            for i, other_card in ipairs(G.jokers.cards) do
-                if other_card.set_cost then
-                    other_card.ability.extra_value = ${valueCode}
-                    other_card:set_cost()
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Jokers Sell Value: $"..tostring(${valueCode})`;
-        break;
-      default:
-        sellValueCode = `
-            for i, other_card in ipairs(G.jokers.cards) do
-                if other_card.set_cost then
-                    other_card.ability.extra_value = (other_card.ability.extra_value or 0) + ${valueCode}
-                    other_card:set_cost()
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Jokers +"..tostring(${valueCode}).." Sell Value"`;
-    }
-  } else if (target === "all") {
-    switch (operation) {
-      case "add":
-        sellValueCode = `
-            for _, area in ipairs({ G.jokers, G.consumeables }) do
-                for i, other_card in ipairs(area.cards) do
-                    if other_card.set_cost then
-                        other_card.ability.extra_value = (other_card.ability.extra_value or 0) + ${valueCode}
-                        other_card:set_cost()
-                    end
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Cards +"..tostring(${valueCode}).." Sell Value"`;
-        break;
-      case "subtract":
-        sellValueCode = `
-            for _, area in ipairs({ G.jokers, G.consumeables }) do
-                for i, other_card in ipairs(area.cards) do
-                    if other_card.set_cost then
-                        other_card.ability.extra_value = math.max(0, (other_card.ability.extra_value or 0) - ${valueCode})
-                        other_card:set_cost()
-                    end
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Cards -"..tostring(${valueCode}).." Sell Value"`;
-        break;
-      case "set":
-        sellValueCode = `
-            for _, area in ipairs({ G.jokers, G.consumeables }) do
-                for i, other_card in ipairs(area.cards) do
-                    if other_card.set_cost then
-                        other_card.ability.extra_value = ${valueCode}
-                        other_card:set_cost()
-                    end
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Cards Sell Value: $"..tostring(${valueCode})`;
-        break;
-      default:
-        sellValueCode = `
-            for _, area in ipairs({ G.jokers, G.consumeables }) do
-                for i, other_card in ipairs(area.cards) do
-                    if other_card.set_cost then
-                        other_card.ability.extra_value = (other_card.ability.extra_value or 0) + ${valueCode}
-                        other_card:set_cost()
-                    end
-                end
-            end`;
-        messageText = customMessage
-          ? `"${customMessage}"`
-          : `"All Cards +"..tostring(${valueCode}).." Sell Value"`;
-    }
-  }
+        sellValueCode += `
+            target_joker.ability.extra_value = ${valueCode}
+            target_joker:set_cost()`;}
+  if (target === "all_jokers" || "all") {sellValueCode += `
+            end
+        end`
+    if (target === "all"){sellValueCode +=`
+    end`
+  }}}
+
+  let messageType, messageOperation
+  const typeKey:Array <Array<string>> = [["specific",''], ["all_jokers",'All Jokers '], ["all",'All cards ']];
+  const operationKey:Array <Array<string>> = [
+    ["add",`+"..tostring(${valueCode}).." Sell Value"`], 
+    ["subtract",`-"..tostring(${valueCode}).." Sell Value"`],
+    ["set",`Sell Value: $"..tostring(${valueCode})`]];
+ operationKey.forEach(entry=> {
+  if (entry[0]==operation){messageOperation = entry[1]}})
+ typeKey.forEach(entry=> {
+  if (entry[0]==target){messageType = entry[1]}})
+
+  messageText = customMessage
+            ? `"${customMessage}"`
+            : `"${messageType}${messageOperation}`
 
   const result: EffectReturn = {
     statement: isScoring

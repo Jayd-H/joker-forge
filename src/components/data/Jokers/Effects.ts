@@ -868,13 +868,28 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Target",
         options: [
-          { value: "self", label: "This Joker Only" },
+          { value: "specific", label: "Specific Joker" },
           { value: "all_jokers", label: "All Jokers" },
           { value: "all", label: "All Jokers and Consumables" },
         ],
+        default: "specific",
+      },{
+        id: "specific_target",
+        type: "select",
+        label: "Specific Joker",
+        options: [
+          { value: "self", label: "This Joker" },
+          { value: "right", label: "Joker on my Right" },
+          { value: "left", label: "Joker on my Left" },
+          { value: "first", label: "Leftmost Joker" },
+          { value: "last", label: "Rightmost Joker" },
+          { value: "random", label: "Random Joker" },
+        ],
+        showWhen: {
+          parameter: "target",
+          values: ["specific"],},
         default: "self",
-      },
-      {
+      },{
         id: "operation",
         type: "select",
         label: "Operation",
