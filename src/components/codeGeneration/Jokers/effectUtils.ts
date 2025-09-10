@@ -95,6 +95,8 @@ import { generateShuffleJokerReturn } from "./effects/ShuffleJokersEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 import { generateApplyHyperChipsReturn } from "./effects/ApplyHyperChipsEffect";
 import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
+import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
+
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -745,6 +747,8 @@ const generateSingleEffect = (
       return generateSetSellValueReturn(effect, triggerType, sameTypeCount);
     case "balance":
       return generateBalanceReturn(effect);
+    case "swap_chips_mult":
+      return generateSwapChipsMultReturn(effect);
     case "change_suit_variable":
       return generateChangeSuitVariableReturn(effect);
     case "change_rank_variable":

@@ -8,6 +8,7 @@ import {
   SparklesIcon,
   CakeIcon,
   UserGroupIcon,
+  VariableIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "./Triggers";
 import { GENERIC_TRIGGERS } from "./Conditions";
@@ -61,9 +62,13 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
     icon: ReceiptPercentIcon,
   },
   {
+    label: "Variables",
+    icon: VariableIcon,
+  },
+  {
     label: "Special",
     icon: SparklesIcon,
-  },
+  },  
 ];
 
 export const EFFECT_TYPES: EffectTypeDefinition[] = [
@@ -553,7 +558,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         default: 1,
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "add_card_to_deck",
@@ -863,13 +868,28 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Target",
         options: [
-          { value: "self", label: "This Joker Only" },
+          { value: "specific", label: "Specific Joker" },
           { value: "all_jokers", label: "All Jokers" },
           { value: "all", label: "All Jokers and Consumables" },
         ],
+        default: "specific",
+      },{
+        id: "specific_target",
+        type: "select",
+        label: "Specific Joker",
+        options: [
+          { value: "self", label: "This Joker" },
+          { value: "right", label: "Joker on my Right" },
+          { value: "left", label: "Joker on my Left" },
+          { value: "first", label: "Leftmost Joker" },
+          { value: "last", label: "Rightmost Joker" },
+          { value: "random", label: "Random Joker" },
+        ],
+        showWhen: {
+          parameter: "target",
+          values: ["specific"],},
         default: "self",
-      },
-      {
+      },{
         id: "operation",
         type: "select",
         label: "Operation",
@@ -1282,68 +1302,57 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           if (!selectedSet || selectedSet === "random") {
             return [{ value: "random", label: "Random from Set" }];
           }
-
           // Handle vanilla sets
           if (selectedSet === "Tarot") {
             const vanillaCards = TAROT_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Tarot")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];
           }
-
           if (selectedSet === "Planet") {
             const vanillaCards = PLANET_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Planet")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];
           }
-
           if (selectedSet === "Spectral") {
             const vanillaCards = SPECTRAL_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Spectral")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];
-          }
-
+            ];}
           // Handle custom sets
           const setKey = selectedSet.includes("_")
             ? selectedSet.split("_").slice(1).join("_")
@@ -1357,8 +1366,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           return [
             { value: "random", label: "Random from Set" },
             ...customConsumablesInSet,
-          ];
-        },
+          ];},
         default: "random",
       },{
         id: "soulable",
@@ -1812,9 +1820,27 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "card_scored",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
+      "joker_evaluated",
+      "before_hand_played",
+      "after_hand_played",
     ],
     params: [],
-    category: "Special",
+    category: "Scoring",
+  },{
+      id: "swap_chips_mult",
+      label: "Swap Chips and Mult",
+      description: "Swap the Chips and Mult values",
+      applicableTriggers: [
+      "hand_played",
+      "card_scored",
+      "card_held_in_hand",
+      "card_held_in_hand_end_of_round",
+      "joker_evaluated",
+      "before_hand_played",
+      "after_hand_played",
+    ],
+      params: [],
+      category: "Scoring",
   },
   {
     id: "change_suit_variable",
@@ -1850,7 +1876,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "reduce_flush_straight_requirements",
@@ -1920,7 +1946,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "change_pokerhand_variable",
@@ -1958,7 +1984,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Special",
+    category: "Variables",
   },
   {
     id: "combine_ranks",

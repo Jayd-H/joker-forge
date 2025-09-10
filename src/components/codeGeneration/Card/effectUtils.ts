@@ -27,6 +27,9 @@ import { generateAddExpChipsReturn } from "./effects/AddExpChipsEffect";
 import { generateAddExpMultReturn } from "./effects/AddExpMultEffect";
 import { generateAddHyperChipsReturn } from "./effects/AddHyperChipsEffect";
 import { generateAddHyperMultReturn } from "./effects/AddHyperMultEffect";
+import { generateChangeRankVariableReturn } from "./effects/ChangeRankVariableEffect";
+import { generateChangeSuitVariableReturn } from "./effects/ChangeSuitVariableEffect";
+import { generateChangePokerHandVariableReturn } from "./effects/ChangePokerHandVariableEffect";
 
 export interface ConfigExtraVariable {
   name: string;
@@ -131,6 +134,15 @@ const generateSingleEffect = (
         trigger || "",
         itemType
       );
+    
+    case "change_rank_variable":
+      return generateChangeRankVariableReturn(effect);
+
+    case "change_suit_variable":
+      return generateChangeSuitVariableReturn(effect);
+    
+      case "change_poker_hand_variable":
+      return generateChangePokerHandVariableReturn(effect);
 
     case "emit_flag":
       return generateEmitFlagReturn(effect, getModPrefix());

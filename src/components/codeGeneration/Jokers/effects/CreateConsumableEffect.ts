@@ -7,7 +7,7 @@ export const generateCreateConsumableReturn = (
 ): EffectReturn => {
   const set = (effect.params?.set as string) || "random";
   const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === "negative";
+  const isNegative = (effect.params?.is_negative as string) == 'y';
   const customMessage = effect.customMessage;
   const soulable = effect.params?.soulable;
 
