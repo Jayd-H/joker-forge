@@ -17,9 +17,12 @@ import Tooltip from "../../generic/Tooltip";
 import { validateJokerName } from "../../generic/validationUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { BoosterData, slugify } from "../../data/BalatroUtils";
+import { getObjectName, updateGameObjectIds } from "../JokersPage";
+
 
 interface BoosterCardProps {
   booster: BoosterData;
+  boosters: BoosterData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -81,6 +84,7 @@ const PropertyIcon: React.FC<{
 
 const BoosterCard: React.FC<BoosterCardProps> = ({
   booster,
+  boosters,
   onEditInfo,
   onEditRules,
   onDelete,
@@ -91,21 +95,35 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const [editingName, setEditingName] = useState(false);
   const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [editingId, setEditingId] = useState(false);
+
   const [tempName, setTempName] = useState(booster.name);
   const [tempCost, setTempCost] = useState(booster.cost);
+  const [tempId, setTempId] = useState(booster.orderValue);
   const [tempDescription, setTempDescription] = useState(booster.description);
+  
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
+  const [hoveredId, setHoveredId] = useState(false);
+
+  const [nameValidationError, setNameValidationError] = useState<string>("");
+  
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
   const [imageLoadError, setImageLoadError] = useState(false);
 
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
-    if (validation.isValid) {
-      onQuickUpdate({ name: tempName, boosterKey: slugify(tempName) });
-      setEditingName(false);
-    }
+    if (!validation.isValid) {
+        setNameValidationError(validation.error || "Invalid name");
+        return}
+
+    const finalName = getObjectName(booster, boosters, tempName)
+      
+    onQuickUpdate({ name: finalName, boosterKey: slugify(finalName) });
+    setEditingName(false)
+    setNameValidationError("");
+    
   };
 
   const handleCostSave = () => {
@@ -117,6 +135,15 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
     onQuickUpdate({ description: tempDescription });
     setEditingDescription(false);
   };
+
+  const handleIdSave = () => {
+      const priorValue = booster.orderValue
+      const newValue = tempId
+      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,boosters.length)) });
+      setEditingId(false);
+      const direction = (priorValue>newValue)?'decrease':'increase'
+      boosters = updateGameObjectIds(booster, boosters, 'change', newValue, direction, priorValue)
+    };
 
   const handleDeleteClick = () => {
     showConfirmation({
@@ -164,6 +191,24 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
+  };
+
+  const handleIdHover = () => {
+    if (tooltipDelayTimeout) {
+      clearTimeout(tooltipDelayTimeout);
+    }
+    const timeout = setTimeout(() => {
+      setHoveredId(true);
+    }, 500);
+    setTooltipDelayTimeout(timeout);
+  };
+
+  const handleIdLeave = () => {
+    if (tooltipDelayTimeout) {
+      clearTimeout(tooltipDelayTimeout);
+      setTooltipDelayTimeout(null);
+    }
+    setHoveredId(false);
   };
 
   const getBoosterTypeIcon = () => {
@@ -294,7 +339,6 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
             )}
           </div>
         </div>
-
         <div className="relative z-30">
           <div
             className={`px-4 py-1 -mt-6 rounded-md border-2 text-sm tracking-wide font-medium bg-black ${getBoosterTypeColor()}`}
@@ -303,8 +347,39 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
           </div>
         </div>
       </div>
-
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
+        <Tooltip content = "Edit Booster Id"show={hoveredId}>
+          <div 
+            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
+            onMouseEnter={handleIdHover}
+            onMouseLeave={handleIdLeave}>
+            {editingId ? (
+            <input 
+              type="number"
+              value={tempId}
+              onChange={(e) => setTempId(parseInt(e.target.value))}
+              onBlur={handleIdSave}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleIdSave();
+                if (e.key === "Escape") {
+                  setTempId(booster.orderValue);
+                  setEditingId(false);
+                }
+              }}
+              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              autoFocus
+              />):(
+            <span
+              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              onClick={() => {
+                setTempId(booster.orderValue);
+                setEditingId(true);
+              }}
+            >
+              Id:{booster.orderValue}
+            </span>)}
+            </div>
+        </Tooltip>
         <Tooltip content="Delete Booster" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"

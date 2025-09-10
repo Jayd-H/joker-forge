@@ -16,6 +16,8 @@ import { exportSingleSeal } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { SealData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import { updateGameObjectIds, getObjectName } from "./JokersPage";
+
 
 interface SealsPageProps {
   modName: string;

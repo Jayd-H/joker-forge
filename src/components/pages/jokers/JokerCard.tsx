@@ -119,10 +119,12 @@ const JokerCard: React.FC<JokerCardProps> = ({
   const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
   const [editingId, setEditingId] = useState(false);
+  
   const [tempName, setTempName] = useState(joker.name);
   const [tempCost, setTempCost] = useState(joker.cost || 4);
   const [tempId, setTempId] = useState(joker.orderValue);
   const [tempDescription, setTempDescription] = useState(joker.description);
+
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [hoveredId, setHoveredId] = useState(false);

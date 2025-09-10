@@ -90,11 +90,12 @@ export interface GameObjectData {
   id: string;
   name: string;
   description: string;
-  imagePreview: string;
   orderValue: number;
+  discovered?: boolean;
 }
 
 export interface JokerData extends GameObjectData {
+  imagePreview: string;
   overlayImagePreview?: string;
   rarity: number | string;
   cost?: number;
@@ -102,7 +103,6 @@ export interface JokerData extends GameObjectData {
   eternal_compat?: boolean;
   perishable_compat?: boolean;
   unlocked?: boolean;
-  discovered?: boolean;
   force_eternal?: boolean;
   force_perishable?: boolean;
   force_rental?: boolean;
@@ -147,11 +147,11 @@ export interface RarityData {
 }
 
 export interface ConsumableData extends GameObjectData{
+  imagePreview: string;
   overlayImagePreview?: string;
   set: "Tarot" | "Planet" | "Spectral" | string;
   cost?: number;
   unlocked?: boolean;
-  discovered?: boolean;
   hidden?: boolean;
   can_repeat_soul?: boolean;
   rules?: Rule[];
@@ -189,6 +189,7 @@ export interface BoosterCardRule {
 }
 
 export interface BoosterData extends GameObjectData{
+  imagePreview: string;
   cost: number;
   weight: number;
   draw_hand: boolean;
@@ -205,7 +206,6 @@ export interface BoosterData extends GameObjectData{
   card_rules: BoosterCardRule[];
   background_colour?: string;
   special_colour?: string;
-  discovered?: boolean;
   hidden?: boolean;
   placeholderCreditIndex?: number;
   boosterKey?: string;
@@ -213,6 +213,7 @@ export interface BoosterData extends GameObjectData{
 }
 
 export interface EnhancementData extends GameObjectData{
+  imagePreview: string;
   enhancementKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
@@ -222,7 +223,6 @@ export interface EnhancementData extends GameObjectData{
   no_suit?: boolean;
   always_scores?: boolean;
   unlocked?: boolean;
-  discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
   weight?: number;
@@ -232,12 +232,12 @@ export interface EnhancementData extends GameObjectData{
 }
 
 export interface SealData extends GameObjectData{
+  imagePreview: string;
   sealKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
   badge_colour?: string;
   unlocked?: boolean;
-  discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
   userVariables?: UserVariable[];
@@ -249,7 +249,6 @@ export interface EditionData extends GameObjectData{
   editionKey: string;
   shader: string | false;
   unlocked?: boolean;
-  discovered?: boolean;
   no_collection?: boolean;
   in_shop?: boolean;
   weight?: number;

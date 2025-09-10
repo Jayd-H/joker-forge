@@ -16,6 +16,8 @@ import { exportSingleEdition } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { EditionData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import { updateGameObjectIds, getObjectName } from "./JokersPage";
+
 
 interface EditionsPageProps {
   modName: string;

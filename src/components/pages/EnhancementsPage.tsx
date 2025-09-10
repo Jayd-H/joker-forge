@@ -16,6 +16,8 @@ import { exportSingleEnhancement } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { EnhancementData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import { updateGameObjectIds, getObjectName } from "./JokersPage";
+
 
 interface EnhancementsPageProps {
   modName: string;

@@ -383,7 +383,6 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const handleAddNewJoker = async () => {
     const placeholderResult = await getRandomPlaceholderJoker();
     const modPool = modPrefix+'_jokers'
-
     const newJoker: JokerData = {
       id: crypto.randomUUID(),
       name: "New Joker",
@@ -413,6 +412,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
       appearFlags: "",
       pools: [modPool],
     };
+    newJoker.name = getObjectName(newJoker,jokers,"New Joker")
     setJokers([...jokers, newJoker]);
     setEditingJoker(newJoker);
   };
@@ -426,17 +426,17 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const handleDeleteJoker = (jokerId: string) => {
     const removedJoker = jokers.filter(joker => joker.id !== jokerId)[0]
     setJokers((prev) => prev.filter((joker) => joker.id !== jokerId));
+    
     if (selectedJokerId === jokerId) {
       const remainingJokers = jokers.filter((joker) => joker.id !== jokerId);
-      setSelectedJokerId(
-        remainingJokers.length > 0 ? remainingJokers[0].id : null);
+      setSelectedJokerId(remainingJokers.length > 0 ? remainingJokers[0].id : null);
     jokers = updateGameObjectIds(removedJoker, jokers, 'remove', removedJoker.orderValue)
   }};
 
   const handleDuplicateJoker = async (joker: JokerData) => {
+    const dupeName = getObjectName(joker,jokers)
     if (isPlaceholderJoker(joker.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderJoker();
-      const dupeName = getObjectName(joker,jokers)
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
@@ -448,7 +448,6 @@ const JokersPage: React.FC<JokersPageProps> = ({
       setJokers([...jokers, duplicatedJoker]);
       jokers = updateGameObjectIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
     } else {
-      const dupeName = getObjectName(joker,jokers)
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
@@ -571,7 +570,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
   };
 
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ||
+    sortOptions.find((option) => option.value === sortBy)?.value ||
     "id-desc";
 
   return (

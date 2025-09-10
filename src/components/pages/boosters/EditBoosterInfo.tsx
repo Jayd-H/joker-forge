@@ -16,9 +16,12 @@ import BalatroCard from "../../generic/BalatroCard";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { BoosterData, BoosterType } from "../../data/BalatroUtils";
 import { UserConfigContext } from "../../Contexts";
+import { getObjectName, updateGameObjectIds } from "../JokersPage";
 
 interface EditBoosterInfoProps {
   isOpen: boolean;
+  booster: BoosterData;
+  boosters: BoosterData[];
   onClose: () => void;
   onSave: () => void;
   editingBooster: BoosterData | null;
@@ -28,6 +31,8 @@ interface EditBoosterInfoProps {
 
 const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   isOpen,
+  booster,
+  boosters,
   onClose,
   onSave,
   editingBooster,
@@ -200,9 +205,10 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     }
 
     if (field === "name") {
+      value = getObjectName(booster, boosters, value)
       onFormDataChange({
-        [field]: finalValue,
-        boosterKey: generateKeyFromName(finalValue),
+        [field]: value,
+        boosterKey: generateKeyFromName(value),
       });
     } else {
       onFormDataChange({
