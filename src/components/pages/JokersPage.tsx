@@ -100,6 +100,16 @@ export const updateGameObjectIds = function(
   return data as any
 }
 
+export const scanGameObjectIds = function(
+  data:GameObjectData[],
+){data.forEach(object =>{
+  if (!object.orderValue){
+    object.orderValue = 1
+    data = updateGameObjectIds(object,data,'insert',1)
+}})
+  return data as any
+}
+
 export const getObjectName = function(
   object:GameObjectData,
   data:GameObjectData[],

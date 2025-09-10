@@ -72,6 +72,7 @@ import Sidebar from "./components/Sidebar";
 
 // Data and Utils
 import {
+  GameObjectData,
   ConsumableData,
   JokerData,
   RarityData,
@@ -93,6 +94,7 @@ import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
+import { scanGameObjectIds } from "./components/pages/JokersPage";
 interface AlertState {
   isVisible: boolean;
   type: "success" | "warning" | "error";
@@ -540,6 +542,9 @@ function AppContent() {
         localStorage.removeItem(AUTO_SAVE_KEY);
         return null;
       }
+
+      const gameObjects = [jokers,consumables,boosters,enhancements,seals,editions]
+      gameObjects.forEach(type => type = scanGameObjectIds(type))
 
       console.log("Loaded auto-saved project state");
       return {
