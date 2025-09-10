@@ -1287,68 +1287,57 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           if (!selectedSet || selectedSet === "random") {
             return [{ value: "random", label: "Random from Set" }];
           }
-
           // Handle vanilla sets
           if (selectedSet === "Tarot") {
             const vanillaCards = TAROT_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Tarot")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];
           }
-
           if (selectedSet === "Planet") {
             const vanillaCards = PLANET_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Planet")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];
           }
-
           if (selectedSet === "Spectral") {
             const vanillaCards = SPECTRAL_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Spectral")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];
-          }
-
+            ];}
           // Handle custom sets
           const setKey = selectedSet.includes("_")
             ? selectedSet.split("_").slice(1).join("_")
@@ -1362,8 +1351,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           return [
             { value: "random", label: "Random from Set" },
             ...customConsumablesInSet,
-          ];
-        },
+          ];},
         default: "random",
       },{
         id: "soulable",

@@ -7,11 +7,11 @@ export const generateCreateConsumableReturn = (
 ): EffectReturn => {
   const set = effect.params?.set || "random";
   const specificCard = effect.params?.specific_card || "random";
-  const isNegative = effect.params?.is_negative || "n";
+  const isNegative = (effect.params?.is_negative as string) == 'y';
+  const isSoulable = (effect.params?.soulable as string) == 'y';
 
   const count = effect.params?.count || 1;
   const customMessage = effect.customMessage;
-  const isSoulable = effect.params?.soulable;
 
 
   const countCode = generateGameVariableCode(count);
@@ -19,7 +19,7 @@ export const generateCreateConsumableReturn = (
   let createCode = `
     __PRE_RETURN_CODE__`
   
-  if (isNegative !== 'y'){createCode += `
+  if (!isNegative){createCode += `
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   }else{createCode += `
     for i = 1, ${countCode} do`
@@ -30,7 +30,7 @@ export const generateCreateConsumableReturn = (
             trigger = 'after',
             delay = 0.4,
             func = function()`
-  if (isNegative == 'y'){createCode += `
+  if (isNegative){createCode += `
             if G.consumeables.config.card_limit > #G.consumeables.cards then`}
 
   createCode +=`
@@ -47,14 +47,14 @@ export const generateCreateConsumableReturn = (
   if (set == "random"){createCode += `set = random_set, `}
   else if (specificCard == "random"){createCode += `set = ${set}, `}
 
-  if (isNegative == 'y'){createCode += `edition = 'e_negative', `}
-  if (isSoulable == 'y' && specificCard == "random"){createCode += `soulable = true, `}
+  if (isNegative){createCode += `edition = 'e_negative', `}
+  if (isSoulable && specificCard == "random"){createCode += `soulable = true, `}
   if (set !== "random" && specificCard !== "random"){createCode += `key = '${specificCard}'`}
 
   createCode += `})                            
             used_card:juice_up(0.3, 0.5)`
 
-  if (isNegative == 'y'){createCode += `
+  if (isNegative){createCode += `
             end`}
 
   createCode +=`
