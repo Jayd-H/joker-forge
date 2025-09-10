@@ -171,7 +171,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
   const handleIdSave = () => {
     const priorValue = joker.orderValue
     const newValue = tempId
-    onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,jokers.length)) });
+    onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,jokers.length+1)) });
     setEditingId(false);
     for (let i=0; i<jokers.length;i++){
       const currentJoker = jokers[i]
