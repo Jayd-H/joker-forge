@@ -570,8 +570,8 @@ const JokersPage: React.FC<JokersPageProps> = ({
   };
 
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.value ||
-    "id-desc";
+    sortOptions.find((option) => option.value === sortBy)?.label ||
+    "Id Value (Most to Least)";
 
   return (
     <div className="min-h-screen">
