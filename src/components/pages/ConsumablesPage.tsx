@@ -1186,8 +1186,8 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   };
 
   const currentSortLabel =
-    currentSortOptions.find((option) => option.value === sortBy)?.value ||
-    "id-desc";
+    currentSortOptions.find((option) => option.value === sortBy)?.label ||
+    "Id Value (Most to Least)";
 
   return (
     <div className="min-h-screen pb-24">

@@ -870,8 +870,8 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   }, [boosters, searchTerm, sortBy, sortOptions]);
 
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.value ||
-    "id-desc";
+    sortOptions.find((option) => option.value === sortBy)?.label ||
+    "Id Value (Most to Least)";
 
   return (
     <div className="min-h-screen">
