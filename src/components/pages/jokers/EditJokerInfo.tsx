@@ -47,7 +47,7 @@ import {
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
-import { updateGameObjectIds, getObjectName } from "../JokersPage";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditJokerInfoProps {
   isOpen: boolean;

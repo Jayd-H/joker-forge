@@ -17,7 +17,7 @@ import Tooltip from "../../generic/Tooltip";
 import { validateJokerName } from "../../generic/validationUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { BoosterData, slugify } from "../../data/BalatroUtils";
-import { getObjectName, updateGameObjectIds } from "../JokersPage";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 
 interface BoosterCardProps {

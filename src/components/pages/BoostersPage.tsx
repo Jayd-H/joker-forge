@@ -27,7 +27,7 @@ import {
 import BoosterCard from "./boosters/BoosterCard";
 import EditBoosterInfo from "./boosters/EditBoosterInfo";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "./JokersPage";
+import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
 
 interface BoostersPageProps {
   modName: string;

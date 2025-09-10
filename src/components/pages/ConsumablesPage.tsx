@@ -30,7 +30,7 @@ import {
 } from "../data/BalatroUtils";
 import { exportSingleConsumable } from "../codeGeneration/Consumables";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "./JokersPage";
+import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
 
 
 interface ConsumablesPageProps {

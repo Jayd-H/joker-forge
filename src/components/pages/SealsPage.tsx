@@ -16,7 +16,7 @@ import { exportSingleSeal } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { SealData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "./JokersPage";
+import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
 
 
 interface SealsPageProps {
@@ -487,6 +487,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
               <SealCard
                 key={seal.id}
                 seal={seal}
+                seals={seals}
                 onEditInfo={() => handleEditInfo(seal)}
                 onEditRules={() => handleEditRules(seal)}
                 onDelete={() => handleDeleteSeal(seal.id)}
@@ -504,6 +505,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
           <EditSealInfo
             isOpen={!!editingSeal}
             seal={editingSeal}
+            seals={seals}
             onClose={() => setEditingSeal(null)}
             onSave={handleSaveSeal}
             onDelete={handleDeleteSeal}

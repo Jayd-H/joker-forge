@@ -15,7 +15,7 @@ import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { ConsumableData } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../JokersPage";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface ConsumableCardProps {
   consumable: ConsumableData;

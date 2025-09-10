@@ -16,7 +16,7 @@ import BalatroCard from "../../generic/BalatroCard";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { BoosterData, BoosterType } from "../../data/BalatroUtils";
 import { UserConfigContext } from "../../Contexts";
-import { getObjectName } from "../JokersPage";
+import { getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditBoosterInfoProps {
   isOpen: boolean;

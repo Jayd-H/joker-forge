@@ -32,8 +32,7 @@ import {
   type JokerData,
   slugify,
 } from "../../data/BalatroUtils";
-import { getObjectName } from "../JokersPage";
-import { updateGameObjectIds } from "../JokersPage";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface JokerCardProps {
   joker: JokerData;

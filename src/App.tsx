@@ -93,7 +93,8 @@ import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
-import { scanGameObjectIds } from "./components/pages/JokersPage";
+import { scanGameObjectIds } from "./components/generic/GameObjectOrdering";
+
 interface AlertState {
   isVisible: boolean;
   type: "success" | "warning" | "error";

@@ -18,7 +18,7 @@ import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { EditionData, slugify } from "../../data/BalatroUtils";
-import { getObjectName, updateGameObjectIds } from "../JokersPage";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditionCardProps {
   edition: EditionData;
