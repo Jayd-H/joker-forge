@@ -194,6 +194,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
       id: crypto.randomUUID(),
       name: `${dupeName}`,
       editionKey: slugify(`${dupeName}`),
+      orderValue: edition.orderValue+1,
     };
     setEditions([...editions, duplicatedEdition]);
     editions = updateGameObjectIds(duplicatedEdition, editions, 'insert', duplicatedEdition.orderValue)

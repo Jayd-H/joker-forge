@@ -189,6 +189,16 @@ const SealsPage: React.FC<SealsPageProps> = ({
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
+        value: "id-desc",
+        label: "Id Value (Most to Least)",
+        sortFn: (a, b) => b.orderValue - a.orderValue,
+      },
+      {
+        value: "id-asc",
+        label: "Id Value (Least to Most)",
+        sortFn: (a, b) => a.orderValue - b.orderValue,
+      },
+      {
         value: "name-asc",
         label: "Name (A-Z)",
         sortFn: (a, b) => a.name.localeCompare(b.name),
@@ -255,7 +265,9 @@ const SealsPage: React.FC<SealsPageProps> = ({
       discovered: true,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
+      orderValue: seals.length+1,
     };
+    newSeal.name = getObjectName(newSeal,seals,"New Seal")
     setSeals([...seals, newSeal]);
     setEditingSeal(newSeal);
   };
@@ -267,36 +279,39 @@ const SealsPage: React.FC<SealsPageProps> = ({
   };
 
   const handleDeleteSeal = (sealId: string) => {
+    const removedSeal = seals.filter(seal => seal.id !== sealId)[0]
     setSeals((prev) => prev.filter((seal) => seal.id !== sealId));
 
-    if (selectedSealId === sealId) {
-      const remainingSeals = seals.filter((seal) => seal.id !== sealId);
-      setSelectedSealId(
-        remainingSeals.length > 0 ? remainingSeals[0].id : null
-      );
-    }
-  };
+    if (selectedSealId === sealId) {const remainingSeals = seals.filter((seal) => seal.id !== sealId);
+      setSelectedSealId(remainingSeals.length > 0 ? remainingSeals[0].id : null);
+    seals = updateGameObjectIds(removedSeal, seals, 'remove', removedSeal.orderValue)
+  }};
 
   const handleDuplicateSeal = async (seal: SealData) => {
+    const dupeName = getObjectName(seal,seals)
     if (isPlaceholderSeal(seal.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderSeal();
       const duplicatedSeal: SealData = {
         ...seal,
         id: crypto.randomUUID(),
-        name: `${seal.name} Copy`,
+        name: `${dupeName}`,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        sealKey: slugify(`${seal.name} Copy`),
+        sealKey: slugify(`${dupeName}`),
+        orderValue: seal.orderValue +1,
       };
       setSeals([...seals, duplicatedSeal]);
+      seals = updateGameObjectIds(duplicatedSeal, seals, 'insert', duplicatedSeal.orderValue)
     } else {
       const duplicatedSeal: SealData = {
         ...seal,
         id: crypto.randomUUID(),
-        name: `${seal.name} Copy`,
-        sealKey: slugify(`${seal.name} Copy`),
+        name: `${dupeName}`,
+        sealKey: slugify(`${dupeName}`),
+        orderValue: seal.orderValue +1,
       };
       setSeals([...seals, duplicatedSeal]);
+      seals = updateGameObjectIds(duplicatedSeal, seals, 'insert', duplicatedSeal.orderValue)
     }
   };
 
@@ -363,7 +378,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    "Id Value (Most to Least)";
 
   return (
     <div className="min-h-screen">

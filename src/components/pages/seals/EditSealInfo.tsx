@@ -19,10 +19,13 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import { getObjectName, updateGameObjectIds } from "../JokersPage";
+
 
 interface EditSealInfoProps {
   isOpen: boolean;
   seal: SealData;
+  seals: SealData[];
   onClose: () => void;
   onSave: (seal: SealData) => void;
   onDelete: (sealId: string) => void;
@@ -68,6 +71,7 @@ const predefinedColors = [
 const EditSealInfo: React.FC<EditSealInfoProps> = ({
   isOpen,
   seal,
+  seals,
   onClose,
   onSave,
   onDelete,
@@ -256,6 +260,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      value = getObjectName(seal, seals, value)
       setFormData({
         ...formData,
         [field]: value,
@@ -354,6 +359,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
       onConfirm: () => {
         onDelete(seal.id);
         onClose();
+        seals = updateGameObjectIds(seal, seals, 'remove', seal.orderValue) 
       },
     });
   };
