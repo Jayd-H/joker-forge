@@ -47,7 +47,6 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   if (!data.jokers || !Array.isArray(data.jokers)) {
     throw new Error("Invalid mod data - missing or invalid jokers data");
   }
-
   const normalizedJokers = data.jokers.map(normalizeJokerData);
   const normalizedSounds = (data.sounds || []).map(normalizeSoundData);
   const normalizedConsumables = (data.consumables || []).map(
@@ -130,6 +129,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
+    orderValue: joker.orderValue || NaN,
   };
 };
 
@@ -162,6 +162,7 @@ const normalizeConsumableData = (
     placeholderCreditIndex: consumable.placeholderCreditIndex,
     consumableKey: consumable.consumableKey || "",
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
+    orderValue: consumable.orderValue || NaN,
   };
 };
 
@@ -189,6 +190,7 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     placeholderCreditIndex: booster.placeholderCreditIndex,
     boosterKey: booster.boosterKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
+    orderValue: booster.orderValue || NaN
   };
 };
 
@@ -216,6 +218,7 @@ const normalizeEnhancementData = (
     placeholderCreditIndex: enhancement.placeholderCreditIndex,
     hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
     weight: enhancement.weight ?? 5,
+    orderValue: enhancement.orderValue || NaN
   };
 };
 
@@ -236,6 +239,7 @@ const normalizeSealData = (seal: SealData): SealData => {
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
     hasUserUploadedImage: seal.hasUserUploadedImage || false,
+    orderValue: seal.orderValue || NaN
   };
 };
 
@@ -258,6 +262,7 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
     disable_shadow: edition.disable_shadow,
     disable_base_shader: edition.disable_base_shader,
     rules: edition.rules || [],
+    orderValue: edition.orderValue || NaN
   };
 };
 

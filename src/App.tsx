@@ -93,6 +93,8 @@ import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
+import { scanGameObjectIds } from "./components/generic/GameObjectOrdering";
+
 interface AlertState {
   isVisible: boolean;
   type: "success" | "warning" | "error";
@@ -426,15 +428,15 @@ function AppContent() {
       try {
         const data: AutoSaveData = {
           modMetadata: metadata,
-          jokers: jokerData,
+          jokers: scanGameObjectIds(jokerData),
           sounds: soundData,
-          consumables: consumableData,
+          consumables: scanGameObjectIds(consumableData),
           customRarities: raritiesData,
           consumableSets: setsData,
-          boosters: boosterData,
-          enhancements: enhancementsData,
-          seals: sealsData,
-          editions: editionsData,
+          boosters: scanGameObjectIds(boosterData),
+          enhancements: scanGameObjectIds(enhancementsData),
+          seals: scanGameObjectIds(sealsData),
+          editions: scanGameObjectIds(editionsData),
           timestamp: Date.now(),
         };
         localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));

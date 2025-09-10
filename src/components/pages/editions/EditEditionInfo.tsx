@@ -30,10 +30,13 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
+
 
 interface EditEditionInfoProps {
   isOpen: boolean;
   edition: EditionData;
+  editions: EditionData[];
   onClose: () => void;
   onSave: (edition: EditionData) => void;
   onDelete: (editionId: string) => void;
@@ -74,6 +77,7 @@ const shaderOptions = [
 const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
   isOpen,
   edition,
+  editions,
   onClose,
   onSave,
   onDelete,
@@ -253,6 +257,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      value = getObjectName(edition, editions, value)
       setFormData({
         ...formData,
         [field]: value,
@@ -292,6 +297,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
       onConfirm: () => {
         onDelete(edition.id);
         onClose();
+        editions = updateGameObjectIds(edition, editions, 'remove', edition.orderValue) 
       },
     });
   };

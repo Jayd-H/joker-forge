@@ -21,10 +21,12 @@ import {
 import { ConsumableSetData } from "../../data/BalatroUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditConsumableInfoProps {
   isOpen: boolean;
   consumable: ConsumableData;
+  consumables: ConsumableData[];
   onClose: () => void;
   onSave: (consumable: ConsumableData) => void;
   onDelete: (consumableId: string) => void;
@@ -44,6 +46,7 @@ interface EditConsumableInfoProps {
 const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   isOpen,
   consumable,
+  consumables,
   onClose,
   onSave,
   onDelete,
@@ -301,6 +304,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      value = getObjectName(consumable, consumables, value)
       setFormData({
         ...formData,
         [field]: value,
@@ -413,6 +417,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       onConfirm: () => {
         onDelete(consumable.id);
         onClose();
+        consumables = updateGameObjectIds(consumable, consumables, 'remove', consumable.orderValue) 
       },
     });
   };

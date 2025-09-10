@@ -18,10 +18,13 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
+
 
 interface EditEnhancementInfoProps {
   isOpen: boolean;
   enhancement: EnhancementData;
+  enhancements: EnhancementData[];
   onClose: () => void;
   onSave: (enhancement: EnhancementData) => void;
   onDelete: (enhancementId: string) => void;
@@ -40,6 +43,7 @@ interface EditEnhancementInfoProps {
 const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   isOpen,
   enhancement,
+  enhancements,
   onClose,
   onSave,
   onDelete,
@@ -263,6 +267,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      value = getObjectName(enhancement, enhancements, value)
       setFormData({
         ...formData,
         [field]: value,
@@ -361,6 +366,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       onConfirm: () => {
         onDelete(enhancement.id);
         onClose();
+        enhancements = updateGameObjectIds(enhancement, enhancements, 'remove', enhancement.orderValue) 
       },
     });
   };
