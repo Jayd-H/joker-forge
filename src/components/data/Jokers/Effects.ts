@@ -531,7 +531,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "modify_internal_variable",
     label: "Modify Internal Variable",
     description: "Change an internal variable value for this joker",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "variable_name",
@@ -564,7 +564,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "add_card_to_deck",
     label: "Add Card to Deck",
     description: "Create a new playing card and add it to your deck",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "suit",
@@ -625,6 +625,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
+      "played_cards_before_scoring",
     ],
     params: [],
     category: "Card Effects",
@@ -633,7 +634,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "copy_played_card",
     label: "Copy Played Card",
     description: "Copy a specific card from the played hand to your deck",
-    applicableTriggers: ["hand_played"],
+    applicableTriggers: ["hand_played", "played_cards_before_scoring"],
     params: [
       {
         id: "card_index",
@@ -675,6 +676,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
+      "played_cards_before_scoring",
     ],
     params: [],
     category: "Card Effects",
@@ -688,6 +690,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
+      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -755,7 +758,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "add_card_to_hand",
     label: "Add Card to Hand",
     description: "Create a new playing card and add it to your hand",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "suit",
@@ -816,6 +819,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
+      "played_cards_before_scoring",
     ],
     params: [],
     category: "Card Effects",
@@ -824,7 +828,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "copy_played_card_to_hand",
     label: "Copy Played Card to Hand",
     description: "Copy a specific card from the played hand to your hand",
-    applicableTriggers: ["hand_played"],
+    applicableTriggers: ["hand_played", "played_cards_before_scoring"],
     params: [
       {
         id: "card_index",
@@ -915,7 +919,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Create Joker",
     description:
       "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "joker_type",
@@ -993,7 +997,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Copy Joker",
     description:
       "Copy an existing joker from your collection. For copying jokers from your own mod, it is j_[modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "selection_method",
@@ -1075,7 +1079,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Destroy Joker",
     description:
       "Destroy an existing joker from your collection. For destroying jokers from your own mod, it is j_[modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "selection_method",
@@ -1154,7 +1158,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "unlock_joker",
     label: "Unlock Joker",
     description: "Unlock a locked joker in the collection ",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "joker_key",
@@ -1179,7 +1183,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "flip_joker",
     label: "Flip Joker",
     description: "Flip a joker",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "selection_method",
@@ -1227,7 +1231,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "shuffle_jokers",
     label: "Shuffle Jokers",
     description: "Shuffle all jokers",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [],
     category: "Jokers",
   },
@@ -1248,6 +1252,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           "before_hand_played",
           "card_held_in_hand",
           "card_held_in_hand_end_of_round",
+          "played_cards_before_scoring",
         ].includes(trigger); // redeeming a voucher while in blind is buggy adding vouchers to other cards in play etc.
       }),
     ],
@@ -1281,7 +1286,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Create Consumable",
     description:
       "Create consumable cards and add them to your consumables area",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "set",
@@ -1398,7 +1403,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "destroy_consumable",
     label: "Destroy Consumable",
     description: "Destroy a consumable card from your collection",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "consumable_type",
@@ -1430,7 +1435,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "copy_consumable",
     label: "Copy Consumable",
     description: "Copy an existing consumable card from your collection",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "consumable_type",
@@ -1473,7 +1478,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Add Permanent Bonus",
     description:
       "Add permanent bonuses to the triggered card (like Hiker joker)",
-    applicableTriggers: ["card_scored"],
+    applicableTriggers: ["card_scored", "played_cards_before_scoring"],
     params: [
       {
         id: "bonus_type",
@@ -1615,6 +1620,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       "hand_discarded",
       "card_held_in_hand",
       "joker_evaluated",
+      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -1847,7 +1853,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Change Suit Variable",
     description:
       "Change the value of a suit variable to a specific suit or random suit",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "variable_name",
@@ -1917,7 +1923,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Change Rank Variable",
     description:
       "Change the value of a rank variable to a specific rank or random rank",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "variable_name",
@@ -1953,7 +1959,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Change Poker Hand Variable",
     description:
       "Change the value of a poker hand variable to a specific poker hand or random poker hand",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "variable_name",
@@ -2101,7 +2107,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "force_game_over",
     label: "Force Game Over",
     description: "Forces the run to end (ignores Mr. Bones)",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [],
     category: "Special",
   },
@@ -2109,7 +2115,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "juice_up_joker",
     label: "Juice Up The Joker",
     description: "Make the joker play a animation",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "mode",
@@ -2142,7 +2148,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "juice_up_card",
     label: "Juice Up The Card",
     description: "Make the Card play a animation",
-    applicableTriggers: ["card_scored", "card_held_in_hand"],
+    applicableTriggers: ["card_scored", "card_held_in_hand", "played_cards_before_scoring"],
     params: [
       {
         id: "mode",
@@ -2175,7 +2181,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "show_message",
     label: "Show Message",
     description: "Display a custom message with specified color",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "colour",
@@ -2204,7 +2210,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Emit Flag",
     description:
       "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "flag_name",
@@ -2240,7 +2246,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "play_sound",
     label: "Play a sound",
     description: "Play a specific sound defined in the Sound Tab",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
     params: [
       {
         id: "sound_key",
