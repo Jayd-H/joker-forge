@@ -70,8 +70,6 @@ export const locateWrongId = function(
   return wrongIndex
 }
 
-
-
 export const getObjectName = function(
   object:GameObjectData,
   data:GameObjectData[],
