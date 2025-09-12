@@ -349,7 +349,7 @@ const EditionCard: React.FC<EditionCardProps> = ({
                   cancelText: "Keep It",
                   confirmVariant: "danger",
                   onConfirm: () => {onDelete()
-                  editions = updateGameObjectIds(edition, editions, 'change', edition.orderValue)}
+                  editions = updateGameObjectIds(edition, editions, 'remove', edition.orderValue)}
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

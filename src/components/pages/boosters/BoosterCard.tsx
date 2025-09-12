@@ -147,7 +147,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       cancelText: "Keep Booster",
       confirmVariant: "danger",
       onConfirm: () => {onDelete(),
-      boosters = updateGameObjectIds(booster, boosters, 'delete', booster.orderValue )}
+      boosters = updateGameObjectIds(booster, boosters, 'remove', booster.orderValue )}
     });
   };
 

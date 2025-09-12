@@ -363,7 +363,7 @@ const SealCard: React.FC<SealCardProps> = ({
                   cancelText: "Keep It",
                   confirmVariant: "danger",
                   onConfirm: () => {onDelete()
-                  seals = updateGameObjectIds(seal, seals, 'change', seal.orderValue)}
+                  seals = updateGameObjectIds(seal, seals, 'remove', seal.orderValue)}
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"
