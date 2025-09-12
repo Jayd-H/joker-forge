@@ -12,7 +12,7 @@ export const generateCreateConsumableReturn = (
 
   const count = effect.params?.count || 1;
   const customMessage = effect.customMessage;
-
+  const ignoreSlots = effect.params?.ignore_slots || false;
 
   const countCode = generateGameVariableCode(count);
 
@@ -30,7 +30,7 @@ export const generateCreateConsumableReturn = (
             trigger = 'after',
             delay = 0.4,
             func = function()`
-  if (isNegative){createCode += `
+  if (isNegative || ignoreSlots){createCode += `
             if G.consumeables.config.card_limit > #G.consumeables.cards + G.GAME.consumeable_buffer then
               G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
 `}
