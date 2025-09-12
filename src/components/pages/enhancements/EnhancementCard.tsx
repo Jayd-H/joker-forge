@@ -387,7 +387,9 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => onDelete(),
+                  onConfirm: () => {onDelete()
+                  enhancements = updateGameObjectIds(enhancement, enhancements, 'change', enhancement.orderValue)}
+                  
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

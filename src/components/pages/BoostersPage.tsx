@@ -609,12 +609,12 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     cost: 4,
     weight: 1,
     draw_hand: false,
+    instant_use: false,
     booster_type: "joker",
     config: { extra: 3, choose: 1 },
     card_rules: [],
     discovered: true,
     boosterKey: "",
-    instant_use: false,
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(
@@ -719,6 +719,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       cost: 4,
       weight: 1,
       draw_hand: false,
+      instant_use: false,
       booster_type: "joker",
       config: { extra: 3, choose: 1 },
       card_rules: [],
@@ -726,7 +727,6 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       placeholderCreditIndex: placeholderResult.creditIndex,
       boosterKey: slugify("New Booster Pack"),
       group_key: key,
-      instant_use: false,
     };
     newBooster.name = getObjectName(newBooster,boosters,"New Booster Pack")
     setBoosters([...boosters, newBooster]);
@@ -791,12 +791,12 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       orderValue: NaN,
       weight: 1,
       draw_hand: false,
+      instant_use: false,
       booster_type: "joker",
       config: { extra: 3, choose: 1 },
       card_rules: [],
       discovered: true,
       boosterKey: "",
-      instant_use: false,
     });
   };
 

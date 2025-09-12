@@ -408,7 +408,8 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => onDelete(),
+                  onConfirm: () => {onDelete(), 
+                  consumables = updateGameObjectIds(consumable, consumables, 'change', consumable.orderValue)}
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

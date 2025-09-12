@@ -663,7 +663,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                       className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
                                     />
                                     <label
-                                      htmlFor="draw_hand"
+                                      htmlFor="instant_use"
                                       className="text-white-light text-sm"
                                     >
                                       Use Selected Card Instantly

@@ -12,6 +12,7 @@ import {
   UserGroupIcon,
   SparklesIcon as SparklesIconSolid,
   Cog6ToothIcon,
+  HandRaisedIcon,
 } from "@heroicons/react/24/outline";
 import Tooltip from "../../generic/Tooltip";
 import { validateJokerName } from "../../generic/validationUtils";
@@ -145,7 +146,8 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       confirmText: "Delete Booster",
       cancelText: "Keep Booster",
       confirmVariant: "danger",
-      onConfirm: onDelete,
+      onConfirm: () => {onDelete(),
+      boosters = updateGameObjectIds(booster, boosters, 'delete', booster.orderValue )}
     });
   };
 
@@ -267,7 +269,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       onClick: () => onQuickUpdate({ discovered: !isDiscovered }),
     },
     {
-      icon: <PlayIcon className="w-full h-full" />,
+      icon: <HandRaisedIcon className="w-full h-full" />,
       tooltip: drawToHand ? "Draws to Hand" : "Opens Normally",
       variant: "success" as const,
       isEnabled: drawToHand,
