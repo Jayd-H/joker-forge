@@ -10,6 +10,7 @@ import { generateConsumableCountConditionCode } from "./conditions/ConsumableCou
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
 import { generateDrawnHandConditionCode } from "./conditions/DrawnHandCondition";
+import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
 
 export const generateConditionChain = (rule: Rule): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
@@ -124,6 +125,9 @@ const generateSingleConditionCode = (
 
     case "system_condition":
       return generateSystemConditionCode([singleConditionRule]);
+
+    case "generic_compare":
+      return generateGenericCompareConditionCode([singleConditionRule]);
 
     default:
       return null;
