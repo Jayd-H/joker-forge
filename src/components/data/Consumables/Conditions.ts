@@ -79,6 +79,14 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Card Selection",
   },
   {
+    id: "hand_drawn",
+    label: "Hand Drawn",
+    description: "Check if a hand is currently drawn",
+    applicableTriggers: ["consumable_used"],
+    params: [],
+    category: "Game Context",
+  },
+  {
     id: "player_money",
     label: "Player Money",
     description: "Check the player's current money",

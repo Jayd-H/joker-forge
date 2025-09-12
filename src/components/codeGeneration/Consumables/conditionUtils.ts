@@ -9,6 +9,7 @@ import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateConsumableCountConditionCode } from "./conditions/ConsumableCountCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
+import { generateDrawnHandConditionCode } from "./conditions/DrawnHandCondition";
 
 export const generateConditionChain = (rule: Rule): string => {
   if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
@@ -111,6 +112,9 @@ const generateSingleConditionCode = (
 
     case "in_blind":
       return generateInBlindConditionCode([singleConditionRule]);
+
+    case "drawn_hand":
+      return generateDrawnHandConditionCode([singleConditionRule]);
 
     case "consumable_count":
       return generateConsumableCountConditionCode([singleConditionRule]);
