@@ -7,6 +7,7 @@ import {
 } from "./effectUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { convertRandomGroupsForCodegen, convertLoopGroupsForCodegen } from ".";
+import { processPassiveEffects } from "./effectUtils";
 
 interface CalculateFunctionResult {
   code: string;
@@ -313,9 +314,9 @@ export const generateCalcFunction = (
         ruleCode += `${retrigCode.ruleCode}`
         allConfigVariables.push(...(retrigCode.configVariables || [] ))
         if (currentRule.hasNonRetriggerEffects){
-        const nonretrigCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, modprefix,'non_retrigger','retrigger_cards',false,jokerKey,globalEffectCounts)
-        ruleCode += `${nonretrigCode.ruleCode}`
-        allConfigVariables.push(...(nonretrigCode.configVariables || [] ))
+          const nonretrigCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, modprefix,'non_retrigger','retrigger_cards',false,jokerKey,globalEffectCounts)
+          ruleCode += `${nonretrigCode.ruleCode}`
+          allConfigVariables.push(...(nonretrigCode.configVariables || [] ))
       }}
     else if (currentRule.hasDeleteEffects){
       const delCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, modprefix,'delete','delete_triggered_card',true,jokerKey,globalEffectCounts)
@@ -337,9 +338,25 @@ export const generateCalcFunction = (
       const regCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, modprefix,'reg','',true,jokerKey,globalEffectCounts)
       ruleCode += `${regCode.ruleCode}`
       allConfigVariables.push(...(regCode.configVariables || [] ))
-    }})
+    }
+    if (currentRule.hasConditions) {
+        ruleCode += `
+            end`
+      }
+      ruleCode += `
+    end`
+    })
   })
+
+  processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
+      ruleCode += `
+${effect.calculateFunction}`})
+  
+  ruleCode += `
+end`
+
   ruleCode = applyIndents(ruleCode)
+
   return {
     code: ruleCode,
     configVariables: allConfigVariables,
