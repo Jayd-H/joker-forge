@@ -17,7 +17,6 @@ export const generateCreateConsumableReturn = (
   const isScoring = scoringTriggers.includes(triggerType);
 
   let createCode = "";
-  let setName = "";
   let colour = "G.C.PURPLE";
   let localizeKey = "";
 
@@ -78,20 +77,16 @@ export const generateCreateConsumableReturn = (
     if (set === "Tarot") {
       colour = "G.C.PURPLE";
       localizeKey = "k_plus_tarot";
-      setName = "'Tarot'";
     } else if (set === "Planet") {
       colour = "G.C.SECONDARY_SET.Planet";
       localizeKey = "k_plus_planet";
-      setName = "'Planet'";
     } else if (set === "Spectral") {
       colour = "G.C.SECONDARY_SET.Spectral";
       localizeKey = "k_plus_spectral";
-      setName = "'Spectral'";
     } else {
       // Custom set
       colour = "G.C.PURPLE";
       localizeKey = "k_plus_consumable";
-      setName = `'${set}'`;
     }
 
   if (isScoring) {
