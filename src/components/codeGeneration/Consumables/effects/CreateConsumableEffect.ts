@@ -33,6 +33,7 @@ export const generateCreateConsumableReturn = (
   if (isNegative || ignoreSlots){createCode += `
             if G.consumeables.config.card_limit > #G.consumeables.cards + G.GAME.consumeable_buffer then
               G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
+            end
 `}
 
   createCode +=`
