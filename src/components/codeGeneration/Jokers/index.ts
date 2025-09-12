@@ -29,6 +29,7 @@ import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
+import { generateCalcFunction } from "./generatefunction";
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -74,7 +75,7 @@ ${hookCode}`;
   return { jokersCode, hooks: "" };
 };
 
-const convertRandomGroupsForCodegen = (
+export const convertRandomGroupsForCodegen = (
   randomGroups: import("../../ruleBuilder/types").RandomGroup[]
 ) => {
   return randomGroups.map((group) => ({
@@ -90,7 +91,7 @@ const convertRandomGroupsForCodegen = (
   }));
 };
 
-const convertLoopGroupsForCodegen = (
+export const convertLoopGroupsForCodegen = (
   loopGroups: import("../../ruleBuilder/types").LoopGroup[]
 ) => {
   return loopGroups.map((group) => ({
@@ -578,6 +579,11 @@ const generateCalculateFunction = (
   joker: JokerData,
   modprefix: string
 ): CalculateFunctionResult => {
+  const stuff = generateCalcFunction(rules,joker,modprefix)
+  return { 
+    code: stuff.code,
+    configVariables: stuff.configVariables
+  }
   const jokerKey = joker.jokerKey;
   const rulesByTrigger: Record<string, Rule[]> = {};
   rules.forEach((rule) => {
