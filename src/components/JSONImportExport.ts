@@ -85,6 +85,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
 
 const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
   return {
+    objectKey: joker.objectKey || "",
     id: joker.id || "",
     name: joker.name || "",
     description: joker.description || "",
@@ -113,7 +114,6 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     rules: joker.rules || [],
     userVariables: joker.userVariables || [],
     placeholderCreditIndex: joker.placeholderCreditIndex,
-    objectKey: joker.objectKey || "",
     hasUserUploadedImage: joker.hasUserUploadedImage || false,
     cardAppearance: joker.cardAppearance || {
       buf: true,
