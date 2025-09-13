@@ -88,7 +88,7 @@ const generateTriggerCode = (
   triggerType: string, 
   sortedRules: Rule[],
   target: string 
-)=>{
+) =>  {
   let triggerContext : string = '', afterCode, triggerCode = ''
 
   const reg = (target === 'reg')
@@ -311,7 +311,9 @@ ${indent}${line}`}
   return finalCode
 }
 
-export const generateCalcFunction = (
+
+
+export const generateCalculateFunction = (
   rules : Rule[],
   joker : JokerData,
   modprefix : string,
