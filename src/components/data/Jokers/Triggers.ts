@@ -105,7 +105,7 @@ export const TRIGGERS: TriggerDefinition[] = [
     label: "When Playing Card is Added",
     description:
       "Triggers when playing cards are added to your deck. Perfect for effects that scale with deck size or trigger when specific cards are acquired, like Hologram gaining X Mult when cards are added.",
-    category: "Packs and Consumables",
+    category: "Packs & Consumables",
   },
   {
     id: "card_held_in_hand_end_of_round",
@@ -202,13 +202,13 @@ export const TRIGGERS: TriggerDefinition[] = [
     id: "booster_opened",
     label: "When a Booster is Opened",
     description: "Triggers when the player opens a booster pack.",
-    category: "Packs and Consumables",
+    category: "Packs & Consumables",
   },
   {
     id: "booster_skipped",
     label: "When a Booster is Skipped",
     description: "Triggers when the player chooses to skip a booster pack.",
-    category: "Packs and Consumables",
+    category: "Packs & Consumables",
   },
   {
     id: "shop_reroll",
@@ -222,7 +222,7 @@ export const TRIGGERS: TriggerDefinition[] = [
     label: "When a Consumable is Used",
     description:
       "Triggers when the player uses a Tarot, Planet, or Spectral card.",
-    category: "Packs and Consumables",
+    category: "Packs & Consumables",
   },
   {
     id: "shop_entered",
