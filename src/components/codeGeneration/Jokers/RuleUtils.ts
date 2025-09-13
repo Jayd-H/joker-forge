@@ -328,7 +328,7 @@ export const generateCalculateFunction = (
   joker : JokerData,
   modprefix : string,
 ) : CalculateFunctionResult => {
-  const jokerKey = joker.jokerKey;
+  const jokerKey = joker.objectKey;
   const rulesByTrigger: Record<string, Rule[]> = {};
   rules.forEach((rule) => {
     if (!rulesByTrigger[rule.trigger]) {
