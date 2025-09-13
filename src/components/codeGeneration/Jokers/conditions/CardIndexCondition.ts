@@ -10,13 +10,14 @@ export const generateCardIndexConditionCode = (
   const indexNumber =
     generateGameVariableCode(condition.params.index_number) || "1";
 
-  const handType = triggerType === "card_discarded" ? "full_hand" : "scoring_hand";
+  const handType = triggerType === "card_discarded" ? "context.full_hand" : 
+  triggerType === "cards_played_before_scoring" ? "c": "context.scoring_hand"
 
   if (indexType === "first") {
-    return `context.other_card == context.${handType}[1]`;
+    return `context.other_card == ${handType}[1]`;
   } else if (indexType === "last") {
-    return `context.other_card == context.${handType}[#context.${handType}]`;
+    return `context.other_card == ${handType}[#${handType}]`;
   } else {
-    return `context.other_card == context.${handType}[${indexNumber}]`;
+    return `context.other_card == ${handType}[${indexNumber}]`;
   }
 };

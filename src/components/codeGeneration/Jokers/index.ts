@@ -1,8 +1,5 @@
 import { JokerData } from "../../data/BalatroUtils";
-import { generateTriggerContext } from "./triggerUtils";
-import { generateConditionChain } from "./conditionUtils";
 import {
-  generateEffectReturnStatement,
   processPassiveEffects,
   ConfigExtraVariable,
 } from "./effectUtils";
@@ -12,7 +9,6 @@ import {
   getAllVariables,
   extractGameVariablesFromRules,
 } from "./variableUtils";
-import type { Rule } from "../../ruleBuilder/types";
 import type { PassiveEffectResult } from "./effectUtils";
 import { generateDiscountItemsHook } from "./effects/DiscountItemsEffect";
 import { generateReduceFlushStraightRequirementsHook } from "./effects/ReduceFlushStraightRequirementsEffect";
@@ -29,6 +25,7 @@ import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
+import { generateCalculateFunction } from "./RuleUtils";
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -74,7 +71,7 @@ ${hookCode}`;
   return { jokersCode, hooks: "" };
 };
 
-const convertRandomGroupsForCodegen = (
+export const convertRandomGroupsForCodegen = (
   randomGroups: import("../../ruleBuilder/types").RandomGroup[]
 ) => {
   return randomGroups.map((group) => ({
@@ -90,7 +87,7 @@ const convertRandomGroupsForCodegen = (
   }));
 };
 
-const convertLoopGroupsForCodegen = (
+export const convertLoopGroupsForCodegen = (
   loopGroups: import("../../ruleBuilder/types").LoopGroup[]
 ) => {
   return loopGroups.map((group) => ({
@@ -578,7 +575,7 @@ const generateCalculateFunction = (
   joker: JokerData,
   modprefix: string
 ): CalculateFunctionResult => {
-  const objectKey = joker.objectKey;
+  const jokerKey = joker.jokerKey;
   const rulesByTrigger: Record<string, Rule[]> = {};
   rules.forEach((rule) => {
     if (!rulesByTrigger[rule.trigger]) {
@@ -703,7 +700,7 @@ const generateCalculateFunction = (
           convertLoopGroupsForCodegen(loopRetriggerEffects),
           triggerType,
           modprefix,
-          objectKey,
+          jokerKey,
           rule.id,
           globalEffectCounts
         );
@@ -839,7 +836,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopNonRetriggerGroups),
             triggerType,
             modprefix,
-            objectKey,
+            jokerKey,
             rule.id,
             globalEffectCounts
           );
@@ -918,7 +915,7 @@ const generateCalculateFunction = (
               convertLoopGroupsForCodegen(loopNonRetriggerGroups),
               triggerType,
               modprefix,
-              objectKey,
+              jokerKey,
               rule.id,
               globalEffectCounts
             );
@@ -966,7 +963,7 @@ const generateCalculateFunction = (
                 [],
                 triggerType,
                 modprefix,
-                objectKey,
+                jokerKey,
                 rule.id,
                 globalEffectCounts
               );
@@ -1091,7 +1088,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(allLoopGroups),
             triggerType,
             modprefix,
-            objectKey,
+            jokerKey,
             rule.id,
             globalEffectCounts
           );
@@ -1188,7 +1185,7 @@ const generateCalculateFunction = (
               convertLoopGroupsForCodegen(allLoopGroups),
               triggerType,
               modprefix,
-              objectKey,
+              jokerKey,
               rule.id,
               globalEffectCounts
             );
@@ -1246,7 +1243,7 @@ const generateCalculateFunction = (
                 [],
                 triggerType,
                 modprefix,
-                objectKey,
+                jokerKey,
                 rule.id,
                 globalEffectCounts
               );
@@ -1324,7 +1321,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopFixProbablityEffects),
             triggerType,
             modprefix,
-            objectKey,
+            jokerKey,
             rule.id,
             globalEffectCounts
           );
@@ -1403,7 +1400,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopModProbablityEffects),
             triggerType,
             modprefix,
-            objectKey,
+            jokerKey,
             rule.id,
             globalEffectCounts
           );
@@ -1463,7 +1460,7 @@ const generateCalculateFunction = (
           convertLoopGroupsForCodegen(rule.loops || []),
           triggerType,
           modprefix,
-          objectKey,
+          jokerKey,
           rule.id,
           globalEffectCounts
         );
@@ -1505,7 +1502,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(rule.loops || []),
             triggerType,
             modprefix,
-            objectKey,
+            jokerKey,
             rule.id,
             globalEffectCounts
           );
@@ -1538,7 +1535,7 @@ const generateCalculateFunction = (
               [],
               triggerType,
               modprefix,
-              objectKey,
+              jokerKey,
               rule.id,
               globalEffectCounts
             );
