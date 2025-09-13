@@ -130,8 +130,8 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
       setNameValidationError(validation.error || "Invalid name");
       return;}
 
-    const finalName = getObjectName(enhancement, enhancements, tempName)
-    onQuickUpdate({ name: finalName, enhancementKey: slugify(finalName) });
+    const tempKey = getObjectName(enhancement, enhancements, tempName)
+    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };

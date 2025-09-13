@@ -263,7 +263,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       description:
         "A {C:blue}custom{} enhancement with {C:red}unique{} effects.",
       imagePreview: placeholderResult.imageData,
-      enhancementKey: slugify("New Enhancement"),
+      objectKey: slugify("New Enhancement"),
       unlocked: true,
       discovered: true,
       rules: [],
@@ -271,7 +271,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       weight: 5,
       orderValue: enhancements.length +1,
     };
-    newEnhancement.name = getObjectName(newEnhancement,enhancements,"New Enhancement")
+    newEnhancement.objectKey = getObjectName(newEnhancement,enhancements,newEnhancement.objectKey)
     setEnhancements([...enhancements, newEnhancement]);
     setEditingEnhancement(newEnhancement);
   };
@@ -303,10 +303,10 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       const duplicatedEnhancement: EnhancementData = {
         ...enhancement,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
+        name: enhancement.objectKey,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        enhancementKey: slugify(`${dupeName}`),
+        objectKey: slugify(`${dupeName}`),
         orderValue: enhancement.orderValue+1
       };
       setEnhancements([...enhancements, duplicatedEnhancement]);
@@ -316,7 +316,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
         ...enhancement,
         id: crypto.randomUUID(),
         name: `${dupeName}`,
-        enhancementKey: slugify(`$${dupeName}`),
+        objectKey: slugify(`$${dupeName}`),
         orderValue: enhancement.orderValue+1
       };
       setEnhancements([...enhancements, duplicatedEnhancement]);

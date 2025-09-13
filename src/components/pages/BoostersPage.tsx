@@ -614,7 +614,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     config: { extra: 3, choose: 1 },
     card_rules: [],
     discovered: true,
-    boosterKey: "",
+    objectKey: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(
@@ -725,10 +725,10 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       card_rules: [],
       discovered: true,
       placeholderCreditIndex: placeholderResult.creditIndex,
-      boosterKey: slugify("New Booster Pack"),
+      objectKey: slugify("New Booster Pack"),
       group_key: key,
     };
-    newBooster.name = getObjectName(newBooster,boosters,"New Booster Pack")
+    newBooster.objectKey = getObjectName(newBooster,boosters,newBooster.objectKey)
     setBoosters([...boosters, newBooster]);
     setEditingBooster(newBooster);
     setFormData(newBooster);
@@ -796,7 +796,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       config: { extra: 3, choose: 1 },
       card_rules: [],
       discovered: true,
-      boosterKey: "",
+      objectKey: "",
     });
   };
 
@@ -811,17 +811,17 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     }};
 
   const handleDuplicateBooster = async (booster: BoosterData) => {
-    const dupeName = getObjectName(booster,boosters)
+    const dupeName = slugify(getObjectName(booster,boosters))
     if (isPlaceholderBooster(booster.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderBooster();
       const duplicatedBooster: BoosterData = {
         ...booster,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
+        name: booster.name,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
         orderValue: booster.orderValue+1,
-        boosterKey: slugify(`${dupeName}`),
+        objectKey: `${dupeName}`,
       };
       setBoosters([...boosters, duplicatedBooster]);
       boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
@@ -830,7 +830,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
         ...booster,
         id: crypto.randomUUID(),
         name: `${booster.name} Copy`,
-        boosterKey: slugify(`${booster.name} Copy`),
+        objectKey: slugify(`${booster.name} Copy`),
       };
       setBoosters([...boosters, duplicatedBooster]);
       boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)

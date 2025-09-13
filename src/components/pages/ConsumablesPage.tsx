@@ -900,9 +900,9 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       hidden: false,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
-      consumableKey: slugify("New Consumable"),
+      objectKey: slugify("New Consumable"),
     };
-    newConsumable.name = getObjectName(newConsumable,consumables,"New Consumable")
+    newConsumable.objectKey = getObjectName(newConsumable,consumables,newConsumable.objectKey)
     setConsumables([...consumables, newConsumable]);
     setEditingConsumable(newConsumable);
   };
@@ -1029,16 +1029,16 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   }};
 
   const handleDuplicateConsumable = async (consumable: ConsumableData) => {
-    const dupeName = getObjectName(consumable,consumables)
+    const dupeName = slugify(getObjectName(consumable,consumables))
     if (isPlaceholderConsumable(consumable.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderConsumable();
       const duplicatedConsumable: ConsumableData = {
         ...consumable,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
+        name: consumable.name,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        consumableKey: slugify(`${dupeName}`),
+        objectKey: `${dupeName}`,
         orderValue: consumable.orderValue+1,
       };
       setConsumables([...consumables, duplicatedConsumable]);
@@ -1048,7 +1048,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         ...consumable,
         id: crypto.randomUUID(),
         name: `${dupeName}`,
-        consumableKey: slugify(`${dupeName}`),
+        objectKey: slugify(`${dupeName}`),
         orderValue: consumable.orderValue+1,
       };
       setConsumables([...consumables, duplicatedConsumable]);

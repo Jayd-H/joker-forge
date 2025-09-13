@@ -259,7 +259,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
       name: "New Seal",
       description: "A {C:blue}custom{} seal with {C:red}unique{} effects.",
       imagePreview: placeholderResult.imageData,
-      sealKey: slugify("New Seal"),
+      objectKey: slugify("New Seal"),
       badge_colour: "#000000",
       unlocked: true,
       discovered: true,
@@ -267,7 +267,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
       placeholderCreditIndex: placeholderResult.creditIndex,
       orderValue: seals.length+1,
     };
-    newSeal.name = getObjectName(newSeal,seals,"New Seal")
+    newSeal.objectKey = getObjectName(newSeal,seals,newSeal.objectKey)
     setSeals([...seals, newSeal]);
     setEditingSeal(newSeal);
   };
@@ -294,10 +294,10 @@ const SealsPage: React.FC<SealsPageProps> = ({
       const duplicatedSeal: SealData = {
         ...seal,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
+        name: seal.name,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        sealKey: slugify(`${dupeName}`),
+        objectKey: slugify(`${dupeName}`),
         orderValue: seal.orderValue +1,
       };
       setSeals([...seals, duplicatedSeal]);
@@ -307,7 +307,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
         ...seal,
         id: crypto.randomUUID(),
         name: `${dupeName}`,
-        sealKey: slugify(`${dupeName}`),
+        objectKey: slugify(`${dupeName}`),
         orderValue: seal.orderValue +1,
       };
       setSeals([...seals, duplicatedSeal]);

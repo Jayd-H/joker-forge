@@ -177,7 +177,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         disable_shadow: edition.disable_shadow === true,
         disable_base_shader: edition.disable_base_shader === true,
         badge_colour: edition.badge_colour || "#FFAA00",
-        editionKey: edition.editionKey || slugify(edition.name),
+        objectKey: getObjectName(edition,editions,edition.objectKey || slugify(edition.name)),
         sound: edition.sound || "foil1",
       });
       setLastDescription(edition.description || "");
@@ -257,11 +257,11 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      value = getObjectName(edition, editions, value)
+      const tempKey = getObjectName(edition, editions, value)
       setFormData({
         ...formData,
         [field]: value,
-        editionKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -484,10 +484,10 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                         </div>
 
                         <InputField
-                          value={formData.editionKey || ""}
+                          value={formData.objectKey || ""}
                           onChange={(e) =>
                             handleInputChange(
-                              "editionKey",
+                              "objectKey",
                               e.target.value,
                               false
                             )

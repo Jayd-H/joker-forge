@@ -205,10 +205,10 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     }
 
     if (field === "name") {
-      value = getObjectName(booster, boosters, value)
+      const tempKey = getObjectName(booster, boosters, value)
       onFormDataChange({
         [field]: value,
-        boosterKey: generateKeyFromName(value),
+        objectKey: generateKeyFromName(tempKey),
       });
     } else {
       onFormDataChange({
@@ -491,10 +491,13 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.boosterKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
-                              onFormDataChange({ boosterKey: e.target.value })
-                            }
+                                handleInputChange(
+                                "objectKey",
+                                e.target.value,
+                                false
+                              )                            }
                             placeholder="Enter booster key"
                             separator={true}
                             label="Booster Key (Code Name)"

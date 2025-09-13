@@ -144,8 +144,8 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
       setNameValidationError(validation.error || "Invalid name");
       return;}
 
-    const finalName = getObjectName(consumable, consumables, tempName)
-    onQuickUpdate({ name: finalName });
+    const tempKey = getObjectName(consumable, consumables, tempName)
+    onQuickUpdate({ name: tempName, objectKey: tempKey});
     setEditingName(false);
     setNameValidationError("");
   };

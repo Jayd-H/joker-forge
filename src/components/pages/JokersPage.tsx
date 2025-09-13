@@ -14,7 +14,7 @@ import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
 import { exportSingleJoker } from "../codeGeneration/Jokers/index";
 import type { Rule } from "../ruleBuilder/types";
-import { RarityData, JokerData } from "../data/BalatroUtils";
+import { RarityData, JokerData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
 import ShowcaseModal from "../generic/ShowcaseModal";
 import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
@@ -355,8 +355,9 @@ const JokersPage: React.FC<JokersPageProps> = ({
       },
       appearFlags: "",
       pools: [modPool],
+      objectKey: slugify("New Joker")
     };
-    newJoker.name = getObjectName(newJoker,jokers,"New Joker")
+    newJoker.objectKey = getObjectName(newJoker,jokers,newJoker.objectKey)
     setJokers([...jokers, newJoker]);
     setEditingJoker(newJoker);
   };
@@ -378,16 +379,17 @@ const JokersPage: React.FC<JokersPageProps> = ({
   }};
 
   const handleDuplicateJoker = async (joker: JokerData) => {
-    const dupeName = getObjectName(joker,jokers)
+    const dupeName = slugify(getObjectName(joker,jokers))
     if (isPlaceholderJoker(joker.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderJoker();
       const duplicatedJoker: JokerData = {
         ...joker,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
+        name: joker.name,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        orderValue: joker.orderValue+1
+        orderValue: joker.orderValue+1,
+        objectKey: `${dupeName}`,
       };
       setJokers([...jokers, duplicatedJoker]);
       jokers = updateGameObjectIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)

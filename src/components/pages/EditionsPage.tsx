@@ -155,7 +155,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
       id: crypto.randomUUID(),
       name: "New Edition",
       description: "A {C:blue}custom{} edition with {C:red}unique{} effects.",
-      editionKey: slugify("New Edition"),
+      objectKey: slugify("New Edition"),
       shader: "foil",
       unlocked: true,
       discovered: true,
@@ -164,7 +164,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
       sound: "foil1",
       orderValue: editions.length+1,
     };
-    newEdition.name = getObjectName(newEdition,editions,"New Edition")
+    newEdition.objectKey = getObjectName(newEdition,editions,newEdition.objectKey)
     setEditions([...editions, newEdition]);
     setEditingEdition(newEdition);
   };
@@ -188,12 +188,12 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     }};
 
   const handleDuplicateEdition = async (edition: EditionData) => {
-    const dupeName = getObjectName(edition,editions)
+    const dupeName = slugify(getObjectName(edition,editions))
     const duplicatedEdition: EditionData = {
       ...edition,
       id: crypto.randomUUID(),
-      name: `${dupeName}`,
-      editionKey: slugify(`${dupeName}`),
+      name: edition.name,
+      objectKey: `${dupeName}`,
       orderValue: edition.orderValue+1,
     };
     setEditions([...editions, duplicatedEdition]);

@@ -70,22 +70,22 @@ export const locateWrongId = function(
   return wrongIndex
 }
 
-export const getObjectName = function(
-  object:GameObjectData,
+export const getObjectName = (
+  object : GameObjectData,
   data:GameObjectData[],
   value?:string,
-){
+)=>{
   let newNumber:number|boolean|string
   let tempName:string = ''
   let currentName 
   let dupeName:string|null = value||null
-  if (dupeName && !data.some(dataObject => dataObject.name == dupeName && object.id !== dataObject.id)){
+  if (dupeName && !data.some(dataObject => dataObject.objectKey == dupeName && object.id !== dataObject.id)){
     return dupeName}
   while (true){
     let count:number = 0
     let looping = true
     let match     
-    currentName = dupeName || object.name
+    currentName = dupeName || object.objectKey
     tempName = currentName
     while (looping == true){
       match = tempName.match(/\d+$/) 
@@ -97,6 +97,6 @@ export const getObjectName = function(
     if (newNumber !== false){
       dupeName = currentName.slice(0,-count)+String(newNumber)}
     else {dupeName = currentName+'2'}
-    if (dupeName && !data.some(dataObject => dataObject.name == dupeName && object.id !== dataObject.id)){
+    if (dupeName && !data.some(dataObject => dataObject.objectKey == dupeName && object.id !== dataObject.id)){
       return dupeName as any
 }}}

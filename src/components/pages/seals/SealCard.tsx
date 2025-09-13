@@ -123,9 +123,9 @@ const SealCard: React.FC<SealCardProps> = ({
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
       return;}
-    const finalName = getObjectName(seal, seals, tempName)
+    const tempKey = getObjectName(seal, seals, tempName)
 
-    onQuickUpdate({ name: finalName, sealKey: slugify(finalName) });
+    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };

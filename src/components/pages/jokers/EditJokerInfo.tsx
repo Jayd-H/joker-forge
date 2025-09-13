@@ -279,7 +279,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         eternal_compat: joker.eternal_compat !== false,
         unlocked: joker.unlocked !== false,
         discovered: joker.discovered !== false,
-        jokerKey: joker.jokerKey || slugify(joker.name),
+        objectKey: getObjectName(joker,jokers,joker.objectKey || slugify(joker.name)),
         hasUserUploadedImage: joker.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -396,11 +396,11 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      value = getObjectName(joker, jokers, value)
+      const tempKey = getObjectName(joker, jokers, value)
       setFormData({
         ...formData,
         [field]: value,
-        jokerKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -997,10 +997,10 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.jokerKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "jokerKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )

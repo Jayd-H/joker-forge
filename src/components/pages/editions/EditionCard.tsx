@@ -144,9 +144,9 @@ const EditionCard: React.FC<EditionCardProps> = ({
       setNameValidationError(validation.error || "Invalid name");
       return;}
 
-    const finalName = getObjectName(edition, editions, tempName)
+    const tempKey = getObjectName(edition, editions, tempName)
 
-    onQuickUpdate({ name: finalName, editionKey: slugify(finalName) });
+    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };

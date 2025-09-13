@@ -188,7 +188,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         discovered: consumable.discovered !== false,
         hidden: consumable.hidden === true,
         can_repeat_soul: consumable.can_repeat_soul === true,
-        consumableKey: consumable.consumableKey || slugify(consumable.name),
+        objectKey: getObjectName(consumable,consumables,consumable.objectKey || slugify(consumable.name)),
         hasUserUploadedImage: consumable.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -304,11 +304,11 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      value = getObjectName(consumable, consumables, value)
+      const tempKey = getObjectName(consumable, consumables, value)
       setFormData({
         ...formData,
         [field]: value,
-        consumableKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -717,10 +717,10 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.consumableKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "consumableKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )

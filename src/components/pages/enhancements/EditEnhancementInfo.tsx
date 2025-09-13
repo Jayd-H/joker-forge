@@ -186,7 +186,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         no_rank: enhancement.no_rank === true,
         no_suit: enhancement.no_suit === true,
         always_scores: enhancement.always_scores === true,
-        enhancementKey: enhancement.enhancementKey || slugify(enhancement.name),
+        objectKey: getObjectName(enhancement,enhancements,enhancement.objectKey || slugify(enhancement.name)),
         hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -267,11 +267,11 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      value = getObjectName(enhancement, enhancements, value)
+      const tempKey = getObjectName(enhancement, enhancements, value)
       setFormData({
         ...formData,
         [field]: value,
-        enhancementKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -619,10 +619,10 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.enhancementKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "enhancementKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )

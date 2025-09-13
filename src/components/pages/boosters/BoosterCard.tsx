@@ -114,8 +114,8 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
     if (validation.isValid) {
-      const finalName = getObjectName(booster, boosters, tempName)
-      onQuickUpdate({ name: finalName, boosterKey: slugify(finalName) });
+      const tempKey = getObjectName(booster, boosters, tempName)
+      onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
       setEditingName(false)    
   }};
 

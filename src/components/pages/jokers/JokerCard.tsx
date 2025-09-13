@@ -156,9 +156,9 @@ const JokerCard: React.FC<JokerCardProps> = ({
       setNameValidationError(validation.error || "Invalid name");
       return;}
 
-    const finalName = getObjectName(joker, jokers, tempName)
+    const tempKey = getObjectName(joker, jokers, tempName)
 
-    onQuickUpdate({ name: finalName, jokerKey: slugify(finalName) });
+    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };
