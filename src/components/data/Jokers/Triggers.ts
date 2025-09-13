@@ -6,6 +6,7 @@ import {
   RectangleStackIcon,
   ShoppingCartIcon,
   SparklesIcon,
+  HandRaisedIcon,
 } from "@heroicons/react/24/outline";
 
 export interface CategoryDefinition {
@@ -15,10 +16,14 @@ export interface CategoryDefinition {
 
 export const TRIGGER_CATEGORIES: CategoryDefinition[] = [
   {
-    label: "Gameplay",
-    icon: PlayIcon,
+    label: "Hand Scoring",
+    icon: HandRaisedIcon,
   },
   {
+    label: "In Blind Events",
+    icon: PlayIcon,
+  },
+  { 
     label: "Round Events",
     icon: ClockIcon,
   },
@@ -26,15 +31,15 @@ export const TRIGGER_CATEGORIES: CategoryDefinition[] = [
     label: "Economy",
     icon: BanknotesIcon,
   },
-  {
+  {    
     label: "Packs & Consumables",
     icon: RectangleStackIcon,
   },
-  {
+  {    
     label: "Shop Events",
     icon: ShoppingCartIcon,
   },
-  {
+  {    
     label: "Special",
     icon: SparklesIcon,
   },
@@ -46,14 +51,14 @@ export const TRIGGERS: TriggerDefinition[] = [
     label: "When a Hand is Played",
     description:
       "Triggers when any hand is played. Use conditions to specify whether to check scoring cards, all played cards, or specific hand types.",
-    category: "Gameplay",
+    category: "Hand Scoring",
   },
   {
     id: "card_scored",
     label: "When a Card is Scored",
     description:
       "Triggers for each individual card during scoring. Use this for card-specific properties like suit, rank, or enhancements.",
-    category: "Gameplay",
+    category: "Hand Scoring",
   },
   {
     id: "card_destroyed",
@@ -63,25 +68,37 @@ export const TRIGGERS: TriggerDefinition[] = [
     category: "Special",
   },
   {
+    id: "first_hand_drawn",
+    label: "When First Hand is Drawn",
+    description: "Triggers only for the first hand drawn in each round.",
+    category: "In Blind Events",
+  },
+  {
+    id: "hand_drawn",
+    label: "When a Hand is Drawn",
+    description: "Triggers when the player draws a new hand of cards.",
+    category: "In Blind Events",
+  },
+  {
     id: "hand_discarded",
     label: "When a Hand is Discarded",
     description:
       "Triggers when the player discards a hand of cards (before the discard happens). Different from 'When a Card is Discarded' which triggers per individual card.",
-    category: "Gameplay",
+    category: "In Blind Events",
   },
   {
     id: "card_discarded",
     label: "When a Card is Discarded",
     description:
       "Triggers whenever a card is discarded. Use conditions to check properties of the discarded card.",
-    category: "Gameplay",
+    category: "In Blind Events",
   },
   {
     id: "card_held_in_hand",
     label: "When a Card is Held in Hand",
     description:
       "Triggers for each individual card currently held in your hand. Perfect for effects that scale with specific cards you're holding, like gaining money for each Ace or mult for each face card.",
-    category: "Gameplay",
+    category: "Hand Scoring",
   },
   {
     id: "playing_card_added",
@@ -95,34 +112,41 @@ export const TRIGGERS: TriggerDefinition[] = [
     label: "When a Card is Held in Hand at End of Round",
     description:
       "Triggers for each individual card currently held in your hand at the end of the round. Good for effects that mimic Gold Cards or Blue Seals.",
-    category: "Round Events",
-  },
-  {
-    id: "after_hand_played",
-    label: "When Hand Finishes Scoring",
-    description:
-      "Triggers after a hand has completely finished scoring, after all cards have been scored and all joker effects have been calculated. Perfect for cleanup effects, resetting variables, or effects that should happen once per hand after everything else.",
-    category: "Gameplay",
+    category: "In Blind Events",
   },
   {
     id: "before_hand_played",
     label: "Before Hand Starts Scoring",
     description:
       "Triggers before a hand starts the scoring sequence or any jokers have been calculated. Perfect for scaling jokers or effects that should happen once per hand before everything else.",
-    category: "Gameplay",
+    category: "Hand Scoring",
+  },
+  {
+    id: "played_cards_before_scoring",
+    label: "For each Played Card before Scoring",
+    description:
+      "Triggers for each card in played hand before a hand starts the scoring sequence",
+    category: "Hand Scoring",
   },
   {
     id: "joker_evaluated",
     label: "When Another Joker is Evaluated",
     description: "Triggers when another joker you own is evaluated (triggered after scoring).",
-    category: "Gameplay"
+    category: "Hand Scoring"
+  },
+  {
+    id: "after_hand_played",
+    label: "When Hand Finishes Scoring",
+    description:
+      "Triggers after a hand has completely finished scoring, after all cards have been scored and all joker effects have been calculated. Perfect for cleanup effects, resetting variables, or effects that should happen once per hand after everything else.",
+    category: "Hand Scoring",
   },
   {
     id: "round_end",
     label: "When the Round Ends",
     description:
       "Triggers at the end of each round, after all hands have been played and the blind is completed. Perfect for gaining money, upgrading the joker, or resetting states.",
-    category: "Round Events",
+    category: "In Blind Events",
   },
   {
     id: "blind_selected",
@@ -199,18 +223,6 @@ export const TRIGGERS: TriggerDefinition[] = [
     description:
       "Triggers when the player uses a Tarot, Planet, or Spectral card.",
     category: "Packs & Consumables",
-  },
-  {
-    id: "hand_drawn",
-    label: "When a Hand is Drawn",
-    description: "Triggers when the player draws a new hand of cards.",
-    category: "Gameplay",
-  },
-  {
-    id: "first_hand_drawn",
-    label: "When First Hand is Drawn",
-    description: "Triggers only for the first hand drawn in each round.",
-    category: "Gameplay",
   },
   {
     id: "shop_entered",

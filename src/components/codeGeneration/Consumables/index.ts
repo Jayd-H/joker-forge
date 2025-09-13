@@ -19,7 +19,7 @@ const ensureConsumableKeys = (
 ): ConsumableData[] => {
   return consumables.map((consumable) => ({
     ...consumable,
-    consumableKey: consumable.consumableKey || slugify(consumable.name),
+    objectKey: consumable.objectKey || slugify(consumable.name),
   }));
 };
 
@@ -91,7 +91,7 @@ export const generateConsumablesCode = (
       currentPosition,
       modPrefix
     );
-    consumablesCode[`${consumable.consumableKey}.lua`] = result.code;
+    consumablesCode[`${consumable.objectKey}.lua`] = result.code;
     currentPosition = result.nextPosition;
   });
 
@@ -118,7 +118,7 @@ const generateConsumableSetsCode = (
     if (setConsumables.length > 0) {
       const cardEntries = setConsumables.map((consumable) => {
         const prefix = modPrefix ? `${modPrefix}_` : "";
-        return `        ['c_${prefix}${consumable.consumableKey}'] = true`;
+        return `        ['c_${prefix}${consumable.objectKey}'] = true`;
       });
       cardsArray = `    cards = {
 ${cardEntries.join(",\n")}
@@ -194,7 +194,7 @@ const generateSingleConsumableCode = (
       randomGroups,
       loopGroups,
       modPrefix,
-      consumable.consumableKey
+      consumable.objectKey
     );
 
     if (effectResult.configVariables) {
@@ -211,7 +211,7 @@ const generateSingleConsumableCode = (
   let nextPosition = currentPosition + 1;
 
   let consumableCode = `SMODS.Consumable {
-    key = '${consumable.consumableKey}',
+    key = '${consumable.objectKey}',
     set = '${consumable.set}',
     pos = { x = ${col}, y = ${row} },`;
 
@@ -279,7 +279,7 @@ const generateSingleConsumableCode = (
     ${locVarsCode},`;
   }
 
-  const useCode = generateUseFunction(activeRules, modPrefix, consumable.consumableKey);
+  const useCode = generateUseFunction(activeRules, modPrefix, consumable.objectKey);
   if (useCode) {
     consumableCode += `
     ${useCode},`;
@@ -303,9 +303,9 @@ const generateSingleConsumableCode = (
 
 export const exportSingleConsumable = (consumable: ConsumableData): void => {
   try {
-    const consumableWithKey = consumable.consumableKey
+    const consumableWithKey = consumable.objectKey
       ? consumable
-      : { ...consumable, consumableKey: slugify(consumable.name) };
+      : { ...consumable, objectKey: slugify(consumable.name) };
 
     const result = generateSingleConsumableCode(
       consumableWithKey,
@@ -319,7 +319,7 @@ export const exportSingleConsumable = (consumable: ConsumableData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${consumableWithKey.consumableKey}.lua`;
+    a.download = `${consumableWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -333,7 +333,7 @@ export const exportSingleConsumable = (consumable: ConsumableData): void => {
 const generateUseFunction = (
   rules: Rule[],
   modPrefix: string,
-  consumableKey?: string,
+  objectKey?: string,
 ): string => {
   if (rules.length === 0) {
     return `use = function(self, card, area, copier)
@@ -362,7 +362,7 @@ const generateUseFunction = (
       randomGroups,
       loopGroups,
       modPrefix,
-      consumableKey
+      objectKey
     );
 
     if (effectResult.preReturnCode) {
@@ -561,7 +561,7 @@ const generateLocVarsFunction = (
     if (denominators.length === 1) {
       return `loc_vars = function(self, info_queue, card)
         local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'c_${modPrefix}_${
-        consumable.consumableKey
+        consumable.objectKey
       }')
         return {vars = {${variableMapping.join(", ")}${
         variableMapping.length > 0 ? ", " : ""

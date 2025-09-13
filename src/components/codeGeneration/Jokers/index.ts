@@ -1,8 +1,5 @@
 import { JokerData } from "../../data/BalatroUtils";
-import { generateTriggerContext } from "./triggerUtils";
-import { generateConditionChain } from "./conditionUtils";
 import {
-  generateEffectReturnStatement,
   processPassiveEffects,
   ConfigExtraVariable,
 } from "./effectUtils";
@@ -12,7 +9,6 @@ import {
   getAllVariables,
   extractGameVariablesFromRules,
 } from "./variableUtils";
-import type { Rule } from "../../ruleBuilder/types";
 import type { PassiveEffectResult } from "./effectUtils";
 import { generateDiscountItemsHook } from "./effects/DiscountItemsEffect";
 import { generateReduceFlushStraightRequirementsHook } from "./effects/ReduceFlushStraightRequirementsEffect";
@@ -29,6 +25,7 @@ import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
+import { generateCalculateFunction } from "./RuleUtils";
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -37,7 +34,7 @@ interface CalculateFunctionResult {
 const ensureJokerKeys = (jokers: JokerData[]): JokerData[] => {
   return jokers.map((joker) => ({
     ...joker,
-    jokerKey: joker.jokerKey || slugify(joker.name),
+    objectKey: joker.objectKey || slugify(joker.name),
   }));
 };
 
@@ -67,14 +64,14 @@ export const generateJokersCode = (
 ${hookCode}`;
     }
 
-    jokersCode[`${joker.jokerKey}.lua`] = jokerCode;
+    jokersCode[`${joker.objectKey}.lua`] = jokerCode;
     currentPosition = result.nextPosition;
   });
 
   return { jokersCode, hooks: "" };
 };
 
-const convertRandomGroupsForCodegen = (
+export const convertRandomGroupsForCodegen = (
   randomGroups: import("../../ruleBuilder/types").RandomGroup[]
 ) => {
   return randomGroups.map((group) => ({
@@ -90,7 +87,7 @@ const convertRandomGroupsForCodegen = (
   }));
 };
 
-const convertLoopGroupsForCodegen = (
+export const convertLoopGroupsForCodegen = (
   loopGroups: import("../../ruleBuilder/types").LoopGroup[]
 ) => {
   return loopGroups.map((group) => ({
@@ -311,7 +308,7 @@ const generateSingleJokerCode = (
   let nextPosition = currentPosition + 1;
 
   let jokerCode = `SMODS.Joker{ --${joker.name}
-    key = "${joker.jokerKey}",
+    key = "${joker.objectKey}",
     config = {
         extra = {`;
 
@@ -432,7 +429,7 @@ const generateSingleJokerCode = (
   if (joker.ignoreSlotLimit) {
     jokerCode += `\n\nlocal check_for_buy_space_ref = G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = function(card)
-    if card.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then -- ignore slot limit when bought
+    if card.config.center.key == "j_${modPrefix}_${joker.objectKey}" then -- ignore slot limit when bought
         return true
     end
     return check_for_buy_space_ref(card)
@@ -440,7 +437,7 @@ end
 
 local can_select_card_ref = G.FUNCS.can_select_card
 G.FUNCS.can_select_card = function(e)
-	if e.config.ref_table.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then
+	if e.config.ref_table.config.center.key == "j_${modPrefix}_${joker.objectKey}" then
 		e.config.colour = G.C.GREEN
 		e.config.button = "use_card"
 	else
@@ -457,9 +454,9 @@ end`;
 
 export const exportSingleJoker = (joker: JokerData): void => {
   try {
-    const jokerWithKey = joker.jokerKey
+    const jokerWithKey = joker.objectKey
       ? joker
-      : { ...joker, jokerKey: slugify(joker.name) };
+      : { ...joker, objectKey: slugify(joker.name) };
 
     const result = generateSingleJokerCode(
       jokerWithKey,
@@ -479,7 +476,7 @@ export const exportSingleJoker = (joker: JokerData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${jokerWithKey.jokerKey}.lua`;
+    a.download = `${jokerWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -571,1018 +568,6 @@ const generateSetAbilityFunction = (joker: JokerData): string | null => {
   return `set_ability = function(self, card, initial)
         ${allCode.join("\n        ")}
     end`;
-};
-
-const generateCalculateFunction = (
-  rules: Rule[],
-  joker: JokerData,
-  modprefix: string
-): CalculateFunctionResult => {
-  const jokerKey = joker.jokerKey;
-  const rulesByTrigger: Record<string, Rule[]> = {};
-  rules.forEach((rule) => {
-    if (!rulesByTrigger[rule.trigger]) {
-      rulesByTrigger[rule.trigger] = [];
-    }
-    rulesByTrigger[rule.trigger].push(rule);
-  });
-
-  const allConfigVariables: ConfigExtraVariable[] = [];
-  const globalEffectCounts = new Map<string, number>();
-
-  let calculateFunction = `calculate = function(self, card, context)`;
-
-  Object.entries(rulesByTrigger).forEach(([triggerType, triggerRules]) => {
-    const sortedRules = [...triggerRules].sort((a, b) => {
-      const aHasConditions = generateConditionChain(a, joker).length > 0;
-      const bHasConditions = generateConditionChain(b, joker).length > 0;
-
-      if (aHasConditions && !bHasConditions) return -1;
-      if (!aHasConditions && bHasConditions) return 1;
-      return 0;
-    });
-
-    const hasRetriggerEffects = sortedRules.some((rule) =>
-      [
-        ...(rule.effects || []),
-        ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
-        ...(rule.loops?.flatMap((g) => g.effects) || []),
-      ].some((effect) => effect.type === "retrigger_cards")
-    );
-
-    const hasDeleteEffects =
-      triggerType !== "card_discarded" &&
-      sortedRules.some((rule) =>
-        [
-          ...(rule.effects || []),
-          ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
-          ...(rule.loops?.flatMap((g) => g.effects) || []),
-        ].some((effect) => effect.type === "delete_triggered_card")
-      );
-
-    const hasFixProbablityEffects = sortedRules.some((rule) =>
-      [
-        ...(rule.effects || []),
-        ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
-        ...(rule.loops?.flatMap((g) => g.effects) || []),
-      ].some((effect) => effect.type === "fix_probability")
-    );
-
-    const hasModProbablityEffects = sortedRules.some((rule) =>
-      [
-        ...(rule.effects || []),
-        ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
-        ...(rule.loops?.flatMap((g) => g.effects) || []),
-      ].some((effect) => effect.type === "mod_probability")
-    );
-
-    const isBlueprintCompatible = rules.some(
-      (rule) => rule.blueprintCompatible ?? true
-    );
-
-    if (hasDeleteEffects) {
-      calculateFunction += `
-        if context.destroy_card and context.destroy_card.should_destroy ${
-          isBlueprintCompatible ? "" : "and not context.blueprint"
-        } then
-            return { remove = true }
-        end`;
-    }
-
-    if (hasRetriggerEffects) {
-      const retriggerContextCheck =
-        triggerType === "card_held_in_hand" ||
-        triggerType === "card_held_in_hand_end_of_round"
-          ? `context.repetition and context.cardarea == G.hand and (next(context.card_effects[1]) or #context.card_effects > 1) ${
-              isBlueprintCompatible ? "" : "and not context.blueprint"
-            }`
-          : `context.repetition and context.cardarea == G.play ${
-              isBlueprintCompatible ? "" : "and not context.blueprint"
-            }`;
-
-      calculateFunction += `
-        if ${retriggerContextCheck} then`;
-
-      let hasAnyConditions = false;
-
-      sortedRules.forEach((rule) => {
-        const regularRetriggerEffects = (rule.effects || []).filter(
-          (e) => e.type === "retrigger_cards"
-        );
-        const randomRetriggerEffects = (rule.randomGroups || []).filter(
-          (group) => group.effects.some((e) => e.type === "retrigger_cards")
-        );
-        const loopRetriggerEffects = (rule.loops || []).filter(
-          (group) => group.effects.some((e) => e.type === "retrigger_cards")
-        );
-
-        if (
-          regularRetriggerEffects.length === 0 &&
-          randomRetriggerEffects.length === 0 &&
-          loopRetriggerEffects.length === 0
-        )
-          return;
-
-        const conditionCode = generateConditionChain(rule, joker);
-
-        if (conditionCode) {
-          const conditional = hasAnyConditions ? "elseif" : "if";
-          calculateFunction += `
-            ${conditional} ${conditionCode} then`;
-          hasAnyConditions = true;
-        } else {
-          if (hasAnyConditions) {
-            calculateFunction += `
-            else`;
-          }
-        }
-
-        const effectResult = generateEffectReturnStatement(
-          regularRetriggerEffects,
-          convertRandomGroupsForCodegen(randomRetriggerEffects),
-          convertLoopGroupsForCodegen(loopRetriggerEffects),
-          triggerType,
-          modprefix,
-          jokerKey,
-          rule.id,
-          globalEffectCounts
-        );
-
-        if (effectResult.configVariables) {
-          allConfigVariables.push(...effectResult.configVariables);
-        }
-
-        if (effectResult.preReturnCode) {
-          calculateFunction += `
-                ${effectResult.preReturnCode}`;
-        }
-
-        if (effectResult.statement) {
-          calculateFunction += `
-                ${effectResult.statement}`;
-        }
-      });
-
-      if (hasAnyConditions) {
-        calculateFunction += `
-            end`;
-      }
-
-      calculateFunction += `
-        end`;
-
-      const hasNonRetriggerEffects = sortedRules.some((rule) => {
-        const regularNonRetriggerEffects = (rule.effects || []).filter(
-          (e) => e.type !== "retrigger_cards"
-        );
-        const randomNonRetriggerGroups = (rule.randomGroups || [])
-          .map((group) => ({
-            ...group,
-            effects: group.effects.filter((e) => e.type !== "retrigger_cards"),
-          }))
-          .filter((group) => group.effects.length > 0);
-        
-        const loopNonRetriggerGroups = (rule.loops || [])
-          .map((group) => ({
-            ...group,
-            effects: group.effects.filter((e) => e.type !== "retrigger_cards"),
-          }))
-          .filter((group) => group.effects.length > 0);
-
-        return (
-          regularNonRetriggerEffects.length > 0 ||
-          randomNonRetriggerGroups.length > 0 ||
-          loopNonRetriggerGroups.length > 0
-        );
-      });
-
-      if (hasNonRetriggerEffects) {
-        const nonRetriggerContextCheck =
-          triggerType === "card_held_in_hand" ||
-          triggerType === "card_held_in_hand_end_of_round"
-            ? `context.individual and context.cardarea == G.hand and not context.end_of_round ${
-                isBlueprintCompatible ? "" : "and not context.blueprint"
-              }`
-            : triggerType === "card_discarded"
-            ? `context.discard ${
-                isBlueprintCompatible ? "" : "and not context.blueprint"
-              }`
-            : `context.individual and context.cardarea == G.play ${
-                isBlueprintCompatible ? "" : "and not context.blueprint"
-              }`;
-
-        calculateFunction += `
-        if ${nonRetriggerContextCheck} then`;
-
-        if (hasDeleteEffects) {
-          calculateFunction += `
-            context.other_card.should_destroy = false`;
-        }
-
-        hasAnyConditions = false;
-
-        const rulesWithConditions = sortedRules.filter(
-          (rule) => generateConditionChain(rule, joker).length > 0
-        );
-        const rulesWithoutConditions = sortedRules.filter(
-          (rule) => generateConditionChain(rule, joker).length === 0
-        );
-
-        rulesWithConditions.forEach((rule) => {
-          const regularNonRetriggerEffects = (rule.effects || []).filter(
-            (e) => e.type !== "retrigger_cards"
-          );
-          const randomNonRetriggerGroups = (rule.randomGroups || [])
-            .map((group) => ({
-              ...group,
-              effects: group.effects.filter(
-                (e) => e.type !== "retrigger_cards"
-              ),
-            }))
-            .filter((group) => group.effects.length > 0);
-          
-          const loopNonRetriggerGroups = (rule.loops || [])
-            .map((group) => ({
-              ...group,
-              effects: group.effects.filter(
-                (e) => e.type !== "retrigger_cards"
-              ),
-            }))
-            .filter((group) => group.effects.length > 0);
-
-          if (
-            regularNonRetriggerEffects.length === 0 &&
-            randomNonRetriggerGroups.length === 0 &&
-            loopNonRetriggerGroups.length === 0
-          )
-            return;
-
-          const conditionCode = generateConditionChain(rule, joker);
-
-          const conditional = hasAnyConditions ? "elseif" : "if";
-          calculateFunction += `
-            ${conditional} ${conditionCode} then`;
-          hasAnyConditions = true;
-
-          const hasDeleteInRegularEffects = (rule.effects || []).some(
-            (effect) => effect.type === "delete_triggered_card"
-          );
-
-          if (hasDeleteInRegularEffects) {
-            calculateFunction += `
-                context.other_card.should_destroy = true`;
-          }
-
-          const effectResult = generateEffectReturnStatement(
-            regularNonRetriggerEffects,
-            convertRandomGroupsForCodegen(randomNonRetriggerGroups),
-            convertLoopGroupsForCodegen(loopNonRetriggerGroups),
-            triggerType,
-            modprefix,
-            jokerKey,
-            rule.id,
-            globalEffectCounts
-          );
-
-          if (effectResult.configVariables) {
-            allConfigVariables.push(...effectResult.configVariables);
-          }
-
-          if (effectResult.preReturnCode) {
-            calculateFunction += `
-                ${effectResult.preReturnCode}`;
-          }
-
-          if (effectResult.statement) {
-            calculateFunction += `
-                ${effectResult.statement}`;
-          }
-        });
-
-        if (rulesWithoutConditions.length > 0) {
-          const rulesWithGroups = rulesWithoutConditions.filter(
-            (rule) => (rule.randomGroups || []).length > 0 || (rule.loops || []).length > 0
-          );
-          const rulesWithoutAnyGroups = rulesWithoutConditions.filter(
-            (rule) =>
-              (rule.randomGroups || []).length === 0 &&
-              (rule.loops || []).length === 0 &&
-              (rule.effects || []).length > 0
-          );
-
-          rulesWithGroups.forEach((rule) => {
-            const regularNonRetriggerEffects = (rule.effects || []).filter(
-              (e) => e.type !== "retrigger_cards"
-            );
-            const randomNonRetriggerGroups = (rule.randomGroups || [])
-              .map((group) => ({
-                ...group,
-                effects: group.effects.filter(
-                  (e) => e.type !== "retrigger_cards"
-                ),
-              }))
-              .filter((group) => group.effects.length > 0);
-            const loopNonRetriggerGroups = (rule.loops || [])
-              .map((group) => ({
-                ...group,
-                effects: group.effects.filter(
-                  (e) => e.type !== "retrigger_cards"
-                ),
-              }))
-              .filter((group) => group.effects.length > 0);
-
-            if (
-              regularNonRetriggerEffects.length === 0 &&
-              randomNonRetriggerGroups.length === 0 &&
-              loopNonRetriggerGroups.length === 0
-            )
-              return;
-
-            const conditional = hasAnyConditions ? "elseif" : "if";
-            calculateFunction += `
-            ${conditional} true then`;
-            hasAnyConditions = true;
-
-            const hasDeleteInRegularEffects = (rule.effects || []).some(
-              (effect) => effect.type === "delete_triggered_card"
-            );
-
-            if (hasDeleteInRegularEffects) {
-              calculateFunction += `
-                context.other_card.should_destroy = true`;
-            }
-
-            const effectResult = generateEffectReturnStatement(
-              regularNonRetriggerEffects,
-              convertRandomGroupsForCodegen(randomNonRetriggerGroups),
-              convertLoopGroupsForCodegen(loopNonRetriggerGroups),
-              triggerType,
-              modprefix,
-              jokerKey,
-              rule.id,
-              globalEffectCounts
-            );
-
-            if (effectResult.configVariables) {
-              allConfigVariables.push(...effectResult.configVariables);
-            }
-
-            if (effectResult.preReturnCode) {
-              calculateFunction += `
-                ${effectResult.preReturnCode}`;
-            }
-
-            if (effectResult.statement) {
-              calculateFunction += `
-                ${effectResult.statement}`;
-            }
-          });
-
-          if (rulesWithoutAnyGroups.length > 0) {
-            if (hasAnyConditions) {
-              calculateFunction += `
-            else`;
-            }
-
-            rulesWithoutAnyGroups.forEach((rule) => {
-              const regularNonRetriggerEffects = (rule.effects || []).filter(
-                (e) => e.type !== "retrigger_cards"
-              );
-
-              if (regularNonRetriggerEffects.length === 0) return;
-
-              const hasDeleteInRegularEffects = (rule.effects || []).some(
-                (effect) => effect.type === "delete_triggered_card"
-              );
-
-              if (hasDeleteInRegularEffects) {
-                calculateFunction += `
-                context.other_card.should_destroy = true`;
-              }
-
-              const effectResult = generateEffectReturnStatement(
-                regularNonRetriggerEffects,
-                [],
-                [],
-                triggerType,
-                modprefix,
-                jokerKey,
-                rule.id,
-                globalEffectCounts
-              );
-
-              if (effectResult.configVariables) {
-                allConfigVariables.push(...effectResult.configVariables);
-              }
-
-              if (effectResult.preReturnCode) {
-                calculateFunction += `
-                ${effectResult.preReturnCode}`;
-              }
-
-              if (effectResult.statement) {
-                calculateFunction += `
-                ${effectResult.statement}`;
-              }
-            });
-          }
-        }
-
-        if (hasAnyConditions) {
-          calculateFunction += `
-            end`;
-        }
-
-        calculateFunction += `
-        end`;
-      }
-    } else if (hasDeleteEffects) {
-      const individualContextCheck =
-        triggerType === "card_held_in_hand" ||
-        triggerType === "card_held_in_hand_end_of_round"
-          ? `context.individual and context.cardarea == G.hand and not context.end_of_round ${
-              isBlueprintCompatible ? "" : "and not context.blueprint"
-            }`
-          : triggerType === "card_discarded"
-          ? `context.discard ${
-              isBlueprintCompatible ? "" : "and not context.blueprint"
-            }`
-          : `context.individual and context.cardarea == G.play ${
-              isBlueprintCompatible ? "" : "and not context.blueprint"
-            }`;
-
-      calculateFunction += `
-        if ${individualContextCheck} then
-            context.other_card.should_destroy = false`;
-
-      let hasAnyConditions = false;
-
-      const rulesWithConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length > 0
-      );
-      const rulesWithoutConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length === 0
-      );
-
-      rulesWithConditions.forEach((rule) => {
-        const regularDeleteEffects = (rule.effects || []).filter(
-          (e) => e.type === "delete_triggered_card"
-        );
-        const randomDeleteGroups = (rule.randomGroups || []).filter((group) =>
-          group.effects.some((e) => e.type === "delete_triggered_card")
-        );
-        const loopDeleteGroups = (rule.loops || []).filter((group) =>
-          group.effects.some((e) => e.type === "delete_triggered_card")
-        );
-
-        const regularNonDeleteEffects = (rule.effects || []).filter(
-          (e) => e.type !== "delete_triggered_card"
-        );
-        const randomNonDeleteGroups = (rule.randomGroups || [])
-          .map((group) => ({
-            ...group,
-            effects: group.effects.filter(
-              (e) => e.type !== "delete_triggered_card"
-            ),
-          }))
-          .filter((group) => group.effects.length > 0);
-        const loopNonDeleteGroups = (rule.loops || [])
-          .map((group) => ({
-            ...group,
-            effects: group.effects.filter(
-              (e) => e.type !== "delete_triggered_card"
-            ),
-          }))
-          .filter((group) => group.effects.length > 0);
-
-        if (
-          regularDeleteEffects.length === 0 &&
-          randomDeleteGroups.length === 0 &&
-          loopDeleteGroups.length === 0 &&
-          regularNonDeleteEffects.length === 0 &&
-          randomNonDeleteGroups.length === 0 &&
-          loopNonDeleteGroups.length === 0
-        )
-          return;
-
-        const conditionCode = generateConditionChain(rule, joker);
-
-        const conditional = hasAnyConditions ? "elseif" : "if";
-        calculateFunction += `
-            ${conditional} ${conditionCode} then`;
-        hasAnyConditions = true;
-
-        if (regularDeleteEffects.length > 0) {
-          calculateFunction += `
-                context.other_card.should_destroy = true`;
-        }
-
-        const allEffects = [
-          ...regularNonDeleteEffects,
-          ...regularDeleteEffects,
-        ];
-        const allRandomGroups = [...randomNonDeleteGroups, ...randomDeleteGroups];
-        const allLoopGroups = [...loopDeleteGroups, ...loopNonDeleteGroups];
-
-        if (allEffects.length > 0 || allRandomGroups.length > 0 || allLoopGroups.length > 0) {
-          const effectResult = generateEffectReturnStatement(
-            allEffects,
-            convertRandomGroupsForCodegen(allRandomGroups),
-            convertLoopGroupsForCodegen(allLoopGroups),
-            triggerType,
-            modprefix,
-            jokerKey,
-            rule.id,
-            globalEffectCounts
-          );
-
-          if (effectResult.configVariables) {
-            allConfigVariables.push(...effectResult.configVariables);
-          }
-
-          if (effectResult.preReturnCode) {
-            calculateFunction += `
-                ${effectResult.preReturnCode}`;
-          }
-
-          if (effectResult.statement) {
-            calculateFunction += `
-                ${effectResult.statement}`;
-          }
-        }
-      });
-
-      if (rulesWithoutConditions.length > 0) {
-        const rulesWithGroups = rulesWithoutConditions.filter(
-          (rule) => (rule.randomGroups || []).length > 0 || (rule.loops || []).length > 0
-        );
-        const rulesWithoutAnyGroups = rulesWithoutConditions.filter(
-          (rule) =>
-            (rule.randomGroups || []).length === 0 &&
-            (rule.loops || []).length === 0 &&
-            (rule.effects || []).length > 0
-        );
-
-        rulesWithGroups.forEach((rule) => {
-          const regularDeleteEffects = (rule.effects || []).filter(
-            (e) => e.type === "delete_triggered_card"
-          );
-          const randomDeleteGroups = (rule.randomGroups || []).filter((group) =>
-            group.effects.some((e) => e.type === "delete_triggered_card")
-          );
-          const loopDeleteGroups = (rule.loops || []).filter((group) =>
-            group.effects.some((e) => e.type === "delete_triggered_card")
-          );
-
-          const regularNonDeleteEffects = (rule.effects || []).filter(
-            (e) => e.type !== "delete_triggered_card"
-          );
-          const randomNonDeleteGroups = (rule.randomGroups || [])
-            .map((group) => ({
-              ...group,
-              effects: group.effects.filter(
-                (e) => e.type !== "delete_triggered_card"
-              ),
-            }))
-            .filter((group) => group.effects.length > 0);
-          const loopNonDeleteGroups = (rule.loops || [])
-            .map((group) => ({
-              ...group,
-              effects: group.effects.filter(
-                (e) => e.type !== "delete_triggered_card"
-              ),
-            }))
-            .filter((group) => group.effects.length > 0);
-
-          if (
-            regularDeleteEffects.length === 0 &&
-            randomDeleteGroups.length === 0 &&
-            loopDeleteGroups.length === 0 &&
-            regularNonDeleteEffects.length === 0 &&
-            randomNonDeleteGroups.length === 0 && 
-            loopNonDeleteGroups.length === 0
-          )
-            return;
-
-          const conditional = hasAnyConditions ? "elseif" : "if";
-          calculateFunction += `
-            ${conditional} true then`;
-          hasAnyConditions = true;
-
-          if (regularDeleteEffects.length > 0) {
-            calculateFunction += `
-                context.other_card.should_destroy = true`;
-          }
-
-          const allEffects = [
-            ...regularNonDeleteEffects,
-            ...regularDeleteEffects,
-          ];
-          const allRandomGroups = [...randomNonDeleteGroups, ...randomDeleteGroups];
-          const allLoopGroups = [...loopDeleteGroups, ...loopNonDeleteGroups];
-
-          if (allEffects.length > 0 || allRandomGroups.length > 0 || allLoopGroups.length > 0) {
-            const effectResult = generateEffectReturnStatement(
-              allEffects,
-              convertRandomGroupsForCodegen(allRandomGroups),
-              convertLoopGroupsForCodegen(allLoopGroups),
-              triggerType,
-              modprefix,
-              jokerKey,
-              rule.id,
-              globalEffectCounts
-            );
-
-            if (effectResult.configVariables) {
-              allConfigVariables.push(...effectResult.configVariables);
-            }
-
-            if (effectResult.preReturnCode) {
-              calculateFunction += `
-                ${effectResult.preReturnCode}`;
-            }
-
-            if (effectResult.statement) {
-              calculateFunction += `
-                ${effectResult.statement}`;
-            }
-          }
-        });
-
-        if (rulesWithoutAnyGroups.length > 0) {
-          if (hasAnyConditions) {
-            calculateFunction += `
-            else`;
-          }
-
-          rulesWithoutAnyGroups.forEach((rule) => {
-            const regularDeleteEffects = (rule.effects || []).filter(
-              (e) => e.type === "delete_triggered_card"
-            );
-            const regularNonDeleteEffects = (rule.effects || []).filter(
-              (e) => e.type !== "delete_triggered_card"
-            );
-
-            if (
-              regularDeleteEffects.length === 0 &&
-              regularNonDeleteEffects.length === 0
-            )
-              return;
-
-            if (regularDeleteEffects.length > 0) {
-              calculateFunction += `
-                context.other_card.should_destroy = true`;
-            }
-
-            const allEffects = [
-              ...regularNonDeleteEffects,
-              ...regularDeleteEffects,
-            ];
-
-            if (allEffects.length > 0) {
-              const effectResult = generateEffectReturnStatement(
-                allEffects,
-                [],
-                [],
-                triggerType,
-                modprefix,
-                jokerKey,
-                rule.id,
-                globalEffectCounts
-              );
-
-              if (effectResult.configVariables) {
-                allConfigVariables.push(...effectResult.configVariables);
-              }
-
-              if (effectResult.preReturnCode) {
-                calculateFunction += `
-                ${effectResult.preReturnCode}`;
-              }
-
-              if (effectResult.statement) {
-                calculateFunction += `
-                ${effectResult.statement}`;
-              }
-            }
-          });
-        }
-      }
-
-      if (hasAnyConditions) {
-        calculateFunction += `
-            end`;
-      }
-
-      calculateFunction += `
-        end`;
-    } else if (hasFixProbablityEffects || hasModProbablityEffects) {
-      if (hasFixProbablityEffects) {
-        calculateFunction += `
-        if context.fix_probability ${
-          isBlueprintCompatible ? "" : "and not context.blueprint"
-        } then
-        local numerator, denominator = context.numerator, context.denominator`;
-
-        let hasAnyConditions = false;
-
-        sortedRules.forEach((rule) => {
-          const regularFixProbablityEffects = (rule.effects || []).filter(
-            (e) => e.type === "fix_probability"
-          );
-          const randomFixProbablityEffects = (rule.randomGroups || []).filter(
-            (group) => group.effects.some((e) => e.type === "fix_probability")
-          );
-          const loopFixProbablityEffects = (rule.loops || []).filter(
-            (group) => group.effects.some((e) => e.type === "fix_probability")
-          );
-
-          if (
-            regularFixProbablityEffects.length === 0 &&
-            randomFixProbablityEffects.length === 0 &&
-            loopFixProbablityEffects.length === 0
-          )
-            return;
-
-          const conditionCode = generateConditionChain(rule, joker);
-
-          if (conditionCode) {
-            const conditional = hasAnyConditions ? "elseif" : "if";
-            calculateFunction += `
-            ${conditional} ${conditionCode} then`;
-            hasAnyConditions = true;
-          } else {
-            if (hasAnyConditions) {
-              calculateFunction += `
-            else`;
-            }
-          }
-
-          const effectResult = generateEffectReturnStatement(
-            regularFixProbablityEffects,
-            convertRandomGroupsForCodegen(randomFixProbablityEffects),
-            convertLoopGroupsForCodegen(loopFixProbablityEffects),
-            triggerType,
-            modprefix,
-            jokerKey,
-            rule.id,
-            globalEffectCounts
-          );
-
-          if (effectResult.configVariables) {
-            allConfigVariables.push(...effectResult.configVariables);
-          }
-
-          if (effectResult.preReturnCode) {
-            calculateFunction += `
-                ${effectResult.preReturnCode}`;
-          }
-
-          if (effectResult.statement) {
-            calculateFunction += `
-                ${effectResult.statement}`;
-          }
-        });
-
-        if (hasAnyConditions) {
-          calculateFunction += `
-            end`;
-        }
-
-        calculateFunction += `
-      return {
-        numerator = numerator, 
-        denominator = denominator
-      }
-        end`;
-      }
-      if (hasModProbablityEffects) {
-        calculateFunction += `
-          if context.mod_probability ${
-            isBlueprintCompatible ? "" : "and not context.blueprint"
-          } then
-          local numerator, denominator = context.numerator, context.denominator`;
-
-        let hasAnyConditions = false;
-
-        sortedRules.forEach((rule) => {
-          const regularModProbablityEffects = (rule.effects || []).filter(
-            (e) => e.type === "mod_probability"
-          );
-          const randomModProbablityEffects = (rule.randomGroups || []).filter(
-            (group) => group.effects.some((e) => e.type === "mod_probability")
-          );
-          const loopModProbablityEffects = (rule.loops || []).filter(
-            (group) => group.effects.some((e) => e.type === "mod_probability")
-          );
-
-          if (
-            regularModProbablityEffects.length === 0 &&
-            randomModProbablityEffects.length === 0 &&
-            loopModProbablityEffects.length === 0
-          )
-            return;
-
-          const conditionCode = generateConditionChain(rule, joker);
-
-          if (conditionCode) {
-            const conditional = hasAnyConditions ? "elseif" : "if";
-            calculateFunction += `
-              ${conditional} ${conditionCode} then`;
-            hasAnyConditions = true;
-          } else {
-            if (hasAnyConditions) {
-              calculateFunction += `
-              else`;
-            }
-          }
-
-          const effectResult = generateEffectReturnStatement(
-            regularModProbablityEffects,
-            convertRandomGroupsForCodegen(randomModProbablityEffects),
-            convertLoopGroupsForCodegen(loopModProbablityEffects),
-            triggerType,
-            modprefix,
-            jokerKey,
-            rule.id,
-            globalEffectCounts
-          );
-
-          if (effectResult.configVariables) {
-            allConfigVariables.push(...effectResult.configVariables);
-          }
-
-          if (effectResult.preReturnCode) {
-            calculateFunction += `
-                  ${effectResult.preReturnCode}`;
-          }
-
-          if (effectResult.statement) {
-            calculateFunction += `
-                  ${effectResult.statement}`;
-          }
-        });
-
-        if (hasAnyConditions) {
-          calculateFunction += `
-              end`;
-        }
-
-        calculateFunction += `
-        return {
-          numerator = numerator, 
-          denominator = denominator
-        }
-          end`;
-      }
-    } else {
-      const triggerContext = generateTriggerContext(triggerType, sortedRules);
-
-      calculateFunction += `
-        if ${triggerContext.check} then`;
-
-      let hasAnyConditions = false;
-
-      const rulesWithConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length > 0
-      );
-      const rulesWithoutConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length === 0
-      );
-
-      rulesWithConditions.forEach((rule) => {
-        const conditionCode = generateConditionChain(rule, joker);
-
-        const conditional = hasAnyConditions ? "elseif" : "if";
-        calculateFunction += `
-            ${conditional} ${conditionCode} then`;
-        hasAnyConditions = true;
-        const effectResult = generateEffectReturnStatement(
-          rule.effects || [],
-          convertRandomGroupsForCodegen(rule.randomGroups || []),
-          convertLoopGroupsForCodegen(rule.loops || []),
-          triggerType,
-          modprefix,
-          jokerKey,
-          rule.id,
-          globalEffectCounts
-        );
-
-        if (effectResult.configVariables) {
-          allConfigVariables.push(...effectResult.configVariables);
-        }
-
-        if (effectResult.preReturnCode) {
-          calculateFunction += `
-                ${effectResult.preReturnCode}`;
-        }
-
-        if (effectResult.statement) {
-          calculateFunction += `
-                ${effectResult.statement}`;
-        }
-      });
-      if (rulesWithoutConditions.length > 0) {
-        const rulesWithGroups = rulesWithoutConditions.filter(
-          (rule) => (rule.randomGroups || []).length > 0 || (rule.loops || []).length > 0
-        );
-        const rulesWithoutAnyGroups = rulesWithoutConditions.filter(
-          (rule) =>
-            (rule.randomGroups || []).length === 0 &&
-            (rule.loops || []).length === 0 &&
-            (rule.effects || []).length > 0
-        );
-
-        rulesWithGroups.forEach((rule) => {
-          const conditional = hasAnyConditions ? "elseif" : "if";
-          calculateFunction += `
-            ${conditional} true then`;
-          hasAnyConditions = true;
-
-          const effectResult = generateEffectReturnStatement(
-            rule.effects || [],
-            convertRandomGroupsForCodegen(rule.randomGroups || []),
-            convertLoopGroupsForCodegen(rule.loops || []),
-            triggerType,
-            modprefix,
-            jokerKey,
-            rule.id,
-            globalEffectCounts
-          );
-
-          if (effectResult.configVariables) {
-            allConfigVariables.push(...effectResult.configVariables);
-          }
-
-          if (effectResult.preReturnCode) {
-            calculateFunction += `
-                ${effectResult.preReturnCode}`;
-          }
-
-          if (effectResult.statement) {
-            calculateFunction += `
-                ${effectResult.statement}`;
-          }
-        });
-
-        if (rulesWithoutAnyGroups.length > 0) {
-          if (hasAnyConditions) {
-            calculateFunction += `
-            else`;
-          }
-
-          rulesWithoutAnyGroups.forEach((rule) => {
-            const effectResult = generateEffectReturnStatement(
-              rule.effects || [],
-              [],
-              [],
-              triggerType,
-              modprefix,
-              jokerKey,
-              rule.id,
-              globalEffectCounts
-            );
-
-            if (effectResult.configVariables) {
-              allConfigVariables.push(...effectResult.configVariables);
-            }
-
-            if (effectResult.preReturnCode) {
-              calculateFunction += `
-                ${effectResult.preReturnCode}`;
-            }
-
-            if (effectResult.statement) {
-              calculateFunction += `
-                ${effectResult.statement}`;
-            }
-          });
-        }
-      }
-
-      if (hasAnyConditions) {
-        calculateFunction += `
-            end`;
-      }
-
-      calculateFunction += `
-        end`;
-    }
-  });
-
-  processPassiveEffects(joker)
-    .filter((effect) => effect.calculateFunction)
-    .forEach((effect) => {
-      calculateFunction += `\n        ${effect.calculateFunction}`;
-    });
-
-  calculateFunction += `
-    end`;
-
-  return {
-    code: calculateFunction,
-    configVariables: allConfigVariables,
-  };
 };
 
 const generateLocVarsFunction = (
@@ -1875,7 +860,7 @@ const generateLocVarsFunction = (
 
       locVarsReturn = `local new_numerator, new_denominator = SMODS.get_probability_vars(card, ${
         numerators[0]
-      }, ${oddsVar}, 'j_${modPrefix}_${joker.jokerKey}') 
+      }, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}') 
         return {vars = {${nonProbabilityVars.join(", ")}${
         nonProbabilityVars.length > 0 ? `, ` : ``
       }new_numerator, new_denominator}}`;
@@ -1893,7 +878,7 @@ const generateLocVarsFunction = (
         const varSuffix = index === 0 ? "" : (index + 1).toString();
 
         probabilityCalls.push(
-          `local new_numerator${varSuffix}, new_denominator${varSuffix} = SMODS.get_probability_vars(card, ${numerator}, ${oddsVar}, 'j_${modPrefix}_${joker.jokerKey}')`
+          `local new_numerator${varSuffix}, new_denominator${varSuffix} = SMODS.get_probability_vars(card, ${numerator}, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}')`
         );
         probabilityVars.push(
           `new_numerator${varSuffix}`,
@@ -1972,7 +957,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
           hooksByType[hookType] = [];
         }
         hooksByType[hookType].push({
-          jokerKey: joker.jokerKey!,
+          jokerKey: joker.objectKey!,
           params: effect.needsHook.effectParams,
         });
       }

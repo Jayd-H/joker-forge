@@ -919,7 +919,7 @@ export const processPassiveEffects = (
       rule.effects?.forEach((effect) => {
         let passiveResult: PassiveEffectResult | null = null;
 
-        const jokerKey = joker.jokerKey;
+        const jokerKey = joker.objectKey;
 
         switch (effect.type) {
           case "edit_hand_size":

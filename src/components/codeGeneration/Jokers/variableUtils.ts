@@ -861,7 +861,7 @@ export const getAllVariables = (
 
   // For jokers, extract explicit variables (consumables/enhancements don't have these complex variables)
   let explicitVariableNames: string[] = [];
-  if ("jokerKey" in item) {
+  if ("unlockTrigger" in item) {
     // Check if it's a joker
     explicitVariableNames = getVariableNamesFromItem(item)
       .filter((name) => !userVars.some((uv) => uv.name === name))

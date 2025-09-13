@@ -53,6 +53,16 @@ export const generateSuitCardConditionCode = (
     }
   }
 
+  if (triggerType === "played_cards_before_scoring") {
+    const checkLogic = getSuitsCheckLogic(
+      suits,
+      useVariable,
+      variableCode,
+      "c"
+    )
+    return checkLogic
+  }
+
   if (triggerType === "card_destroyed") {
     const checkLogic = getSuitsCheckLogic(
       suits,

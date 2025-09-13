@@ -37,6 +37,10 @@ end)()`;
 end)()`;
     }
   }
+  if (triggerType === "cards_played_before_scoring"){
+    return editionType == "any" ? `c.edition ~= nil` : editionType == "none" ? 
+    `c.edition == nil` : `c.edition and c.edition.key == "${editionType}"`
+  }
 
   if (editionType === "any") {
     return `context.other_card.edition ~= nil`;
