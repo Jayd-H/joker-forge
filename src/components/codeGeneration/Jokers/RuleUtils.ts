@@ -79,17 +79,16 @@ const generateTriggerCode = (
   currentRule: RuleAttributes, 
   triggerType: string, 
   sortedRules: Rule[],
-  conflicts: boolean,
   target?: string 
 )=>{
   let triggerContext, afterCode, triggerCode = ''
-  // If conflicts, then the code will expect a target for which rule type to resolve first for the function
-  const retriggerEffects = (target == 'retrigger') || (currentRule.hasRetriggerEffects && !conflicts)
-  const nonRetriggerEffects = (target == 'non_retrigger') || (currentRule.hasNonRetriggerEffects && !conflicts)
-  const deleteEffects = (target == 'delete') || (currentRule.hasDeleteEffects && !conflicts)
-  const fixProbabilityEffects = (target == 'fix') || (currentRule.hasFixProbabilityEffects && !conflicts)
-  const modProbabilityEffects = (target == 'mod') || (currentRule.hasModProbabilityEffects && !conflicts)
   const reg = (target == 'reg')
+
+  const retriggerEffects = (target == 'retrigger') || (currentRule.hasRetriggerEffects &&  !reg)
+  const nonRetriggerEffects = (target == 'non_retrigger') || (currentRule.hasNonRetriggerEffects && !reg)
+  const deleteEffects = (target == 'delete') || (currentRule.hasDeleteEffects && !reg)
+  const fixProbabilityEffects = (target == 'fix') || (currentRule.hasFixProbabilityEffects &&  !reg)
+  const modProbabilityEffects = (target == 'mod') || (currentRule.hasModProbabilityEffects &&  !reg)
   const bc = currentRule.blueprintCompatible
 
   if (currentRule.hasDeleteEffects)
@@ -244,7 +243,7 @@ const generateCodeForRuleType = (
   let configVariables
   let ruleCode = ''
   if (targetTrigger !== 'reg'){
-    const triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, true, targetTrigger)
+    const triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, targetTrigger)
     const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions)
     const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, targetEffect, targetPolarity)
     const effectCode = effectResult.effectCode
@@ -252,7 +251,7 @@ const generateCodeForRuleType = (
     
     ruleCode += `${triggerCode}${conditionCode}${effectCode}`
   } else {
-    const triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, false, 'reg')
+    const triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, 'reg')
     const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions)
     const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, 'reg',)
     const effectCode = effectResult.effectCode
