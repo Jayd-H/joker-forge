@@ -20,9 +20,11 @@ export const generateCreateConsumableReturn = (
   let colour = "G.C.PURPLE";
   let localizeKey = "";
 
-  if (!isNegative && !ignoreSlots){createCode += `
+  if (!isNegative && !ignoreSlots) {
+    createCode += `
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
-  }else{createCode += `
+  } else {
+    createCode += `
     for i = 1, ${countCode} do`
   }
   
@@ -31,7 +33,8 @@ export const generateCreateConsumableReturn = (
             trigger = 'after',
             delay = 0.4,
             func = function()`
-  if (isNegative){createCode += `
+  if (isNegative) {
+    createCode += `
             if G.consumeables.config.card_limit > #G.consumeables.cards + G.GAME.consumeable_buffer then
               G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
             end
@@ -40,7 +43,8 @@ export const generateCreateConsumableReturn = (
   createCode +=`
             play_sound('timpani')`
                  
-  if (set === "random"){createCode += `
+  if (set === "random") {
+    createCode += `
             local sets = {'Tarot', 'Planet', 'Spectral'}
             local random_set = pseudorandom_element(sets, 'random_consumable_set')`
   }
@@ -48,17 +52,18 @@ export const generateCreateConsumableReturn = (
   createCode += `
             SMODS.add_card({ `
 
-  if (set == "random"){createCode += `set = random_set, `}
-  else if (specificCard == "random"){createCode += `set = ${set}, `}
+  if (set == "random") {createCode += `set = random_set, `}
+  else if (specificCard == "random") {createCode += `set = ${set}, `}
 
-  if (isNegative){createCode += `edition = 'e_negative', `}
-  if (isSoulable && specificCard == "random"){createCode += `soulable = true, `}
-  if (set !== "random" && specificCard !== "random"){createCode += `key = '${specificCard}'`}
+  if (isNegative) {createCode += `edition = 'e_negative', `}
+  if (isSoulable && specificCard == "random") {createCode += `soulable = true, `}
+  if (set !== "random" && specificCard !== "random") {createCode += `key = '${specificCard}'`}
 
   createCode += `})                            
             used_card:juice_up(0.3, 0.5)`
 
-  if (isNegative){createCode += `
+  if (isNegative) {
+    createCode += `
             end`}
 
     createCode +=`
