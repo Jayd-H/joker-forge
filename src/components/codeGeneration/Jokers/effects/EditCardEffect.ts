@@ -12,7 +12,13 @@ export const generateEditCardReturn = (
   const newEdition = (effect.params?.new_edition as string) || "none";
   const customMessage = effect.customMessage;
 
+
   let modificationCode = "";
+  let target = 'context.other_card'
+
+  if (triggerType == "played_cards_before_scoring"){
+    target = 'c'
+  }
 
   if (newRank !== "none" || newSuit !== "none") {
     let suitParam = "nil";
@@ -36,7 +42,7 @@ export const generateEditCardReturn = (
 
   if (newEnhancement === "remove") {
     modificationCode += `
-                context.other_card:set_ability(G.P_CENTERS.c_base)`;
+                ${target}:set_ability(G.P_CENTERS.c_base)`;
   } else if (newEnhancement === "random") {
     modificationCode += `
                 local enhancement_pool = {}
@@ -46,10 +52,10 @@ export const generateEditCardReturn = (
                     end
                 end
                 local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
-                context.other_card:set_ability(random_enhancement)`;
+                ${target}:set_ability(random_enhancement)`;
   } else if (newEnhancement !== "none") {
     modificationCode += `
-                context.other_card:set_ability(G.P_CENTERS.${newEnhancement})`;
+                ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
   }
 
   if (newSeal === "remove") {
@@ -59,7 +65,7 @@ export const generateEditCardReturn = (
     modificationCode += `
                 local random_seal = SMODS.poll_seal({mod = 10, guaranteed = true})
                 if random_seal then
-                    context.other_card:set_seal(random_seal, true)
+                    ${target}:set_seal(random_seal, true)
                 end`;
   } else if (newSeal !== "none") {
     modificationCode += `
@@ -68,16 +74,16 @@ export const generateEditCardReturn = (
 
   if (newEdition === "remove") {
     modificationCode += `
-                context.other_card:set_edition(nil)`;
+                ${target}:set_edition(nil)`;
   } else if (newEdition === "random") {
     modificationCode += `
                 local random_edition = poll_edition('edit_card_edition', nil, true, true)
                 if random_edition then
-                    context.other_card:set_edition(random_edition, true)
+                    ${target}:set_edition(random_edition, true)
                 end`;
   } else if (newEdition !== "none") {
     modificationCode += `
-                context.other_card:set_edition("${newEdition}", true)`;
+                ${target}:set_edition("${newEdition}", true)`;
   }
 
   const scoringTriggers = ["card_scored"];

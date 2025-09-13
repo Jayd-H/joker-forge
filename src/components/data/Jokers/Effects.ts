@@ -564,7 +564,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "add_card_to_deck",
     label: "Add Card to Deck",
     description: "Create a new playing card and add it to your deck",
-    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
         id: "suit",
@@ -634,7 +634,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "copy_played_card",
     label: "Copy Played Card",
     description: "Copy a specific card from the played hand to your deck",
-    applicableTriggers: ["hand_played", "played_cards_before_scoring"],
+    applicableTriggers: ["hand_played"],
     params: [
       {
         id: "card_index",
@@ -758,7 +758,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "add_card_to_hand",
     label: "Add Card to Hand",
     description: "Create a new playing card and add it to your hand",
-    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
         id: "suit",
@@ -828,7 +828,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "copy_played_card_to_hand",
     label: "Copy Played Card to Hand",
     description: "Copy a specific card from the played hand to your hand",
-    applicableTriggers: ["hand_played", "played_cards_before_scoring"],
+    applicableTriggers: ["hand_played"],
     params: [
       {
         id: "card_index",

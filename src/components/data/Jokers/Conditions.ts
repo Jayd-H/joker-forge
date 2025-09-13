@@ -1010,7 +1010,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     label: "First/Last Scored",
     description:
       "Check if this is the first or last card of a specific type to be scored",
-    applicableTriggers: ["card_scored", "played_cards_before_scoring"],
+    applicableTriggers: ["card_scored"],
     params: [
       {
         id: "position",

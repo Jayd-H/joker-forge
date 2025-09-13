@@ -24,6 +24,7 @@ interface RuleAttributes {
   hasNoConditions: boolean;
   hasGroupRules: boolean;
   hasNonGroupRules: boolean;
+  isForCardTrigger: boolean;
   blueprintCompatible: boolean;
 }
 
@@ -41,6 +42,8 @@ const getAllRulesWithAttributes = (
     effect => effect.type === "fix_probability"))
   const rulesWithModProbabilityEffects = rules.filter(rule => rule.effects.some(
     effect => effect.type === "mod_probability"))
+  const rulesWithForCardTrigger = rules.filter(rule => 
+    rule.trigger === "played_cards_before_scoring")
   const rulesWithConditions = rules.filter(rule => 
     generateConditionChain(rule, joker).length > 0)
   const rulesWithNoConditions = rules.filter(rule => 
@@ -62,7 +65,8 @@ const getAllRulesWithAttributes = (
     rulesWithNoConditions,
     rulesWithGroups,
     rulesWithNoGroups,
-    blueprintCompatibleRules
+    rulesWithForCardTrigger,
+    blueprintCompatibleRules,
   }}
 
 const getRuleAttributes = (
@@ -71,6 +75,7 @@ const getRuleAttributes = (
 ) : RuleAttributes => {
     const activeRule = getAllRulesWithAttributes(joker)
   return {
+      isForCardTrigger: activeRule.rulesWithForCardTrigger.includes(currentRule) ? true : false,
       hasRetriggerEffects: activeRule.rulesWithRetriggerEffects.includes(currentRule) ? true : false,
       hasNonRetriggerEffects: activeRule.rulesWithNonRetriggerEffects.includes(currentRule) ? true : false,
       hasDeleteEffects: activeRule.rulesWithDeleteEffects.includes(currentRule) ? true : false,
@@ -97,6 +102,7 @@ const generateTriggerCode = (
   const deleteEffects = (target === 'delete')
   const fixProbabilityEffects = (target === 'fix')
   const modProbabilityEffects = (target === 'mod')
+  const forCardTrigger = (target === 'for_card')
   const bc = currentRule.blueprintCompatible
 
   if (currentRule.hasDeleteEffects)
@@ -129,6 +135,10 @@ const generateTriggerCode = (
   else if (modProbabilityEffects){
     triggerContext = `context.mod_probability ${bc ? "" : "and not context.blueprint"}`
     afterCode = `local numerator, denominator = context.numerator, context.denominator`}
+  else if (forCardTrigger){
+      triggerContext = `context.before${bc ? '' : ' and not context.blueprint'}`,
+      afterCode = `for i, c in ipairs(context.scoring_hand) do`
+  }
   else if (reg) {
     triggerContext = generateTriggerContext(triggerType, sortedRules).check}
   
@@ -156,7 +166,7 @@ const generateConditionCode = (
   
   if (currentRule.hasNoConditions) {return ''}
   
-  let condition = generateConditionChain(rule, joker)
+  let condition = generateConditionChain(rule, joker, )
 
   let conditionCode = ''
   if (condition){
@@ -370,31 +380,39 @@ end`
       }}
     else if (currentRule.hasDeleteEffects){
       const delCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'delete','delete_triggered_card',newTrigger,jokerKey,globalEffectCounts,true)
-      ruleCode += `${delCode.ruleCode}`
+      ruleCode += `${delCode.ruleCode}
+      end`
       allConfigVariables.push(...(delCode.configVariables || [] ))
+    }
+    else if (currentRule.isForCardTrigger){
+      const forCardCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'for_card','reg',newTrigger,jokerKey,globalEffectCounts,true)
+      ruleCode += `${forCardCode.ruleCode}
+      end
+    end`
+      allConfigVariables.push(...(forCardCode.configVariables || [] ))
+      
     }
     else if (currentRule.hasFixProbabilityEffects || currentRule.hasModProbabilityEffects){
       if (currentRule.hasFixProbabilityEffects){
         const fixCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'fix','fix_probability',newTrigger,jokerKey,globalEffectCounts,true)
-        ruleCode += `${fixCode.ruleCode}`
-        allConfigVariables.push(...(fixCode.configVariables || [] ))
-           ruleCode += `
-    return {
+        ruleCode += `${fixCode.ruleCode}
+            return {
       numerator = numerator, 
       denominator = denominator
     }
       end`
+        allConfigVariables.push(...(fixCode.configVariables || [] ))
       }
       if (currentRule.hasModProbabilityEffects){
         const modCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'mod','mod_probability',newTrigger,jokerKey,globalEffectCounts,true)
-        ruleCode += `${modCode.ruleCode}`
-        allConfigVariables.push(...(modCode.configVariables || [] ))
-                   ruleCode += `
+        ruleCode += `${modCode.ruleCode}
     return {
       numerator = numerator, 
       denominator = denominator
     }
       end`
+        allConfigVariables.push(...(modCode.configVariables || [] ))
+
       }}
     else {
       const regCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'reg','reg',newTrigger,jokerKey,globalEffectCounts)
