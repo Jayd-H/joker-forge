@@ -20,8 +20,7 @@ export const generateCreateConsumableReturn = (
   let colour = "G.C.PURPLE";
   let localizeKey = "";
 
-  // Determine the set and card to create
-    if (!isNegative && !ignoreSlots){createCode += `
+  if (!isNegative && !ignoreSlots){createCode += `
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   }else{createCode += `
     for i = 1, ${countCode} do`
