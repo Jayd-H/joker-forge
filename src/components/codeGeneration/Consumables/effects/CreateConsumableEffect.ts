@@ -19,7 +19,7 @@ export const generateCreateConsumableReturn = (
   let createCode = `
     __PRE_RETURN_CODE__`
   
-  if (!isNegative){createCode += `
+  if (!isNegative && ignoreSlots){createCode += `
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   }else{createCode += `
     for i = 1, ${countCode} do`
@@ -30,7 +30,7 @@ export const generateCreateConsumableReturn = (
             trigger = 'after',
             delay = 0.4,
             func = function()`
-  if (isNegative || ignoreSlots){createCode += `
+  if (isNegative){createCode += `
             if G.consumeables.config.card_limit > #G.consumeables.cards + G.GAME.consumeable_buffer then
               G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
             end
