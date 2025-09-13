@@ -113,7 +113,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     rules: joker.rules || [],
     userVariables: joker.userVariables || [],
     placeholderCreditIndex: joker.placeholderCreditIndex,
-    jokerKey: joker.jokerKey || "",
+    objectKey: joker.objectKey || "",
     hasUserUploadedImage: joker.hasUserUploadedImage || false,
     cardAppearance: joker.cardAppearance || {
       buf: true,
@@ -160,7 +160,7 @@ const normalizeConsumableData = (
     can_repeat_soul: consumable.can_repeat_soul,
     rules: consumable.rules || [],
     placeholderCreditIndex: consumable.placeholderCreditIndex,
-    consumableKey: consumable.consumableKey || "",
+    objectKey: consumable.objectKey || "",
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
     orderValue: consumable.orderValue || NaN,
   };
@@ -188,7 +188,7 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     discovered: booster.discovered,
     hidden: booster.hidden,
     placeholderCreditIndex: booster.placeholderCreditIndex,
-    boosterKey: booster.boosterKey || "",
+    objectKey: booster.objectKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
     orderValue: booster.orderValue || NaN
   };
@@ -202,7 +202,7 @@ const normalizeEnhancementData = (
     name: enhancement.name || "",
     description: enhancement.description || "",
     imagePreview: enhancement.imagePreview || "",
-    enhancementKey: enhancement.enhancementKey || "",
+    objectKey: enhancement.objectKey || "",
     atlas: enhancement.atlas,
     pos: enhancement.pos || { x: 0, y: 0 },
     any_suit: enhancement.any_suit,
@@ -228,7 +228,7 @@ const normalizeSealData = (seal: SealData): SealData => {
     name: seal.name || "",
     description: seal.description || "",
     imagePreview: seal.imagePreview || "",
-    sealKey: seal.sealKey || "",
+    objectKey: seal.objectKey || "",
     atlas: seal.atlas,
     pos: seal.pos || { x: 0, y: 0 },
     badge_colour: seal.badge_colour || "#FFFFFF",
@@ -248,7 +248,7 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
     id: edition.id || "",
     name: edition.name || "",
     description: edition.description || "",
-    editionKey: edition.editionKey || "",
+    objectKey: edition.objectKey || "",
     shader: edition.shader || false,
     unlocked: edition.unlocked,
     discovered: edition.discovered,

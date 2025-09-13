@@ -80,7 +80,7 @@ const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
         if (!poolsMap[poolName]) {
           poolsMap[poolName] = [];
         }
-        const jokerKey = joker.jokerKey || slugify(joker.name);
+        const jokerKey = joker.objectKey || slugify(joker.name);
         poolsMap[poolName].push(`j_${getModPrefix()}_${jokerKey}`);
       });
     }

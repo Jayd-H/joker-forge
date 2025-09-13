@@ -37,7 +37,7 @@ interface CalculateFunctionResult {
 const ensureJokerKeys = (jokers: JokerData[]): JokerData[] => {
   return jokers.map((joker) => ({
     ...joker,
-    jokerKey: joker.jokerKey || slugify(joker.name),
+    objectKey: joker.objectKey || slugify(joker.name),
   }));
 };
 
@@ -67,7 +67,7 @@ export const generateJokersCode = (
 ${hookCode}`;
     }
 
-    jokersCode[`${joker.jokerKey}.lua`] = jokerCode;
+    jokersCode[`${joker.objectKey}.lua`] = jokerCode;
     currentPosition = result.nextPosition;
   });
 
@@ -311,7 +311,7 @@ const generateSingleJokerCode = (
   let nextPosition = currentPosition + 1;
 
   let jokerCode = `SMODS.Joker{ --${joker.name}
-    key = "${joker.jokerKey}",
+    key = "${joker.objectKey}",
     config = {
         extra = {`;
 
@@ -432,7 +432,7 @@ const generateSingleJokerCode = (
   if (joker.ignoreSlotLimit) {
     jokerCode += `\n\nlocal check_for_buy_space_ref = G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = function(card)
-    if card.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then -- ignore slot limit when bought
+    if card.config.center.key == "j_${modPrefix}_${joker.objectKey}" then -- ignore slot limit when bought
         return true
     end
     return check_for_buy_space_ref(card)
@@ -440,7 +440,7 @@ end
 
 local can_select_card_ref = G.FUNCS.can_select_card
 G.FUNCS.can_select_card = function(e)
-	if e.config.ref_table.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then
+	if e.config.ref_table.config.center.key == "j_${modPrefix}_${joker.objectKey}" then
 		e.config.colour = G.C.GREEN
 		e.config.button = "use_card"
 	else
@@ -457,9 +457,9 @@ end`;
 
 export const exportSingleJoker = (joker: JokerData): void => {
   try {
-    const jokerWithKey = joker.jokerKey
+    const jokerWithKey = joker.objectKey
       ? joker
-      : { ...joker, jokerKey: slugify(joker.name) };
+      : { ...joker, objectKey: slugify(joker.name) };
 
     const result = generateSingleJokerCode(
       jokerWithKey,
@@ -479,7 +479,7 @@ export const exportSingleJoker = (joker: JokerData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${jokerWithKey.jokerKey}.lua`;
+    a.download = `${jokerWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -578,7 +578,7 @@ const generateCalculateFunction = (
   joker: JokerData,
   modprefix: string
 ): CalculateFunctionResult => {
-  const jokerKey = joker.jokerKey;
+  const objectKey = joker.objectKey;
   const rulesByTrigger: Record<string, Rule[]> = {};
   rules.forEach((rule) => {
     if (!rulesByTrigger[rule.trigger]) {
@@ -703,7 +703,7 @@ const generateCalculateFunction = (
           convertLoopGroupsForCodegen(loopRetriggerEffects),
           triggerType,
           modprefix,
-          jokerKey,
+          objectKey,
           rule.id,
           globalEffectCounts
         );
@@ -839,7 +839,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopNonRetriggerGroups),
             triggerType,
             modprefix,
-            jokerKey,
+            objectKey,
             rule.id,
             globalEffectCounts
           );
@@ -918,7 +918,7 @@ const generateCalculateFunction = (
               convertLoopGroupsForCodegen(loopNonRetriggerGroups),
               triggerType,
               modprefix,
-              jokerKey,
+              objectKey,
               rule.id,
               globalEffectCounts
             );
@@ -966,7 +966,7 @@ const generateCalculateFunction = (
                 [],
                 triggerType,
                 modprefix,
-                jokerKey,
+                objectKey,
                 rule.id,
                 globalEffectCounts
               );
@@ -1091,7 +1091,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(allLoopGroups),
             triggerType,
             modprefix,
-            jokerKey,
+            objectKey,
             rule.id,
             globalEffectCounts
           );
@@ -1188,7 +1188,7 @@ const generateCalculateFunction = (
               convertLoopGroupsForCodegen(allLoopGroups),
               triggerType,
               modprefix,
-              jokerKey,
+              objectKey,
               rule.id,
               globalEffectCounts
             );
@@ -1246,7 +1246,7 @@ const generateCalculateFunction = (
                 [],
                 triggerType,
                 modprefix,
-                jokerKey,
+                objectKey,
                 rule.id,
                 globalEffectCounts
               );
@@ -1324,7 +1324,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopFixProbablityEffects),
             triggerType,
             modprefix,
-            jokerKey,
+            objectKey,
             rule.id,
             globalEffectCounts
           );
@@ -1403,7 +1403,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopModProbablityEffects),
             triggerType,
             modprefix,
-            jokerKey,
+            objectKey,
             rule.id,
             globalEffectCounts
           );
@@ -1463,7 +1463,7 @@ const generateCalculateFunction = (
           convertLoopGroupsForCodegen(rule.loops || []),
           triggerType,
           modprefix,
-          jokerKey,
+          objectKey,
           rule.id,
           globalEffectCounts
         );
@@ -1505,7 +1505,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(rule.loops || []),
             triggerType,
             modprefix,
-            jokerKey,
+            objectKey,
             rule.id,
             globalEffectCounts
           );
@@ -1538,7 +1538,7 @@ const generateCalculateFunction = (
               [],
               triggerType,
               modprefix,
-              jokerKey,
+              objectKey,
               rule.id,
               globalEffectCounts
             );
@@ -1875,7 +1875,7 @@ const generateLocVarsFunction = (
 
       locVarsReturn = `local new_numerator, new_denominator = SMODS.get_probability_vars(card, ${
         numerators[0]
-      }, ${oddsVar}, 'j_${modPrefix}_${joker.jokerKey}') 
+      }, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}') 
         return {vars = {${nonProbabilityVars.join(", ")}${
         nonProbabilityVars.length > 0 ? `, ` : ``
       }new_numerator, new_denominator}}`;
@@ -1893,7 +1893,7 @@ const generateLocVarsFunction = (
         const varSuffix = index === 0 ? "" : (index + 1).toString();
 
         probabilityCalls.push(
-          `local new_numerator${varSuffix}, new_denominator${varSuffix} = SMODS.get_probability_vars(card, ${numerator}, ${oddsVar}, 'j_${modPrefix}_${joker.jokerKey}')`
+          `local new_numerator${varSuffix}, new_denominator${varSuffix} = SMODS.get_probability_vars(card, ${numerator}, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}')`
         );
         probabilityVars.push(
           `new_numerator${varSuffix}`,
@@ -1972,7 +1972,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
           hooksByType[hookType] = [];
         }
         hooksByType[hookType].push({
-          jokerKey: joker.jokerKey!,
+          jokerKey: joker.objectKey!,
           params: effect.needsHook.effectParams,
         });
       }
