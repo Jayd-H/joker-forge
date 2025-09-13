@@ -307,8 +307,7 @@ const applyIndents = (
     
     let line = stringLines[i]
     
-    while (line.startsWith(' ')){
-      line = line.slice(1)} // Change character checking methods later
+    line = line.trimStart()
     if  (line.includes('end') && !line.includes('pend') || 
         (line.includes('}') && !line.includes('{')) || 
         (line.includes('else') && !line.includes('elseif'))) 
