@@ -75,17 +75,17 @@ const getRuleAttributes = (
 ) : RuleAttributes => {
     const activeRule = getAllRulesWithAttributes(joker)
   return {
-      isForCardTrigger: activeRule.rulesWithForCardTrigger.includes(currentRule) ? true : false,
-      hasRetriggerEffects: activeRule.rulesWithRetriggerEffects.includes(currentRule) ? true : false,
-      hasNonRetriggerEffects: activeRule.rulesWithNonRetriggerEffects.includes(currentRule) ? true : false,
-      hasDeleteEffects: activeRule.rulesWithDeleteEffects.includes(currentRule) ? true : false,
-      hasFixProbabilityEffects: activeRule.rulesWithFixProbabilityEffects.includes(currentRule) ? true : false,
-      hasModProbabilityEffects: activeRule.rulesWithModProbabilityEffects.includes(currentRule) ? true : false,
-      hasConditions: activeRule.rulesWithConditions.includes(currentRule) ? true : false,
-      hasNoConditions: activeRule.rulesWithNoConditions.includes(currentRule) ? true : false,
-      hasGroupRules: activeRule.rulesWithGroups.includes(currentRule) ? true : false,
-      hasNonGroupRules: activeRule.rulesWithNoGroups.includes(currentRule) ? true : false,
-      blueprintCompatible: activeRule.blueprintCompatibleRules.includes(currentRule) ? true : false }
+    isForCardTrigger: activeRule.rulesWithForCardTrigger.includes(currentRule) ? true : false,
+    hasRetriggerEffects: activeRule.rulesWithRetriggerEffects.includes(currentRule) ? true : false,
+    hasNonRetriggerEffects: activeRule.rulesWithNonRetriggerEffects.includes(currentRule) ? true : false,
+    hasDeleteEffects: activeRule.rulesWithDeleteEffects.includes(currentRule) ? true : false,
+    hasFixProbabilityEffects: activeRule.rulesWithFixProbabilityEffects.includes(currentRule) ? true : false,
+    hasModProbabilityEffects: activeRule.rulesWithModProbabilityEffects.includes(currentRule) ? true : false,
+    hasConditions: activeRule.rulesWithConditions.includes(currentRule) ? true : false,
+    hasNoConditions: activeRule.rulesWithNoConditions.includes(currentRule) ? true : false,
+    hasGroupRules: activeRule.rulesWithGroups.includes(currentRule) ? true : false,
+    hasNonGroupRules: activeRule.rulesWithNoGroups.includes(currentRule) ? true : false,
+    blueprintCompatible: activeRule.blueprintCompatibleRules.includes(currentRule) ? true : false }
 }
 
 const generateTriggerCode = (
@@ -107,28 +107,28 @@ const generateTriggerCode = (
 
   if (currentRule.hasDeleteEffects)
     {triggerCode += `
-        if context.destroy_card and context.destroy_card.should_destroy ${bc ? "" : "and not context.blueprint"} then
-        return { remove = true }
-        end`}
+      if context.destroy_card and context.destroy_card.should_destroy ${bc ? "" : "and not context.blueprint"} then
+      return { remove = true }
+      end`}
   if (retriggerEffects){
   triggerContext =
-          triggerType === "card_held_in_hand" || triggerType === "card_held_in_hand_end_of_round"? 
-          `context.repetition and context.cardarea == G.hand and (next(context.card_effects[1]) or #context.card_effects > 1) ${bc ? "" : "and not context.blueprint"}`: 
-          `context.repetition and context.cardarea == G.play ${bc ? "" : "and not context.blueprint"}`}
+    triggerType === "card_held_in_hand" || triggerType === "card_held_in_hand_end_of_round"? 
+    `context.repetition and context.cardarea == G.hand and (next(context.card_effects[1]) or #context.card_effects > 1) ${bc ? "" : "and not context.blueprint"}`: 
+    `context.repetition and context.cardarea == G.play ${bc ? "" : "and not context.blueprint"}`}
   else if (nonRetriggerEffects){
   triggerContext =
-            triggerType === "card_held_in_hand" || triggerType === "card_held_in_hand_end_of_round" ?
-            `context.individual and context.cardarea == G.hand and not context.end_of_round ${bc ? "" : "and not context.blueprint"}` :
-            triggerType === "card_discarded"? `context.discard 
-            ${bc ? "" : "and not context.blueprint"}` : 
-            `context.individual and context.cardarea == G.play ${bc ? "" : "and not context.blueprint"}`} 
+    triggerType === "card_held_in_hand" || triggerType === "card_held_in_hand_end_of_round" ?
+    `context.individual and context.cardarea == G.hand and not context.end_of_round ${bc ? "" : "and not context.blueprint"}` :
+    triggerType === "card_discarded"? `context.discard 
+    ${bc ? "" : "and not context.blueprint"}` : 
+    `context.individual and context.cardarea == G.play ${bc ? "" : "and not context.blueprint"}`} 
   else if (deleteEffects){
     triggerContext =
-            triggerType === "card_held_in_hand" || triggerType === "card_held_in_hand_end_of_round" ? 
-            `context.individual and context.cardarea == G.hand and not context.end_of_round ${bc ? "" : "and not context.blueprint"}` : 
-            triggerType === "card_discarded" ? 
-            `context.discard ${bc ? "" : "and not context.blueprint"}` : 
-            `context.individual and context.cardarea == G.play ${bc ? "" : "and not context.blueprint"}`}
+      triggerType === "card_held_in_hand" || triggerType === "card_held_in_hand_end_of_round" ? 
+      `context.individual and context.cardarea == G.hand and not context.end_of_round ${bc ? "" : "and not context.blueprint"}` : 
+      triggerType === "card_discarded" ? 
+      `context.discard ${bc ? "" : "and not context.blueprint"}` : 
+      `context.individual and context.cardarea == G.play ${bc ? "" : "and not context.blueprint"}`}
   else if (fixProbabilityEffects){
     triggerContext = `context.fix_probability ${bc ? "" : "and not context.blueprint"}`
     afterCode = `local numerator, denominator = context.numerator, context.denominator`}
@@ -203,16 +203,22 @@ const generateEffectCode = (
 ) => {
   let effectCode = '', configVariables
 
-  const allEffects = (target !== 'reg' && targetType) ? (rule.effects || []).filter(effect => effect.type === target) : 
-    (target !== 'reg' && !targetType) ? (rule.effects || []).filter(effect => effect.type !== target) : 
+  const allEffects = (target !== 'reg' && targetType) ? (rule.effects || []).filter(
+    effect => effect.type === target) : 
+    (target !== 'reg' && !targetType) ? (rule.effects || []).filter(
+      effect => effect.type !== target) : 
     (rule.effects)
 
-  const allRandomGroups = (target !== 'reg' && targetType) ? (rule.randomGroups || []).filter(group => group.effects.some(effect => effect.type === target)) : 
-    (target !== 'reg' && !targetType) ? (rule.randomGroups || []).filter(group => group.effects.some(effect => effect.type !== target)) : 
+  const allRandomGroups = (target !== 'reg' && targetType) ? (rule.randomGroups || []).filter(
+    group => group.effects.some(effect => effect.type === target)) : 
+    (target !== 'reg' && !targetType) ? (rule.randomGroups || []).filter(
+      group => group.effects.some(effect => effect.type !== target)) : 
     (rule.randomGroups) 
 
-  const allLoopGroups = (target !== 'reg' && targetType) ? (rule.loops || []).filter(group => group.effects.some(effect => effect.type === target)) :
-    (target !== 'reg' && !targetType) ? (rule.loops || []).filter(group => group.effects.some(effect => effect.type !== target)) :
+  const allLoopGroups = (target !== 'reg' && targetType) ? (rule.loops || []).filter(
+    group => group.effects.some(effect => effect.type === target)) :
+    (target !== 'reg' && !targetType) ? (rule.loops || []).filter(
+      group => group.effects.some(effect => effect.type !== target)) :
     (rule.loops)
 
   const effectResult = generateEffectReturnStatement(
@@ -262,7 +268,8 @@ const generateCodeForRuleType = (
     if (newTrigger){
     triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, targetTrigger)}
     const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions)
-    const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, targetEffect, targetPolarity)
+    const effectResult= generateEffectCode(
+      rule, triggerType, modPrefix, jokerKey, globalEffectCounts, targetEffect, targetPolarity)
     const effectCode = effectResult.effectCode
     configVariables = effectResult.configVariables
     
@@ -271,7 +278,8 @@ const generateCodeForRuleType = (
     if (newTrigger){
     triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, 'reg')}
     const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions)
-    const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, 'reg')
+    const effectResult= generateEffectCode(
+      rule, triggerType, modPrefix, jokerKey, globalEffectCounts, 'reg')
     const effectCode = effectResult.effectCode
     configVariables = effectResult.configVariables
     
@@ -301,7 +309,8 @@ const applyIndents = (
     
     while (line.startsWith(' ')){
       line = line.slice(1)} // Change character checking methods later
-    if (line.includes('end') && !line.includes('pend') || (line.includes('}') && !line.includes('{')) || 
+    if  (line.includes('end') && !line.includes('pend') || 
+        (line.includes('}') && !line.includes('{')) || 
         (line.includes('else') && !line.includes('elseif'))) 
       {indentCount -= 1}
 
@@ -362,7 +371,10 @@ export const generateCalculateFunction = (
       newTrigger = true} else {newTrigger = false}
 
     if (currentRule.hasRetriggerEffects){
-        const retrigCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'retrigger','retrigger_cards',newTrigger,jokerKey,globalEffectCounts,true)
+        const retrigCode = generateCodeForRuleType(
+          rule, currentRule, joker, triggerType, sortedRules, 
+          hasAnyConditions, modprefix, 'retrigger', 'retrigger_cards',
+          newTrigger, jokerKey, globalEffectCounts, true)
         ruleCode += `${retrigCode.ruleCode}`
         allConfigVariables.push(...(retrigCode.configVariables || [] ))
 
@@ -373,19 +385,28 @@ export const generateCalculateFunction = (
           ruleCode += `
 end`
         if (currentRule.hasNonRetriggerEffects){
-          const nonretrigCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'non_retrigger','retrigger_cards',newTrigger,jokerKey,globalEffectCounts,false)
+          const nonretrigCode = generateCodeForRuleType(
+            rule, currentRule, joker, triggerType, sortedRules, 
+            hasAnyConditions, modprefix, 'non_retrigger', 'retrigger_cards',
+            newTrigger, jokerKey, globalEffectCounts, false)
           ruleCode += `${nonretrigCode.ruleCode}`
           allConfigVariables.push(...(nonretrigCode.configVariables || [] ))
 
       }}
     else if (currentRule.hasDeleteEffects){
-      const delCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'delete','delete_triggered_card',newTrigger,jokerKey,globalEffectCounts,true)
+      const delCode = generateCodeForRuleType(
+        rule, currentRule, joker, triggerType, sortedRules, 
+        hasAnyConditions, modprefix, 'delete', 'delete_triggered_card',
+        newTrigger, jokerKey, globalEffectCounts, true)
       ruleCode += `${delCode.ruleCode}
       end`
       allConfigVariables.push(...(delCode.configVariables || [] ))
     }
     else if (currentRule.isForCardTrigger){
-      const forCardCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'for_card','reg',newTrigger,jokerKey,globalEffectCounts,true)
+      const forCardCode = generateCodeForRuleType(
+        rule, currentRule, joker, triggerType, sortedRules, 
+        hasAnyConditions, modprefix, 'for_card', 'reg',
+        newTrigger, jokerKey, globalEffectCounts, true)
       ruleCode += `${forCardCode.ruleCode}
       end
     end`
@@ -394,7 +415,10 @@ end`
     }
     else if (currentRule.hasFixProbabilityEffects || currentRule.hasModProbabilityEffects){
       if (currentRule.hasFixProbabilityEffects){
-        const fixCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'fix','fix_probability',newTrigger,jokerKey,globalEffectCounts,true)
+        const fixCode = generateCodeForRuleType(
+          rule, currentRule, joker, triggerType, sortedRules, 
+          hasAnyConditions, modprefix, 'fix', 'fix_probability',
+          newTrigger, jokerKey, globalEffectCounts, true)
         ruleCode += `${fixCode.ruleCode}
             return {
       numerator = numerator, 
@@ -404,7 +428,10 @@ end`
         allConfigVariables.push(...(fixCode.configVariables || [] ))
       }
       if (currentRule.hasModProbabilityEffects){
-        const modCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'mod','mod_probability',newTrigger,jokerKey,globalEffectCounts,true)
+        const modCode = generateCodeForRuleType(
+          rule, currentRule, joker, triggerType, sortedRules, 
+          hasAnyConditions, modprefix, 'mod', 'mod_probability',
+          newTrigger, jokerKey, globalEffectCounts, true)
         ruleCode += `${modCode.ruleCode}
     return {
       numerator = numerator, 
@@ -415,7 +442,10 @@ end`
 
       }}
     else {
-      const regCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'reg','reg',newTrigger,jokerKey,globalEffectCounts)
+      const regCode = generateCodeForRuleType(
+        rule, currentRule, joker, triggerType, sortedRules, 
+        hasAnyConditions, modprefix, 'reg', 'reg', newTrigger,
+        jokerKey, globalEffectCounts)
       ruleCode += `${regCode.ruleCode}`
       allConfigVariables.push(...(regCode.configVariables || [] ))
     }
