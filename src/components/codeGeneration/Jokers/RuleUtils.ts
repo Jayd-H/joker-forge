@@ -342,7 +342,6 @@ export const generateCalculateFunction = (
     });
 
   let hasAnyConditions = false
-  let hasProbabilityEvents = false
   let currentTriggerContext = '' 
   let newTrigger = false
 
@@ -379,12 +378,23 @@ end`
         const fixCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'fix','fix_probability',newTrigger,jokerKey,globalEffectCounts,true)
         ruleCode += `${fixCode.ruleCode}`
         allConfigVariables.push(...(fixCode.configVariables || [] ))
-        hasProbabilityEvents = true
+           ruleCode += `
+    return {
+      numerator = numerator, 
+      denominator = denominator
+    }
+      end`
       }
       if (currentRule.hasModProbabilityEffects){
         const modCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'mod','mod_probability',newTrigger,jokerKey,globalEffectCounts,true)
         ruleCode += `${modCode.ruleCode}`
         allConfigVariables.push(...(modCode.configVariables || [] ))
+                   ruleCode += `
+    return {
+      numerator = numerator, 
+      denominator = denominator
+    }
+      end`
       }}
     else {
       const regCode = generateCodeForRuleType(rule, currentRule, joker, triggerType, sortedRules, hasAnyConditions, modprefix,'reg','reg',newTrigger,jokerKey,globalEffectCounts)
@@ -395,19 +405,8 @@ end`
       ruleCode += `
         end`
     hasAnyConditions = true}
-
-    })
   
-  if (hasProbabilityEvents){
-    ruleCode += `
-    return {
-      numerator = numerator, 
-      denominator = denominator
-    }`}
-
-  ruleCode += `
-end`
-})
+})})
   processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
       ruleCode += `
 ${effect.calculateFunction}`})
