@@ -100,3 +100,27 @@ export const getObjectName = (
     if (dupeName && !data.some(dataObject => dataObject.objectKey == dupeName && object.id !== dataObject.id)){
       return dupeName as any
 }}}
+
+export const scanGameObjectKeys = (
+  data:GameObjectData[])=>{
+  let wrongObjects: Array <GameObjectData> = []
+  data.forEach(object1 => {
+    data.forEach(object2 => {
+      if (object1.objectKey == object2.objectKey && object1.orderValue > object2.orderValue){
+        wrongObjects.push(object1)
+      }
+    })
+  })
+  wrongObjects.forEach(object =>
+    object.objectKey = getObjectName(object,data,object.objectKey)
+  )
+
+  return data as any
+}
+
+export const scanGameObjects = (
+  data : GameObjectData[]) => {
+    const checkedKeys = scanGameObjectKeys(data)
+    const checkedIds = scanGameObjectIds(checkedKeys)
+    return checkedIds as any
+  }
