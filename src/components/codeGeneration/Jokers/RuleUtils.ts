@@ -69,18 +69,18 @@ const getRuleAttributes = (
   joker: JokerData,
   currentRule: Rule,
 ) : RuleAttributes => {
-    const Rule = getAllRulesWithAttributes(joker)
+    const activeRule = getAllRulesWithAttributes(joker)
   return {
-      hasRetriggerEffects: Rule.rulesWithRetriggerEffects.includes(currentRule) ? true : false,
-      hasNonRetriggerEffects: Rule.rulesWithNonRetriggerEffects.includes(currentRule) ? true : false,
-      hasDeleteEffects: Rule.rulesWithDeleteEffects.includes(currentRule) ? true : false,
-      hasFixProbabilityEffects: Rule.rulesWithFixProbabilityEffects.includes(currentRule) ? true : false,
-      hasModProbabilityEffects: Rule.rulesWithModProbabilityEffects.includes(currentRule) ? true : false,
-      hasConditions: Rule.rulesWithConditions.includes(currentRule) ? true : false,
-      hasNoConditions: Rule.rulesWithNoConditions.includes(currentRule) ? true : false,
-      hasGroupRules: Rule.rulesWithGroups.includes(currentRule) ? true : false,
-      hasNonGroupRules: Rule.rulesWithNoGroups.includes(currentRule) ? true : false,
-      blueprintCompatible: Rule.blueprintCompatibleRules.includes(currentRule) ? true : false }
+      hasRetriggerEffects: activeRule.rulesWithRetriggerEffects.includes(currentRule) ? true : false,
+      hasNonRetriggerEffects: activeRule.rulesWithNonRetriggerEffects.includes(currentRule) ? true : false,
+      hasDeleteEffects: activeRule.rulesWithDeleteEffects.includes(currentRule) ? true : false,
+      hasFixProbabilityEffects: activeRule.rulesWithFixProbabilityEffects.includes(currentRule) ? true : false,
+      hasModProbabilityEffects: activeRule.rulesWithModProbabilityEffects.includes(currentRule) ? true : false,
+      hasConditions: activeRule.rulesWithConditions.includes(currentRule) ? true : false,
+      hasNoConditions: activeRule.rulesWithNoConditions.includes(currentRule) ? true : false,
+      hasGroupRules: activeRule.rulesWithGroups.includes(currentRule) ? true : false,
+      hasNonGroupRules: activeRule.rulesWithNoGroups.includes(currentRule) ? true : false,
+      blueprintCompatible: activeRule.blueprintCompatibleRules.includes(currentRule) ? true : false }
 }
 
 const generateTriggerCode = (
