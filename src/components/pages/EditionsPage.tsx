@@ -152,6 +152,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
 
   const handleAddNewEdition = async () => {
     const newEdition: EditionData = {
+      objectType: "edition",
       id: crypto.randomUUID(),
       name: "New Edition",
       description: "A {C:blue}custom{} edition with {C:red}unique{} effects.",

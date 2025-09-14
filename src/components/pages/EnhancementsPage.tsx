@@ -258,6 +258,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     const placeholderResult = await getRandomPlaceholderEnhancement();
 
     const newEnhancement: EnhancementData = {
+      objectType: "enhancement",
       id: crypto.randomUUID(),
       name: "New Enhancement",
       description:

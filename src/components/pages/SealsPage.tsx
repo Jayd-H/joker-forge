@@ -255,6 +255,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
     const placeholderResult = await getRandomPlaceholderSeal();
 
     const newSeal: SealData = {
+      objectType: "seal",
       id: crypto.randomUUID(),
       name: "New Seal",
       description: "A {C:blue}custom{} seal with {C:red}unique{} effects.",

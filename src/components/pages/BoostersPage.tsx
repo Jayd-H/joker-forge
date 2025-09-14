@@ -615,6 +615,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     card_rules: [],
     discovered: true,
     objectKey: "",
+    objectType: "booster",
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(
@@ -727,6 +728,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       placeholderCreditIndex: placeholderResult.creditIndex,
       objectKey: slugify("New Booster Pack"),
       group_key: key,
+      objectType: "booster",
     };
     newBooster.objectKey = getObjectName(newBooster,boosters,newBooster.objectKey)
     setBoosters([...boosters, newBooster]);
@@ -797,6 +799,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       card_rules: [],
       discovered: true,
       objectKey: "",
+      objectType: "booster",
     });
   };
 

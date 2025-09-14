@@ -901,6 +901,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
       objectKey: slugify("New Consumable"),
+      objectType: "consumable",
     };
     newConsumable.objectKey = getObjectName(newConsumable,consumables,newConsumable.objectKey)
     setConsumables([...consumables, newConsumable]);

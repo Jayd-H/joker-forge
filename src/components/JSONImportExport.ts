@@ -131,6 +131,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
     orderValue: joker.orderValue || NaN,
+    objectType: "joker",
   };
 };
 
@@ -163,7 +164,7 @@ const normalizeConsumableData = (
     can_repeat_soul: consumable.can_repeat_soul,
     rules: consumable.rules || [],
     placeholderCreditIndex: consumable.placeholderCreditIndex,
-  
+    objectType: "consumable",
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
     orderValue: consumable.orderValue || NaN,
   };
@@ -173,6 +174,7 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
   return {
     //@ts-ignore: backwards compatibility
     objectKey: booster.boosterKey || booster.objectKey || "",
+    objectType: "booster",
     id: booster.id || "",
     name: booster.name || "",
     description: booster.description || "",
@@ -204,6 +206,7 @@ const normalizeEnhancementData = (
   return {
     //@ts-ignore: backwards compatibility
     objectKey: enhancement.enhancementKey || enhancement.objectKey || "",
+    objectType: "enhancement",
     id: enhancement.id || "",
     name: enhancement.name || "",
     description: enhancement.description || "",
@@ -231,6 +234,7 @@ const normalizeSealData = (seal: SealData): SealData => {
   return {
     //@ts-ignore: backwards compatibility
     objectKey: seal.sealKey || seal.objectKey || "",
+    objectType: "seal",
     id: seal.id || "",
     name: seal.name || "",
     description: seal.description || "",
@@ -253,6 +257,7 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
   return {
     //@ts-ignore: backwards compatibility
     objectKey: edition.editionKey || edition.objectKey || "",
+    objectType: "edition",
     id: edition.id || "",
     name: edition.name || "",
     description: edition.description || "",

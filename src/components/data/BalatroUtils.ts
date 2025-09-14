@@ -89,6 +89,7 @@ export interface UserVariable {
 export interface GameObjectData {
   id: string;
   name: string;
+  objectType: string;
   objectKey: string;
   description: string;
   orderValue: number;

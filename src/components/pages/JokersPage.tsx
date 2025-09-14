@@ -328,6 +328,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
     const placeholderResult = await getRandomPlaceholderJoker();
     const modPool = modPrefix+'_jokers'
     const newJoker: JokerData = {
+      objectType: "joker",
       id: crypto.randomUUID(),
       name: "New Joker",
       description: "A {C:blue}custom{} joker with {C:red}unique{} effects.",

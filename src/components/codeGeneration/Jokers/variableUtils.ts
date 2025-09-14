@@ -588,7 +588,7 @@ export const generateVariableConfig = (variables: VariableInfo[]): string => {
 };
 
 export const getVariableNamesFromItem = (
-  item: JokerData | ConsumableData | EnhancementData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData
 ): string[] => {
   if (!item.rules) return [];
 
@@ -861,7 +861,7 @@ export const getAllVariables = (
 
   // For jokers, extract explicit variables (consumables/enhancements don't have these complex variables)
   let explicitVariableNames: string[] = [];
-  if ("unlockTrigger" in item) {
+  if (item.objectType == 'joker') {
     // Check if it's a joker
     explicitVariableNames = getVariableNamesFromItem(item)
       .filter((name) => !userVars.some((uv) => uv.name === name))
