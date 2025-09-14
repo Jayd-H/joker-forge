@@ -85,7 +85,8 @@ export const normalizeImportedModData = (data: ImportableModData) => {
 
 const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
   return {
-    objectKey: joker.objectKey || "",
+    //@ts-ignore: backwards compatibility
+    objectKey: joker.jokerKey || joker.objectKey || "",
     id: joker.id || "",
     name: joker.name || "",
     description: joker.description || "",
@@ -147,6 +148,8 @@ const normalizeConsumableData = (
   consumable: ConsumableData
 ): ConsumableData => {
   return {
+    //@ts-ignore: backwards compatibility
+    objectKey: consumable.consumableKey || consumable.objectKey || "",
     id: consumable.id || "",
     name: consumable.name || "",
     description: consumable.description || "",
@@ -160,7 +163,7 @@ const normalizeConsumableData = (
     can_repeat_soul: consumable.can_repeat_soul,
     rules: consumable.rules || [],
     placeholderCreditIndex: consumable.placeholderCreditIndex,
-    objectKey: consumable.objectKey || "",
+  
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
     orderValue: consumable.orderValue || NaN,
   };
@@ -168,6 +171,8 @@ const normalizeConsumableData = (
 
 const normalizeBoosterData = (booster: BoosterData): BoosterData => {
   return {
+    //@ts-ignore: backwards compatibility
+    objectKey: booster.boosterKey || booster.objectKey || "",
     id: booster.id || "",
     name: booster.name || "",
     description: booster.description || "",
@@ -188,7 +193,6 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     discovered: booster.discovered,
     hidden: booster.hidden,
     placeholderCreditIndex: booster.placeholderCreditIndex,
-    objectKey: booster.objectKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
     orderValue: booster.orderValue || NaN
   };
@@ -198,11 +202,12 @@ const normalizeEnhancementData = (
   enhancement: EnhancementData
 ): EnhancementData => {
   return {
+    //@ts-ignore: backwards compatibility
+    objectKey: enhancement.enhancementKey || enhancement.objectKey || "",
     id: enhancement.id || "",
     name: enhancement.name || "",
     description: enhancement.description || "",
     imagePreview: enhancement.imagePreview || "",
-    objectKey: enhancement.objectKey || "",
     atlas: enhancement.atlas,
     pos: enhancement.pos || { x: 0, y: 0 },
     any_suit: enhancement.any_suit,
@@ -224,11 +229,12 @@ const normalizeEnhancementData = (
 
 const normalizeSealData = (seal: SealData): SealData => {
   return {
+    //@ts-ignore: backwards compatibility
+    objectKey: seal.sealKey || seal.objectKey || "",
     id: seal.id || "",
     name: seal.name || "",
     description: seal.description || "",
     imagePreview: seal.imagePreview || "",
-    objectKey: seal.objectKey || "",
     atlas: seal.atlas,
     pos: seal.pos || { x: 0, y: 0 },
     badge_colour: seal.badge_colour || "#FFFFFF",
@@ -245,10 +251,11 @@ const normalizeSealData = (seal: SealData): SealData => {
 
 const normalizeEditionData = (edition: EditionData): EditionData => {
   return {
+    //@ts-ignore: backwards compatibility
+    objectKey: edition.editionKey || edition.objectKey || "",
     id: edition.id || "",
     name: edition.name || "",
     description: edition.description || "",
-    objectKey: edition.objectKey || "",
     shader: edition.shader || false,
     unlocked: edition.unlocked,
     discovered: edition.discovered,

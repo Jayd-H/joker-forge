@@ -326,6 +326,12 @@ ${indent}${line}`}
         line.includes('while ') || line.includes('do ') || line.includes(' then'))
         {indentCount += 1}
   }
+  while (indentCount > 1){
+    const indent = indents(indentCount-1) 
+    finalCode += `
+${indent}end`
+    indentCount -= 1
+  }
   return finalCode
 }
 
@@ -407,7 +413,6 @@ end`
         hasAnyConditions, modprefix, 'for_card', 'reg',
         newTrigger, jokerKey, globalEffectCounts, true)
       ruleCode += `${forCardCode.ruleCode}
-      end
     end`
       allConfigVariables.push(...(forCardCode.configVariables || [] ))
       
@@ -452,14 +457,16 @@ end`
       ruleCode += `
         end`
     hasAnyConditions = true}
+
+      
+  ruleCode += `
+end`
   
 })})
   processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
       ruleCode += `
-${effect.calculateFunction}`})
-  
-  ruleCode += `
-end`
+${effect.calculateFunction}`})      
+
 
   ruleCode = applyIndents(ruleCode)
 
