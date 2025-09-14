@@ -6,7 +6,8 @@ import type { EffectReturn } from "../effectUtils";
 
 export const generateSetDollarsReturn = (
   effect: Effect,
-  sameTypeCount: number = 0
+  sameTypeCount: number = 0,
+  triggerType: string,
 ): EffectReturn => {
   const operation = (effect.params?.operation as string) || "add";
 
@@ -25,12 +26,27 @@ export const generateSetDollarsReturn = (
 
   switch (operation) {
     case "add": {
+      if (triggerType == "round_end"){
+      result = {
+        statement: `
+        __PRIOR_FUNCTION__
+        calculate_dollar_bonus = function(self, card)
+            return card.ability.extra.${valueCode}
+        end,
+        __PRIOR_FUNCTION_END__`,
+        colour: "G.C.MONEY",
+        configVariables:
+          configVariables.length > 0 ? configVariables : undefined,
+      }
+    } else {
       result = {
         statement: `dollars = ${valueCode}`,
         colour: "G.C.MONEY",
         configVariables:
           configVariables.length > 0 ? configVariables : undefined,
-      };
+      }
+    }
+
 
       if (customMessage) {
         result.message = `"${customMessage}"`;

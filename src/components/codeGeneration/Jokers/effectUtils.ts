@@ -135,6 +135,7 @@ export interface ReturnStatementResult {
   statement: string;
   colour: string;
   preReturnCode?: string;
+  priorFunctionCode?: string;
   isRandomChance?: boolean;
   configVariables?: ConfigExtraVariable[];
 }
@@ -163,6 +164,7 @@ export function generateEffectReturnStatement(
   }
 
   let combinedPreReturnCode = "";
+  let combinedPriorFunctionCode = "";
   let mainReturnStatement = "";
   let primaryColour = "G.C.WHITE";
   const allConfigVariables: ConfigExtraVariable[] = [];
@@ -212,6 +214,15 @@ export function generateEffectReturnStatement(
         effect.statement
       );
 
+      const { newStatement, priorFunctionCode } = extractPriorFunction(
+        cleanedStatement
+      );
+
+      if (priorFunctionCode) {
+        combinedPriorFunctionCode +=
+          (combinedPriorFunctionCode ? "\n                " : "") + priorFunctionCode;
+      }
+
       if (preReturnCode) {
         combinedPreReturnCode +=
           (combinedPreReturnCode ? "\n                " : "") + preReturnCode;
@@ -219,7 +230,7 @@ export function generateEffectReturnStatement(
 
       processedEffects.push({
         ...effect,
-        statement: cleanedStatement,
+        statement: newStatement,
       });
     });
 
@@ -312,6 +323,16 @@ export function generateEffectReturnStatement(
           effect.statement
         );
 
+        const { newStatement, priorFunctionCode } = extractPriorFunction(
+          cleanedStatement
+        );
+
+      if (priorFunctionCode) {
+        combinedPriorFunctionCode +=
+          (combinedPriorFunctionCode ? "\n                " : "") + 
+          priorFunctionCode;
+      }
+
         if (preReturnCode) {
           groupPreReturnCode +=
             (groupPreReturnCode ? "\n                        " : "") +
@@ -320,7 +341,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: cleanedStatement,
+          statement: newStatement,
         });
       });
 
@@ -540,6 +561,16 @@ export function generateEffectReturnStatement(
           effect.statement
         );
 
+        const { newStatement, priorFunctionCode } = extractPriorFunction(
+          cleanedStatement
+        );
+
+      if (priorFunctionCode) {
+        combinedPriorFunctionCode +=
+          (combinedPriorFunctionCode ? "\n                " : "") + 
+          priorFunctionCode;
+      }
+
         if (preReturnCode) {
           groupPreReturnCode +=
             (groupPreReturnCode ? "\n                        " : "") +
@@ -548,7 +579,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: cleanedStatement,
+          statement: newStatement,
         });
       });
 
@@ -669,6 +700,7 @@ export function generateEffectReturnStatement(
     statement: mainReturnStatement,
     colour: primaryColour,
     preReturnCode: combinedPreReturnCode || undefined,
+    priorFunctionCode: combinedPriorFunctionCode || undefined,
     isRandomChance: randomGroups.length > 0,
     configVariables: allConfigVariables,
   };
@@ -738,7 +770,7 @@ const generateSingleEffect = (
     case "show_message":
       return generateShowMessageReturn(effect);
     case "set_dollars":
-      return generateSetDollarsReturn(effect, sameTypeCount);
+      return generateSetDollarsReturn(effect, sameTypeCount, triggerType);
     case "disable_boss_blind":
       return generateDisableBossBlindReturn(effect, triggerType);
     case "prevent_game_over":
@@ -1038,6 +1070,33 @@ function extractPreReturnCode(statement: string): {
   }
 
   return { cleanedStatement: statement };
+}
+
+function extractPriorFunction(statement: string): {
+  newStatement: string;
+  priorFunctionCode?: string;
+} {
+  const preFunctionStart = "__PRIOR_FUNCTION__";
+  const preFunctionEnd = "__PRIOR_FUNCTION_END__";
+  if (statement.includes(preFunctionStart) && statement.includes(preFunctionEnd)) {
+    const startIndex =
+      statement.indexOf(preFunctionStart) + preFunctionStart.length;
+    const endIndex = statement.indexOf(preFunctionEnd);
+
+    if (startIndex < endIndex) {
+      const priorFunctionCode = statement.substring(startIndex, endIndex).trim();
+      const newStatement = statement
+        .replace(
+          new RegExp(`${preFunctionStart}[\\s\\S]*?${preFunctionEnd}`, "g"),
+          ""
+        )
+        .trim();
+
+    return { newStatement, priorFunctionCode };
+    } 
+  }
+
+  return { newStatement: statement}
 }
 
 function getOrdinalSuffix(num: number): string {

@@ -245,6 +245,12 @@ const generateEffectCode = (
   if (effectResult.statement) {
       effectCode += `
           ${effectResult.statement}`}
+  
+  if (effectResult.priorFunctionCode) {
+    const priorFunctionCode = effectResult.priorFunctionCode
+    return {effectCode, configVariables, priorFunctionCode}
+  }
+  
 
 return {effectCode, configVariables}
 }
@@ -278,6 +284,12 @@ const generateCodeForRuleType = (
     configVariables = effectResult.configVariables
     
     ruleCode += `${triggerCode}${conditionCode}${effectCode}`
+
+    if (effectResult.priorFunctionCode){
+      const priorFunctionCode = effectResult.priorFunctionCode
+      return {ruleCode, configVariables, priorFunctionCode}
+    }
+
   } else {
     if (newTrigger) {
       triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, 'reg') 
@@ -289,6 +301,11 @@ const generateCodeForRuleType = (
     configVariables = effectResult.configVariables
     
     ruleCode += `${triggerCode}${conditionCode}${effectCode}`
+
+    if (effectResult.priorFunctionCode){
+      const priorFunctionCode = effectResult.priorFunctionCode
+      return {ruleCode, configVariables, priorFunctionCode}
+    }
   }
 
   return {ruleCode, configVariables}
@@ -313,14 +330,16 @@ const applyIndents = (
     let line = stringLines[i]
     
     line = line.trimStart()
-    if ( line.includes('end') && !line.includes('pend') || 
+
+    if ( line.includes('end') && !line.includes('pend') && !line.includes('end_')|| 
          ( line.includes('}') && !line.includes('{') ) || 
          ( line.includes('else') && !line.includes('elseif') ) ) {
       indentCount -= 1
     }
 
     if (line.includes('end') && (stringLines[i+1]||'').includes('else')) {
-      line = ''}
+      line = ''
+      indentCount +=1}
 
     const indent = indents(indentCount)
 
@@ -328,10 +347,17 @@ const applyIndents = (
     finalCode += `
 ${indent}${line}`}
 
-    if (line.includes('if ') || line.includes('else ') || line.includes('function') || 
+    if (line.includes('if ') || line.includes('else') || line.includes('function(') || 
         (line.includes('{') && !line.includes('}')) || line.includes('for ') || 
         line.includes('while ') || line.includes('do ') || line.includes(' then'))
         {indentCount += 1}
+  }
+
+  while (indentCount > 1){
+    indentCount -= 1
+    const indent = indents(indentCount)
+    finalCode += `
+${indent}end`
   }
 
   return finalCode
@@ -356,6 +382,7 @@ export const generateCalculateFunction = (
   const globalEffectCounts = new Map<string, number>();
 
   let ruleCode = `calculate = function(self, card, context)`;
+  let priorFunctionCode = ``
   
   Object.entries(rulesByTrigger).forEach(([triggerType, triggerRules]) => {
     const sortedRules = [...triggerRules].sort((a, b) => {
@@ -391,13 +418,18 @@ end`}
         ruleCode += `${retrigCode.ruleCode}`
         allConfigVariables.push(...(retrigCode.configVariables || [] ))
 
-        if (currentRule.hasConditions) {
-        ruleCode += `
-            end`
+        if (retrigCode.priorFunctionCode){
+          priorFunctionCode += `${retrigCode.priorFunctionCode}
+          `
         }
+
+        if (currentRule.hasNonRetriggerEffects) {
+          if (currentRule.hasConditions) {
+            ruleCode += `
+                end`
+          }
           ruleCode += `
 end`
-        if (currentRule.hasNonRetriggerEffects) {
           const nonretrigCode = generateCodeForRuleType(
             rule, currentRule, joker, triggerType, sortedRules, 
             hasAnyConditions, modprefix, 'non_retrigger', 'retrigger_cards',
@@ -406,6 +438,10 @@ end`
           ruleCode += `${nonretrigCode.ruleCode}`
           allConfigVariables.push(...(nonretrigCode.configVariables || [] ))
 
+          if (nonretrigCode.priorFunctionCode){
+          priorFunctionCode += `${retrigCode.priorFunctionCode}
+            `
+          }
       }}
     else if (currentRule.hasDeleteEffects) {
       const delCode = generateCodeForRuleType(
@@ -416,6 +452,10 @@ end`
       ruleCode += `${delCode.ruleCode}
       end`
       allConfigVariables.push(...(delCode.configVariables || [] ))
+      if (delCode.priorFunctionCode){
+          priorFunctionCode += `${delCode.priorFunctionCode}
+          `
+        }
     }
     else if (currentRule.isForCardTrigger) {
       const forCardCode = generateCodeForRuleType(
@@ -426,7 +466,11 @@ end`
       ruleCode += `${forCardCode.ruleCode}
     end`
       allConfigVariables.push(...(forCardCode.configVariables || [] ))
-      
+
+      if (forCardCode.priorFunctionCode){
+          priorFunctionCode += `${forCardCode.priorFunctionCode}
+          `
+        }
     }
     else if (currentRule.hasFixProbabilityEffects || currentRule.hasModProbabilityEffects) {
       if (currentRule.hasFixProbabilityEffects) {
@@ -442,6 +486,11 @@ end`
     }
       end`
         allConfigVariables.push(...(fixCode.configVariables || [] ))
+
+        if (fixCode.priorFunctionCode){
+          priorFunctionCode += `${fixCode.priorFunctionCode}
+          `
+        }
       }
       if (currentRule.hasModProbabilityEffects) {
         const modCode = generateCodeForRuleType(
@@ -457,6 +506,11 @@ end`
       end`
         allConfigVariables.push(...(modCode.configVariables || [] ))
 
+        if (modCode.priorFunctionCode){
+          priorFunctionCode += `${modCode.priorFunctionCode}
+          `
+        }
+
       }}
     else {
       const regCode = generateCodeForRuleType(
@@ -466,7 +520,13 @@ end`
 
       ruleCode += `${regCode.ruleCode}`
       allConfigVariables.push(...(regCode.configVariables || [] ))
+
+      if (regCode.priorFunctionCode){
+          priorFunctionCode += `${regCode.priorFunctionCode}
+          `
+        }
     }
+    
     if (currentRule.hasConditions) {
       ruleCode += `
         end`
@@ -479,6 +539,11 @@ ${effect.calculateFunction}`})
 
   ruleCode += `
 end`
+  
+  if (priorFunctionCode !== ''){
+    ruleCode = `${priorFunctionCode}
+    ${ruleCode}`
+  }
 
   ruleCode = applyIndents(ruleCode)
 
