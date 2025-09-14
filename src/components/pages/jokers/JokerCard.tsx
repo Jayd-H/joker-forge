@@ -164,7 +164,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
   };
 
   const handleCostSave = () => {
-    onQuickUpdate({ cost: Math.min(tempCost,999)});
+    onQuickUpdate({ cost: tempCost });
     setEditingCost(false);
   };
 
