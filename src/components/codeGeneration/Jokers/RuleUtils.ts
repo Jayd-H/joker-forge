@@ -162,19 +162,22 @@ const generateConditionCode = (
   rule:Rule, 
   joker:JokerData,
   hasAnyConditions: boolean,
+  newTrigger: boolean,
  ) => {
   
-  if (currentRule.hasNoConditions) {return ''}
+  if (currentRule.hasNoConditions && !hasAnyConditions) {return ''}
   
   let condition = generateConditionChain(rule, joker, )
-
   let conditionCode = ''
+
+  const elseStatement = (hasAnyConditions || !newTrigger)
+
   if (condition) {
-    const conditional = hasAnyConditions ? "elseif" : "if"
+    const conditional = elseStatement ? "elseif" : "if"
           conditionCode += `
               ${conditional} ${condition} then`
   } else {
-          if (hasAnyConditions) {
+          if (elseStatement) {
             conditionCode += `
             else`;
           }
@@ -268,7 +271,7 @@ const generateCodeForRuleType = (
     if (newTrigger) {
       triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, targetTrigger)
     }
-    const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions)
+    const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions, newTrigger)
     const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, targetEffect, targetPolarity)
     
     const effectCode = effectResult.effectCode
@@ -279,7 +282,7 @@ const generateCodeForRuleType = (
     if (newTrigger) {
       triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, 'reg') 
     }   
-    const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions)
+    const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions, newTrigger)
     const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, 'reg')
     
     const effectCode = effectResult.effectCode
@@ -310,12 +313,14 @@ const applyIndents = (
     let line = stringLines[i]
     
     line = line.trimStart()
-    if  (line.includes('end') && !line.includes('pend') || 
-        (line.includes('}') && !line.includes('{')) || 
-        (line.includes('else') && !line.includes('elseif'))) 
-      {indentCount -= 1}
+    if ( line.includes('end') && !line.includes('pend') || 
+         ( line.includes('}') && !line.includes('{') ) || 
+         ( line.includes('else') && !line.includes('elseif') ) ) {
+      indentCount -= 1
+    }
 
-    if (line.includes('end') && (stringLines[i+1]||'').includes('else')) {line = ''}
+    if (line.includes('end') && (stringLines[i+1]||'').includes('else')) {
+      line = ''}
 
     const indent = indents(indentCount)
 
@@ -369,8 +374,14 @@ export const generateCalculateFunction = (
   sortedRules.forEach(rule => {
     const currentRule : RuleAttributes = getRuleAttributes(joker, rule)    
     if (currentTriggerContext !== triggerType) {
+      if (currentTriggerContext !== ''){
+        ruleCode += `
+end`}
+      newTrigger = true
       currentTriggerContext = triggerType
-      newTrigger = true} else {newTrigger = false}
+    } else {
+        newTrigger = false
+      }
 
     if (currentRule.hasRetriggerEffects) {
         const retrigCode = generateCodeForRuleType(
@@ -460,10 +471,6 @@ end`
       ruleCode += `
         end`
     hasAnyConditions = true}
-
-      
-  ruleCode += `
-end`
   
 })})
   processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
