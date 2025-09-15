@@ -47,7 +47,6 @@ export const generateSetDollarsReturn = (
       }
     }
 
-
       if (customMessage) {
         result.message = `"${customMessage}"`;
       }
