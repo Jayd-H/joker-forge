@@ -406,20 +406,24 @@ export const generateCalculateFunction = (
   sortedRules.forEach(rule => {
     const currentRule : RuleAttributes = getRuleAttributes(joker, rule) 
     const currentPriorFunctionCode = priorFunctionCode
-    
+
     if (currentTriggerContext !== rule.trigger) {
 
       if (currentTriggerContext !== '') {
-        if (currentRule.isForCardTrigger){
+        if (currentRule.isForCardTrigger) {
           ruleCode = applyIndents(ruleCode, 3)
         } else {
           ruleCode = applyIndents(ruleCode, 2)
-      }}
+        }
+      } else { 
+        ruleCode = applyIndents(ruleCode, 2)
+      }
       newTrigger = true
       currentTriggerContext = rule.trigger
     } else {
-        newTrigger = false
-      }
+      newTrigger = false
+      ruleCode = applyIndents(ruleCode, 2)
+    }
 
     if (currentRule.hasRetriggerEffects) {
         const retrigCode = generateCodeForRuleType(
@@ -550,7 +554,7 @@ end`
   
   ruleCode = checkAnyRules(ruleCode)
 
-  if (priorFunctionCode !== `calc_dollar_bonus = (self, card)
+  if (priorFunctionCode !== `calc_dollar_bonus = function(self, card)
 `) {
     priorFunctionCode = priorFunctionCode.slice(0,priorFunctionCode.lastIndexOf("else"))
     priorFunctionCode = applyIndents(priorFunctionCode, 1)
