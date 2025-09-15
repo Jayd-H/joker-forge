@@ -490,8 +490,8 @@ export const generateCalculateFunction = (
             return {
       numerator = numerator, 
       denominator = denominator
-    }
-      end`
+    }`
+
         allConfigVariables.push(...(fixCode.configVariables || [] ))
 
         if (fixCode.priorFunctionCode){
@@ -500,6 +500,9 @@ export const generateCalculateFunction = (
         }
       }
       if (currentRule.hasModProbabilityEffects) {
+        if (currentRule.hasFixProbabilityEffects) {        
+          ruleCode = applyIndents(ruleCode, 2)
+}
         const modCode = generateCodeForRuleType(
           rule, currentRule, joker, triggerType, sortedRules, 
           hasAnyConditions, modprefix, 'mod', 'mod_probability',
@@ -509,8 +512,9 @@ export const generateCalculateFunction = (
     return {
       numerator = numerator, 
       denominator = denominator
-    }
-      end`
+    }`
+        ruleCode = applyIndents(ruleCode, 3)
+
         allConfigVariables.push(...(modCode.configVariables || [] ))
 
         if (modCode.priorFunctionCode){
@@ -544,6 +548,7 @@ export const generateCalculateFunction = (
 
 })})
   processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
+      ruleCode = applyIndents(ruleCode, 2)
       ruleCode += `
 ${effect.calculateFunction}`})   
 
