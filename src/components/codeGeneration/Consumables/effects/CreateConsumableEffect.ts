@@ -8,7 +8,7 @@ export const generateCreateConsumableReturn = (
   const specificCard = (effect.params?.specific_card as string) || "random";
   const isNegative = (effect.params?.is_negative as string) == 'y';
   const customMessage = effect.customMessage;
-  const isSoulable = effect.params?.soulable;
+  const isSoulable = effect.params?.soulable == 'y';
   const countCode = String(effect.params?.count) || '1'
   const ignoreSlots = effect.params?.ignore_slots || false;
 
@@ -53,7 +53,7 @@ export const generateCreateConsumableReturn = (
 
   if (set == "random") {
     createCode += `set = random_set, `
-  } else {
+  } else  {
     createCode += `set = '${set}', `
   }
 
