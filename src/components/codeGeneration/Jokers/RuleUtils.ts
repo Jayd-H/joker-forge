@@ -409,13 +409,9 @@ export const generateCalculateFunction = (
 
     if (currentTriggerContext !== rule.trigger) {
 
-      if (currentTriggerContext !== '') {
-        if (currentRule.isForCardTrigger) {
-          ruleCode = applyIndents(ruleCode, 3)
-        } else {
-          ruleCode = applyIndents(ruleCode, 2)
-        }
-      } else { 
+      if (currentTriggerContext !== '' && currentRule.isForCardTrigger) {
+        ruleCode = applyIndents(ruleCode, 3)
+        } else { 
         ruleCode = applyIndents(ruleCode, 2)
       }
       newTrigger = true
