@@ -99,18 +99,16 @@ export const generateCreateConsumableReturn = (
       localizeKey = "k_plus_consumable";
     }
 
-
-
   return {
       statement: `${createCode}
+                      if created_consumable then
                         card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
                           customMessage
                             ? `"${customMessage}"`
                             : `localize('${localizeKey}')`
                         }, colour = ${colour}})
                     end
-                    return true
-                  end`,
+                    return true`,
       colour: colour,
 
   }
