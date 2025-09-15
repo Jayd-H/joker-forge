@@ -3,7 +3,6 @@ import type { Effect } from "../../../ruleBuilder/types";
 
 export const generateCreateConsumableReturn = (
   effect: Effect,
-  triggerType: string
 ): EffectReturn => {
   const set = (effect.params?.set as string) || "random";
   const specificCard = (effect.params?.specific_card as string) || "random";
@@ -13,8 +12,6 @@ export const generateCreateConsumableReturn = (
   const countCode = String(effect.params?.count) || '1'
   const ignoreSlots = effect.params?.ignore_slots || false;
 
-  const scoringTriggers = ["hand_played", "card_scored"];
-  const isScoring = scoringTriggers.includes(triggerType);
 
   let createCode = ``;
   let colour = "G.C.PURPLE";
@@ -32,8 +29,8 @@ export const generateCreateConsumableReturn = (
   
   createCode += `
             G.E_MANAGER:add_event(Event({
-            trigger = 'after',
-            delay = 0.4,
+            trigger = 'before',
+            delay = 0.0,
             func = function()`
 
   if (isNegative) {
@@ -103,17 +100,8 @@ export const generateCreateConsumableReturn = (
       localizeKey = "k_plus_consumable";
     }
 
-  if (isScoring) {
-    return {
-      statement: `__PRE_RETURN_CODE__${createCode}
-                __PRE_RETURN_CODE_END__`,
-      message: customMessage
-        ? `"${customMessage}"`
-        : `created_consumable and localize('${localizeKey}') or nil`,
-      colour: colour,
-    };
-  } else {
-    return {
+
+  return {
       statement: `${createCode}
                     if created_consumable then
                         card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
@@ -125,6 +113,5 @@ export const generateCreateConsumableReturn = (
                     return true
                   end`,
       colour: colour,
-    };
   }
 };

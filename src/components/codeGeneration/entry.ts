@@ -12,6 +12,7 @@ import {
   isCustomShader,
   getCustomShaderFilepath,
   SoundData,
+  isCustomConsumableSet,
 } from "../data/BalatroUtils";
 import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
@@ -474,13 +475,14 @@ to_big = to_big or function(a) return a end
 lenient_bignum = lenient_bignum or function(a) return a end
 `;
 
-const createIndexList = function(objects:GameObjectData[]){
+const createIndexList = (objects:GameObjectData[]) => {
   const alphabetOrder = objects.sort((a,b)=>a.name.localeCompare(b.name))
   const order : Array < Array <number> > = []
 
+
   objects.forEach(object=>{
     order.push([alphabetOrder.indexOf(object) + 1 , object.orderValue])
-  })
+})
 
   const indexOrder = order.sort((a,b) => a[1] - b[1])
   const indexArray : Array <number> = []
@@ -493,7 +495,7 @@ const createIndexList = function(objects:GameObjectData[]){
 }
 
   if (jokers.length > 0) {
-    const indexArray= createIndexList(jokers)
+    const indexArray = createIndexList(jokers)
     output += `
 local jokerIndexList = {${indexArray}}
 
@@ -513,7 +515,7 @@ end
   }
 
   if (consumables.length > 0) {
-    const indexArray= createIndexList(consumables)
+    const indexArray = createIndexList(consumables)
     output += `
 local consumableIndexList = {${indexArray}}
 
@@ -521,6 +523,11 @@ local function load_consumables_folder()
     local mod_path = SMODS.current_mod.path
     local consumables_path = mod_path .. "/consumables"
     local files = NFS.getDirectoryItemsInfo(consumables_path)
+    for i = 1, #files do
+        if files[i].name == "sets.lua" then
+            assert(SMODS.load_file("consumables/sets.lua"))()
+        end
+    end    
     for i = 1, #consumableIndexList do
         local file_name = files[consumableIndexList[i]].name
         if file_name:sub(-4) == ".lua" then

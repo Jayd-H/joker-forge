@@ -3,7 +3,6 @@ import type { Effect } from "../../../ruleBuilder/types";
 
 export const generateCreateConsumableReturn = (
   effect: Effect,
-  triggerType: string
 ): EffectReturn => {
   const set = (effect.params?.set as string) || "random";
   const specificCard = (effect.params?.specific_card as string) || "random";
@@ -13,8 +12,6 @@ export const generateCreateConsumableReturn = (
   const countCode = String(effect.params?.count) || '1'
   const ignoreSlots = effect.params?.ignore_slots || false;
 
-  const scoringTriggers = ["hand_played", "card_scored"];
-  const isScoring = scoringTriggers.includes(triggerType);
 
   let createCode = ``;
   let colour = "G.C.PURPLE";
@@ -22,11 +19,9 @@ export const generateCreateConsumableReturn = (
 
   if (!isNegative && !ignoreSlots) {
     createCode += `
-    func = function()
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   } else {
     createCode += `
-    func = function()
     for i = 1, ${countCode} do`
   }
   
@@ -44,6 +39,7 @@ export const generateCreateConsumableReturn = (
 `}
 
   createCode +=`
+  
             play_sound('timpani')`
                  
   if (set === "random") {
@@ -103,19 +99,10 @@ export const generateCreateConsumableReturn = (
       localizeKey = "k_plus_consumable";
     }
 
-  if (isScoring) {
-    return {
-      statement: `__PRE_RETURN_CODE__${createCode}
-                __PRE_RETURN_CODE_END__`,
-      message: customMessage
-        ? `"${customMessage}"`
-        : `created_consumable and localize('${localizeKey}') or nil`,
-      colour: colour,
-    };
-  } else {
-    return {
+
+
+  return {
       statement: `${createCode}
-                    if created_consumable then
                         card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
                           customMessage
                             ? `"${customMessage}"`
@@ -125,6 +112,6 @@ export const generateCreateConsumableReturn = (
                     return true
                   end`,
       colour: colour,
-    };
+
   }
 };
