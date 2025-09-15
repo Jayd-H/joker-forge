@@ -490,7 +490,8 @@ export const generateCalculateFunction = (
             return {
       numerator = numerator, 
       denominator = denominator
-    }`
+    }
+      end`
         allConfigVariables.push(...(fixCode.configVariables || [] ))
 
         if (fixCode.priorFunctionCode){
@@ -508,7 +509,8 @@ export const generateCalculateFunction = (
     return {
       numerator = numerator, 
       denominator = denominator
-    }`
+    }
+      end`
         allConfigVariables.push(...(modCode.configVariables || [] ))
 
         if (modCode.priorFunctionCode){
