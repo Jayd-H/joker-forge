@@ -167,7 +167,7 @@ const generateConditionCode = (
   
   if (currentRule.hasNoConditions && !hasAnyConditions) {return ''}
   
-  const condition = generateConditionChain(rule, joker, )
+  const condition = generateConditionChain(rule, joker)
   let conditionCode = ''
 
   const elseStatement = (hasAnyConditions || !newTrigger)
@@ -197,7 +197,6 @@ const generateConditionCode = (
 
 const generateEffectCode = (
   rule : Rule, 
-  triggerType : string,
   modprefix : string,
   jokerKey? : string,
   globalEffectCounts? : Map <string,number>,
@@ -228,7 +227,7 @@ const generateEffectCode = (
                 allEffects,
                 convertRandomGroupsForCodegen(allRandomGroups),
                 convertLoopGroupsForCodegen(allLoopGroups),
-                triggerType,
+                rule,
                 modprefix,
                 jokerKey,
                 rule.id,
@@ -278,12 +277,14 @@ const generateCodeForRuleType = (
       triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, targetTrigger)
     }
     const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions, newTrigger)
-    const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, targetEffect, targetPolarity)
+    const effectResult= generateEffectCode(rule, modPrefix, jokerKey, globalEffectCounts, targetEffect, targetPolarity)
     
     const effectCode = effectResult.effectCode
     configVariables = effectResult.configVariables
     
-    ruleCode += `${triggerCode}${conditionCode}${effectCode}`
+    if (effectCode) {
+      ruleCode += `${triggerCode}${conditionCode}${effectCode}`
+    }
 
     if (effectResult.priorFunctionCode){
       const priorFunctionCode = effectResult.priorFunctionCode
@@ -295,12 +296,14 @@ const generateCodeForRuleType = (
       triggerCode = generateTriggerCode(currentRule, triggerType, sortedRules, 'reg') 
     }   
     const conditionCode = generateConditionCode(currentRule, rule, joker, hasAnyConditions, newTrigger)
-    const effectResult= generateEffectCode(rule, triggerType, modPrefix, jokerKey, globalEffectCounts, 'reg')
+    const effectResult= generateEffectCode(rule, modPrefix, jokerKey, globalEffectCounts, 'reg')
     
     const effectCode = effectResult.effectCode
     configVariables = effectResult.configVariables
-    
-    ruleCode += `${triggerCode}${conditionCode}${effectCode}`
+
+    if (effectCode) {
+      ruleCode += `${triggerCode}${conditionCode}${effectCode}`
+    }
 
     if (effectResult.priorFunctionCode){
       const priorFunctionCode = effectResult.priorFunctionCode
@@ -312,7 +315,8 @@ const generateCodeForRuleType = (
 }
 
 const applyIndents = (
-  code : string
+  code : string,
+  finalIndent : number
 ) => {
   let finalCode = ''
   let indentCount = 1
@@ -337,9 +341,9 @@ const applyIndents = (
       indentCount -= 1
     }
 
-    if (line.includes('end') && (stringLines[i+1]||'').includes('else')) {
+    if (line.includes('end') && (stringLines[i+1] || '').includes('else')) {
       line = ''
-      indentCount +=1}
+      indentCount += 1}
 
     const indent = indents(indentCount)
 
@@ -353,7 +357,7 @@ ${indent}${line}`}
         {indentCount += 1}
   }
 
-  while (indentCount > 1){
+  while (indentCount > finalIndent){
     indentCount -= 1
     const indent = indents(indentCount)
     finalCode += `
@@ -400,12 +404,16 @@ export const generateCalculateFunction = (
 
   sortedRules.forEach(rule => {
     const currentRule : RuleAttributes = getRuleAttributes(joker, rule)    
-    if (currentTriggerContext !== triggerType) {
-      if (currentTriggerContext !== ''){
-        ruleCode += `
-end`}
+    if (currentTriggerContext !== rule.trigger) {
+
+      if (currentTriggerContext !== '') {
+        if (currentRule.isForCardTrigger){
+          ruleCode = applyIndents(ruleCode, 3)
+        } else {
+          ruleCode = applyIndents(ruleCode, 2)
+      }}
       newTrigger = true
-      currentTriggerContext = triggerType
+      currentTriggerContext = rule.trigger
     } else {
         newTrigger = false
       }
@@ -424,12 +432,8 @@ end`}
         }
 
         if (currentRule.hasNonRetriggerEffects) {
-          if (currentRule.hasConditions) {
-            ruleCode += `
-                end`
-          }
-          ruleCode += `
-end`
+          ruleCode = applyIndents(ruleCode, 2)
+
           const nonretrigCode = generateCodeForRuleType(
             rule, currentRule, joker, triggerType, sortedRules, 
             hasAnyConditions, modprefix, 'non_retrigger', 'retrigger_cards',
@@ -449,9 +453,10 @@ end`
         hasAnyConditions, modprefix, 'delete', 'delete_triggered_card',
         newTrigger, jokerKey, globalEffectCounts, true)
 
-      ruleCode += `${delCode.ruleCode}
-      end`
+      ruleCode += `${delCode.ruleCode}`
+
       allConfigVariables.push(...(delCode.configVariables || [] ))
+
       if (delCode.priorFunctionCode){
           priorFunctionCode += `${delCode.priorFunctionCode}
           `
@@ -463,8 +468,7 @@ end`
         hasAnyConditions, modprefix, 'for_card', 'reg',
         newTrigger, jokerKey, globalEffectCounts, true)
 
-      ruleCode += `${forCardCode.ruleCode}
-    end`
+      ruleCode += `${forCardCode.ruleCode}`
       allConfigVariables.push(...(forCardCode.configVariables || [] ))
 
       if (forCardCode.priorFunctionCode){
@@ -483,8 +487,7 @@ end`
             return {
       numerator = numerator, 
       denominator = denominator
-    }
-      end`
+    }`
         allConfigVariables.push(...(fixCode.configVariables || [] ))
 
         if (fixCode.priorFunctionCode){
@@ -502,8 +505,7 @@ end`
     return {
       numerator = numerator, 
       denominator = denominator
-    }
-      end`
+    }`
         allConfigVariables.push(...(modCode.configVariables || [] ))
 
         if (modCode.priorFunctionCode){
@@ -528,10 +530,9 @@ end`
     }
     
     if (currentRule.hasConditions) {
-      ruleCode += `
-        end`
-    hasAnyConditions = true}
-  
+      hasAnyConditions = true
+    }
+
 })})
   processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
       ruleCode += `
@@ -540,14 +541,36 @@ ${effect.calculateFunction}`})
   ruleCode += `
 end`
   
+  ruleCode = checkAnyRules(ruleCode)
+
   if (priorFunctionCode !== ''){
     ruleCode = `${priorFunctionCode}
     ${ruleCode}`
   }
 
-  ruleCode = applyIndents(ruleCode)
+  ruleCode = applyIndents(ruleCode, 1)
+
 
   return {
     code: ruleCode,
     configVariables: allConfigVariables,
 }}
+
+const checkAnyRules = (
+  code : string
+) => {
+  let tempCode = code
+
+  while (tempCode.includes("end")){
+    tempCode = tempCode.replace("end","")
+  }
+
+  tempCode = tempCode.replace("calculate = function(self, card, context)","")
+  tempCode = tempCode.trim()
+
+  if (!tempCode) {
+    return ''
+  } else {
+    return code
+  }
+}
