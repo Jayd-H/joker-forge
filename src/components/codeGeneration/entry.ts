@@ -12,7 +12,6 @@ import {
   isCustomShader,
   getCustomShaderFilepath,
   SoundData,
-  isCustomConsumableSet,
 } from "../data/BalatroUtils";
 import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
