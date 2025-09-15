@@ -58,7 +58,7 @@ export const generateSuitCardConditionCode = (
       suits,
       useVariable,
       variableCode,
-      "c"
+      "used_card"
     )
     return checkLogic
   }

@@ -34,19 +34,15 @@ export const generateSetDollarsReturn = (
     blindReward +=`__PRIOR_FUNCTION__
         calculate_dollar_bonus = function(self, card)`
 
+    blindReward += `
+    return `
+
     if (conditions) {
-      blindReward += `
-        if ${conditions} then`
+      blindReward += `${conditions} and`
     }
 
     blindReward += `
-    return ${valueCode}`
-
-    if (conditions) {
-      blindReward += `
-        end`
-    }
-    blindReward += `
+      ${valueCode}
       end,
     __PRIOR_FUNCTION_END__`
   }

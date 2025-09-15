@@ -38,8 +38,8 @@ end)()`;
     }
   }
   if (triggerType === "cards_played_before_scoring"){
-    return editionType == "any" ? `c.edition ~= nil` : editionType == "none" ? 
-    `c.edition == nil` : `c.edition and c.edition.key == "${editionType}"`
+    return editionType == "any" ? `used_card.edition ~= nil` : editionType == "none" ? 
+    `used_card.edition == nil` : `used_card.edition and used_Card.edition.key == "${editionType}"`
   }
 
   if (editionType === "any") {

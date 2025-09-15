@@ -9,9 +9,9 @@ export const generateCardEnhancementConditionCode = (
 
   if (triggerType === "cards_played_before_scoring"){
     if (enhancementType == "any"){
-      return `SMODS.get_enhancements(c)`
+      return `SMODS.get_enhancements(used_card)`
     } else {
-    return `SMODS.get_enhancements(c)["${enhancementType}"] == true`
+    return `SMODS.get_enhancements(used_card)["${enhancementType}"] == true`
   }}
   if (triggerType === "card_destroyed") {
     if (enhancementType === "any") {

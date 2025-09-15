@@ -66,7 +66,7 @@ export const generateRankCardConditionCode = (
       rankGroupType,
       useVariable,
       variableCode,
-      "c"
+      "used_card"
     )
     return checkLogic
   }

@@ -137,7 +137,7 @@ const generateTriggerCode = (
     afterCode = `local numerator, denominator = context.numerator, context.denominator`}
   else if (forCardTrigger) {
     triggerContext = `context.before ${bc ? '' : ' and not context.blueprint'}`
-    afterCode = `for i, c in ipairs(context.scoring_hand) do`
+    afterCode = `for i, used_card in ipairs(context.scoring_hand) do`
   }
   else if (reg) {
     triggerContext = generateTriggerContext(triggerType, sortedRules).check}
@@ -337,7 +337,7 @@ const applyIndents = (
 
     if ( line.includes('end') && !line.includes('pend') && !line.includes('end_')|| 
          ( line.includes('}') && !line.includes('{') ) || 
-         ( line.includes('else') && !line.includes('elseif') ) ) {
+         ( line.includes('else') ) ) {
       indentCount -= 1
     }
 

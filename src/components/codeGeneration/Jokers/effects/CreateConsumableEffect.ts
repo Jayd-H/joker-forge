@@ -22,9 +22,11 @@ export const generateCreateConsumableReturn = (
 
   if (!isNegative && !ignoreSlots) {
     createCode += `
+    func = function()
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   } else {
     createCode += `
+    func = function()
     for i = 1, ${countCode} do`
   }
   
@@ -55,8 +57,8 @@ export const generateCreateConsumableReturn = (
 
   if (set == "random") {
     createCode += `set = random_set, `
-  } else if (specificCard == "random") {
-    createCode += `set = ${set}, `
+  } else {
+    createCode += `set = '${set}', `
   }
 
   if (isNegative) {
@@ -120,7 +122,8 @@ export const generateCreateConsumableReturn = (
                             : `localize('${localizeKey}')`
                         }, colour = ${colour}})
                     end
-                    return true`,
+                    return true
+                  end`,
       colour: colour,
     };
   }
