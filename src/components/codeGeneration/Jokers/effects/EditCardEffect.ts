@@ -17,7 +17,7 @@ export const generateEditCardReturn = (
   let target = 'context.other_card'
 
   if (triggerType == "played_cards_before_scoring"){
-    target = 'c'
+    target = 'used_card'
   }
 
   if (newRank !== "none" || newSuit !== "none") {
@@ -37,7 +37,7 @@ export const generateEditCardReturn = (
     }
 
     modificationCode += `
-                assert(SMODS.change_base(context.other_card, ${suitParam}, ${rankParam}))`;
+                assert(SMODS.change_base(${target}, ${suitParam}, ${rankParam}))`;
   }
 
   if (newEnhancement === "remove") {
