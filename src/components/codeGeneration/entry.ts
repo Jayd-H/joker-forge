@@ -501,7 +501,7 @@ local function load_jokers_folder()
     local mod_path = SMODS.current_mod.path
     local jokers_path = mod_path .. "/jokers"
     local files = NFS.getDirectoryItemsInfo(jokers_path)
-    for i = 1, #files do
+    for i = 1, #jokerIndexList do
         local file_name = files[jokerIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("jokers/" .. file_name))()
@@ -521,7 +521,7 @@ local function load_consumables_folder()
     local mod_path = SMODS.current_mod.path
     local consumables_path = mod_path .. "/consumables"
     local files = NFS.getDirectoryItemsInfo(consumables_path)
-    for i = 1, #files do
+    for i = 1, #consumableIndexList do
         local file_name = files[consumableIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("consumables/" .. file_name))()
@@ -541,7 +541,7 @@ local function load_enhancements_folder()
     local mod_path = SMODS.current_mod.path
     local enhancements_path = mod_path .. "/enhancements"
     local files = NFS.getDirectoryItemsInfo(enhancements_path)
-    for i = 1, #files do
+    for i = 1, #enhancementIndexList do
         local file_name = files[enhancementIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("enhancements/" .. file_name))()
@@ -561,7 +561,7 @@ local function load_seals_folder()
     local mod_path = SMODS.current_mod.path
     local seals_path = mod_path .. "/seals"
     local files = NFS.getDirectoryItemsInfo(seals_path)
-    for i = 1, #files do
+    for i = 1, #sealIndexList do
         local file_name = files[sealIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("seals/" .. file_name))()
@@ -581,7 +581,7 @@ local function load_editions_folder()
     local mod_path = SMODS.current_mod.path
     local editions_path = mod_path .. "/editions"
     local files = NFS.getDirectoryItemsInfo(editions_path)
-    for i = 1, #files do
+    for i = 1, #editionIndexList do
         local file_name = files[editionIndexList[i]].name
         if file_name:sub(-4) == ".lua" then
             assert(SMODS.load_file("editions/" .. file_name))()
