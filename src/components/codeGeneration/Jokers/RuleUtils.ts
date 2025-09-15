@@ -386,7 +386,8 @@ export const generateCalculateFunction = (
   const globalEffectCounts = new Map<string, number>();
 
   let ruleCode = `calculate = function(self, card, context)`;
-  let priorFunctionCode = ``
+  let priorFunctionCode = `calc_dollar_bonus = function(self, card)
+` //Change later if more prior Functions are added
   
   Object.entries(rulesByTrigger).forEach(([triggerType, triggerRules]) => {
     const sortedRules = [...triggerRules].sort((a, b) => {
@@ -403,7 +404,9 @@ export const generateCalculateFunction = (
   let newTrigger = false
 
   sortedRules.forEach(rule => {
-    const currentRule : RuleAttributes = getRuleAttributes(joker, rule)    
+    const currentRule : RuleAttributes = getRuleAttributes(joker, rule) 
+    const currentPriorFunctionCode = priorFunctionCode
+    
     if (currentTriggerContext !== rule.trigger) {
 
       if (currentTriggerContext !== '') {
@@ -533,6 +536,10 @@ export const generateCalculateFunction = (
       hasAnyConditions = true
     }
 
+    if (currentPriorFunctionCode !== priorFunctionCode) {
+      priorFunctionCode += 'else'
+    } 
+
 })})
   processPassiveEffects(joker).filter((effect) => effect.calculateFunction).forEach((effect) => {
       ruleCode += `
@@ -543,7 +550,12 @@ end`
   
   ruleCode = checkAnyRules(ruleCode)
 
-  if (priorFunctionCode !== ''){
+  if (priorFunctionCode !== `calc_dollar_bonus = (self, card)
+`) {
+    priorFunctionCode = priorFunctionCode.slice(0,priorFunctionCode.lastIndexOf("else"))
+    priorFunctionCode = applyIndents(priorFunctionCode, 1)
+    priorFunctionCode += `,`
+    
     ruleCode = `${priorFunctionCode}
     ${ruleCode}`
   }

@@ -32,19 +32,16 @@ export const generateSetDollarsReturn = (
   if (triggerType == "round_end" && operation == "add") { 
 
     blindReward +=`__PRIOR_FUNCTION__
-        calculate_dollar_bonus = function(self, card)`
-
-    blindReward += `
-    return `
+    `
 
     if (conditions) {
-      blindReward += `${conditions} and`
+      blindReward += `if ${conditions} then
+        return ${valueCode} or nil
+      __PRIOR_FUNCTION_END__`
+    } else {
+      blindReward += `return ${valueCode}
+      __PRIOR_FUNCTION_END__`
     }
-
-    blindReward += `
-      ${valueCode}
-      end,
-    __PRIOR_FUNCTION_END__`
   }
 
   switch (operation) {
