@@ -184,7 +184,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, edition]);
+  }, [isOpen, edition, editions]);
 
   useEffect(() => {
     if (!isOpen) return;

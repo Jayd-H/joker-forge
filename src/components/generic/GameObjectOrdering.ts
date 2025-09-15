@@ -54,16 +54,17 @@ export const locateMissingIds = function <GameObjectType extends GameObjectData>
   data:GameObjectType[]
 ) {
   const objectData = data
-  let listOfValues:Array <number> = []
-  let missingValues:Array <number> =[]
+  const listOfValues : Array <number> = []
+  const missingValues : Array <number> = []
 
   objectData.forEach(object => listOfValues.push(object.orderValue))
-  listOfValues.sort((a,b)=>a-b)
+  listOfValues.sort((a,b) => a - b)
   
-  for (let i=0;i<listOfValues.length;i++){ 
-    if (listOfValues[i]!==i+1){
-      missingValues.push(i+1)
-  }}
+  for (let i=0; i < listOfValues.length; i++) { 
+    if (listOfValues[i] !== i + 1) {
+      missingValues.push(i + 1)
+    }
+  }
 
   return missingValues
 }
@@ -112,37 +113,39 @@ export const getObjectName = <GameObjectType extends GameObjectData>(
   while (true){
     let count:number = 0
     let looping = true
-    let match  
 
     currentName = dupeName || object.objectKey
     tempName = currentName
 
     while (looping == true){
-      match = tempName.match(/\d+$/) 
-      if (match){tempName=tempName.slice(0,-1), count +=1}
-      else {looping=false}
+      const match = tempName.match(/\d+$/) 
+      if (match) {
+        tempName = tempName.slice(0,-1)
+        count += 1
+      } else { looping = false }
     }
 
-    if (count>0){
+    if (count > 0) {
       newNumber = Number(currentName.substring(
-        currentName.length-Number(count),currentName.length)) + 1
+        currentName.length - Number(count), currentName.length)) + 1
       }
     else {newNumber = false} 
 
     if (newNumber !== false) {
-      dupeName = currentName.slice(0,-count)+String(newNumber)
+      dupeName = currentName.slice(0, -count) + String(newNumber)
     }
     else {dupeName = currentName+'2'}
 
     if (dupeName && !data.some(
       dataObject => dataObject.objectKey == dupeName && object.id !== dataObject.id)) {
       return dupeName
-}}}
+    }
+}}
 
 export const scanGameObjectKeys = <GameObjectType extends GameObjectData> (
   data:GameObjectType[]
 ) => {
-  let wrongObjects: Array <GameObjectType> = []
+  const wrongObjects: Array <GameObjectType> = []
 
   data.forEach(object1 => {
     data.forEach(object2 => {

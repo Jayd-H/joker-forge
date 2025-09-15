@@ -187,7 +187,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, seal]);
+  }, [isOpen, seal, seals]);
 
   useEffect(() => {
     if (!isOpen) return;

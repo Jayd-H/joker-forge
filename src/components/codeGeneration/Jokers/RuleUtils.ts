@@ -136,8 +136,8 @@ const generateTriggerCode = (
     triggerContext = `context.mod_probability ${bc ? "" : "and not context.blueprint"}`
     afterCode = `local numerator, denominator = context.numerator, context.denominator`}
   else if (forCardTrigger) {
-      triggerContext = `context.before${bc ? '' : ' and not context.blueprint'}`,
-      afterCode = `for i, c in ipairs(context.scoring_hand) do`
+    triggerContext = `context.before ${bc ? '' : ' and not context.blueprint'}`
+    afterCode = `for i, c in ipairs(context.scoring_hand) do`
   }
   else if (reg) {
     triggerContext = generateTriggerContext(triggerType, sortedRules).check}
@@ -167,7 +167,7 @@ const generateConditionCode = (
   
   if (currentRule.hasNoConditions && !hasAnyConditions) {return ''}
   
-  let condition = generateConditionChain(rule, joker, )
+  const condition = generateConditionChain(rule, joker, )
   let conditionCode = ''
 
   const elseStatement = (hasAnyConditions || !newTrigger)

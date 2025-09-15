@@ -194,7 +194,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, enhancement]);
+  }, [isOpen, enhancement, enhancements]);
 
   useEffect(() => {
     if (!isOpen) return;

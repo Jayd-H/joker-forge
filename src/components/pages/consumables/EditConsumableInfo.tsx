@@ -196,7 +196,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, consumable]);
+  }, [isOpen, consumable, consumables]);
 
   useEffect(() => {
     if (!isOpen) return;

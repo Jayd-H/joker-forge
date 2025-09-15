@@ -288,7 +288,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       setValidationResults({});
       setPoolsInput((joker.pools || []).join(", "));
     }
-  }, [isOpen, joker]);
+  }, [isOpen, joker, jokers]);
 
   useEffect(() => {
     if (!isOpen) return;

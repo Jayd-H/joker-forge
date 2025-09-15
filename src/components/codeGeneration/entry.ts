@@ -43,12 +43,12 @@ import {
 };
 */
 
-const sortGameObjectForExport = (
-  items: GameObjectData[]
+const sortGameObjectForExport = <GameObjectType extends GameObjectData> (
+  items: GameObjectType[]
 )=>{
   const sortedItems = [...items].sort((a, b) => 
     a.orderValue - b.orderValue)
-  return sortedItems as any;
+  return sortedItems;
 };
 
 
@@ -476,15 +476,19 @@ lenient_bignum = lenient_bignum or function(a) return a end
 
 const createIndexList = function(objects:GameObjectData[]){
   const alphabetOrder = objects.sort((a,b)=>a.name.localeCompare(b.name))
-  console.log(String(alphabetOrder))
-  let order:Array<Array<number>>= []
+  const order : Array < Array <number> > = []
+
   objects.forEach(object=>{
-    order.push([alphabetOrder.indexOf(object)+1,object.orderValue
-  ])})
-  const indexOrder = order.sort((a,b)=>a[1]-b[1])
-  let  indexArray:Array<number> = []
-  indexOrder.forEach(step=>{
-    indexArray.push(step[0])})
+    order.push([alphabetOrder.indexOf(object) + 1 , object.orderValue])
+  })
+
+  const indexOrder = order.sort((a,b) => a[1] - b[1])
+  const indexArray : Array <number> = []
+
+  indexOrder.forEach(step => {
+    indexArray.push(step[0])
+  })
+
   return indexArray
 }
 

@@ -85,7 +85,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
 
 const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
   return {
-    //@ts-ignore: backwards compatibility
+    //@ts-expect-error: backwards compatibility
     objectKey: joker.jokerKey || joker.objectKey || "",
     id: joker.id || "",
     name: joker.name || "",
@@ -149,7 +149,7 @@ const normalizeConsumableData = (
   consumable: ConsumableData
 ): ConsumableData => {
   return {
-    //@ts-ignore: backwards compatibility
+    //@ts-expect-error: backwards compatibility
     objectKey: consumable.consumableKey || consumable.objectKey || "",
     id: consumable.id || "",
     name: consumable.name || "",
@@ -172,7 +172,7 @@ const normalizeConsumableData = (
 
 const normalizeBoosterData = (booster: BoosterData): BoosterData => {
   return {
-    //@ts-ignore: backwards compatibility
+    //@ts-expect-error: backwards compatibility
     objectKey: booster.boosterKey || booster.objectKey || "",
     objectType: "booster",
     id: booster.id || "",
@@ -204,7 +204,7 @@ const normalizeEnhancementData = (
   enhancement: EnhancementData
 ): EnhancementData => {
   return {
-    //@ts-ignore: backwards compatibility
+    //@ts-expect-error: backwards compatibility
     objectKey: enhancement.enhancementKey || enhancement.objectKey || "",
     objectType: "enhancement",
     id: enhancement.id || "",
@@ -232,7 +232,7 @@ const normalizeEnhancementData = (
 
 const normalizeSealData = (seal: SealData): SealData => {
   return {
-    //@ts-ignore: backwards compatibility
+    //@ts-expect-error: backwards compatibility
     objectKey: seal.sealKey || seal.objectKey || "",
     objectType: "seal",
     id: seal.id || "",
@@ -255,7 +255,7 @@ const normalizeSealData = (seal: SealData): SealData => {
 
 const normalizeEditionData = (edition: EditionData): EditionData => {
   return {
-    //@ts-ignore: backwards compatibility
+    //@ts-expect-error: backwards compatibility
     objectKey: edition.editionKey || edition.objectKey || "",
     objectType: "edition",
     id: edition.id || "",
