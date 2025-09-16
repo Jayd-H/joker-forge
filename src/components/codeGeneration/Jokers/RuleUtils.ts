@@ -14,7 +14,7 @@ interface CalculateFunctionResult {
   configVariables: ConfigExtraVariable[];
 }
 
-interface RuleAttributes {
+export interface RuleAttributes {
   hasRetriggerEffects: boolean;
   hasNonRetriggerEffects: boolean;
   hasDeleteEffects: boolean;
@@ -140,7 +140,7 @@ const generateTriggerCode = (
     afterCode = `for i, used_card in ipairs(context.scoring_hand) do`
   }
   else if (reg) {
-    triggerContext = generateTriggerContext(triggerType, sortedRules).check}
+    triggerContext = generateTriggerContext(triggerType, sortedRules, currentRule).check}
   
   triggerCode += `
   if ${triggerContext} then`
@@ -170,7 +170,7 @@ const generateConditionCode = (
   const condition = generateConditionChain(rule, joker)
   let conditionCode = ''
 
-  const elseStatement = (hasAnyConditions || !newTrigger)
+  const elseStatement = (hasAnyConditions && !newTrigger )
 
   if (condition) {
     const conditional = elseStatement ? "elseif" : "if"
@@ -402,6 +402,7 @@ export const generateCalculateFunction = (
   let hasAnyConditions = false
   let currentTriggerContext = '' 
   let newTrigger = false
+  let oldBlueprintable: boolean
 
   sortedRules.forEach(rule => {
     const currentRule : RuleAttributes = getRuleAttributes(joker, rule) 
@@ -417,9 +418,15 @@ export const generateCalculateFunction = (
       newTrigger = true
       currentTriggerContext = rule.trigger
     } else {
-      newTrigger = false
-      ruleCode = applyIndents(ruleCode, 2)
+      if (oldBlueprintable == rule.blueprintCompatible){
+        ruleCode = applyIndents(ruleCode, 3)
+        newTrigger = false
+      } else {
+        ruleCode = applyIndents(ruleCode, 2)
+        newTrigger = true
+      }
     }
+    oldBlueprintable = rule.blueprintCompatible
 
     if (currentRule.hasRetriggerEffects) {
         const retrigCode = generateCodeForRuleType(
