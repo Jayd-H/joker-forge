@@ -47,7 +47,11 @@ import {
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
@@ -106,6 +110,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
   >({});
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const [validationResults, setValidationResults] = useState<{
     name?: ValidationResult;
@@ -279,7 +284,11 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         eternal_compat: joker.eternal_compat !== false,
         unlocked: joker.unlocked !== false,
         discovered: joker.discovered !== false,
-        objectKey: getObjectName(joker,jokers,joker.objectKey || slugify(joker.name)),
+        objectKey: getObjectName(
+          joker,
+          jokers,
+          joker.objectKey || slugify(joker.name)
+        ),
         hasUserUploadedImage: joker.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -291,7 +300,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   }, [isOpen, joker, jokers]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showPlaceholderPicker) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -306,7 +315,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, handleSave]);
+  }, [isOpen, showPlaceholderPicker, handleSave]);
 
   if (!isOpen) return null;
 
@@ -396,7 +405,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      const tempKey = getObjectName(joker, jokers, value)
+      const tempKey = getObjectName(joker, jokers, value);
       setFormData({
         ...formData,
         [field]: value,
@@ -652,7 +661,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       onConfirm: () => {
         onDelete(joker.id);
         onClose();
-        jokers = updateGameObjectIds(joker, jokers, 'remove', joker.orderValue) 
+        jokers = updateGameObjectIds(joker, jokers, "remove", joker.orderValue);
       },
     });
   };
@@ -837,7 +846,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                       </h4>
                       <div className="flex gap-6">
                         <div className="flex-shrink-0">
-                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative">
+                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative group">
                             {formData.imagePreview ? (
                               <>
                                 <img
@@ -877,6 +886,25 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             ) : (
                               <PhotoIcon className="h-16 w-16 text-white-darker opacity-50 mx-auto my-auto" />
                             )}
+                            <button
+                              type="button"
+                              onClick={() => setShowPlaceholderPicker(true)}
+                              title="Choose placeholder"
+                              className={[
+                                "absolute top-2 right-2 z-20",
+                                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                                "bg-black/70 backdrop-blur",
+                                "flex items-center justify-center",
+                                "opacity-0 -translate-y-1 pointer-events-none",
+                                "transition-all duration-200 ease-out",
+                                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                                "hover:bg-black/80 active:scale-95",
+                                "cursor-pointer",
+                              ].join(" ")}
+                            >
+                              <PhotoIcon className="h-5 w-5 text-white/90" />
+                            </button>
                           </div>
                           <input
                             type="file"
@@ -1501,6 +1529,20 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
           </div>
         </div>
       </div>
+      <PlaceholderPickerModal
+        type="joker"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          setFormData((prev) => ({
+            ...prev,
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          }));
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };

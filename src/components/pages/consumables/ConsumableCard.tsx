@@ -10,12 +10,17 @@ import {
   EyeSlashIcon,
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/solid";
+import { PhotoIcon } from "@heroicons/react/24/outline";
 
 import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { ConsumableData } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface ConsumableCardProps {
   consumable: ConsumableData;
@@ -120,16 +125,20 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
 
   const [tempName, setTempName] = useState(consumable.name);
   const [tempCost, setTempCost] = useState(consumable.cost || 3);
-  const [tempDescription, setTempDescription] = useState(consumable.description);
+  const [tempDescription, setTempDescription] = useState(
+    consumable.description
+  );
   const [tempId, setTempId] = useState(consumable.orderValue);
 
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
-  const [tooltipDelayTimeout, setTooltipDelayTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [tooltipDelayTimeout, setTooltipDelayTimeout] =
+    useState<NodeJS.Timeout | null>(null);
   const [hoveredId, setHoveredId] = useState(false);
 
   const [imageLoadError, setImageLoadError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const [nameValidationError, setNameValidationError] = useState<string>("");
 
@@ -142,10 +151,11 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
 
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
-      return;}
+      return;
+    }
 
-    const tempKey = getObjectName(consumable, consumables, tempName)
-    onQuickUpdate({ name: tempName, objectKey: tempKey});
+    const tempKey = getObjectName(consumable, consumables, tempName);
+    onQuickUpdate({ name: tempName, objectKey: tempKey });
     setEditingName(false);
     setNameValidationError("");
   };
@@ -166,13 +176,22 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
   };
 
   const handleIdSave = () => {
-      const priorValue = consumable.orderValue
-      const newValue = tempId
-      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,consumables.length)) });
-      setEditingId(false);
-      const direction = (priorValue>newValue)?'decrease':'increase'
-      consumables = updateGameObjectIds(consumable, consumables, 'change', newValue, direction, priorValue)
-    };
+    const priorValue = consumable.orderValue;
+    const newValue = tempId;
+    onQuickUpdate({
+      orderValue: Math.max(1, Math.min(tempId, consumables.length)),
+    });
+    setEditingId(false);
+    const direction = priorValue > newValue ? "decrease" : "increase";
+    consumables = updateGameObjectIds(
+      consumable,
+      consumables,
+      "change",
+      newValue,
+      direction,
+      priorValue
+    );
+  };
 
   const handleButtonHover = (buttonType: string) => {
     if (tooltipDelayTimeout) {
@@ -288,7 +307,7 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
           )}
         </div>
 
-        <div className="w-42 z-10 relative">
+        <div className="w-42 z-10 relative group">
           <div className="relative">
             {consumable.imagePreview && !imageLoadError ? (
               <>
@@ -325,6 +344,25 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
                 }}
               />
             )}
+            <button
+              type="button"
+              onClick={() => setShowPlaceholderPicker(true)}
+              className={[
+                "absolute top-2 right-2 z-20",
+                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                "bg-black/70 backdrop-blur",
+                "flex items-center justify-center",
+                "opacity-0 -translate-y-1 pointer-events-none",
+                "transition-all duration-200 ease-out",
+                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                "hover:bg-black/80 active:scale-95",
+                "cursor-pointer",
+              ].join(" ")}
+              title="Choose placeholder"
+            >
+              <PhotoIcon className="h-4 w-4 text-white-darker" />
+            </button>
           </div>
         </div>
 
@@ -360,37 +398,40 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content = "Edit Joker Id"show={hoveredId}>
-          <div 
+        <Tooltip content="Edit Joker Id" show={hoveredId}>
+          <div
             className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
             onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}>
+            onMouseLeave={handleIdLeave}
+          >
             {editingId ? (
-            <input 
-              type="number"
-              value={tempId}
-              onChange={(e) => setTempId(parseInt(e.target.value))}
-              onBlur={handleIdSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleIdSave();
-                if (e.key === "Escape") {
+              <input
+                type="number"
+                value={tempId}
+                onChange={(e) => setTempId(parseInt(e.target.value))}
+                onBlur={handleIdSave}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleIdSave();
+                  if (e.key === "Escape") {
+                    setTempId(consumable.orderValue);
+                    setEditingId(false);
+                  }
+                }}
+                className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                autoFocus
+              />
+            ) : (
+              <span
+                className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onClick={() => {
                   setTempId(consumable.orderValue);
-                  setEditingId(false);
-                }
-              }}
-              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-              />):(
-            <span
-              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              onClick={() => {
-                setTempId(consumable.orderValue);
-                setEditingId(true);
-              }}
-            >
-              Id:{consumable.orderValue}
-            </span>)}
-            </div>
+                  setEditingId(true);
+                }}
+              >
+                Id:{consumable.orderValue}
+              </span>
+            )}
+          </div>
         </Tooltip>
         <Tooltip content="Delete Consumable" show={hoveredTrash}>
           <div
@@ -409,10 +450,14 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
                   cancelText: "Keep It",
                   confirmVariant: "danger",
                   onConfirm: () => {
-                    onDelete()
+                    onDelete();
                     consumables = updateGameObjectIds(
-                      consumable, consumables, 'remove', consumable.orderValue)
-                    }
+                      consumable,
+                      consumables,
+                      "remove",
+                      consumable.orderValue
+                    );
+                  },
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"
@@ -553,8 +598,11 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
               </div>
             </Tooltip>
             <div className="w-px bg-black-lighter py-3"></div>
-            
-            <Tooltip content="Export Consumable" show={hoveredButton === "export"}>
+
+            <Tooltip
+              content="Export Consumable"
+              show={hoveredButton === "export"}
+            >
               <div
                 className="flex flex-1 transition-colors cursor-pointer group"
                 onClick={onExport}
@@ -582,6 +630,19 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
             </Tooltip>
           </div>
         </div>
+        <PlaceholderPickerModal
+          type="consumable"
+          isOpen={showPlaceholderPicker}
+          onClose={() => setShowPlaceholderPicker(false)}
+          onSelect={(index, src) => {
+            onQuickUpdate({
+              imagePreview: src,
+              hasUserUploadedImage: false,
+              placeholderCreditIndex: index,
+            });
+            setShowPlaceholderPicker(false);
+          }}
+        />
       </div>
     </div>
   );
