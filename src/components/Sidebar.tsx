@@ -5,7 +5,7 @@ import {
   DocumentTextIcon,
   PuzzlePieceIcon,
   FolderIcon,
-  HeartIcon,
+  //HeartIcon,
   ArrowUpTrayIcon,
   ArrowDownTrayIcon,
   BookmarkIcon,
@@ -71,10 +71,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       return;
     }
 
-    if (section === "support") {
-      window.open("https://ko-fi.com/jaydchw", "_blank");
-      return;
-    }
+    // if (section === "support") {
+    //   window.open("https://ko-fi.com/jaydchw", "_blank");
+    // return;
+    //}
 
     onSectionChange?.(section);
   };
@@ -110,7 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const visibleResourceItems = [
-    { id: "support", label: "Support", icon: HeartIcon },
+    // { id: "support", label: "Support", icon: HeartIcon },
     { id: "vanilla", label: "Vanilla Reforged", icon: FolderIcon },
   ];
 
