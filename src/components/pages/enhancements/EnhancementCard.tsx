@@ -21,9 +21,11 @@ import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { EnhancementData, slugify } from "../../data/BalatroUtils";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EnhancementCardProps {
   enhancement: EnhancementData;
+  enhancements: EnhancementData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -87,6 +89,7 @@ const PropertyIcon: React.FC<{
 
 const EnhancementCard: React.FC<EnhancementCardProps> = ({
   enhancement,
+  enhancements,
   onEditInfo,
   onEditRules,
   onDuplicate,
@@ -99,13 +102,15 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
 
   const [editingName, setEditingName] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [editingId, setEditingId] = useState(false);
+  
   const [tempName, setTempName] = useState(enhancement.name);
-  const [tempDescription, setTempDescription] = useState(
-    enhancement.description
-  );
+  const [tempDescription, setTempDescription] = useState(enhancement.description);
+  const [tempId, setTempId] = useState(enhancement.orderValue);
 
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
+  const [hoveredId, setHoveredId] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
@@ -123,10 +128,10 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
 
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
-      return;
-    }
+      return;}
 
-    onQuickUpdate({ name: tempName, enhancementKey: slugify(tempName) });
+    const tempKey = getObjectName(enhancement, enhancements, tempName)
+    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };
@@ -135,6 +140,15 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
     onQuickUpdate({ description: tempDescription });
     setEditingDescription(false);
   };
+
+  const handleIdSave = () => {
+      const priorValue = enhancement.orderValue
+      const newValue = tempId
+      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,enhancements.length)) });
+      setEditingId(false);
+      const direction = (priorValue>newValue)?'decrease':'increase'
+      enhancements = updateGameObjectIds(enhancement, enhancements, 'change', newValue, direction, priorValue)
+    };
 
   const handleButtonHover = (buttonType: string) => {
     if (tooltipDelayTimeout) {
@@ -170,6 +184,24 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
+  };
+
+  const handleIdHover = () => {
+    if (tooltipDelayTimeout) {
+      clearTimeout(tooltipDelayTimeout);
+    }
+    const timeout = setTimeout(() => {
+      setHoveredId(true);
+    }, 500);
+    setTooltipDelayTimeout(timeout);
+  };
+
+  const handleIdLeave = () => {
+    if (tooltipDelayTimeout) {
+      clearTimeout(tooltipDelayTimeout);
+      setTooltipDelayTimeout(null);
+    }
+    setHoveredId(false);
   };
 
   const isUnlocked = enhancement.unlocked !== false;
@@ -307,6 +339,38 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
+        <Tooltip content = "Edit Joker Id"show={hoveredId}>
+          <div 
+            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
+            onMouseEnter={handleIdHover}
+            onMouseLeave={handleIdLeave}>
+            {editingId ? (
+            <input 
+              type="number"
+              value={tempId}
+              onChange={(e) => setTempId(parseInt(e.target.value))}
+              onBlur={handleIdSave}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleIdSave();
+                if (e.key === "Escape") {
+                  setTempId(enhancement.orderValue);
+                  setEditingId(false);
+                }
+              }}
+              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              autoFocus
+              />):(
+            <span
+              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              onClick={() => {
+                setTempId(enhancement.orderValue);
+                setEditingId(true);
+              }}
+            >
+              Id:{enhancement.orderValue}
+            </span>)}
+            </div>
+        </Tooltip>
         <Tooltip content="Delete Enhancement" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
@@ -323,7 +387,8 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => onDelete(),
+                  onConfirm: () => {onDelete()
+                  enhancements = updateGameObjectIds(enhancement, enhancements, 'remove', enhancement.orderValue)}
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

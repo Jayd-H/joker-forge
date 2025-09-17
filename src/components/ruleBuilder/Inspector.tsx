@@ -1353,7 +1353,7 @@ const Inspector: React.FC<InspectorProps> = ({
                       switch (itemType) {
                         case "joker":
                           classPrefix = "j";
-                          key = joker.jokerKey || "";
+                          key = joker.objectKey || "";
                           break;
                         case "consumable":
                           classPrefix = "c";
@@ -1367,7 +1367,7 @@ const Inspector: React.FC<InspectorProps> = ({
                           break;
                         default:
                           classPrefix = "j";
-                          key = joker.jokerKey || "";
+                          key = joker.objectKey || "";
                       }
                       const modPrefix = getModPrefix();
 

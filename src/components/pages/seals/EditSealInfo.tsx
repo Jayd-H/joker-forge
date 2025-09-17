@@ -19,10 +19,13 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
+
 
 interface EditSealInfoProps {
   isOpen: boolean;
   seal: SealData;
+  seals: SealData[];
   onClose: () => void;
   onSave: (seal: SealData) => void;
   onDelete: (sealId: string) => void;
@@ -68,6 +71,7 @@ const predefinedColors = [
 const EditSealInfo: React.FC<EditSealInfoProps> = ({
   isOpen,
   seal,
+  seals,
   onClose,
   onSave,
   onDelete,
@@ -175,7 +179,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
         discovered: seal.discovered !== false,
         no_collection: seal.no_collection === true,
         badge_colour: seal.badge_colour || "#000000",
-        sealKey: seal.sealKey || slugify(seal.name),
+        objectKey: getObjectName(seal,seals,seal.objectKey || slugify(seal.name)),
         hasUserUploadedImage: seal.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -183,7 +187,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, seal]);
+  }, [isOpen, seal, seals]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -256,10 +260,11 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      const tempKey = getObjectName(seal, seals, value)
       setFormData({
         ...formData,
         [field]: value,
-        sealKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -354,6 +359,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
       onConfirm: () => {
         onDelete(seal.id);
         onClose();
+        seals = updateGameObjectIds(seal, seals, 'remove', seal.orderValue) 
       },
     });
   };
@@ -607,10 +613,10 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.sealKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "sealKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )

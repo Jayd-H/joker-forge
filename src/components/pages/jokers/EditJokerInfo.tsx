@@ -47,10 +47,12 @@ import {
   unlockTriggerOptions,
 } from "../../codeGeneration/Jokers/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
+import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditJokerInfoProps {
   isOpen: boolean;
   joker: JokerData;
+  jokers: JokerData[];
   onClose: () => void;
   onSave: (joker: JokerData) => void;
   onDelete: (jokerId: string) => void;
@@ -77,6 +79,7 @@ type UnlockTrigger = keyof typeof unlockOptions;
 const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   isOpen,
   joker,
+  jokers,
   onClose,
   onSave,
   onDelete,
@@ -276,7 +279,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         eternal_compat: joker.eternal_compat !== false,
         unlocked: joker.unlocked !== false,
         discovered: joker.discovered !== false,
-        jokerKey: joker.jokerKey || slugify(joker.name),
+        objectKey: getObjectName(joker,jokers,joker.objectKey || slugify(joker.name)),
         hasUserUploadedImage: joker.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -285,7 +288,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       setValidationResults({});
       setPoolsInput((joker.pools || []).join(", "));
     }
-  }, [isOpen, joker]);
+  }, [isOpen, joker, jokers]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -393,10 +396,11 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      const tempKey = getObjectName(joker, jokers, value)
       setFormData({
         ...formData,
         [field]: value,
-        jokerKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -648,6 +652,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       onConfirm: () => {
         onDelete(joker.id);
         onClose();
+        jokers = updateGameObjectIds(joker, jokers, 'remove', joker.orderValue) 
       },
     });
   };
@@ -992,10 +997,10 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.jokerKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "jokerKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )
