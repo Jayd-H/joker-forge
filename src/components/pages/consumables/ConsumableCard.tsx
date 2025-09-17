@@ -15,11 +15,9 @@ import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { ConsumableData } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface ConsumableCardProps {
   consumable: ConsumableData;
-  consumables: ConsumableData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -98,7 +96,6 @@ const PropertyIcon: React.FC<{
 
 const ConsumableCard: React.FC<ConsumableCardProps> = ({
   consumable,
-  consumables,
   onEditInfo,
   onEditRules,
   onDuplicate,
@@ -116,17 +113,16 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
   const [editingName, setEditingName] = useState(false);
   const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [editingId, setEditingId] = useState(false);
-
   const [tempName, setTempName] = useState(consumable.name);
   const [tempCost, setTempCost] = useState(consumable.cost || 3);
-  const [tempDescription, setTempDescription] = useState(consumable.description);
-  const [tempId, setTempId] = useState(consumable.orderValue);
+  const [tempDescription, setTempDescription] = useState(
+    consumable.description
+  );
 
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
-  const [tooltipDelayTimeout, setTooltipDelayTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [hoveredId, setHoveredId] = useState(false);
+  const [tooltipDelayTimeout, setTooltipDelayTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   const [imageLoadError, setImageLoadError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
@@ -142,10 +138,10 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
 
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
-      return;}
+      return;
+    }
 
-    const tempKey = getObjectName(consumable, consumables, tempName)
-    onQuickUpdate({ name: tempName, objectKey: tempKey});
+    onQuickUpdate({ name: tempName });
     setEditingName(false);
     setNameValidationError("");
   };
@@ -164,15 +160,6 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
     onQuickUpdate({ set: value });
     setShowSetMenu(false);
   };
-
-  const handleIdSave = () => {
-      const priorValue = consumable.orderValue
-      const newValue = tempId
-      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,consumables.length)) });
-      setEditingId(false);
-      const direction = (priorValue>newValue)?'decrease':'increase'
-      consumables = updateGameObjectIds(consumable, consumables, 'change', newValue, direction, priorValue)
-    };
 
   const handleButtonHover = (buttonType: string) => {
     if (tooltipDelayTimeout) {
@@ -208,24 +195,6 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
-  };
-
-  const handleIdHover = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setHoveredId(true);
-    }, 500);
-    setTooltipDelayTimeout(timeout);
-  };
-
-  const handleIdLeave = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-      setTooltipDelayTimeout(null);
-    }
-    setHoveredId(false);
   };
 
   const isUnlocked = consumable.unlocked !== false;
@@ -360,38 +329,6 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content = "Edit Joker Id"show={hoveredId}>
-          <div 
-            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
-            onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}>
-            {editingId ? (
-            <input 
-              type="number"
-              value={tempId}
-              onChange={(e) => setTempId(parseInt(e.target.value))}
-              onBlur={handleIdSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleIdSave();
-                if (e.key === "Escape") {
-                  setTempId(consumable.orderValue);
-                  setEditingId(false);
-                }
-              }}
-              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-              />):(
-            <span
-              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              onClick={() => {
-                setTempId(consumable.orderValue);
-                setEditingId(true);
-              }}
-            >
-              Id:{consumable.orderValue}
-            </span>)}
-            </div>
-        </Tooltip>
         <Tooltip content="Delete Consumable" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
@@ -408,11 +345,7 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => {
-                    onDelete()
-                    consumables = updateGameObjectIds(
-                      consumable, consumables, 'remove', consumable.orderValue)
-                    }
+                  onConfirm: () => onDelete(),
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

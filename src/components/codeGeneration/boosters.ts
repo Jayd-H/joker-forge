@@ -23,7 +23,7 @@ const generateSingleBooster = (
   modPrefix: string,
   index: number
 ): string => {
-  const cleanKey = booster.objectKey || sanitizeKey(booster.name);
+  const cleanKey = booster.boosterKey || sanitizeKey(booster.name);
 
   let code = `SMODS.Booster {\n`;
   code += `    key = '${cleanKey}',\n`;
@@ -144,7 +144,7 @@ const generateCreateCardFunction = (
     code += `            skip_materialize = true,\n`;
     code += `            soulable = true,\n`;
     code += `            key_append = "${modPrefix}_${
-      booster.objectKey || "booster"
+      booster.boosterKey || "booster"
     }"\n`;
     code += `        }\n`;
   } else {
@@ -163,7 +163,7 @@ const generateCreateCardFunction = (
       code += `            total_weight = total_weight + weight\n`;
       code += `        end\n`;
       code += `        local random_value = pseudorandom('${modPrefix}_${
-        booster.objectKey || "booster"
+        booster.boosterKey || "booster"
       }_card') * total_weight\n`;
       code += `        local cumulative_weight = 0\n`;
       code += `        local selected_index = 1\n`;
@@ -176,7 +176,7 @@ const generateCreateCardFunction = (
       code += `        end\n`;
     } else {
       code += `        local selected_index = pseudorandom('${modPrefix}_${
-        booster.objectKey || "booster"
+        booster.boosterKey || "booster"
       }_card', 1, ${rules.length})\n`;
     }
 
@@ -194,7 +194,7 @@ const generateCreateCardFunction = (
       code += `                skip_materialize = true,\n`;
       code += `                soulable = true,\n`;
       code += `                key_append = "${modPrefix}_${
-        booster.objectKey || "booster"
+        booster.boosterKey || "booster"
       }"\n`;
       code += `            }\n`;
     });

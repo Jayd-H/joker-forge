@@ -16,12 +16,9 @@ import BalatroCard from "../../generic/BalatroCard";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { BoosterData, BoosterType } from "../../data/BalatroUtils";
 import { UserConfigContext } from "../../Contexts";
-import { getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditBoosterInfoProps {
   isOpen: boolean;
-  booster: BoosterData;
-  boosters: BoosterData[];
   onClose: () => void;
   onSave: () => void;
   editingBooster: BoosterData | null;
@@ -31,8 +28,6 @@ interface EditBoosterInfoProps {
 
 const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   isOpen,
-  booster,
-  boosters,
   onClose,
   onSave,
   editingBooster,
@@ -205,10 +200,9 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     }
 
     if (field === "name") {
-      const tempKey = getObjectName(booster, boosters, value)
       onFormDataChange({
-        [field]: value,
-        objectKey: generateKeyFromName(tempKey),
+        [field]: finalValue,
+        boosterKey: generateKeyFromName(finalValue),
       });
     } else {
       onFormDataChange({
@@ -491,13 +485,10 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.objectKey || ""}
+                            value={formData.boosterKey || ""}
                             onChange={(e) =>
-                                handleInputChange(
-                                "objectKey",
-                                e.target.value,
-                                false
-                              )                            }
+                              onFormDataChange({ boosterKey: e.target.value })
+                            }
                             placeholder="Enter booster key"
                             separator={true}
                             label="Booster Key (Code Name)"
@@ -666,7 +657,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                       className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
                                     />
                                     <label
-                                      htmlFor="instant_use"
+                                      htmlFor="draw_hand"
                                       className="text-white-light text-sm"
                                     >
                                       Use Selected Card Instantly

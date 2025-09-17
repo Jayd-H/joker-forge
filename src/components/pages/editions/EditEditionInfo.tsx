@@ -30,13 +30,10 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
-
 
 interface EditEditionInfoProps {
   isOpen: boolean;
   edition: EditionData;
-  editions: EditionData[];
   onClose: () => void;
   onSave: (edition: EditionData) => void;
   onDelete: (editionId: string) => void;
@@ -77,7 +74,6 @@ const shaderOptions = [
 const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
   isOpen,
   edition,
-  editions,
   onClose,
   onSave,
   onDelete,
@@ -177,14 +173,14 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         disable_shadow: edition.disable_shadow === true,
         disable_base_shader: edition.disable_base_shader === true,
         badge_colour: edition.badge_colour || "#FFAA00",
-        objectKey: getObjectName(edition,editions,edition.objectKey || slugify(edition.name)),
+        editionKey: edition.editionKey || slugify(edition.name),
         sound: edition.sound || "foil1",
       });
       setLastDescription(edition.description || "");
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, edition, editions]);
+  }, [isOpen, edition]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -257,11 +253,10 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      const tempKey = getObjectName(edition, editions, value)
       setFormData({
         ...formData,
         [field]: value,
-        objectKey: slugify(tempKey),
+        editionKey: slugify(value),
       });
     } else {
       setFormData({
@@ -297,7 +292,6 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
       onConfirm: () => {
         onDelete(edition.id);
         onClose();
-        editions = updateGameObjectIds(edition, editions, 'remove', edition.orderValue) 
       },
     });
   };
@@ -484,10 +478,10 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                         </div>
 
                         <InputField
-                          value={formData.objectKey || ""}
+                          value={formData.editionKey || ""}
                           onChange={(e) =>
                             handleInputChange(
-                              "objectKey",
+                              "editionKey",
                               e.target.value,
                               false
                             )

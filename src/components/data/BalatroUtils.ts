@@ -86,17 +86,10 @@ export interface UserVariable {
     | "Flush Five";
 }
 
-export interface GameObjectData {
+export interface JokerData {
   id: string;
   name: string;
-  objectType: string;
-  objectKey: string;
   description: string;
-  orderValue: number;
-  discovered?: boolean;
-}
-
-export interface JokerData extends GameObjectData {
   imagePreview: string;
   overlayImagePreview?: string;
   rarity: number | string;
@@ -105,6 +98,7 @@ export interface JokerData extends GameObjectData {
   eternal_compat?: boolean;
   perishable_compat?: boolean;
   unlocked?: boolean;
+  discovered?: boolean;
   force_eternal?: boolean;
   force_perishable?: boolean;
   force_rental?: boolean;
@@ -121,6 +115,7 @@ export interface JokerData extends GameObjectData {
   rules?: Rule[];
   userVariables?: UserVariable[];
   placeholderCreditIndex?: number;
+  jokerKey?: string;
   hasUserUploadedImage?: boolean;
   cardAppearance: {
     // this uses the "source keys" as keys
@@ -147,16 +142,21 @@ export interface RarityData {
   default_weight: number;
 }
 
-export interface ConsumableData extends GameObjectData{
+export interface ConsumableData {
+  id: string;
+  name: string;
+  description: string;
   imagePreview: string;
   overlayImagePreview?: string;
   set: "Tarot" | "Planet" | "Spectral" | string;
   cost?: number;
   unlocked?: boolean;
+  discovered?: boolean;
   hidden?: boolean;
   can_repeat_soul?: boolean;
   rules?: Rule[];
   placeholderCreditIndex?: number;
+  consumableKey?: string;
   hasUserUploadedImage?: boolean;
 }
 
@@ -188,7 +188,10 @@ export interface BoosterCardRule {
   pool?: string;
 }
 
-export interface BoosterData extends GameObjectData{
+export interface BoosterData {
+  id: string;
+  name: string;
+  description: string;
   imagePreview: string;
   cost: number;
   weight: number;
@@ -206,13 +209,19 @@ export interface BoosterData extends GameObjectData{
   card_rules: BoosterCardRule[];
   background_colour?: string;
   special_colour?: string;
+  discovered?: boolean;
   hidden?: boolean;
   placeholderCreditIndex?: number;
+  boosterKey?: string;
   hasUserUploadedImage?: boolean;
 }
 
-export interface EnhancementData extends GameObjectData{
+export interface EnhancementData {
+  id: string;
+  name: string;
+  description: string;
   imagePreview: string;
+  enhancementKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
   any_suit?: boolean;
@@ -221,6 +230,7 @@ export interface EnhancementData extends GameObjectData{
   no_suit?: boolean;
   always_scores?: boolean;
   unlocked?: boolean;
+  discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
   weight?: number;
@@ -229,12 +239,17 @@ export interface EnhancementData extends GameObjectData{
   hasUserUploadedImage?: boolean;
 }
 
-export interface SealData extends GameObjectData{
+export interface SealData {
+  id: string;
+  name: string;
+  description: string;
   imagePreview: string;
+  sealKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
   badge_colour?: string;
   unlocked?: boolean;
+  discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
   userVariables?: UserVariable[];
@@ -242,9 +257,14 @@ export interface SealData extends GameObjectData{
   hasUserUploadedImage?: boolean;
 }
 
-export interface EditionData extends GameObjectData{
+export interface EditionData {
+  id: string;
+  name: string;
+  description: string;
+  editionKey: string;
   shader: string | false;
   unlocked?: boolean;
+  discovered?: boolean;
   no_collection?: boolean;
   in_shop?: boolean;
   weight?: number;
@@ -396,7 +416,7 @@ export const DataRegistry = {
   getConsumables: (): Array<{ value: string; label: string; set: string }> => {
     const custom = registryState.consumables.map((consumable) => ({
       value: `c_${registryState.modPrefix}_${
-        consumable.objectKey ||
+        consumable.consumableKey ||
         (consumable.name
           ? consumable.name.toLowerCase().replace(/\s+/g, "_")
           : "unnamed_consumable")
@@ -414,7 +434,7 @@ export const DataRegistry = {
   }> => {
     const custom = registryState.boosters.map((booster) => ({
       value: `${registryState.modPrefix}_${
-        booster.objectKey ||
+        booster.boosterKey ||
         (booster.name
           ? booster.name.toLowerCase().replace(/\s+/g, "_")
           : "unnamed_booster")
@@ -433,8 +453,8 @@ export const DataRegistry = {
     }));
 
     const custom = registryState.enhancements.map((enhancement) => ({
-      key: `m_${registryState.modPrefix}_${enhancement.objectKey}`,
-      value: `m_${registryState.modPrefix}_${enhancement.objectKey}`,
+      key: `m_${registryState.modPrefix}_${enhancement.enhancementKey}`,
+      value: `m_${registryState.modPrefix}_${enhancement.enhancementKey}`,
       label: enhancement.name || "Unnamed Enhancement",
     }));
 
@@ -449,8 +469,8 @@ export const DataRegistry = {
     }));
 
     const custom = registryState.seals.map((seal) => ({
-      key: `${registryState.modPrefix}_${seal.objectKey}`,
-      value: `${registryState.modPrefix}_${seal.objectKey}`,
+      key: `${registryState.modPrefix}_${seal.sealKey}`,
+      value: `${registryState.modPrefix}_${seal.sealKey}`,
       label: seal.name || "Unnamed Seal",
     }));
 
@@ -465,8 +485,8 @@ export const DataRegistry = {
     }));
 
     const custom = registryState.editions.map((edition) => ({
-      key: `e_${registryState.modPrefix}_${edition.objectKey}`,
-      value: `e_${registryState.modPrefix}_${edition.objectKey}`,
+      key: `e_${registryState.modPrefix}_${edition.editionKey}`,
+      value: `e_${registryState.modPrefix}_${edition.editionKey}`,
       label: edition.name || "Unnamed Edition",
     }));
 
@@ -591,7 +611,7 @@ export const isCustomEdition = (
 ): boolean => {
   return (
     value.includes("_") &&
-    customEditions.some((e) => `e_${modPrefix}_${e.objectKey}` === value)
+    customEditions.some((e) => `e_${modPrefix}_${e.editionKey}` === value)
   );
 };
 
@@ -623,7 +643,7 @@ export const isCustomSeal = (
 ): boolean => {
   return (
     value.includes("_") &&
-    customSeals.some((s) => `${modPrefix}_${s.objectKey}` === value)
+    customSeals.some((s) => `${modPrefix}_${s.sealKey}` === value)
   );
 };
 
@@ -670,7 +690,7 @@ export const isCustomEnhancement = (
   return (
     value.includes("_") &&
     customEnhancements.some(
-      (e) => `m_${modPrefix}_${e.objectKey}` === value
+      (e) => `m_${modPrefix}_${e.enhancementKey}` === value
     )
   );
 };
@@ -711,7 +731,7 @@ export const getBoosterDropdownOptions = (
 ) => {
   return customBoosters.map((booster) => ({
     value: `${registryState.modPrefix}_${
-      booster.objectKey ||
+      booster.boosterKey ||
       (booster.name
         ? booster.name.toLowerCase().replace(/\s+/g, "_")
         : "unnamed_booster")
@@ -730,7 +750,7 @@ export const getBoosterByKey = (
 
   return customBoosters.find(
     (booster) =>
-      booster.objectKey === searchKey ||
+      booster.boosterKey === searchKey ||
       (booster.name &&
         booster.name.toLowerCase().replace(/\s+/g, "_") === searchKey)
   );
@@ -746,7 +766,7 @@ export const isCustomBooster = (
     customBoosters.some(
       (b) =>
         `${modPrefix}_${
-          b.objectKey ||
+          b.boosterKey ||
           (b.name ? b.name.toLowerCase().replace(/\s+/g, "_") : "unnamed")
         }` === key
     )

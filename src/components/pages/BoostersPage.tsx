@@ -27,7 +27,6 @@ import {
 import BoosterCard from "./boosters/BoosterCard";
 import EditBoosterInfo from "./boosters/EditBoosterInfo";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
 
 interface BoostersPageProps {
   modName: string;
@@ -596,7 +595,9 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   modPrefix,
 }) => {
   const { userConfig, setUserConfig } = useContext(UserConfigContext);
-  const [editingBooster, setEditingBooster] = useState<BoosterData | null>(null);
+  const [editingBooster, setEditingBooster] = useState<BoosterData | null>(
+    null
+  );
   const [editingRules, setEditingRules] = useState<BoosterData | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
@@ -604,22 +605,20 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     id: "",
     name: "",
     description: "",
-    orderValue: NaN,
     imagePreview: "",
     cost: 4,
     weight: 1,
     draw_hand: false,
-    instant_use: false,
     booster_type: "joker",
     config: { extra: 3, choose: 1 },
     card_rules: [],
     discovered: true,
-    objectKey: "",
-    objectType: "booster",
+    boosterKey: "",
+    instant_use: false,
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState(
-    userConfig.filters.boostersFilter ?? "id-desc"
+    userConfig.filters.boostersFilter ?? "name-asc"
   );
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
@@ -633,16 +632,6 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
 
   const sortOptions: SortOption[] = useMemo(
     () => [
-      {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
       {
         value: "name-asc",
         label: "Name (A-Z)",
@@ -716,21 +705,18 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       description:
         "A {C:purple}custom{} booster pack with {C:blue}unique{} cards.",
       imagePreview: placeholderResult.imageData,
-      orderValue: boosters.length+1,
       cost: 4,
       weight: 1,
       draw_hand: false,
-      instant_use: false,
       booster_type: "joker",
       config: { extra: 3, choose: 1 },
       card_rules: [],
       discovered: true,
       placeholderCreditIndex: placeholderResult.creditIndex,
-      objectKey: slugify("New Booster Pack"),
+      boosterKey: slugify("New Booster Pack"),
       group_key: key,
-      objectType: "booster",
+      instant_use: false,
     };
-    newBooster.objectKey = getObjectName(newBooster,boosters,newBooster.objectKey)
     setBoosters([...boosters, newBooster]);
     setEditingBooster(newBooster);
     setFormData(newBooster);
@@ -790,53 +776,50 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       description: "",
       imagePreview: "",
       cost: 4,
-      orderValue: NaN,
       weight: 1,
       draw_hand: false,
-      instant_use: false,
       booster_type: "joker",
       config: { extra: 3, choose: 1 },
       card_rules: [],
       discovered: true,
-      objectKey: "",
-      objectType: "booster",
+      boosterKey: "",
+      instant_use: false,
     });
   };
 
   const handleDeleteBooster = (boosterId: string) => {
-    const removedBooster = boosters.filter(booster => booster.id !== boosterId)[0]
     setBoosters((prev) => prev.filter((booster) => booster.id !== boosterId));
 
     if (selectedBoosterId === boosterId) {
-      const remainingBoosters = boosters.filter((booster) => booster.id !== boosterId);
-      setSelectedBoosterId(remainingBoosters.length > 0 ? remainingBoosters[0].id : null);
-    boosters = updateGameObjectIds(removedBooster, boosters, 'remove', removedBooster.orderValue)
-    }};
+      const remainingBoosters = boosters.filter(
+        (booster) => booster.id !== boosterId
+      );
+      setSelectedBoosterId(
+        remainingBoosters.length > 0 ? remainingBoosters[0].id : null
+      );
+    }
+  };
 
   const handleDuplicateBooster = async (booster: BoosterData) => {
-    const dupeName = slugify(getObjectName(booster,boosters))
     if (isPlaceholderBooster(booster.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderBooster();
       const duplicatedBooster: BoosterData = {
         ...booster,
         id: crypto.randomUUID(),
-        name: booster.name,
+        name: `${booster.name} Copy`,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        orderValue: booster.orderValue+1,
-        objectKey: `${dupeName}`,
+        boosterKey: slugify(`${booster.name} Copy`),
       };
       setBoosters([...boosters, duplicatedBooster]);
-      boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
     } else {
       const duplicatedBooster: BoosterData = {
         ...booster,
         id: crypto.randomUUID(),
         name: `${booster.name} Copy`,
-        objectKey: slugify(`${booster.name} Copy`),
+        boosterKey: slugify(`${booster.name} Copy`),
       };
       setBoosters([...boosters, duplicatedBooster]);
-      boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
     }
   };
 
@@ -874,7 +857,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    "Name (A-Z)";
 
   return (
     <div className="min-h-screen">
@@ -986,7 +969,6 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
               <BoosterCard
                 key={booster.id}
                 booster={booster}
-                boosters={boosters}
                 onEditInfo={() => handleEditBooster(booster)}
                 onEditRules={() => handleEditRules(booster)}
                 onDelete={() => handleDeleteBooster(booster.id)}
@@ -997,11 +979,9 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
             ))}
           </div>
         )}
-        {editingBooster && (
+
         <EditBoosterInfo
           isOpen={showEditModal}
-          booster={editingBooster}
-          boosters={boosters}
           onClose={closeModal}
           onSave={handleSaveBooster}
           editingBooster={editingBooster}
@@ -1009,7 +989,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
           onFormDataChange={(updates) =>
             setFormData((prev) => ({ ...prev, ...updates }))
           }
-        />)}
+        />
 
         <EditBoosterRulesModal
           isOpen={showRulesModal}
