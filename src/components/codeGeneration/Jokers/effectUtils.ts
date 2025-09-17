@@ -1,4 +1,4 @@
-import type { Effect, LoopGroup, RandomGroup, Rule } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
@@ -135,7 +135,6 @@ export interface ReturnStatementResult {
   statement: string;
   colour: string;
   preReturnCode?: string;
-  priorFunctionCode?: string;
   isRandomChance?: boolean;
   configVariables?: ConfigExtraVariable[];
 }
@@ -149,7 +148,7 @@ export function generateEffectReturnStatement(
   regularEffects: Effect[] = [],
   randomGroups: RandomGroup[] = [],
   loopGroups: LoopGroup[] = [],
-  rule: Rule,
+  triggerType: string = "hand_played",
   modprefix: string,
   jokerKey?: string,
   ruleId?: string,
@@ -164,7 +163,6 @@ export function generateEffectReturnStatement(
   }
 
   let combinedPreReturnCode = "";
-  let combinedPriorFunctionCode = "";
   let mainReturnStatement = "";
   let primaryColour = "G.C.WHITE";
   const allConfigVariables: ConfigExtraVariable[] = [];
@@ -187,7 +185,7 @@ export function generateEffectReturnStatement(
 
         const result = generateSingleEffect(
           effectWithContext,
-          rule,
+          triggerType,
           currentCount,
           modprefix
         );
@@ -214,15 +212,6 @@ export function generateEffectReturnStatement(
         effect.statement
       );
 
-      const { newStatement, priorFunctionCode } = extractPriorFunction(
-        cleanedStatement
-      );
-
-      if (priorFunctionCode) {
-        combinedPriorFunctionCode +=
-          (combinedPriorFunctionCode ? "\n                " : "") + priorFunctionCode;
-      }
-
       if (preReturnCode) {
         combinedPreReturnCode +=
           (combinedPreReturnCode ? "\n                " : "") + preReturnCode;
@@ -230,7 +219,7 @@ export function generateEffectReturnStatement(
 
       processedEffects.push({
         ...effect,
-        statement: newStatement,
+        statement: cleanedStatement,
       });
     });
 
@@ -296,7 +285,7 @@ export function generateEffectReturnStatement(
 
           const result = generateSingleEffect(
             effectWithContext,
-            rule,
+            triggerType,
             currentCount,
             modprefix
           );
@@ -323,16 +312,6 @@ export function generateEffectReturnStatement(
           effect.statement
         );
 
-        const { newStatement, priorFunctionCode } = extractPriorFunction(
-          cleanedStatement
-        );
-
-      if (priorFunctionCode) {
-        combinedPriorFunctionCode +=
-          (combinedPriorFunctionCode ? "\n                " : "") + 
-          priorFunctionCode;
-      }
-
         if (preReturnCode) {
           groupPreReturnCode +=
             (groupPreReturnCode ? "\n                        " : "") +
@@ -341,7 +320,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: newStatement,
+          statement: cleanedStatement,
         });
       });
 
@@ -359,9 +338,9 @@ export function generateEffectReturnStatement(
 
       if (
         hasDeleteInGroup &&
-        (rule.trigger === "card_scored" ||
-          rule.trigger === "card_held_in_hand" ||
-          rule.trigger === "card_held_in_hand_end_of_round")
+        (triggerType === "card_scored" ||
+          triggerType === "card_held_in_hand" ||
+          triggerType === "card_held_in_hand_end_of_round")
       ) {
         groupContent += `context.other_card.should_destroy = true
                         `;
@@ -463,7 +442,7 @@ export function generateEffectReturnStatement(
         const firstEffect = randomGroups[0].effects[0];
         const firstEffectResult = generateSingleEffect(
           firstEffect,
-          rule,
+          triggerType,
           0,
           modprefix
         );
@@ -515,7 +494,7 @@ export function generateEffectReturnStatement(
       });
     }
 
-    loopGroups.forEach((group) => {
+    loopGroups.forEach((group, _groupIndex) => {
       const { preReturnCode: groupPreCode, modifiedEffects } =
         coordinateVariableConflicts(group.effects);
 
@@ -534,7 +513,7 @@ export function generateEffectReturnStatement(
 
           const result = generateSingleEffect(
             effectWithContext,
-            rule,
+            triggerType,
             currentCount,
             modprefix
           );
@@ -561,16 +540,6 @@ export function generateEffectReturnStatement(
           effect.statement
         );
 
-        const { newStatement, priorFunctionCode } = extractPriorFunction(
-          cleanedStatement
-        );
-
-      if (priorFunctionCode) {
-        combinedPriorFunctionCode +=
-          (combinedPriorFunctionCode ? "\n                " : "") + 
-          priorFunctionCode;
-      }
-
         if (preReturnCode) {
           groupPreReturnCode +=
             (groupPreReturnCode ? "\n                        " : "") +
@@ -579,7 +548,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: newStatement,
+          statement: cleanedStatement,
         });
       });
 
@@ -593,9 +562,9 @@ export function generateEffectReturnStatement(
 
       if (
         hasDeleteInGroup &&
-        (rule.trigger === "card_scored" ||
-          rule.trigger === "card_held_in_hand" ||
-          rule.trigger === "card_held_in_hand_end_of_round")
+        (triggerType === "card_scored" ||
+          triggerType === "card_held_in_hand" ||
+          triggerType === "card_held_in_hand_end_of_round")
       ) {
         groupContent += `context.other_card.should_destroy = true
                         `;
@@ -688,9 +657,9 @@ export function generateEffectReturnStatement(
         const firstEffect = loopGroups[0].effects[0];
         const firstEffectResult = generateSingleEffect(
           firstEffect,
-          rule,
+          triggerType,
           0,
-          modprefix,
+          modprefix
         );
         primaryColour = firstEffectResult.colour || "G.C.WHITE";
       }
@@ -700,7 +669,6 @@ export function generateEffectReturnStatement(
     statement: mainReturnStatement,
     colour: primaryColour,
     preReturnCode: combinedPreReturnCode || undefined,
-    priorFunctionCode: combinedPriorFunctionCode || undefined,
     isRandomChance: randomGroups.length > 0,
     configVariables: allConfigVariables,
   };
@@ -708,11 +676,10 @@ export function generateEffectReturnStatement(
 
 const generateSingleEffect = (
   effect: ExtendedEffect,
-  rule: Rule,
+  triggerType: string,
   sameTypeCount: number = 0,
-  modprefix: string,
+  modprefix: string
 ): EffectReturn => {
-  const triggerType = rule.trigger
   switch (effect.type) {
     case "add_chips":
       return generateAddChipsReturn(effect, sameTypeCount);
@@ -771,7 +738,7 @@ const generateSingleEffect = (
     case "show_message":
       return generateShowMessageReturn(effect);
     case "set_dollars":
-      return generateSetDollarsReturn(effect, sameTypeCount, rule);
+      return generateSetDollarsReturn(effect, sameTypeCount);
     case "disable_boss_blind":
       return generateDisableBossBlindReturn(effect, triggerType);
     case "prevent_game_over":
@@ -952,7 +919,7 @@ export const processPassiveEffects = (
       rule.effects?.forEach((effect) => {
         let passiveResult: PassiveEffectResult | null = null;
 
-        const jokerKey = joker.objectKey;
+        const jokerKey = joker.jokerKey;
 
         switch (effect.type) {
           case "edit_hand_size":
@@ -1071,33 +1038,6 @@ function extractPreReturnCode(statement: string): {
   }
 
   return { cleanedStatement: statement };
-}
-
-function extractPriorFunction(statement: string): {
-  newStatement: string;
-  priorFunctionCode?: string;
-} {
-  const preFunctionStart = "__PRIOR_FUNCTION__";
-  const preFunctionEnd = "__PRIOR_FUNCTION_END__";
-  if (statement.includes(preFunctionStart) && statement.includes(preFunctionEnd)) {
-    const startIndex =
-      statement.indexOf(preFunctionStart) + preFunctionStart.length;
-    const endIndex = statement.indexOf(preFunctionEnd);
-
-    if (startIndex < endIndex) {
-      const priorFunctionCode = statement.substring(startIndex, endIndex).trim();
-      const newStatement = statement
-        .replace(
-          new RegExp(`${preFunctionStart}[\\s\\S]*?${preFunctionEnd}`, "g"),
-          ""
-        )
-        .trim();
-
-    return { newStatement, priorFunctionCode };
-    } 
-  }
-
-  return { newStatement: statement}
 }
 
 function getOrdinalSuffix(num: number): string {

@@ -507,7 +507,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
       "card_destroyed",
-      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -552,7 +551,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
       "card_destroyed",
-      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -596,8 +594,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
-      "card_destroyed",      
-      "played_cards_before_scoring",
+      "card_destroyed",
     ],
     params: [
       {
@@ -622,7 +619,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
       "card_destroyed",
-      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -648,7 +644,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
       "card_destroyed",
-      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -669,7 +664,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
       "card_discarded",
-      "played_cards_before_scoring",
     ],
     params: [
       {
@@ -701,7 +695,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "player_money",
     label: "Player Money",
     description: "Check how much money the player has",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -901,7 +895,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "generic_compare",
     label: "Generic Compare",
     description: "Compare two custom values with an operator",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "value1",
@@ -928,7 +922,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "remaining_hands",
     label: "Remaining Hands",
     description: "Check how many hands the player has left",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -950,7 +944,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "remaining_discards",
     label: "Remaining Discards",
     description: "Check how many discards the player has left",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -980,7 +974,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "joker_count",
     label: "Joker Count",
     description: "Check how many jokers the player has",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -1060,7 +1054,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "specific_joker",
     label: "Specific Joker",
     description: "Check if a specific joker is in your collection",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -1085,7 +1079,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "internal_variable",
     label: "Internal Variable",
     description: "Check the value of an internal variable for this joker",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "variable_name",
@@ -1112,7 +1106,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "check_flag",
     label: "Check Flag",
     description: "Check if a specific flag from your mod is true",
-    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
         id: "flag_name",
@@ -1153,7 +1147,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "consumable_count",
     label: "Consumable Count",
     description: "Check how many of a consumable a player has",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "consumable_type",
@@ -1426,7 +1420,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "blind_type",
     label: "Blind Type",
     description: "Check the type of the current blind",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "blind_type",
@@ -1445,7 +1439,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "boss_blind_type",
     label: "Boss Blind Type",
     description: "Check the type of the current boss blind",
-    applicableTriggers: [...GENERIC_TRIGGERS, "blind_selected", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "blind_selected"],
     params: [
       {
         id: "operator",
@@ -1471,7 +1465,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "blind_name",
     label: "Blind Name",
     description: "Check the current blind",
-    applicableTriggers: [...GENERIC_TRIGGERS, "blind_selected", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "blind_selected"],
     params: [
       {
         id: "operation",
@@ -1598,7 +1592,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "ante_level",
     label: "Ante Level",
     description: "Check the current ante level",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -1626,7 +1620,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_discarded",
       "after_hand_played",
       "before_hand_played",
-      "played_cards_before_scoring",
     ],
     params: [],
     category: "Game State",
@@ -1666,7 +1659,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "hand_size",
     label: "Hand Size",
     description: "Check the current hand size",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "operator",
@@ -1687,7 +1680,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "deck_size",
     label: "Deck Size",
     description: "Check the size of the deck",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "size_type",
@@ -1718,7 +1711,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "deck_count",
     label: "Deck Count",
     description: "Count cards in your entire deck by property",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
         id: "property_type",
@@ -1997,7 +1990,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "this_joker_index",
     label: "This Joker Position",
     description: "Check the position of this joker",
-    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
         id: "position",
@@ -2067,7 +2060,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "this_joker_flipped",
     label: "This Joker is Flipped",
     description: "Check if this joker is flipped (facing back)",
-    applicableTriggers: [...GENERIC_TRIGGERS, "played_cards_before_scoring"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
     params: [],
     category: "Deck & Jokers",
   },

@@ -105,7 +105,7 @@ const generateSingleEffect = (
       return generateLevelUpHandReturn(effect, 0, itemType);
 
     case "create_consumable":
-      return generateCreateConsumableReturn(effect);
+      return generateCreateConsumableReturn(effect, trigger || "");
 
     case "copy_consumable":
       return generateCopyConsumableReturn(effect, trigger || "");
@@ -444,7 +444,7 @@ export function generateEffectReturnStatement(
       });
     }
 
-    loopGroups.forEach((group) => {
+    loopGroups.forEach((group, _groupIndex) => {
       const effectReturns: EffectReturn[] = group.effects
         .map((effect) => generateSingleEffect(effect, trigger, itemType))
         .filter((ret) => ret.statement || ret.message);

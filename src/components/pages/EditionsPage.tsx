@@ -16,8 +16,6 @@ import { exportSingleEdition } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { EditionData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
-
 
 interface EditionsPageProps {
   modName: string;
@@ -77,16 +75,6 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
 
   const sortOptions: SortOption[] = useMemo(
     () => [
-      {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
       {
         value: "name-asc",
         label: "Name (A-Z)",
@@ -152,20 +140,17 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
 
   const handleAddNewEdition = async () => {
     const newEdition: EditionData = {
-      objectType: "edition",
       id: crypto.randomUUID(),
       name: "New Edition",
       description: "A {C:blue}custom{} edition with {C:red}unique{} effects.",
-      objectKey: slugify("New Edition"),
+      editionKey: slugify("New Edition"),
       shader: "foil",
       unlocked: true,
       discovered: true,
       rules: [],
       weight: 0,
       sound: "foil1",
-      orderValue: editions.length+1,
     };
-    newEdition.objectKey = getObjectName(newEdition,editions,newEdition.objectKey)
     setEditions([...editions, newEdition]);
     setEditingEdition(newEdition);
   };
@@ -179,26 +164,26 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
   };
 
   const handleDeleteEdition = (editionId: string) => {
-    const removedEdition = editions.filter(edition => edition.id !== editionId)[0]
     setEditions((prev) => prev.filter((edition) => edition.id !== editionId));
 
     if (selectedEditionId === editionId) {
-      const remainingEditions = editions.filter((edition) => edition.id !== editionId);
-      setSelectedEditionId(remainingEditions.length > 0 ? remainingEditions[0].id : null);
-    editions = updateGameObjectIds(removedEdition, editions, 'remove', removedEdition.orderValue)
-    }};
+      const remainingEditions = editions.filter(
+        (edition) => edition.id !== editionId
+      );
+      setSelectedEditionId(
+        remainingEditions.length > 0 ? remainingEditions[0].id : null
+      );
+    }
+  };
 
   const handleDuplicateEdition = async (edition: EditionData) => {
-    const dupeName = slugify(getObjectName(edition,editions))
     const duplicatedEdition: EditionData = {
       ...edition,
       id: crypto.randomUUID(),
-      name: edition.name,
-      objectKey: `${dupeName}`,
-      orderValue: edition.orderValue+1,
+      name: `${edition.name} Copy`,
+      editionKey: slugify(`${edition.name} Copy`),
     };
     setEditions([...editions, duplicatedEdition]);
-    editions = updateGameObjectIds(duplicatedEdition, editions, 'insert', duplicatedEdition.orderValue)
   };
 
   const handleExportEdition = (edition: EditionData) => {
@@ -269,7 +254,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    "Name (A-Z)";
 
   return (
     <div className="min-h-screen">
@@ -379,7 +364,6 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
               <EditionCard
                 key={edition.id}
                 edition={edition}
-                editions={editions}
                 onEditInfo={() => handleEditInfo(edition)}
                 onEditRules={() => handleEditRules(edition)}
                 onDelete={() => handleDeleteEdition(edition.id)}
@@ -397,7 +381,6 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
           <EditEditionInfo
             isOpen={!!editingEdition}
             edition={editingEdition}
-            editions={editions}
             onClose={() => setEditingEdition(null)}
             onSave={handleSaveEdition}
             onDelete={handleDeleteEdition}

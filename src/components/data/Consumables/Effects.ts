@@ -842,7 +842,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "specific_card",
           values: ["random"],
         },
-        default:"n",
+        default:"nil",
       },{
         id: "is_negative",
         type: "select",
@@ -851,7 +851,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "n", label: "No Edition" },
           { value: "y", label: "Negative Edition" },
         ],
-        default: "n",
+        default: "none",
       },{
         id: "count",
         type: "number",
@@ -859,15 +859,6 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         default: 1,
         min: 1,
         max: 5,
-      },{
-        id: "ignore_slots",
-        type: "select",
-        label: "Ignore Slots",
-        options: [
-          { value: "y", label: "True" },
-          { value: "n", label: "False" },
-        ],
-        default:"n",
       },
     ],
     category: "Consumables",

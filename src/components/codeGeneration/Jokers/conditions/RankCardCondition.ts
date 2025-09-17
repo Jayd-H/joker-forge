@@ -60,17 +60,6 @@ export const generateRankCardConditionCode = (
     rankGroupType = rankGroup;
   }
 
-  if (triggerType === "played_cards_before_scoring") {
-    const checkLogic = getRanksCheckLogic(
-      ranks,
-      rankGroupType,
-      useVariable,
-      variableCode,
-      "used_card"
-    )
-    return checkLogic
-  }
-
   if (triggerType === "card_destroyed") {
     const checkLogic = getRanksCheckLogic(
       ranks,
