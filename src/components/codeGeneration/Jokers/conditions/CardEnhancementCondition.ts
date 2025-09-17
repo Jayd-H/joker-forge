@@ -7,6 +7,12 @@ export const generateCardEnhancementConditionCode = (
   const triggerType = rules[0].trigger || "hand_played";
   const enhancementType = (condition.params.enhancement as string) || "any";
 
+  if (triggerType === "cards_played_before_scoring"){
+    if (enhancementType == "any"){
+      return `SMODS.get_enhancements(used_card)`
+    } else {
+    return `SMODS.get_enhancements(used_card)["${enhancementType}"] == true`
+  }}
   if (triggerType === "card_destroyed") {
     if (enhancementType === "any") {
       return `(function()
