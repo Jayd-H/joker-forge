@@ -1,4 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
+import type { RuleAttributes } from "./RuleUtils";
+
 
 interface TriggerContext {
   check: string;
@@ -7,13 +9,14 @@ interface TriggerContext {
 
 export const generateTriggerContext = (
   triggerType: string,
-  rules: Rule[]
+  rules: Rule[],
+  currentRule: RuleAttributes
 ): TriggerContext => {
   const hasRetriggerEffects = rules.some((rule) =>
     rule.effects.some((effect) => effect.type === "retrigger_cards")
   );
 
-  const isBlueprintCompatible = rules.some((rule) => rule.blueprintCompatible ?? true);
+  const isBlueprintCompatible = currentRule.blueprintCompatible ?? true;
 
   switch (triggerType) {
     case "card_scored":
@@ -219,7 +222,11 @@ export const generateTriggerContext = (
         check: `context.pseudorandom_result ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
         comment: "-- When chance roll succeeds/failes",
       };
-
+    case "played_cards_before_scoring":
+      return {
+        check: `context.before${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
+        comment: "-- Evaluates each Card before scoring begins",
+      };
     case "hand_played":
     default:
       return {
