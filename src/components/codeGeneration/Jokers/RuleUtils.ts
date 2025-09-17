@@ -332,12 +332,19 @@ const applyIndents = (
   for (let i = 0; i < stringLines.length; i++) {
     
     let line = stringLines[i]
+    let subLine = line
     
     line = line.trimStart()
+    if (line.includes('"')|| line.includes('--')){
+      const index1 = line.indexOf('"') || line.indexOf('-')
+      const index2 = line.lastIndexOf('"') || line.length
+      const sliceString = line.slice(index1, index2)
+      subLine = line.replace(sliceString, '')
+    }
 
-    if ( line.includes('end') && !line.includes('pend') && !line.includes('end_')|| 
-         ( line.includes('}') && !line.includes('{') ) || 
-         ( line.includes('else') ) ) {
+    if ( subLine.includes('end') && !subLine.includes('pend') && !subLine.includes('end_')|| 
+         ( subLine.includes('}') && !subLine.includes('{') ) || 
+         ( subLine.includes('else') ) ) {
       indentCount -= 1
     }
 
@@ -351,9 +358,9 @@ const applyIndents = (
     finalCode += `
 ${indent}${line}`}
 
-    if (line.includes('if ') || line.includes('else') || line.includes('function(') || 
-        (line.includes('{') && !line.includes('}')) || line.includes('for ') || 
-        line.includes('while ') || line.includes('do ') || line.includes(' then'))
+    if (subLine.includes('if ') || subLine.includes('else') || subLine.includes('function(') || 
+        (subLine.includes('{') && !subLine.includes('}')) || subLine.includes('for ') || 
+        subLine.includes('while ') || subLine.includes('do ') || subLine.includes(' then'))
         {indentCount += 1}
   }
 
