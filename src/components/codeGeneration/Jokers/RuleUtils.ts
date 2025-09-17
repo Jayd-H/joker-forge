@@ -49,9 +49,9 @@ const getAllRulesWithAttributes = (
   const rulesWithNoConditions = rules.filter(rule => 
     generateConditionChain(rule, joker).length === 0)
   const rulesWithGroups = rules.filter(rule => 
-    [...rule.randomGroups, ...rule.loops].length > 0)
+    [...(rule.randomGroups || []), ...(rule.loops || [])].length > 0)
   const rulesWithNoGroups = rules.filter(rule => 
-    [...rule.randomGroups, ...rule.loops].length === 0)
+    [...(rule.randomGroups || []), ...(rule.loops || [])].length === 0)
   const blueprintCompatibleRules = rules.filter(rule => 
     rule.blueprintCompatible == true)
 
@@ -211,17 +211,26 @@ const generateEffectCode = (
       effect => effect.type !== target) : 
     (rule.effects)
 
-  const allRandomGroups = (target !== 'reg' && targetType) ? (rule.randomGroups || []).filter(
-    group => group.effects.some(effect => effect.type === target)) : 
-    (target !== 'reg' && !targetType) ? (rule.randomGroups || []).filter(
-      group => group.effects.some(effect => effect.type !== target)) : 
-    (rule.randomGroups) 
+  const allRandomGroups = (target !== 'reg' && targetType)
+    ? (rule.randomGroups || []).filter(
+        group => group.effects.some(effect => effect.type === target)
+      )
+    : (target !== 'reg' && !targetType)
+      ? (rule.randomGroups || []).filter(
+        group => group.effects.some(effect => effect.type !== target)
+      )
+      : (rule.randomGroups || []) 
 
-  const allLoopGroups = (target !== 'reg' && targetType) ? (rule.loops || []).filter(
-    group => group.effects.some(effect => effect.type === target)) :
-    (target !== 'reg' && !targetType) ? (rule.loops || []).filter(
-      group => group.effects.some(effect => effect.type !== target)) :
-    (rule.loops)
+  const allLoopGroups = (target !== 'reg' && targetType) 
+    ? (rule.loops || []).filter(
+      group => group.effects.some(effect => effect.type === target)
+    )
+    : (target !== 'reg' && !targetType)
+      ? (rule.loops || []).filter(
+        group => group.effects.some(effect => effect.type !== target)
+      )
+      : (rule.loops || [])
+      
 
   const effectResult = generateEffectReturnStatement(
                 allEffects,
