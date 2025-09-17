@@ -16,8 +16,6 @@ import { exportSingleEnhancement } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { EnhancementData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
-
 
 interface EnhancementsPageProps {
   modName: string;
@@ -178,7 +176,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
   const [currentEnhancementForRules, setCurrentEnhancementForRules] =
     useState<EnhancementData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState(userConfig.filters.enhancementsFilter ?? "id-desc");
+  const [sortBy, setSortBy] = useState(userConfig.filters.enhancementsFilter ?? "name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -191,16 +189,6 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
 
   const sortOptions: SortOption[] = useMemo(
     () => [
-      {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
       {
         value: "name-asc",
         label: "Name (A-Z)",
@@ -258,21 +246,18 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     const placeholderResult = await getRandomPlaceholderEnhancement();
 
     const newEnhancement: EnhancementData = {
-      objectType: "enhancement",
       id: crypto.randomUUID(),
       name: "New Enhancement",
       description:
         "A {C:blue}custom{} enhancement with {C:red}unique{} effects.",
       imagePreview: placeholderResult.imageData,
-      objectKey: slugify("New Enhancement"),
+      enhancementKey: slugify("New Enhancement"),
       unlocked: true,
       discovered: true,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
       weight: 5,
-      orderValue: enhancements.length +1,
     };
-    newEnhancement.objectKey = getObjectName(newEnhancement,enhancements,newEnhancement.objectKey)
     setEnhancements([...enhancements, newEnhancement]);
     setEditingEnhancement(newEnhancement);
   };
@@ -288,40 +273,40 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
   };
 
   const handleDeleteEnhancement = (enhancementId: string) => {
-    const removedEnhancement = enhancements.filter(enhancement => enhancement.id !== enhancementId)[0]
-    setEnhancements((prev) =>prev.filter((enhancement) => enhancement.id !== enhancementId));
+    setEnhancements((prev) =>
+      prev.filter((enhancement) => enhancement.id !== enhancementId)
+    );
 
     if (selectedEnhancementId === enhancementId) {
-      const remainingEnhancements = enhancements.filter((enhancement) => enhancement.id !== enhancementId);
-      setSelectedEnhancementId(remainingEnhancements.length > 0 ? remainingEnhancements[0].id : null);
-      enhancements = updateGameObjectIds(removedEnhancement, enhancements, 'remove', removedEnhancement.orderValue)
-  }};
+      const remainingEnhancements = enhancements.filter(
+        (enhancement) => enhancement.id !== enhancementId
+      );
+      setSelectedEnhancementId(
+        remainingEnhancements.length > 0 ? remainingEnhancements[0].id : null
+      );
+    }
+  };
 
   const handleDuplicateEnhancement = async (enhancement: EnhancementData) => {
-    const dupeName = getObjectName(enhancement,enhancements)
     if (isPlaceholderEnhancement(enhancement.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderEnhancement();
       const duplicatedEnhancement: EnhancementData = {
         ...enhancement,
         id: crypto.randomUUID(),
-        name: enhancement.objectKey,
+        name: `${enhancement.name} Copy`,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        objectKey: slugify(`${dupeName}`),
-        orderValue: enhancement.orderValue+1
+        enhancementKey: slugify(`${enhancement.name} Copy`),
       };
       setEnhancements([...enhancements, duplicatedEnhancement]);
-      enhancements = updateGameObjectIds(duplicatedEnhancement, enhancements, 'insert', duplicatedEnhancement.orderValue)
     } else {
       const duplicatedEnhancement: EnhancementData = {
         ...enhancement,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
-        objectKey: slugify(`$${dupeName}`),
-        orderValue: enhancement.orderValue+1
+        name: `${enhancement.name} Copy`,
+        enhancementKey: slugify(`${enhancement.name} Copy`),
       };
       setEnhancements([...enhancements, duplicatedEnhancement]);
-      enhancements = updateGameObjectIds(duplicatedEnhancement, enhancements, 'insert', duplicatedEnhancement.orderValue)
     }
   };
 
@@ -395,7 +380,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    "Name (A-Z)";
 
   return (
     <div className="min-h-screen">
@@ -506,7 +491,6 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
               <EnhancementCard
                 key={enhancement.id}
                 enhancement={enhancement}
-                enhancements={enhancements}
                 onEditInfo={() => handleEditInfo(enhancement)}
                 onEditRules={() => handleEditRules(enhancement)}
                 onDelete={() => handleDeleteEnhancement(enhancement.id)}
@@ -526,7 +510,6 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
           <EditEnhancementInfo
             isOpen={!!editingEnhancement}
             enhancement={editingEnhancement}
-            enhancements={enhancements}
             onClose={() => setEditingEnhancement(null)}
             onSave={handleSaveEnhancement}
             onDelete={handleDeleteEnhancement}

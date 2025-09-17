@@ -32,7 +32,7 @@ export const generateSetSellValueReturn = (
   let targetJokerLogic = ''
 
   if (target == "specific") {
-    if (specificTarget == "left" || specificTarget == "right" ||specificTarget == "self") {
+    if (specificTarget == "left"||"right"||"self"){
       targetJokerLogic += `local my_pos = nil
         for i = 1, #G.jokers.cards do
             if G.jokers.cards[i] == card then
@@ -63,13 +63,13 @@ export const generateSetSellValueReturn = (
         end`;
       break;}
     sellValueCode += `${targetJokerLogic}`}
-  if (target == "all_jokers" || target == "all") {
+  if (target === "all_jokers"||"all") {
     sellValueCode += ``
-    if (target == "all") {
+    if (target === "all") {
        sellValueCode += `for _, area in ipairs({ G.jokers, G.consumeables }) do
        `}
     sellValueCode += `for i, target_card in ipairs(`
-    if (target == "all_jokers") {sellValueCode += `G.jokers.cards`}
+    if (target === "all_jokers") {sellValueCode += `G.jokers.cards`}
     else {sellValueCode += `area.cards`}
     sellValueCode += `) do
                 if target_card.set_cost then`            
@@ -88,10 +88,10 @@ export const generateSetSellValueReturn = (
         sellValueCode += `
             target_joker.ability.extra_value = ${valueCode}
             target_joker:set_cost()`;}
-  if (target == "all_jokers" || target == "all") {sellValueCode += `
+  if (target === "all_jokers" || "all") {sellValueCode += `
             end
         end`
-    if (target == "all"){sellValueCode +=`
+    if (target === "all"){sellValueCode +=`
     end`
   }}}
 

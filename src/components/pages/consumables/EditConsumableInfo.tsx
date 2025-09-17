@@ -21,12 +21,10 @@ import {
 import { ConsumableSetData } from "../../data/BalatroUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface EditConsumableInfoProps {
   isOpen: boolean;
   consumable: ConsumableData;
-  consumables: ConsumableData[];
   onClose: () => void;
   onSave: (consumable: ConsumableData) => void;
   onDelete: (consumableId: string) => void;
@@ -46,7 +44,6 @@ interface EditConsumableInfoProps {
 const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   isOpen,
   consumable,
-  consumables,
   onClose,
   onSave,
   onDelete,
@@ -188,7 +185,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         discovered: consumable.discovered !== false,
         hidden: consumable.hidden === true,
         can_repeat_soul: consumable.can_repeat_soul === true,
-        objectKey: getObjectName(consumable,consumables,consumable.objectKey || slugify(consumable.name)),
+        consumableKey: consumable.consumableKey || slugify(consumable.name),
         hasUserUploadedImage: consumable.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -196,7 +193,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, consumable, consumables]);
+  }, [isOpen, consumable]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -304,11 +301,10 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      const tempKey = getObjectName(consumable, consumables, value)
       setFormData({
         ...formData,
         [field]: value,
-        objectKey: slugify(tempKey),
+        consumableKey: slugify(value),
       });
     } else {
       setFormData({
@@ -417,7 +413,6 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       onConfirm: () => {
         onDelete(consumable.id);
         onClose();
-        consumables = updateGameObjectIds(consumable, consumables, 'remove', consumable.orderValue) 
       },
     });
   };
@@ -717,10 +712,10 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.objectKey || ""}
+                            value={formData.consumableKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "objectKey",
+                                "consumableKey",
                                 e.target.value,
                                 false
                               )

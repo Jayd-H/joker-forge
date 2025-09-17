@@ -31,9 +31,7 @@ end)()`;
 end)()`;
     }
   }
-  if (triggerType === "cards_played_before_scoring"){
-    return sealType === "any" ? `used_card.seal ~= nil` : `used_card.seal == "${capitalizedSealType}"`
-  }
+
   return sealType === "any"
     ? `context.other_card.seal ~= nil`
     : `context.other_card.seal == "${capitalizedSealType}"`;

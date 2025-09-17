@@ -16,11 +16,9 @@ import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { SealData, slugify } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface SealCardProps {
   seal: SealData;
-  seals: SealData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -84,7 +82,6 @@ const PropertyIcon: React.FC<{
 
 const SealCard: React.FC<SealCardProps> = ({
   seal,
-  seals,
   onEditInfo,
   onEditRules,
   onDuplicate,
@@ -97,13 +94,9 @@ const SealCard: React.FC<SealCardProps> = ({
 
   const [editingName, setEditingName] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [editingId, setEditingId] = useState(false);
-  
   const [tempName, setTempName] = useState(seal.name);
   const [tempDescription, setTempDescription] = useState(seal.description);
-  const [tempId, setTempId] = useState(seal.orderValue);
 
-  const [hoveredId, setHoveredId] = useState(false);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
@@ -120,12 +113,13 @@ const SealCard: React.FC<SealCardProps> = ({
 
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
+
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
-      return;}
-    const tempKey = getObjectName(seal, seals, tempName)
+      return;
+    }
 
-    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
+    onQuickUpdate({ name: tempName, sealKey: slugify(tempName) });
     setEditingName(false);
     setNameValidationError("");
   };
@@ -134,16 +128,6 @@ const SealCard: React.FC<SealCardProps> = ({
     onQuickUpdate({ description: tempDescription });
     setEditingDescription(false);
   };
-
-  const handleIdSave = () => {
-      const priorValue = seal.orderValue
-      const newValue = tempId
-      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,seals.length)) });
-      setEditingId(false);
-      const direction = (priorValue>newValue)?'decrease':'increase'
-      seals = updateGameObjectIds(seal, seals, 'change', newValue, direction, priorValue)
-    };
-  
 
   const handleButtonHover = (buttonType: string) => {
     if (tooltipDelayTimeout) {
@@ -179,24 +163,6 @@ const SealCard: React.FC<SealCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
-  };
-
-  const handleIdHover = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setHoveredId(true);
-    }, 500);
-    setTooltipDelayTimeout(timeout);
-  };
-
-  const handleIdLeave = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-      setTooltipDelayTimeout(null);
-    }
-    setHoveredId(false);
   };
 
   const isUnlocked = seal.unlocked !== false;
@@ -313,39 +279,8 @@ const SealCard: React.FC<SealCardProps> = ({
           </div>
         </div>
       </div>
+
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content = "Edit Joker Id"show={hoveredId}>
-          <div 
-            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
-            onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}>
-            {editingId ? (
-            <input 
-              type="number"
-              value={tempId}
-              onChange={(e) => setTempId(parseInt(e.target.value))}
-              onBlur={handleIdSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleIdSave();
-                if (e.key === "Escape") {
-                  setTempId(seal.orderValue);
-                  setEditingId(false);
-                }
-              }}
-              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-              />):(
-            <span
-              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              onClick={() => {
-                setTempId(seal.orderValue);
-                setEditingId(true);
-              }}
-            >
-              Id:{seal.orderValue}
-            </span>)}
-            </div>
-        </Tooltip>        
         <Tooltip content="Delete Seal" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
@@ -362,8 +297,7 @@ const SealCard: React.FC<SealCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => {onDelete()
-                  seals = updateGameObjectIds(seal, seals, 'remove', seal.orderValue)}
+                  onConfirm: () => onDelete(),
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

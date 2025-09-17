@@ -30,8 +30,6 @@ import {
 } from "../data/BalatroUtils";
 import { exportSingleConsumable } from "../codeGeneration/Consumables";
 import { UserConfigContext } from "../Contexts";
-import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
-
 
 interface ConsumablesPageProps {
   modName: string;
@@ -745,16 +743,6 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   const consumableSortOptions: SortOption<ConsumableData>[] = useMemo(
     () => [
       {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
-      {
         value: "name-asc",
         label: "Name (A-Z)",
         sortFn: (a, b) => a.name.localeCompare(b.name),
@@ -892,7 +880,6 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         "A {C:purple}custom{} consumable with {C:blue}unique{} effects.",
       imagePreview: placeholderResult.imageData,
       overlayImagePreview: "",
-      orderValue: consumables.length+1,
       set: "Tarot",
       cost: 3,
       unlocked: true,
@@ -900,10 +887,8 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       hidden: false,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
-      objectKey: slugify("New Consumable"),
-      objectType: "consumable",
+      consumableKey: slugify("New Consumable"),
     };
-    newConsumable.objectKey = getObjectName(newConsumable,consumables,newConsumable.objectKey)
     setConsumables([...consumables, newConsumable]);
     setEditingConsumable(newConsumable);
   };
@@ -1020,41 +1005,42 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   };
 
   const handleDeleteConsumable = (consumableId: string) => {
-    const removedConsumable = consumables.filter(cons => cons.id !== consumableId)[0]
-    setConsumables((prev) =>prev.filter((consumable) => consumable.id !== consumableId));
+    setConsumables((prev) =>
+      prev.filter((consumable) => consumable.id !== consumableId)
+    );
 
     if (selectedConsumableId === consumableId) {
-      const remainingConsumables = consumables.filter((consumable) => consumable.id !== consumableId);
-      setSelectedConsumableId(remainingConsumables.length > 0 ? remainingConsumables[0].id : null)
-      consumables = updateGameObjectIds(removedConsumable, consumables, 'remove', removedConsumable.orderValue)
-  }};
+      const remainingConsumables = consumables.filter(
+        (consumable) => consumable.id !== consumableId
+      );
+      setSelectedConsumableId(
+        remainingConsumables.length > 0 ? remainingConsumables[0].id : null
+      );
+    }
+  };
 
   const handleDuplicateConsumable = async (consumable: ConsumableData) => {
-    const dupeName = slugify(getObjectName(consumable,consumables))
     if (isPlaceholderConsumable(consumable.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderConsumable();
       const duplicatedConsumable: ConsumableData = {
         ...consumable,
         id: crypto.randomUUID(),
-        name: consumable.name,
+        name: `${consumable.name} Copy`,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        objectKey: `${dupeName}`,
-        orderValue: consumable.orderValue+1,
+        consumableKey: slugify(`${consumable.name} Copy`),
       };
       setConsumables([...consumables, duplicatedConsumable]);
-      consumables = updateGameObjectIds(duplicatedConsumable, consumables, 'insert', duplicatedConsumable.orderValue)
     } else {
       const duplicatedConsumable: ConsumableData = {
         ...consumable,
         id: crypto.randomUUID(),
-        name: `${dupeName}`,
-        objectKey: slugify(`${dupeName}`),
-        orderValue: consumable.orderValue+1,
+        name: `${consumable.name} Copy`,
+        consumableKey: slugify(`${consumable.name} Copy`),
       };
       setConsumables([...consumables, duplicatedConsumable]);
-      consumables = updateGameObjectIds(duplicatedConsumable, consumables, 'insert', duplicatedConsumable.orderValue)
-  }};
+    }
+  };
 
   const handleExportConsumable = (consumable: ConsumableData) => {
     try {
@@ -1188,7 +1174,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
 
   const currentSortLabel =
     currentSortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    "Name (A-Z)";
 
   return (
     <div className="min-h-screen pb-24">
@@ -1365,7 +1351,6 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
                   <ConsumableCard
                     key={consumable.id}
                     consumable={consumable}
-                    consumables={consumables}
                     onEditInfo={() => handleEditInfo(consumable)}
                     onEditRules={() => handleEditRules(consumable)}
                     onDelete={() => handleDeleteConsumable(consumable.id)}
@@ -1442,7 +1427,6 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
           <EditConsumableInfo
             isOpen={!!editingConsumable}
             consumable={editingConsumable}
-            consumables={consumables}
             onClose={() => setEditingConsumable(null)}
             onSave={handleSaveConsumable}
             onDelete={handleDeleteConsumable}

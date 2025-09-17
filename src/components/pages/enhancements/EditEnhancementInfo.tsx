@@ -18,13 +18,10 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
-
 
 interface EditEnhancementInfoProps {
   isOpen: boolean;
   enhancement: EnhancementData;
-  enhancements: EnhancementData[];
   onClose: () => void;
   onSave: (enhancement: EnhancementData) => void;
   onDelete: (enhancementId: string) => void;
@@ -43,7 +40,6 @@ interface EditEnhancementInfoProps {
 const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   isOpen,
   enhancement,
-  enhancements,
   onClose,
   onSave,
   onDelete,
@@ -186,7 +182,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         no_rank: enhancement.no_rank === true,
         no_suit: enhancement.no_suit === true,
         always_scores: enhancement.always_scores === true,
-        objectKey: getObjectName(enhancement,enhancements,enhancement.objectKey || slugify(enhancement.name)),
+        enhancementKey: enhancement.enhancementKey || slugify(enhancement.name),
         hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -194,7 +190,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, enhancement, enhancements]);
+  }, [isOpen, enhancement]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -267,11 +263,10 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      const tempKey = getObjectName(enhancement, enhancements, value)
       setFormData({
         ...formData,
         [field]: value,
-        objectKey: slugify(tempKey),
+        enhancementKey: slugify(value),
       });
     } else {
       setFormData({
@@ -366,7 +361,6 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       onConfirm: () => {
         onDelete(enhancement.id);
         onClose();
-        enhancements = updateGameObjectIds(enhancement, enhancements, 'remove', enhancement.orderValue) 
       },
     });
   };
@@ -619,10 +613,10 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.objectKey || ""}
+                            value={formData.enhancementKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "objectKey",
+                                "enhancementKey",
                                 e.target.value,
                                 false
                               )
