@@ -247,7 +247,7 @@ export function generateEffectReturnStatement(
       });
     }
 
-    loopGroups.forEach((group) => {
+    loopGroups.forEach((group, _groupIndex) => {
       const effectReturns: EffectReturn[] = group.effects
         .map((effect) => generateSingleEffect(effect, modprefix))
         .filter((ret) => ret.statement || ret.message);
