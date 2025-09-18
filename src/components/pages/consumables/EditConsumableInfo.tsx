@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import {
   PhotoIcon,
   SparklesIcon,
@@ -50,7 +56,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   availableSets,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [formData, setFormData] = useState<ConsumableData>(consumable);
   const [activeTab, setActiveTab] = useState<"visual" | "description">(
     "visual"
@@ -61,7 +67,9 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -352,6 +360,24 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
     return canvas.toDataURL("image/png");
   };
 
+  const resizeImage = (
+    img: HTMLImageElement,
+    width = 142,
+    height = 190
+  ): string => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = width;
+    canvas.height = height;
+
+    if (ctx) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, 0, 0, width, height);
+    }
+    return canvas.toDataURL("image/png");
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     if (file) {
@@ -359,29 +385,14 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-          let finalImageData: string;
+          const finalImageData = resizeImage(img, 142, 190);
 
-          if (
-            (img.width === 71 && img.height === 95) ||
-            (img.width === 142 && img.height === 190)
-          ) {
-            if (img.width === 71 && img.height === 95) {
-              finalImageData = upscaleImage(img);
-            } else {
-              finalImageData = reader.result as string;
-            }
-
-            setFormData({
-              ...formData,
-              imagePreview: finalImageData,
-              hasUserUploadedImage: true,
-            });
-            setPlaceholderError(false);
-          } else {
-            alert(
-              `Image dimensions must be either 71x95 or 142x190 pixels. Your image is ${img.width}x${img.height}.`
-            );
-          }
+          setFormData({
+            ...formData,
+            imagePreview: finalImageData,
+            hasUserUploadedImage: true,
+          });
+          setPlaceholderError(false);
         };
         img.src = reader.result as string;
       };
@@ -806,11 +817,11 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                   textAreaId="consumable-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
                   onAutoFormatToggle={() => {
-                    setUserConfig(prevConfig => ({
+                    setUserConfig((prevConfig) => ({
                       ...prevConfig,
-                      defaultAutoFormat: !autoFormatEnabled
-                    }))
-                    setAutoFormatEnabled(!autoFormatEnabled)
+                      defaultAutoFormat: !autoFormatEnabled,
+                    }));
+                    setAutoFormatEnabled(!autoFormatEnabled);
                   }}
                   validationResult={validationResults.description}
                   placeholder="Describe your consumable's effects using Balatro formatting..."

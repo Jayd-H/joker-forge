@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import {
   PhotoIcon,
   BoltIcon,
@@ -45,7 +51,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   onDelete,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [formData, setFormData] = useState<EnhancementData>(enhancement);
   const [activeTab, setActiveTab] = useState<"visual" | "description">(
     "visual"
@@ -55,7 +61,9 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
@@ -285,18 +293,21 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
     });
   };
 
-  const upscaleImage = (img: HTMLImageElement): string => {
+  const resizeImage = (
+    img: HTMLImageElement,
+    width = 142,
+    height = 190
+  ): string => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = 142;
-    canvas.height = 190;
+    canvas.width = width;
+    canvas.height = height;
 
     if (ctx) {
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, 0, 0, 142, 190);
+      ctx.drawImage(img, 0, 0, width, height);
     }
-
     return canvas.toDataURL("image/png");
   };
 
@@ -307,29 +318,14 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-          let finalImageData: string;
+          const finalImageData = resizeImage(img, 142, 190);
 
-          if (
-            (img.width === 71 && img.height === 95) ||
-            (img.width === 142 && img.height === 190)
-          ) {
-            if (img.width === 71 && img.height === 95) {
-              finalImageData = upscaleImage(img);
-            } else {
-              finalImageData = reader.result as string;
-            }
-
-            setFormData({
-              ...formData,
-              imagePreview: finalImageData,
-              hasUserUploadedImage: true,
-            });
-            setPlaceholderError(false);
-          } else {
-            alert(
-              `Image dimensions must be either 71x95 or 142x190 pixels. Your image is ${img.width}x${img.height}.`
-            );
-          }
+          setFormData({
+            ...formData,
+            imagePreview: finalImageData,
+            hasUserUploadedImage: true,
+          });
+          setPlaceholderError(false);
         };
         img.src = reader.result as string;
       };
@@ -675,8 +671,8 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                                 )}
                               </div>
                               <p className="text-xs text-white-darker">
-                                Higher values appear more frequently. Click the value
-                                to edit directly.
+                                Higher values appear more frequently. Click the
+                                value to edit directly.
                               </p>
                             </div>
                           </div>
@@ -807,11 +803,11 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                   textAreaId="enhancement-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
                   onAutoFormatToggle={() => {
-                    setUserConfig(prevConfig => ({
+                    setUserConfig((prevConfig) => ({
                       ...prevConfig,
-                      defaultAutoFormat: !autoFormatEnabled
-                    }))
-                    setAutoFormatEnabled(!autoFormatEnabled)
+                      defaultAutoFormat: !autoFormatEnabled,
+                    }));
+                    setAutoFormatEnabled(!autoFormatEnabled);
                   }}
                   validationResult={validationResults.description}
                   placeholder="Describe your enhancement's effects using Balatro formatting..."
