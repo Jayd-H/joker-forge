@@ -600,6 +600,24 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     return canvas.toDataURL("image/png");
   };
 
+  const resizeImage = (
+    img: HTMLImageElement,
+    width = 142,
+    height = 190
+  ): string => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = width;
+    canvas.height = height;
+
+    if (ctx) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, 0, 0, width, height);
+    }
+    return canvas.toDataURL("image/png");
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     if (file) {
@@ -607,29 +625,14 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-          let finalImageData: string;
+          const finalImageData = resizeImage(img, 142, 190);
 
-          if (
-            (img.width === 71 && img.height === 95) ||
-            (img.width === 142 && img.height === 190)
-          ) {
-            if (img.width === 71 && img.height === 95) {
-              finalImageData = upscaleImage(img);
-            } else {
-              finalImageData = reader.result as string;
-            }
-
-            setFormData({
-              ...formData,
-              imagePreview: finalImageData,
-              hasUserUploadedImage: true,
-            });
-            setPlaceholderError(false);
-          } else {
-            alert(
-              `Image dimensions must be either 71x95 or 142x190 pixels. Your image is ${img.width}x${img.height}.`
-            );
-          }
+          setFormData({
+            ...formData,
+            imagePreview: finalImageData,
+            hasUserUploadedImage: true,
+          });
+          setPlaceholderError(false);
         };
         img.src = reader.result as string;
       };

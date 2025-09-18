@@ -117,18 +117,21 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     return color.startsWith("#") ? color : `#${color}`;
   };
 
-  const upscaleImage = (img: HTMLImageElement): string => {
+  const resizeImage = (
+    img: HTMLImageElement,
+    width = 142,
+    height = 190
+  ): string => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = 142;
-    canvas.height = 190;
+    canvas.width = width;
+    canvas.height = height;
 
     if (ctx) {
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, 0, 0, 142, 190);
+      ctx.drawImage(img, 0, 0, width, height);
     }
-
     return canvas.toDataURL("image/png");
   };
 
@@ -139,27 +142,11 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-          let finalImageData: string;
-
-          if (
-            (img.width === 71 && img.height === 95) ||
-            (img.width === 142 && img.height === 190)
-          ) {
-            if (img.width === 71 && img.height === 95) {
-              finalImageData = upscaleImage(img);
-            } else {
-              finalImageData = reader.result as string;
-            }
-
-            onFormDataChange({
-              imagePreview: finalImageData,
-              hasUserUploadedImage: true,
-            });
-          } else {
-            alert(
-              `Image dimensions must be either 71x95 or 142x190 pixels. Your image is ${img.width}x${img.height}.`
-            );
-          }
+          const finalImageData = resizeImage(img, 142, 190);
+          onFormDataChange({
+            imagePreview: finalImageData,
+            hasUserUploadedImage: true,
+          });
         };
         img.src = reader.result as string;
       };
