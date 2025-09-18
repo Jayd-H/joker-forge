@@ -39,38 +39,60 @@ export const generateModifyInternalVariableReturn = (
   const isScoring = scoringTriggers.includes(triggerType);
 
   let operationCode = "";
-  let messageText = "";
+  const messageText = customMessage ? `"${customMessage}"` : undefined;
   let messageColor = "G.C.WHITE";
 
   switch (operation) {
     case "set":
       operationCode = `${abilityPath}.${variableName} = ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.BLUE";
       break;
     case "increment":
       operationCode = `${abilityPath}.${variableName} = (${abilityPath}.${variableName}) + ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.GREEN";
       break;
     case "decrement":
       operationCode = `${abilityPath}.${variableName} = math.max(0, (${abilityPath}.${variableName}) - ${valueCode})`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.RED";
       break;
     case "multiply":
       operationCode = `${abilityPath}.${variableName} = (${abilityPath}.${variableName}) * ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.MULT";
       break;
     case "divide":
       operationCode = `${abilityPath}.${variableName} = (${abilityPath}.${variableName}) / ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.MULT";
+      break;
+    case "power":
+      operationCode = `${abilityPath}.${variableName} = (${abilityPath}.${variableName}) ^ ${valueCode}`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "absolute":
+      operationCode = `${abilityPath}.${variableName} = math.abs(${abilityPath}.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "natural_log":
+      operationCode = `${abilityPath}.${variableName} = math.log(${abilityPath}.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "log10":
+      operationCode = `${abilityPath}.${variableName} = math.log10(${abilityPath}.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "square_root":
+      operationCode = `${abilityPath}.${variableName} = math.sqrt(${abilityPath}.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "ceil":
+      operationCode = `${abilityPath}.${variableName} = math.ceil(${abilityPath}.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "floor":
+      operationCode = `${abilityPath}.${variableName} = math.floor(${abilityPath}.${variableName})`;
+      messageColor = "G.C.BLUE";
       break;
     default:
       operationCode = `${abilityPath}.${variableName} = (${abilityPath}.${variableName}) + ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.GREEN";
   }
 
@@ -79,7 +101,7 @@ export const generateModifyInternalVariableReturn = (
       statement: `__PRE_RETURN_CODE__
                 ${operationCode}
                 __PRE_RETURN_CODE_END__`,
-      message: messageText || undefined,
+      message: messageText,
       colour: messageColor,
     };
   } else {
@@ -88,7 +110,7 @@ export const generateModifyInternalVariableReturn = (
                     ${operationCode}
                     return true
                 end`,
-      message: messageText || undefined,
+      message: messageText,
       colour: messageColor,
     };
   }
