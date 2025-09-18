@@ -3,7 +3,7 @@ import { EffectReturn } from "../effectUtils";
 
 export const generateForceGameOverReturn = (effect: Effect): EffectReturn => {
   const customMessage = effect.customMessage;
-  const message = customMessage? `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = "${customMessage}", colour = G.C.RED})`: ``;
+  let message = customMessage? `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = "${customMessage}", colour = G.C.RED})`: ``;
 
   const statement = `func = function()
                 ${message}

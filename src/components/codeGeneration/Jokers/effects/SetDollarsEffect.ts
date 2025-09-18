@@ -5,10 +5,13 @@ import {
 import type { EffectReturn } from "../effectUtils";
 
 export const generateSetDollarsReturn = (
-  effect : Effect,
-  sameTypeCount : number = 0,
+
+  effect: Effect,
+  sameTypeCount: number = 0,
+
 ): EffectReturn => {
   const operation = (effect.params?.operation as string) || "add";
+
   const variableName =
     sameTypeCount === 0 ? "dollars" : `dollars${sameTypeCount + 1}`;
 
@@ -23,14 +26,15 @@ export const generateSetDollarsReturn = (
   let result: EffectReturn;
   
   switch (operation) {
-    case "add":{
+    case "add": {
+
       result = {
         statement: `dollars = ${valueCode}`,
         colour: "G.C.MONEY",
         configVariables:
           configVariables.length > 0 ? configVariables : undefined,
-      }
-    
+      };
+
       if (customMessage) {
         result.message = `"${customMessage}"`;
       }

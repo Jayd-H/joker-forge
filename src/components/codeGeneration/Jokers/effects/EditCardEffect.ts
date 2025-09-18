@@ -12,13 +12,7 @@ export const generateEditCardReturn = (
   const newEdition = (effect.params?.new_edition as string) || "none";
   const customMessage = effect.customMessage;
 
-
   let modificationCode = "";
-  let target = 'context.other_card'
-
-  if (triggerType == "played_cards_before_scoring"){
-    target = 'used_card'
-  }
 
   if (newRank !== "none" || newSuit !== "none") {
     let suitParam = "nil";
@@ -37,12 +31,12 @@ export const generateEditCardReturn = (
     }
 
     modificationCode += `
-                assert(SMODS.change_base(${target}, ${suitParam}, ${rankParam}))`;
+                assert(SMODS.change_base(context.other_card, ${suitParam}, ${rankParam}))`;
   }
 
   if (newEnhancement === "remove") {
     modificationCode += `
-                ${target}:set_ability(G.P_CENTERS.c_base)`;
+                context.other_card:set_ability(G.P_CENTERS.c_base)`;
   } else if (newEnhancement === "random") {
     modificationCode += `
                 local enhancement_pool = {}
@@ -52,10 +46,10 @@ export const generateEditCardReturn = (
                     end
                 end
                 local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
-                ${target}:set_ability(random_enhancement)`;
+                context.other_card:set_ability(random_enhancement)`;
   } else if (newEnhancement !== "none") {
     modificationCode += `
-                ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
+                context.other_card:set_ability(G.P_CENTERS.${newEnhancement})`;
   }
 
   if (newSeal === "remove") {
@@ -65,7 +59,7 @@ export const generateEditCardReturn = (
     modificationCode += `
                 local random_seal = SMODS.poll_seal({mod = 10, guaranteed = true})
                 if random_seal then
-                    ${target}:set_seal(random_seal, true)
+                    context.other_card:set_seal(random_seal, true)
                 end`;
   } else if (newSeal !== "none") {
     modificationCode += `
@@ -74,16 +68,16 @@ export const generateEditCardReturn = (
 
   if (newEdition === "remove") {
     modificationCode += `
-                ${target}:set_edition(nil)`;
+                context.other_card:set_edition(nil)`;
   } else if (newEdition === "random") {
     modificationCode += `
                 local random_edition = poll_edition('edit_card_edition', nil, true, true)
                 if random_edition then
-                    ${target}:set_edition(random_edition, true)
+                    context.other_card:set_edition(random_edition, true)
                 end`;
   } else if (newEdition !== "none") {
     modificationCode += `
-                ${target}:set_edition("${newEdition}", true)`;
+                context.other_card:set_edition("${newEdition}", true)`;
   }
 
   const scoringTriggers = ["card_scored"];
