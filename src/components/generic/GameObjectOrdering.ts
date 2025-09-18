@@ -106,7 +106,8 @@ export const getObjectName = <GameObjectType extends GameObjectData>(
 
   if (dupeName && !data.some(
     dataObject => dataObject.objectKey == dupeName && 
-    object.id !== dataObject.id)) {
+    object.id !== dataObject.id
+  )) {
     return dupeName
   }
 
@@ -137,7 +138,9 @@ export const getObjectName = <GameObjectType extends GameObjectData>(
     else {dupeName = currentName+'2'}
 
     if (dupeName && !data.some(
-      dataObject => dataObject.objectKey == dupeName && object.id !== dataObject.id)) {
+      dataObject => dataObject.objectKey == dupeName && 
+      object.id !== dataObject.id
+    )) {
       return dupeName
     }
 }}
@@ -156,19 +159,8 @@ export const scanGameObjectKeys = <GameObjectType extends GameObjectData> (
   })
   
   wrongObjects.forEach(object =>
-    object.objectKey = getObjectName(object,data,object.objectKey)
+    object.objectKey = getObjectName(object, data, object.objectKey)
   )
 
   return data
-}
-
-export const scanGameObjects = <GameObjectType extends GameObjectData> (
-  data : GameObjectType[]
-) => {
-  let tempData = data
-
-    tempData = scanGameObjectKeys(tempData)
-    tempData = scanGameObjectIds(tempData)
-
-    return tempData as GameObjectType[]
 }
