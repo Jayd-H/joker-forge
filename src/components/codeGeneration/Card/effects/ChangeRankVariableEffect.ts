@@ -40,7 +40,7 @@ export const generateChangeRankVariableReturn = (
   };
 
   if (effect.customMessage) {
-    result.message = effect.customMessage;
+    result.message = `"${effect.customMessage}"`;
   }
 
   return result;
