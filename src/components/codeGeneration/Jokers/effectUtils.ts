@@ -1,4 +1,4 @@
-import type { Effect, LoopGroup, RandomGroup, Rule } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
@@ -149,7 +149,7 @@ export function generateEffectReturnStatement(
   regularEffects: Effect[] = [],
   randomGroups: RandomGroup[] = [],
   loopGroups: LoopGroup[] = [],
-  rule: Rule,
+  triggerType: string,
   modprefix: string,
   jokerKey?: string,
   ruleId?: string,
@@ -187,7 +187,7 @@ export function generateEffectReturnStatement(
 
         const result = generateSingleEffect(
           effectWithContext,
-          rule,
+          triggerType,
           currentCount,
           modprefix
         );
@@ -296,7 +296,7 @@ export function generateEffectReturnStatement(
 
           const result = generateSingleEffect(
             effectWithContext,
-            rule,
+            triggerType,
             currentCount,
             modprefix
           );
@@ -359,9 +359,9 @@ export function generateEffectReturnStatement(
 
       if (
         hasDeleteInGroup &&
-        (rule.trigger === "card_scored" ||
-          rule.trigger === "card_held_in_hand" ||
-          rule.trigger === "card_held_in_hand_end_of_round")
+        (triggerType === "card_scored" ||
+          triggerType === "card_held_in_hand" ||
+          triggerType === "card_held_in_hand_end_of_round")
       ) {
         groupContent += `context.other_card.should_destroy = true
                         `;
@@ -463,7 +463,7 @@ export function generateEffectReturnStatement(
         const firstEffect = randomGroups[0].effects[0];
         const firstEffectResult = generateSingleEffect(
           firstEffect,
-          rule,
+          triggerType,
           0,
           modprefix
         );
@@ -534,7 +534,7 @@ export function generateEffectReturnStatement(
 
           const result = generateSingleEffect(
             effectWithContext,
-            rule,
+            triggerType,
             currentCount,
             modprefix
           );
@@ -593,9 +593,9 @@ export function generateEffectReturnStatement(
 
       if (
         hasDeleteInGroup &&
-        (rule.trigger === "card_scored" ||
-          rule.trigger === "card_held_in_hand" ||
-          rule.trigger === "card_held_in_hand_end_of_round")
+        (triggerType === "card_scored" ||
+          triggerType === "card_held_in_hand" ||
+          triggerType === "card_held_in_hand_end_of_round")
       ) {
         groupContent += `context.other_card.should_destroy = true
                         `;
@@ -688,7 +688,7 @@ export function generateEffectReturnStatement(
         const firstEffect = loopGroups[0].effects[0];
         const firstEffectResult = generateSingleEffect(
           firstEffect,
-          rule,
+          triggerType,
           0,
           modprefix,
         );
@@ -708,11 +708,11 @@ export function generateEffectReturnStatement(
 
 const generateSingleEffect = (
   effect: ExtendedEffect,
-  rule: Rule,
+  triggerType: string,
   sameTypeCount: number = 0,
   modprefix: string,
 ): EffectReturn => {
-  const triggerType = rule.trigger
+
   switch (effect.type) {
     case "add_chips":
       return generateAddChipsReturn(effect, sameTypeCount);
@@ -771,7 +771,7 @@ const generateSingleEffect = (
     case "show_message":
       return generateShowMessageReturn(effect);
     case "set_dollars":
-      return generateSetDollarsReturn(effect, sameTypeCount, rule);
+      return generateSetDollarsReturn(effect, sameTypeCount);
     case "disable_boss_blind":
       return generateDisableBossBlindReturn(effect, triggerType);
     case "prevent_game_over":

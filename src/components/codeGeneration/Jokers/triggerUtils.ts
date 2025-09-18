@@ -1,5 +1,4 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { RuleAttributes } from "./RuleUtils";
 
 
 interface TriggerContext {
@@ -10,13 +9,12 @@ interface TriggerContext {
 export const generateTriggerContext = (
   triggerType: string,
   rules: Rule[],
-  currentRule: RuleAttributes
 ): TriggerContext => {
   const hasRetriggerEffects = rules.some((rule) =>
     rule.effects.some((effect) => effect.type === "retrigger_cards")
   );
 
-  const isBlueprintCompatible = currentRule.blueprintCompatible ?? true;
+  const isBlueprintCompatible = rules.some((rule) => rule.blueprintCompatible ?? true);
 
   switch (triggerType) {
     case "card_scored":

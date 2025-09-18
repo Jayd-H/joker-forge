@@ -1,21 +1,16 @@
-import type { Effect, Rule } from "../../../ruleBuilder/types";
+import type { Effect } from "../../../ruleBuilder/types";
 import {
   generateConfigVariables
 } from "../gameVariableUtils";
 import type { EffectReturn } from "../effectUtils";
-import { generateConditionChain } from "../conditionUtils";
 
 export const generateSetDollarsReturn = (
   effect : Effect,
   sameTypeCount : number = 0,
-  rule : Rule,
 ): EffectReturn => {
   const operation = (effect.params?.operation as string) || "add";
   const variableName =
     sameTypeCount === 0 ? "dollars" : `dollars${sameTypeCount + 1}`;
-
-  const triggerType = rule.trigger
-  const conditions = generateConditionChain(rule)
 
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
@@ -27,41 +22,15 @@ export const generateSetDollarsReturn = (
 
   let result: EffectReturn;
   
-  let blindReward = ''
-
-  if (triggerType == "round_end" && operation == "add") { 
-
-    blindReward +=`__PRIOR_FUNCTION__
-    `
-
-    if (conditions) {
-      blindReward += `if ${conditions} then
-        return ${valueCode} or nil
-      __PRIOR_FUNCTION_END__`
-    } else {
-      blindReward += `return ${valueCode}
-      __PRIOR_FUNCTION_END__`
-    }
-  }
-
   switch (operation) {
-    case "add": {
-      if (triggerType == "round_end"){
-      result = {
-        statement: blindReward,
-        colour: "G.C.MONEY",
-        configVariables:
-          configVariables.length > 0 ? configVariables : undefined,
-      }
-    } else {
+    case "add":{
       result = {
         statement: `dollars = ${valueCode}`,
         colour: "G.C.MONEY",
         configVariables:
           configVariables.length > 0 ? configVariables : undefined,
       }
-    }
-
+    
       if (customMessage) {
         result.message = `"${customMessage}"`;
       }
