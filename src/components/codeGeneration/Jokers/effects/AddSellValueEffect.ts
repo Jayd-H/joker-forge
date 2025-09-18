@@ -30,7 +30,7 @@ export const generateAddSellValueReturn = (
   let targetJokerLogic = ''
 
   if (target == "specific") {
-    if (specificTarget == "left"||"right"||"self"){
+    if (specificTarget == "left" || specificTarget == "right" || specificTarget == "self") {
       targetJokerLogic += `local my_pos = nil
         for i = 1, #G.jokers.cards do
             if G.jokers.cards[i] == card then
@@ -40,29 +40,31 @@ export const generateAddSellValueReturn = (
         end
         local `}
     switch (specificTarget) {
-    case "right":
-      targetJokerLogic += `target_joker = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
-      break;
-    case "left":
-      targetJokerLogic += `target_joker = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
-      break;
-    case "self":
-      targetJokerLogic += `target_joker = G.jokers.cards[my_post]`;
-      break;
-    case "first":
-      targetJokerLogic += `target_joker = G.jokers.cards[1]`;
-      break
-    case "last":
-      targetJokerLogic += `target_joker = G.jokers.cards[#G.jokers]`;
-      break
-    case "random":
-      targetJokerLogic += `chosenTarget = pseudorandom(3456543, 1, #G.jokers.cards) or nil
+      case "right":
+        targetJokerLogic += `target_joker = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
+        break;
+      case "left":
+        targetJokerLogic += `target_joker = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
+        break;
+      case "self":
+        targetJokerLogic += `target_joker = G.jokers.cards[my_post]`;
+        break;
+      case "first":
+        targetJokerLogic += `target_joker = G.jokers.cards[1]`;
+        break
+      case "last":
+        targetJokerLogic += `target_joker = G.jokers.cards[#G.jokers]`;
+        break
+      case "random":
+        targetJokerLogic += `chosenTarget = pseudorandom(3456543, 1, #G.jokers.cards) or nil
         target_joker = G.jokers.cards[chosenTarget]
         end`;
-      break;}
+        break;
+    }
     sellValueCode += `${targetJokerLogic}
             target_joker.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
-            target_joker:set_cost()`;}
+            target_joker:set_cost()`;
+  }
   else if (target === "all_jokers") {
     sellValueCode += `
             for i, other_card in ipairs(G.jokers.cards) do
