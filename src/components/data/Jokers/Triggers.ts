@@ -122,13 +122,6 @@ export const TRIGGERS: TriggerDefinition[] = [
     category: "Hand Scoring",
   },
   {
-    id: "played_cards_before_scoring",
-    label: "For each Played Card before Scoring",
-    description:
-      "Triggers for each card in played hand before a hand starts the scoring sequence",
-    category: "Hand Scoring",
-  },
-  {
     id: "joker_evaluated",
     label: "When Another Joker is Evaluated",
     description: "Triggers when another joker you own is evaluated (triggered after scoring).",

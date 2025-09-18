@@ -220,11 +220,6 @@ export const generateTriggerContext = (
         check: `context.pseudorandom_result ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
         comment: "-- When chance roll succeeds/failes",
       };
-    case "played_cards_before_scoring":
-      return {
-        check: `context.before${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
-        comment: "-- Evaluates each Card before scoring begins",
-      };
     case "hand_played":
     default:
       return {
