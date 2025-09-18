@@ -494,7 +494,7 @@ export function generateEffectReturnStatement(
       });
     }
 
-    loopGroups.forEach((group, _groupIndex) => {
+    loopGroups.forEach((group) => {
       const { preReturnCode: groupPreCode, modifiedEffects } =
         coordinateVariableConflicts(group.effects);
 
