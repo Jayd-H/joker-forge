@@ -9,7 +9,8 @@ export const generateDestroySelfReturn = (effect?: Effect): EffectReturn => {
                 card:${thing}
                 return true
             end`;
-  if (isMessage == 'y'){
+
+  if (isMessage == 'y') {
   return {
     statement: statement,
     message: customMessage ? `"${customMessage}"` : `"Destroyed!"`,

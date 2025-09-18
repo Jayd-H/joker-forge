@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import {
   PhotoIcon,
   BoltIcon,
@@ -18,10 +24,16 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface EditEnhancementInfoProps {
   isOpen: boolean;
   enhancement: EnhancementData;
+  enhancements: EnhancementData[];
   onClose: () => void;
   onSave: (enhancement: EnhancementData) => void;
   onDelete: (enhancementId: string) => void;
@@ -40,12 +52,13 @@ interface EditEnhancementInfoProps {
 const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   isOpen,
   enhancement,
+  enhancements,
   onClose,
   onSave,
   onDelete,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [formData, setFormData] = useState<EnhancementData>(enhancement);
   const [activeTab, setActiveTab] = useState<"visual" | "description">(
     "visual"
@@ -55,13 +68,16 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
   >({});
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const [validationResults, setValidationResults] = useState<{
     name?: ValidationResult;
@@ -182,7 +198,11 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         no_rank: enhancement.no_rank === true,
         no_suit: enhancement.no_suit === true,
         always_scores: enhancement.always_scores === true,
-        enhancementKey: enhancement.enhancementKey || slugify(enhancement.name),
+        objectKey: getObjectName(
+          enhancement,
+          enhancements,
+          enhancement.objectKey || slugify(enhancement.name)
+        ),
         hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -190,10 +210,10 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, enhancement]);
+  }, [isOpen, enhancement, enhancements]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showPlaceholderPicker) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -208,7 +228,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, handleSave]);
+  }, [isOpen, showPlaceholderPicker, handleSave]);
 
   if (!isOpen) return null;
 
@@ -263,10 +283,11 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      const tempKey = getObjectName(enhancement, enhancements, value);
       setFormData({
         ...formData,
         [field]: value,
-        enhancementKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -361,6 +382,12 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
       onConfirm: () => {
         onDelete(enhancement.id);
         onClose();
+        enhancements = updateGameObjectIds(
+          enhancement,
+          enhancements,
+          "remove",
+          enhancement.orderValue
+        );
       },
     });
   };
@@ -525,7 +552,7 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                       </h4>
                       <div className="flex gap-6">
                         <div className="flex-shrink-0">
-                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative">
+                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative group">
                             {formData.imagePreview ? (
                               <img
                                 src={formData.imagePreview}
@@ -557,6 +584,25 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                                 <PhotoIcon className="h-16 w-16 text-white-darker opacity-50" />
                               </div>
                             )}
+                            <button
+                              type="button"
+                              onClick={() => setShowPlaceholderPicker(true)}
+                              title="Choose placeholder"
+                              className={[
+                                "absolute top-2 right-2 z-20",
+                                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                                "bg-black/70 backdrop-blur",
+                                "flex items-center justify-center",
+                                "opacity-0 -translate-y-1 pointer-events-none",
+                                "transition-all duration-200 ease-out",
+                                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                                "hover:bg-black/80 active:scale-95",
+                                "cursor-pointer",
+                              ].join(" ")}
+                            >
+                              <PhotoIcon className="h-5 w-5 text-white/90" />
+                            </button>
                           </div>
                           <input
                             type="file"
@@ -613,10 +659,10 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.enhancementKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "enhancementKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )
@@ -675,8 +721,8 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                                 )}
                               </div>
                               <p className="text-xs text-white-darker">
-                                Higher values appear more frequently. Click the value
-                                to edit directly.
+                                Higher values appear more frequently. Click the
+                                value to edit directly.
                               </p>
                             </div>
                           </div>
@@ -807,11 +853,11 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
                   textAreaId="enhancement-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
                   onAutoFormatToggle={() => {
-                    setUserConfig(prevConfig => ({
+                    setUserConfig((prevConfig) => ({
                       ...prevConfig,
-                      defaultAutoFormat: !autoFormatEnabled
-                    }))
-                    setAutoFormatEnabled(!autoFormatEnabled)
+                      defaultAutoFormat: !autoFormatEnabled,
+                    }));
+                    setAutoFormatEnabled(!autoFormatEnabled);
                   }}
                   validationResult={validationResults.description}
                   placeholder="Describe your enhancement's effects using Balatro formatting..."
@@ -855,6 +901,20 @@ const EditEnhancementInfo: React.FC<EditEnhancementInfoProps> = ({
           </div>
         </div>
       </div>
+      <PlaceholderPickerModal
+        type="enhancement"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          setFormData((prev) => ({
+            ...prev,
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          }));
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };

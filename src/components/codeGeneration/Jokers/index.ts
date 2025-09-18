@@ -1,8 +1,5 @@
 import { JokerData } from "../../data/BalatroUtils";
-import { generateTriggerContext } from "./triggerUtils";
-import { generateConditionChain } from "./conditionUtils";
 import {
-  generateEffectReturnStatement,
   processPassiveEffects,
   ConfigExtraVariable,
 } from "./effectUtils";
@@ -12,7 +9,6 @@ import {
   getAllVariables,
   extractGameVariablesFromRules,
 } from "./variableUtils";
-import type { Rule } from "../../ruleBuilder/types";
 import type { PassiveEffectResult } from "./effectUtils";
 import { generateDiscountItemsHook } from "./effects/DiscountItemsEffect";
 import { generateReduceFlushStraightRequirementsHook } from "./effects/ReduceFlushStraightRequirementsEffect";
@@ -29,6 +25,12 @@ import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
+import { generateEffectReturnStatement } from "./effectUtils";
+import { generateConditionChain } from "./conditionUtils";
+import { Rule } from "../../ruleBuilder";
+import { generateTriggerContext } from "./triggerUtils";
+
+
 interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
@@ -37,7 +39,7 @@ interface CalculateFunctionResult {
 const ensureJokerKeys = (jokers: JokerData[]): JokerData[] => {
   return jokers.map((joker) => ({
     ...joker,
-    jokerKey: joker.jokerKey || slugify(joker.name),
+    objectKey: joker.objectKey || slugify(joker.name),
   }));
 };
 
@@ -67,14 +69,14 @@ export const generateJokersCode = (
 ${hookCode}`;
     }
 
-    jokersCode[`${joker.jokerKey}.lua`] = jokerCode;
+    jokersCode[`${joker.objectKey}.lua`] = jokerCode;
     currentPosition = result.nextPosition;
   });
 
   return { jokersCode, hooks: "" };
 };
 
-const convertRandomGroupsForCodegen = (
+export const convertRandomGroupsForCodegen = (
   randomGroups: import("../../ruleBuilder/types").RandomGroup[]
 ) => {
   return randomGroups.map((group) => ({
@@ -90,7 +92,7 @@ const convertRandomGroupsForCodegen = (
   }));
 };
 
-const convertLoopGroupsForCodegen = (
+export const convertLoopGroupsForCodegen = (
   loopGroups: import("../../ruleBuilder/types").LoopGroup[]
 ) => {
   return loopGroups.map((group) => ({
@@ -311,7 +313,7 @@ const generateSingleJokerCode = (
   let nextPosition = currentPosition + 1;
 
   let jokerCode = `SMODS.Joker{ --${joker.name}
-    key = "${joker.jokerKey}",
+    key = "${joker.objectKey}",
     config = {
         extra = {`;
 
@@ -432,7 +434,7 @@ const generateSingleJokerCode = (
   if (joker.ignoreSlotLimit) {
     jokerCode += `\n\nlocal check_for_buy_space_ref = G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = function(card)
-    if card.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then -- ignore slot limit when bought
+    if card.config.center.key == "j_${modPrefix}_${joker.objectKey}" then -- ignore slot limit when bought
         return true
     end
     return check_for_buy_space_ref(card)
@@ -440,7 +442,7 @@ end
 
 local can_select_card_ref = G.FUNCS.can_select_card
 G.FUNCS.can_select_card = function(e)
-	if e.config.ref_table.config.center.key == "j_${modPrefix}_${joker.jokerKey}" then
+	if e.config.ref_table.config.center.key == "j_${modPrefix}_${joker.objectKey}" then
 		e.config.colour = G.C.GREEN
 		e.config.button = "use_card"
 	else
@@ -457,9 +459,9 @@ end`;
 
 export const exportSingleJoker = (joker: JokerData): void => {
   try {
-    const jokerWithKey = joker.jokerKey
+    const jokerWithKey = joker.objectKey
       ? joker
-      : { ...joker, jokerKey: slugify(joker.name) };
+      : { ...joker, objectKey: slugify(joker.name) };
 
     const result = generateSingleJokerCode(
       jokerWithKey,
@@ -479,7 +481,7 @@ export const exportSingleJoker = (joker: JokerData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${jokerWithKey.jokerKey}.lua`;
+    a.download = `${jokerWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -490,95 +492,13 @@ export const exportSingleJoker = (joker: JokerData): void => {
   }
 };
 
-const generateSetAbilityFunction = (joker: JokerData): string | null => {
-  const forcedStickers: string[] = [];
-  const suitVariables = (joker.userVariables || []).filter(
-    (v) => v.type === "suit"
-  );
-  const rankVariables = (joker.userVariables || []).filter(
-    (v) => v.type === "rank"
-  );
-  const pokerHandVariables = (joker.userVariables || []).filter(
-    (v) => v.type === "pokerhand"
-  );
-
-  if (joker.force_eternal) {
-    forcedStickers.push("card:set_eternal(true)");
-  }
-
-  if (joker.force_perishable) {
-    forcedStickers.push("card:add_sticker('perishable', true)");
-  }
-
-  if (joker.force_rental) {
-    forcedStickers.push("card:add_sticker('rental', true)");
-  }
-
-  const forcedEditions: string[] = [];
-
-  if (joker.force_foil) {
-    forcedEditions.push('card:set_edition("e_foil", true)');
-  }
-
-  if (joker.force_holographic) {
-    forcedEditions.push('card:set_edition("e_holo", true)');
-  }
-
-  if (joker.force_polychrome) {
-    forcedEditions.push('card:set_edition("e_polychrome", true)');
-  }
-
-  if (joker.force_negative) {
-    forcedEditions.push('card:set_edition("e_negative", true)');
-  }
-
-  const variableInits: string[] = [];
-
-  suitVariables.forEach((variable) => {
-    const defaultSuit =
-      variable.initialSuit || getSuitByValue("Spades")?.value || "Spades";
-    variableInits.push(
-      `G.GAME.current_round.${variable.name}_card = { suit = '${defaultSuit}' }`
-    );
-  });
-
-  rankVariables.forEach((variable) => {
-    const defaultRank =
-      variable.initialRank || getRankByValue("A")?.label || "Ace";
-    const defaultId = getRankId(defaultRank);
-    variableInits.push(
-      `G.GAME.current_round.${variable.name}_card = { rank = '${defaultRank}', id = ${defaultId} }`
-    );
-  });
-
-  pokerHandVariables.forEach((variable) => {
-    const defaultPokerHand = variable.initialPokerHand || "High Card";
-    variableInits.push(
-      `G.GAME.current_round.${variable.name}_hand = '${defaultPokerHand}'`
-    );
-  });
-
-  if (
-    forcedStickers.length === 0 &&
-    variableInits.length === 0 &&
-    forcedEditions.length === 0
-  ) {
-    return null;
-  }
-
-  const allCode = [...forcedStickers, ...variableInits, ...forcedEditions];
-
-  return `set_ability = function(self, card, initial)
-        ${allCode.join("\n        ")}
-    end`;
-};
-
 const generateCalculateFunction = (
   rules: Rule[],
   joker: JokerData,
   modprefix: string
 ): CalculateFunctionResult => {
-  const jokerKey = joker.jokerKey;
+  //@ts-expect-error: backwards compatibility
+  const jokerKey = joker.jokerKey || joker.objectKey;
   const rulesByTrigger: Record<string, Rule[]> = {};
   rules.forEach((rule) => {
     if (!rulesByTrigger[rule.trigger]) {
@@ -1585,6 +1505,89 @@ const generateCalculateFunction = (
   };
 };
 
+const generateSetAbilityFunction = (joker: JokerData): string | null => {
+  const forcedStickers: string[] = [];
+  const suitVariables = (joker.userVariables || []).filter(
+    (v) => v.type === "suit"
+  );
+  const rankVariables = (joker.userVariables || []).filter(
+    (v) => v.type === "rank"
+  );
+  const pokerHandVariables = (joker.userVariables || []).filter(
+    (v) => v.type === "pokerhand"
+  );
+
+  if (joker.force_eternal) {
+    forcedStickers.push("card:set_eternal(true)");
+  }
+
+  if (joker.force_perishable) {
+    forcedStickers.push("card:add_sticker('perishable', true)");
+  }
+
+  if (joker.force_rental) {
+    forcedStickers.push("card:add_sticker('rental', true)");
+  }
+
+  const forcedEditions: string[] = [];
+
+  if (joker.force_foil) {
+    forcedEditions.push('card:set_edition("e_foil", true)');
+  }
+
+  if (joker.force_holographic) {
+    forcedEditions.push('card:set_edition("e_holo", true)');
+  }
+
+  if (joker.force_polychrome) {
+    forcedEditions.push('card:set_edition("e_polychrome", true)');
+  }
+
+  if (joker.force_negative) {
+    forcedEditions.push('card:set_edition("e_negative", true)');
+  }
+
+  const variableInits: string[] = [];
+
+  suitVariables.forEach((variable) => {
+    const defaultSuit =
+      variable.initialSuit || getSuitByValue("Spades")?.value || "Spades";
+    variableInits.push(
+      `G.GAME.current_round.${variable.name}_card = { suit = '${defaultSuit}' }`
+    );
+  });
+
+  rankVariables.forEach((variable) => {
+    const defaultRank =
+      variable.initialRank || getRankByValue("A")?.label || "Ace";
+    const defaultId = getRankId(defaultRank);
+    variableInits.push(
+      `G.GAME.current_round.${variable.name}_card = { rank = '${defaultRank}', id = ${defaultId} }`
+    );
+  });
+
+  pokerHandVariables.forEach((variable) => {
+    const defaultPokerHand = variable.initialPokerHand || "High Card";
+    variableInits.push(
+      `G.GAME.current_round.${variable.name}_hand = '${defaultPokerHand}'`
+    );
+  });
+
+  if (
+    forcedStickers.length === 0 &&
+    variableInits.length === 0 &&
+    forcedEditions.length === 0
+  ) {
+    return null;
+  }
+
+  const allCode = [...forcedStickers, ...variableInits, ...forcedEditions];
+
+  return `set_ability = function(self, card, initial)
+        ${allCode.join("\n        ")}
+    end`;
+};
+
 const generateLocVarsFunction = (
   joker: JokerData,
   passiveEffects: PassiveEffectResult[],
@@ -1875,7 +1878,7 @@ const generateLocVarsFunction = (
 
       locVarsReturn = `local new_numerator, new_denominator = SMODS.get_probability_vars(card, ${
         numerators[0]
-      }, ${oddsVar}, 'j_${modPrefix}_${joker.jokerKey}') 
+      }, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}') 
         return {vars = {${nonProbabilityVars.join(", ")}${
         nonProbabilityVars.length > 0 ? `, ` : ``
       }new_numerator, new_denominator}}`;
@@ -1893,7 +1896,7 @@ const generateLocVarsFunction = (
         const varSuffix = index === 0 ? "" : (index + 1).toString();
 
         probabilityCalls.push(
-          `local new_numerator${varSuffix}, new_denominator${varSuffix} = SMODS.get_probability_vars(card, ${numerator}, ${oddsVar}, 'j_${modPrefix}_${joker.jokerKey}')`
+          `local new_numerator${varSuffix}, new_denominator${varSuffix} = SMODS.get_probability_vars(card, ${numerator}, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}')`
         );
         probabilityVars.push(
           `new_numerator${varSuffix}`,
@@ -1972,7 +1975,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
           hooksByType[hookType] = [];
         }
         hooksByType[hookType].push({
-          jokerKey: joker.jokerKey!,
+          jokerKey: joker.objectKey!,
           params: effect.needsHook.effectParams,
         });
       }
