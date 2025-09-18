@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import {
   PhotoIcon,
   SparklesIcon,
@@ -21,10 +27,16 @@ import {
 import { ConsumableSetData } from "../../data/BalatroUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface EditConsumableInfoProps {
   isOpen: boolean;
   consumable: ConsumableData;
+  consumables: ConsumableData[];
   onClose: () => void;
   onSave: (consumable: ConsumableData) => void;
   onDelete: (consumableId: string) => void;
@@ -44,13 +56,14 @@ interface EditConsumableInfoProps {
 const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   isOpen,
   consumable,
+  consumables,
   onClose,
   onSave,
   onDelete,
   availableSets,
   showConfirmation,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [formData, setFormData] = useState<ConsumableData>(consumable);
   const [activeTab, setActiveTab] = useState<"visual" | "description">(
     "visual"
@@ -61,13 +74,16 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
 
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
   >({});
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const [validationResults, setValidationResults] = useState<{
     name?: ValidationResult;
@@ -185,7 +201,11 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         discovered: consumable.discovered !== false,
         hidden: consumable.hidden === true,
         can_repeat_soul: consumable.can_repeat_soul === true,
-        consumableKey: consumable.consumableKey || slugify(consumable.name),
+        objectKey: getObjectName(
+          consumable,
+          consumables,
+          consumable.objectKey || slugify(consumable.name)
+        ),
         hasUserUploadedImage: consumable.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -193,10 +213,10 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, consumable]);
+  }, [isOpen, consumable, consumables]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showPlaceholderPicker) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -211,7 +231,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, handleSave]);
+  }, [isOpen, showPlaceholderPicker, handleSave]);
 
   if (!isOpen) return null;
 
@@ -301,10 +321,11 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      const tempKey = getObjectName(consumable, consumables, value);
       setFormData({
         ...formData,
         [field]: value,
-        consumableKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -413,6 +434,12 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
       onConfirm: () => {
         onDelete(consumable.id);
         onClose();
+        consumables = updateGameObjectIds(
+          consumable,
+          consumables,
+          "remove",
+          consumable.orderValue
+        );
       },
     });
   };
@@ -580,7 +607,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                       </h4>
                       <div className="flex gap-6">
                         <div className="flex-shrink-0">
-                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative">
+                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative group">
                             {formData.imagePreview ? (
                               <>
                                 <img
@@ -620,6 +647,25 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                             ) : (
                               <PhotoIcon className="h-16 w-16 text-white-darker opacity-50 mx-auto my-auto" />
                             )}
+                            <button
+                              type="button"
+                              onClick={() => setShowPlaceholderPicker(true)}
+                              title="Choose placeholder"
+                              className={[
+                                "absolute top-2 right-2 z-20",
+                                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                                "bg-black/70 backdrop-blur",
+                                "flex items-center justify-center",
+                                "opacity-0 -translate-y-1 pointer-events-none",
+                                "transition-all duration-200 ease-out",
+                                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                                "hover:bg-black/80 active:scale-95",
+                                "cursor-pointer",
+                              ].join(" ")}
+                            >
+                              <PhotoIcon className="h-5 w-5 text-white/90" />
+                            </button>
                           </div>
                           <input
                             type="file"
@@ -712,10 +758,10 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.consumableKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "consumableKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )
@@ -806,11 +852,11 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                   textAreaId="consumable-description-edit"
                   autoFormatEnabled={autoFormatEnabled}
                   onAutoFormatToggle={() => {
-                    setUserConfig(prevConfig => ({
+                    setUserConfig((prevConfig) => ({
                       ...prevConfig,
-                      defaultAutoFormat: !autoFormatEnabled
-                    }))
-                    setAutoFormatEnabled(!autoFormatEnabled)
+                      defaultAutoFormat: !autoFormatEnabled,
+                    }));
+                    setAutoFormatEnabled(!autoFormatEnabled);
                   }}
                   validationResult={validationResults.description}
                   placeholder="Describe your consumable's effects using Balatro formatting..."
@@ -857,7 +903,21 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
             />
           </div>
         </div>
-      </div>
+      </div>{" "}
+      <PlaceholderPickerModal
+        type="consumable"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          setFormData((prev) => ({
+            ...prev,
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          }));
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };

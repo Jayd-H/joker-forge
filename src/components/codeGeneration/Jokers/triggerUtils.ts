@@ -1,5 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 
+
 interface TriggerContext {
   check: string;
   comment: string;

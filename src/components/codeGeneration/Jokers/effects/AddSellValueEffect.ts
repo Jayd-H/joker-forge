@@ -30,7 +30,7 @@ export const generateAddSellValueReturn = (
   let targetJokerLogic = ''
 
   if (target == "specific") {
-    if (specificTarget == "left"||"right"||"self"){
+    if (specificTarget == "left" || specificTarget == "right" || specificTarget == "self") {
       targetJokerLogic += `local my_pos = nil
         for i = 1, #G.jokers.cards do
             if G.jokers.cards[i] == card then
@@ -38,7 +38,8 @@ export const generateAddSellValueReturn = (
                 break
             end
         end
-        local `}
+        local `
+      }
     switch (specificTarget) {
     case "right":
       targetJokerLogic += `target_joker = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
