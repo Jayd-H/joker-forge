@@ -62,7 +62,7 @@ export const generateChangePokerHandVariableReturn = (
   };
 
   if (effect.customMessage) {
-    result.message = effect.customMessage;
+    result.message = `"${effect.customMessage}"`;
   }
 
   return result;

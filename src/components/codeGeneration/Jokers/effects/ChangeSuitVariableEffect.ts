@@ -37,7 +37,7 @@ export const generateChangeSuitVariableReturn = (
   };
 
   if (effect.customMessage) {
-    result.message = effect.customMessage;
+    result.message = `"${effect.customMessage}"`;
   }
 
   return result;

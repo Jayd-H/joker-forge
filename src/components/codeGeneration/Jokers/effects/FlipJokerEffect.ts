@@ -85,7 +85,7 @@ export const generateFlipJokerReturn = (
 
   return {
     statement: `__PRE_RETURN_CODE__${jokerFlipCode}__PRE_RETURN_CODE_END__`,
-    message: customMessage ?? `"Flip!"`,
+    message: customMessage ? `"${customMessage}"` : `"Flip!"`,
     colour: "G.C.ORANGE"
   }
 };
