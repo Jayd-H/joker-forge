@@ -34,7 +34,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   formData,
   onFormDataChange,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [activeTab, setActiveTab] = useState<
     "visual" | "description" | "settings"
   >("visual");
@@ -42,7 +42,9 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
@@ -108,18 +110,21 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     return color.startsWith("#") ? color : `#${color}`;
   };
 
-  const upscaleImage = (img: HTMLImageElement): string => {
+  const resizeImage = (
+    img: HTMLImageElement,
+    width = 142,
+    height = 190
+  ): string => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = 142;
-    canvas.height = 190;
+    canvas.width = width;
+    canvas.height = height;
 
     if (ctx) {
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, 0, 0, 142, 190);
+      ctx.drawImage(img, 0, 0, width, height);
     }
-
     return canvas.toDataURL("image/png");
   };
 
@@ -130,27 +135,11 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-          let finalImageData: string;
-
-          if (
-            (img.width === 71 && img.height === 95) ||
-            (img.width === 142 && img.height === 190)
-          ) {
-            if (img.width === 71 && img.height === 95) {
-              finalImageData = upscaleImage(img);
-            } else {
-              finalImageData = reader.result as string;
-            }
-
-            onFormDataChange({
-              imagePreview: finalImageData,
-              hasUserUploadedImage: true,
-            });
-          } else {
-            alert(
-              `Image dimensions must be either 71x95 or 142x190 pixels. Your image is ${img.width}x${img.height}.`
-            );
-          }
+          const finalImageData = resizeImage(img, 142, 190);
+          onFormDataChange({
+            imagePreview: finalImageData,
+            hasUserUploadedImage: true,
+          });
         };
         img.src = reader.result as string;
       };
@@ -644,25 +633,25 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                     </label>
                                   </div>
                                 </div>
-                                  <div className="flex items-center gap-3">
-                                    <input
-                                      type="checkbox"
-                                      id="instant_use"
-                                      checked={formData.instant_use || false}
-                                      onChange={(e) =>
-                                        onFormDataChange({
-                                          instant_use: e.target.checked,
-                                        })
-                                      }
-                                      className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
-                                    />
-                                    <label
-                                      htmlFor="draw_hand"
-                                      className="text-white-light text-sm"
-                                    >
-                                      Use Selected Card Instantly
-                                    </label>
-                                  </div>
+                                <div className="flex items-center gap-3">
+                                  <input
+                                    type="checkbox"
+                                    id="instant_use"
+                                    checked={formData.instant_use || false}
+                                    onChange={(e) =>
+                                      onFormDataChange({
+                                        instant_use: e.target.checked,
+                                      })
+                                    }
+                                    className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
+                                  />
+                                  <label
+                                    htmlFor="draw_hand"
+                                    className="text-white-light text-sm"
+                                  >
+                                    Use Selected Card Instantly
+                                  </label>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -690,11 +679,11 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                           size="sm"
                           variant={autoFormatEnabled ? "primary" : "secondary"}
                           onClick={() => {
-                            setUserConfig(prevConfig => ({
+                            setUserConfig((prevConfig) => ({
                               ...prevConfig,
-                              defaultAutoFormat: !autoFormatEnabled
-                            }))
-                            setAutoFormatEnabled(!autoFormatEnabled)
+                              defaultAutoFormat: !autoFormatEnabled,
+                            }));
+                            setAutoFormatEnabled(!autoFormatEnabled);
                           }}
                           icon={<SparklesIcon className="h-3 w-3" />}
                         >

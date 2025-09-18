@@ -309,6 +309,27 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     effectCategories,
   ]);
 
+  useEffect(() => {
+    const section =
+      activeFilter === "triggers"
+        ? categorizedItems.triggers
+        : activeFilter === "conditions"
+        ? categorizedItems.conditions
+        : categorizedItems.effects;
+
+    const total = Object.values(section).reduce(
+      (sum, { items }) => sum + items.length,
+      0
+    );
+
+    if (total > 0 && total < 8) {
+      const allLabels = Object.values(section).map(
+        ({ category }) => category.label
+      );
+      setExpandedCategories(new Set(allLabels));
+    }
+  }, [activeFilter, categorizedItems, searchTerm]);
+
   const shouldShowSection = (sectionType: FilterType) => {
     if (!selectedRule && sectionType !== "triggers") {
       return false;
