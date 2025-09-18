@@ -130,7 +130,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
-    orderValue: joker.orderValue || NaN,
+    orderValue: joker.orderValue || 1,
     objectType: "joker",
   };
 };
@@ -166,7 +166,7 @@ const normalizeConsumableData = (
     placeholderCreditIndex: consumable.placeholderCreditIndex,
     objectType: "consumable",
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
-    orderValue: consumable.orderValue || NaN,
+    orderValue: consumable.orderValue || 1,
   };
 };
 
@@ -196,7 +196,7 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     hidden: booster.hidden,
     placeholderCreditIndex: booster.placeholderCreditIndex,
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
-    orderValue: booster.orderValue || NaN
+    orderValue: booster.orderValue || 1,
   };
 };
 
@@ -226,7 +226,7 @@ const normalizeEnhancementData = (
     placeholderCreditIndex: enhancement.placeholderCreditIndex,
     hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
     weight: enhancement.weight ?? 5,
-    orderValue: enhancement.orderValue || NaN
+    orderValue: enhancement.orderValue || 1,
   };
 };
 
@@ -249,7 +249,7 @@ const normalizeSealData = (seal: SealData): SealData => {
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
     hasUserUploadedImage: seal.hasUserUploadedImage || false,
-    orderValue: seal.orderValue || NaN
+    orderValue: seal.orderValue || 1,
   };
 };
 
@@ -274,7 +274,7 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
     disable_shadow: edition.disable_shadow,
     disable_base_shader: edition.disable_base_shader,
     rules: edition.rules || [],
-    orderValue: edition.orderValue || NaN
+    orderValue: edition.orderValue || 1,
   };
 };
 
