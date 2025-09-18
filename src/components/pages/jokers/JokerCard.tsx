@@ -32,11 +32,9 @@ import {
   type JokerData,
   slugify,
 } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
 
 interface JokerCardProps {
   joker: JokerData;
-  jokers: JokerData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -102,7 +100,6 @@ const PropertyIcon: React.FC<{
 
 const JokerCard: React.FC<JokerCardProps> = ({
   joker,
-  jokers,
   onEditInfo,
   onEditRules,
   onDelete,
@@ -117,16 +114,11 @@ const JokerCard: React.FC<JokerCardProps> = ({
   const [editingName, setEditingName] = useState(false);
   const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [editingId, setEditingId] = useState(false);
-  
   const [tempName, setTempName] = useState(joker.name);
   const [tempCost, setTempCost] = useState(joker.cost || 4);
-  const [tempId, setTempId] = useState(joker.orderValue);
   const [tempDescription, setTempDescription] = useState(joker.description);
-
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
-  const [hoveredId, setHoveredId] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
@@ -154,11 +146,10 @@ const JokerCard: React.FC<JokerCardProps> = ({
 
     if (!validation.isValid) {
       setNameValidationError(validation.error || "Invalid name");
-      return;}
+      return;
+    }
 
-    const tempKey = getObjectName(joker, jokers, tempName)
-
-    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
+    onQuickUpdate({ name: tempName, jokerKey: slugify(tempName) });
     setEditingName(false);
     setNameValidationError("");
   };
@@ -166,15 +157,6 @@ const JokerCard: React.FC<JokerCardProps> = ({
   const handleCostSave = () => {
     onQuickUpdate({ cost: tempCost });
     setEditingCost(false);
-  };
-
-  const handleIdSave = () => {
-    const priorValue = joker.orderValue
-    const newValue = tempId
-    onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,jokers.length)) });
-    setEditingId(false);
-    const direction = (priorValue>newValue)?'decrease':'increase'
-    jokers = updateGameObjectIds(joker, jokers, 'change', newValue, direction, priorValue)
   };
 
   const handleDescriptionSave = () => {
@@ -230,24 +212,6 @@ const JokerCard: React.FC<JokerCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
-  };
-
-  const handleIdHover = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setHoveredId(true);
-    }, 500);
-    setTooltipDelayTimeout(timeout);
-  };
-
-  const handleIdLeave = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-      setTooltipDelayTimeout(null);
-    }
-    setHoveredId(false);
   };
 
   const blueprintCompat = joker.blueprint_compat !== false;
@@ -457,41 +421,9 @@ const JokerCard: React.FC<JokerCardProps> = ({
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content = "Edit Joker Id"show={hoveredId}>
-          <div 
-            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
-            onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}>
-            {editingId ? (
-            <input 
-              type="number"
-              value={tempId}
-              onChange={(e) => setTempId(parseInt(e.target.value))}
-              onBlur={handleIdSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleIdSave();
-                if (e.key === "Escape") {
-                  setTempId(joker.orderValue);
-                  setEditingId(false);
-                }
-              }}
-              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-              />):(
-            <span
-              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              onClick={() => {
-                setTempId(joker.orderValue);
-                setEditingId(true);
-              }}
-            >
-              Id:{joker.orderValue}
-            </span>)}
-            </div>
-        </Tooltip>
         <Tooltip content="Delete Joker" show={hoveredTrash}>
           <div
-            className="absolute -top-3 -right-3 h-8 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
+            className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
             onMouseEnter={handleTrashHover}
             onMouseLeave={handleTrashLeave}
           >
@@ -505,9 +437,7 @@ const JokerCard: React.FC<JokerCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => {onDelete()
-                  jokers = updateGameObjectIds(joker, jokers, 'remove', joker.orderValue)}
-                  ,
+                  onConfirm: () => onDelete(),
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"

@@ -47,6 +47,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   if (!data.jokers || !Array.isArray(data.jokers)) {
     throw new Error("Invalid mod data - missing or invalid jokers data");
   }
+
   const normalizedJokers = data.jokers.map(normalizeJokerData);
   const normalizedSounds = (data.sounds || []).map(normalizeSoundData);
   const normalizedConsumables = (data.consumables || []).map(
@@ -85,8 +86,6 @@ export const normalizeImportedModData = (data: ImportableModData) => {
 
 const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: joker.jokerKey || joker.objectKey || "",
     id: joker.id || "",
     name: joker.name || "",
     description: joker.description || "",
@@ -115,6 +114,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     rules: joker.rules || [],
     userVariables: joker.userVariables || [],
     placeholderCreditIndex: joker.placeholderCreditIndex,
+    jokerKey: joker.jokerKey || "",
     hasUserUploadedImage: joker.hasUserUploadedImage || false,
     cardAppearance: joker.cardAppearance || {
       buf: true,
@@ -130,8 +130,6 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
-    orderValue: joker.orderValue || NaN,
-    objectType: "joker",
   };
 };
 
@@ -149,8 +147,6 @@ const normalizeConsumableData = (
   consumable: ConsumableData
 ): ConsumableData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: consumable.consumableKey || consumable.objectKey || "",
     id: consumable.id || "",
     name: consumable.name || "",
     description: consumable.description || "",
@@ -164,17 +160,13 @@ const normalizeConsumableData = (
     can_repeat_soul: consumable.can_repeat_soul,
     rules: consumable.rules || [],
     placeholderCreditIndex: consumable.placeholderCreditIndex,
-    objectType: "consumable",
+    consumableKey: consumable.consumableKey || "",
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
-    orderValue: consumable.orderValue || NaN,
   };
 };
 
 const normalizeBoosterData = (booster: BoosterData): BoosterData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: booster.boosterKey || booster.objectKey || "",
-    objectType: "booster",
     id: booster.id || "",
     name: booster.name || "",
     description: booster.description || "",
@@ -195,8 +187,8 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     discovered: booster.discovered,
     hidden: booster.hidden,
     placeholderCreditIndex: booster.placeholderCreditIndex,
+    boosterKey: booster.boosterKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
-    orderValue: booster.orderValue || NaN
   };
 };
 
@@ -204,13 +196,11 @@ const normalizeEnhancementData = (
   enhancement: EnhancementData
 ): EnhancementData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: enhancement.enhancementKey || enhancement.objectKey || "",
-    objectType: "enhancement",
     id: enhancement.id || "",
     name: enhancement.name || "",
     description: enhancement.description || "",
     imagePreview: enhancement.imagePreview || "",
+    enhancementKey: enhancement.enhancementKey || "",
     atlas: enhancement.atlas,
     pos: enhancement.pos || { x: 0, y: 0 },
     any_suit: enhancement.any_suit,
@@ -226,19 +216,16 @@ const normalizeEnhancementData = (
     placeholderCreditIndex: enhancement.placeholderCreditIndex,
     hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
     weight: enhancement.weight ?? 5,
-    orderValue: enhancement.orderValue || NaN
   };
 };
 
 const normalizeSealData = (seal: SealData): SealData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: seal.sealKey || seal.objectKey || "",
-    objectType: "seal",
     id: seal.id || "",
     name: seal.name || "",
     description: seal.description || "",
     imagePreview: seal.imagePreview || "",
+    sealKey: seal.sealKey || "",
     atlas: seal.atlas,
     pos: seal.pos || { x: 0, y: 0 },
     badge_colour: seal.badge_colour || "#FFFFFF",
@@ -249,18 +236,15 @@ const normalizeSealData = (seal: SealData): SealData => {
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
     hasUserUploadedImage: seal.hasUserUploadedImage || false,
-    orderValue: seal.orderValue || NaN
   };
 };
 
 const normalizeEditionData = (edition: EditionData): EditionData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: edition.editionKey || edition.objectKey || "",
-    objectType: "edition",
     id: edition.id || "",
     name: edition.name || "",
     description: edition.description || "",
+    editionKey: edition.editionKey || "",
     shader: edition.shader || false,
     unlocked: edition.unlocked,
     discovered: edition.discovered,
@@ -274,7 +258,6 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
     disable_shadow: edition.disable_shadow,
     disable_base_shader: edition.disable_base_shader,
     rules: edition.rules || [],
-    orderValue: edition.orderValue || NaN
   };
 };
 

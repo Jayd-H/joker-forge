@@ -12,18 +12,14 @@ import {
   UserGroupIcon,
   SparklesIcon as SparklesIconSolid,
   Cog6ToothIcon,
-  HandRaisedIcon,
 } from "@heroicons/react/24/outline";
 import Tooltip from "../../generic/Tooltip";
 import { validateJokerName } from "../../generic/validationUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { BoosterData, slugify } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
-
 
 interface BoosterCardProps {
   booster: BoosterData;
-  boosters: BoosterData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -85,7 +81,6 @@ const PropertyIcon: React.FC<{
 
 const BoosterCard: React.FC<BoosterCardProps> = ({
   booster,
-  boosters,
   onEditInfo,
   onEditRules,
   onDelete,
@@ -96,17 +91,11 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const [editingName, setEditingName] = useState(false);
   const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [editingId, setEditingId] = useState(false);
-
   const [tempName, setTempName] = useState(booster.name);
   const [tempCost, setTempCost] = useState(booster.cost);
-  const [tempId, setTempId] = useState(booster.orderValue);
   const [tempDescription, setTempDescription] = useState(booster.description);
-  
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
-  const [hoveredId, setHoveredId] = useState(false);
-  
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
   const [imageLoadError, setImageLoadError] = useState(false);
@@ -114,10 +103,10 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
     if (validation.isValid) {
-      const tempKey = getObjectName(booster, boosters, tempName)
-      onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
-      setEditingName(false)    
-  }};
+      onQuickUpdate({ name: tempName, boosterKey: slugify(tempName) });
+      setEditingName(false);
+    }
+  };
 
   const handleCostSave = () => {
     onQuickUpdate({ cost: tempCost });
@@ -129,15 +118,6 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
     setEditingDescription(false);
   };
 
-  const handleIdSave = () => {
-      const priorValue = booster.orderValue
-      const newValue = tempId
-      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,boosters.length)) });
-      setEditingId(false);
-      const direction = (priorValue>newValue)?'decrease':'increase'
-      boosters = updateGameObjectIds(booster, boosters, 'change', newValue, direction, priorValue)
-    };
-
   const handleDeleteClick = () => {
     showConfirmation({
       type: "danger",
@@ -146,10 +126,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       confirmText: "Delete Booster",
       cancelText: "Keep Booster",
       confirmVariant: "danger",
-      onConfirm: () => {
-      onDelete()
-      boosters = updateGameObjectIds(booster, boosters, 'remove', booster.orderValue)
-      }
+      onConfirm: onDelete,
     });
   };
 
@@ -187,24 +164,6 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
-  };
-
-  const handleIdHover = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setHoveredId(true);
-    }, 500);
-    setTooltipDelayTimeout(timeout);
-  };
-
-  const handleIdLeave = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-      setTooltipDelayTimeout(null);
-    }
-    setHoveredId(false);
   };
 
   const getBoosterTypeIcon = () => {
@@ -249,7 +208,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const rulesCount = booster.card_rules?.length || 0;
   const isDiscovered = booster.discovered ?? true;
   const drawToHand = booster.draw_hand === true;
-  const instantUse = booster.instant_use === true;
+  const instantUse = booster.instant_use === false;
 
   const propertyIcons = [
     {
@@ -271,7 +230,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       onClick: () => onQuickUpdate({ discovered: !isDiscovered }),
     },
     {
-      icon: <HandRaisedIcon className="w-full h-full" />,
+      icon: <PlayIcon className="w-full h-full" />,
       tooltip: drawToHand ? "Draws to Hand" : "Opens Normally",
       variant: "success" as const,
       isEnabled: drawToHand,
@@ -279,9 +238,9 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
     },
     {
       icon: <PlayIcon className="w-full h-full" />,
-      tooltip: instantUse ? "Instant Use": "Adds to Hand" ,
+      tooltip: instantUse ? "Adds to Hand" : "Instant Use",
       variant: "success" as const,
-      isEnabled: instantUse,
+      isEnabled: !instantUse,
       onClick: () => onQuickUpdate({ instant_use: !instantUse }),
     },
   ];
@@ -335,6 +294,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
             )}
           </div>
         </div>
+
         <div className="relative z-30">
           <div
             className={`px-4 py-1 -mt-6 rounded-md border-2 text-sm tracking-wide font-medium bg-black ${getBoosterTypeColor()}`}
@@ -343,39 +303,8 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
           </div>
         </div>
       </div>
+
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content = "Edit Booster Id"show={hoveredId}>
-          <div 
-            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
-            onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}>
-            {editingId ? (
-            <input 
-              type="number"
-              value={tempId}
-              onChange={(e) => setTempId(parseInt(e.target.value))}
-              onBlur={handleIdSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleIdSave();
-                if (e.key === "Escape") {
-                  setTempId(booster.orderValue);
-                  setEditingId(false);
-                }
-              }}
-              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-              />):(
-            <span
-              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              onClick={() => {
-                setTempId(booster.orderValue);
-                setEditingId(true);
-              }}
-            >
-              Id:{booster.orderValue}
-            </span>)}
-            </div>
-        </Tooltip>
         <Tooltip content="Delete Booster" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
