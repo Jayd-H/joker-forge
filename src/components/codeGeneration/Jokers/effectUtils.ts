@@ -135,7 +135,6 @@ export interface ReturnStatementResult {
   statement: string;
   colour: string;
   preReturnCode?: string;
-  priorFunctionCode?: string;
   isRandomChance?: boolean;
   configVariables?: ConfigExtraVariable[];
 }
@@ -149,7 +148,7 @@ export function generateEffectReturnStatement(
   regularEffects: Effect[] = [],
   randomGroups: RandomGroup[] = [],
   loopGroups: LoopGroup[] = [],
-  triggerType: string,
+  triggerType: string = "hand_played",
   modprefix: string,
   jokerKey?: string,
   ruleId?: string,
@@ -164,7 +163,6 @@ export function generateEffectReturnStatement(
   }
 
   let combinedPreReturnCode = "";
-  let combinedPriorFunctionCode = "";
   let mainReturnStatement = "";
   let primaryColour = "G.C.WHITE";
   const allConfigVariables: ConfigExtraVariable[] = [];
@@ -210,18 +208,9 @@ export function generateEffectReturnStatement(
 
     const processedEffects: EffectReturn[] = [];
     effectReturns.forEach((effect) => {
-      const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+      const { newStatement, preReturnCode } = extractPreReturnCode(
         effect.statement
       );
-
-      const { newStatement, priorFunctionCode } = extractPriorFunction(
-        cleanedStatement
-      );
-
-      if (priorFunctionCode) {
-        combinedPriorFunctionCode +=
-          (combinedPriorFunctionCode ? "\n                " : "") + priorFunctionCode;
-      }
 
       if (preReturnCode) {
         combinedPreReturnCode +=
@@ -319,19 +308,9 @@ export function generateEffectReturnStatement(
       const processedEffects: EffectReturn[] = [];
 
       effectReturns.forEach((effect) => {
-        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+        const { newStatement, preReturnCode } = extractPreReturnCode(
           effect.statement
         );
-
-        const { newStatement, priorFunctionCode } = extractPriorFunction(
-          cleanedStatement
-        );
-
-      if (priorFunctionCode) {
-        combinedPriorFunctionCode +=
-          (combinedPriorFunctionCode ? "\n                " : "") + 
-          priorFunctionCode;
-      }
 
         if (preReturnCode) {
           groupPreReturnCode +=
@@ -557,19 +536,9 @@ export function generateEffectReturnStatement(
       const processedEffects: EffectReturn[] = [];
 
       effectReturns.forEach((effect) => {
-        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+        const { newStatement, preReturnCode } = extractPreReturnCode(
           effect.statement
         );
-
-        const { newStatement, priorFunctionCode } = extractPriorFunction(
-          cleanedStatement
-        );
-
-      if (priorFunctionCode) {
-        combinedPriorFunctionCode +=
-          (combinedPriorFunctionCode ? "\n                " : "") + 
-          priorFunctionCode;
-      }
 
         if (preReturnCode) {
           groupPreReturnCode +=
@@ -700,7 +669,6 @@ export function generateEffectReturnStatement(
     statement: mainReturnStatement,
     colour: primaryColour,
     preReturnCode: combinedPreReturnCode || undefined,
-    priorFunctionCode: combinedPriorFunctionCode || undefined,
     isRandomChance: randomGroups.length > 0,
     configVariables: allConfigVariables,
   };
@@ -1046,7 +1014,7 @@ export const processPassiveEffects = (
 };
 
 function extractPreReturnCode(statement: string): {
-  cleanedStatement: string;
+  newStatement: string;
   preReturnCode?: string;
 } {
   const preReturnStart = "__PRE_RETURN_CODE__";
@@ -1059,45 +1027,18 @@ function extractPreReturnCode(statement: string): {
 
     if (startIndex < endIndex) {
       const preReturnCode = statement.substring(startIndex, endIndex).trim();
-      const cleanedStatement = statement
+      const newStatement = statement
         .replace(
           new RegExp(`${preReturnStart}[\\s\\S]*?${preReturnEnd}`, "g"),
           ""
         )
         .trim();
 
-      return { cleanedStatement, preReturnCode };
+      return { newStatement, preReturnCode };
     }
   }
 
-  return { cleanedStatement: statement };
-}
-
-function extractPriorFunction(statement: string): {
-  newStatement: string;
-  priorFunctionCode?: string;
-} {
-  const preFunctionStart = "__PRIOR_FUNCTION__";
-  const preFunctionEnd = "__PRIOR_FUNCTION_END__";
-  if (statement.includes(preFunctionStart) && statement.includes(preFunctionEnd)) {
-    const startIndex =
-      statement.indexOf(preFunctionStart) + preFunctionStart.length;
-    const endIndex = statement.indexOf(preFunctionEnd);
-
-    if (startIndex < endIndex) {
-      const priorFunctionCode = statement.substring(startIndex, endIndex).trim();
-      const newStatement = statement
-        .replace(
-          new RegExp(`${preFunctionStart}[\\s\\S]*?${preFunctionEnd}`, "g"),
-          ""
-        )
-        .trim();
-
-    return { newStatement, priorFunctionCode };
-    } 
-  }
-
-  return { newStatement: statement}
+  return { newStatement: statement };
 }
 
 function getOrdinalSuffix(num: number): string {
