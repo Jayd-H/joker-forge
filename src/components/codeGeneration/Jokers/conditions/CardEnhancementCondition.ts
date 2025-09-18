@@ -7,6 +7,7 @@ export const generateCardEnhancementConditionCode = (
   const triggerType = rules[0].trigger || "hand_played";
   const enhancementType = (condition.params.enhancement as string) || "any";
 
+
   if (triggerType === "card_destroyed") {
     if (enhancementType === "any") {
       return `(function()

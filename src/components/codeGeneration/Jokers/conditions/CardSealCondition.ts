@@ -31,7 +31,7 @@ end)()`;
 end)()`;
     }
   }
-
+  
   return sealType === "any"
     ? `context.other_card.seal ~= nil`
     : `context.other_card.seal == "${capitalizedSealType}"`;

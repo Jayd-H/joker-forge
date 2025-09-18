@@ -16,6 +16,8 @@ import { exportSingleSeal } from "../codeGeneration/Card/index";
 import type { Rule } from "../ruleBuilder/types";
 import { SealData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
+
 
 interface SealsPageProps {
   modName: string;
@@ -187,6 +189,16 @@ const SealsPage: React.FC<SealsPageProps> = ({
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
+        value: "id-desc",
+        label: "Id Value (Most to Least)",
+        sortFn: (a, b) => b.orderValue - a.orderValue,
+      },
+      {
+        value: "id-asc",
+        label: "Id Value (Least to Most)",
+        sortFn: (a, b) => a.orderValue - b.orderValue,
+      },
+      {
         value: "name-asc",
         label: "Name (A-Z)",
         sortFn: (a, b) => a.name.localeCompare(b.name),
@@ -243,17 +255,20 @@ const SealsPage: React.FC<SealsPageProps> = ({
     const placeholderResult = await getRandomPlaceholderSeal();
 
     const newSeal: SealData = {
+      objectType: "seal",
       id: crypto.randomUUID(),
       name: "New Seal",
       description: "A {C:blue}custom{} seal with {C:red}unique{} effects.",
       imagePreview: placeholderResult.imageData,
-      sealKey: slugify("New Seal"),
+      objectKey: slugify("New Seal"),
       badge_colour: "#000000",
       unlocked: true,
       discovered: true,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
+      orderValue: seals.length+1,
     };
+    newSeal.objectKey = getObjectName(newSeal,seals,newSeal.objectKey)
     setSeals([...seals, newSeal]);
     setEditingSeal(newSeal);
   };
@@ -265,36 +280,39 @@ const SealsPage: React.FC<SealsPageProps> = ({
   };
 
   const handleDeleteSeal = (sealId: string) => {
+    const removedSeal = seals.filter(seal => seal.id !== sealId)[0]
     setSeals((prev) => prev.filter((seal) => seal.id !== sealId));
 
-    if (selectedSealId === sealId) {
-      const remainingSeals = seals.filter((seal) => seal.id !== sealId);
-      setSelectedSealId(
-        remainingSeals.length > 0 ? remainingSeals[0].id : null
-      );
-    }
-  };
+    if (selectedSealId === sealId) {const remainingSeals = seals.filter((seal) => seal.id !== sealId);
+      setSelectedSealId(remainingSeals.length > 0 ? remainingSeals[0].id : null);
+    seals = updateGameObjectIds(removedSeal, seals, 'remove', removedSeal.orderValue)
+  }};
 
   const handleDuplicateSeal = async (seal: SealData) => {
+    const dupeName = getObjectName(seal,seals)
     if (isPlaceholderSeal(seal.imagePreview)) {
       const placeholderResult = await getRandomPlaceholderSeal();
       const duplicatedSeal: SealData = {
         ...seal,
         id: crypto.randomUUID(),
-        name: `${seal.name} Copy`,
+        name: seal.name,
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
-        sealKey: slugify(`${seal.name} Copy`),
+        objectKey: slugify(`${dupeName}`),
+        orderValue: seal.orderValue +1,
       };
       setSeals([...seals, duplicatedSeal]);
+      seals = updateGameObjectIds(duplicatedSeal, seals, 'insert', duplicatedSeal.orderValue)
     } else {
       const duplicatedSeal: SealData = {
         ...seal,
         id: crypto.randomUUID(),
-        name: `${seal.name} Copy`,
-        sealKey: slugify(`${seal.name} Copy`),
+        name: `${dupeName}`,
+        objectKey: slugify(`${dupeName}`),
+        orderValue: seal.orderValue +1,
       };
       setSeals([...seals, duplicatedSeal]);
+      seals = updateGameObjectIds(duplicatedSeal, seals, 'insert', duplicatedSeal.orderValue)
     }
   };
 
@@ -361,7 +379,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    "Id Value (Most to Least)";
 
   return (
     <div className="min-h-screen">
@@ -470,6 +488,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
               <SealCard
                 key={seal.id}
                 seal={seal}
+                seals={seals}
                 onEditInfo={() => handleEditInfo(seal)}
                 onEditRules={() => handleEditRules(seal)}
                 onDelete={() => handleDeleteSeal(seal.id)}
@@ -487,6 +506,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
           <EditSealInfo
             isOpen={!!editingSeal}
             seal={editingSeal}
+            seals={seals}
             onClose={() => setEditingSeal(null)}
             onSave={handleSaveSeal}
             onDelete={handleDeleteSeal}
