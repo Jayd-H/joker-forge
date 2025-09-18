@@ -35,15 +35,15 @@ export const updateGameObjectIds = function <GameObjectType extends GameObjectDa
 }
 
 export const scanGameObjectIds = function <GameObjectType extends GameObjectData> (
-  data:GameObjectType[]
+  data: GameObjectType[]
 ) {
   const missingValues = locateMissingIds(data)
   const objectData = data
 
-  if (missingValues.length == 0){return data}
+  if (missingValues.length == 0) {return data}
 
   missingValues.forEach(value=>{
-    const objectIndex:number = locateWrongId(data)
+    const objectIndex: number = locateWrongId(data)
     objectData[objectIndex].orderValue = value
   })
 
@@ -165,8 +165,10 @@ export const scanGameObjectKeys = <GameObjectType extends GameObjectData> (
 export const scanGameObjects = <GameObjectType extends GameObjectData> (
   data : GameObjectType[]
 ) => {
-    const checkedKeys = scanGameObjectKeys(data)
-    const checkedIds = scanGameObjectIds(checkedKeys)
+  let tempData = data
 
-    return checkedIds
-  }
+    tempData = scanGameObjectKeys(tempData)
+    tempData = scanGameObjectIds(tempData)
+
+    return tempData as GameObjectType[]
+}
