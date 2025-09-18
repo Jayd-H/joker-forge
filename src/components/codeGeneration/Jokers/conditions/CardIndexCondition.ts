@@ -10,8 +10,7 @@ export const generateCardIndexConditionCode = (
   const indexNumber =
     generateGameVariableCode(condition.params.index_number) || "1";
 
-  const handType = triggerType === "card_discarded" ? "context.full_hand" : 
-  triggerType === "cards_played_before_scoring" ? "used_card": "context.scoring_hand"
+  const handType = triggerType === "card_discarded" ? "context.full_hand" : "context.scoring_hand"
 
   if (indexType === "first") {
     return `context.other_card == ${handType}[1]`;

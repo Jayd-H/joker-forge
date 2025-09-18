@@ -16,10 +16,6 @@ export const generateEditCardReturn = (
   let modificationCode = "";
   let target = 'context.other_card'
 
-  if (triggerType == "played_cards_before_scoring"){
-    target = 'used_card'
-  }
-
   if (newRank !== "none" || newSuit !== "none") {
     let suitParam = "nil";
     let rankParam = "nil";
