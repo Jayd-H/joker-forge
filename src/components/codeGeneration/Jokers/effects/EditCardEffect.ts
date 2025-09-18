@@ -14,7 +14,7 @@ export const generateEditCardReturn = (
 
 
   let modificationCode = "";
-  let target = 'context.other_card'
+  const target = 'context.other_card'
 
   if (newRank !== "none" || newSuit !== "none") {
     let suitParam = "nil";
