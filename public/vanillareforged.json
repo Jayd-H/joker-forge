@@ -6376,7 +6376,7 @@
       "rules": [
         {
           "id": "636046e0-fb2e-479e-a7bf-e7c8a60ba896",
-          "trigger": "played_cards_before_scoring",
+          "trigger": "card_scored",
           "conditionGroups": [
             {
               "id": "71cae66a-dfbd-4336-b3cd-ecbde5f5e338",
@@ -11068,7 +11068,7 @@
       "rules": [
         {
           "id": "ac6b8f74-0644-4314-bf18-e5febc6763f3",
-          "trigger": "played_cards_before_scoring",
+          "trigger": "card_scored",
           "conditionGroups": [
             {
               "id": "74da21ce-b2e7-437f-86c9-f369bdc35500",

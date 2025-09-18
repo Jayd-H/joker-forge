@@ -30,8 +30,10 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
-
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
 
 interface EditEditionInfoProps {
   isOpen: boolean;
@@ -177,7 +179,11 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         disable_shadow: edition.disable_shadow === true,
         disable_base_shader: edition.disable_base_shader === true,
         badge_colour: edition.badge_colour || "#FFAA00",
-        objectKey: getObjectName(edition,editions,edition.objectKey || slugify(edition.name)),
+        objectKey: getObjectName(
+          edition,
+          editions,
+          edition.objectKey || slugify(edition.name)
+        ),
         sound: edition.sound || "foil1",
       });
       setLastDescription(edition.description || "");
@@ -257,7 +263,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
-      const tempKey = getObjectName(edition, editions, value)
+      const tempKey = getObjectName(edition, editions, value);
       setFormData({
         ...formData,
         [field]: value,
@@ -297,7 +303,12 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
       onConfirm: () => {
         onDelete(edition.id);
         onClose();
-        editions = updateGameObjectIds(edition, editions, 'remove', edition.orderValue) 
+        editions = updateGameObjectIds(
+          edition,
+          editions,
+          "remove",
+          edition.orderValue
+        );
       },
     });
   };

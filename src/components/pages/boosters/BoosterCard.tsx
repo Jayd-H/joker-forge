@@ -13,13 +13,17 @@ import {
   SparklesIcon as SparklesIconSolid,
   Cog6ToothIcon,
   HandRaisedIcon,
+  PhotoIcon,
 } from "@heroicons/react/24/outline";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 import Tooltip from "../../generic/Tooltip";
 import { validateJokerName } from "../../generic/validationUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { BoosterData, slugify } from "../../data/BalatroUtils";
-import { updateGameObjectIds, getObjectName } from "../../generic/GameObjectOrdering";
-
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
 
 interface BoosterCardProps {
   booster: BoosterData;
@@ -102,22 +106,24 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   const [tempCost, setTempCost] = useState(booster.cost);
   const [tempId, setTempId] = useState(booster.orderValue);
   const [tempDescription, setTempDescription] = useState(booster.description);
-  
+
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [hoveredId, setHoveredId] = useState(false);
-  
+
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
   const [imageLoadError, setImageLoadError] = useState(false);
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const handleNameSave = () => {
     const validation = validateJokerName(tempName);
     if (validation.isValid) {
-      const tempKey = getObjectName(booster, boosters, tempName)
+      const tempKey = getObjectName(booster, boosters, tempName);
       onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
-      setEditingName(false)    
-  }};
+      setEditingName(false);
+    }
+  };
 
   const handleCostSave = () => {
     onQuickUpdate({ cost: tempCost });
@@ -130,13 +136,22 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
   };
 
   const handleIdSave = () => {
-      const priorValue = booster.orderValue
-      const newValue = tempId
-      onQuickUpdate({ orderValue: Math.max(1,Math.min(tempId,boosters.length)) });
-      setEditingId(false);
-      const direction = (priorValue>newValue)?'decrease':'increase'
-      boosters = updateGameObjectIds(booster, boosters, 'change', newValue, direction, priorValue)
-    };
+    const priorValue = booster.orderValue;
+    const newValue = tempId;
+    onQuickUpdate({
+      orderValue: Math.max(1, Math.min(tempId, boosters.length)),
+    });
+    setEditingId(false);
+    const direction = priorValue > newValue ? "decrease" : "increase";
+    boosters = updateGameObjectIds(
+      booster,
+      boosters,
+      "change",
+      newValue,
+      direction,
+      priorValue
+    );
+  };
 
   const handleDeleteClick = () => {
     showConfirmation({
@@ -147,9 +162,14 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
       cancelText: "Keep Booster",
       confirmVariant: "danger",
       onConfirm: () => {
-      onDelete()
-      boosters = updateGameObjectIds(booster, boosters, 'remove', booster.orderValue)
-      }
+        onDelete();
+        boosters = updateGameObjectIds(
+          booster,
+          boosters,
+          "remove",
+          booster.orderValue
+        );
+      },
     });
   };
 
@@ -279,7 +299,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
     },
     {
       icon: <PlayIcon className="w-full h-full" />,
-      tooltip: instantUse ? "Instant Use": "Adds to Hand" ,
+      tooltip: instantUse ? "Instant Use" : "Adds to Hand",
       variant: "success" as const,
       isEnabled: instantUse,
       onClick: () => onQuickUpdate({ instant_use: !instantUse }),
@@ -318,7 +338,7 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
           )}
         </div>
 
-        <div className="w-42 z-10 relative">
+        <div className="w-42 z-10 relative group">
           <div className="relative rounded-lg overflow-hidden">
             {booster.imagePreview && !imageLoadError ? (
               <img
@@ -333,6 +353,25 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
                 <GiftIcon className="h-16 w-16 text-mint opacity-60" />
               </div>
             )}
+            <button
+              type="button"
+              onClick={() => setShowPlaceholderPicker(true)}
+              className={[
+                "absolute top-2 right-2 z-20",
+                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                "bg-black/70 backdrop-blur",
+                "flex items-center justify-center",
+                "opacity-0 -translate-y-1 pointer-events-none",
+                "transition-all duration-200 ease-out",
+                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                "hover:bg-black/80 active:scale-95",
+                "cursor-pointer",
+              ].join(" ")}
+              title="Choose placeholder"
+            >
+              <PhotoIcon className="h-4 w-4 text-white-darker" />
+            </button>
           </div>
         </div>
         <div className="relative z-30">
@@ -344,37 +383,40 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
         </div>
       </div>
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content = "Edit Booster Id"show={hoveredId}>
-          <div 
+        <Tooltip content="Edit Booster Id" show={hoveredId}>
+          <div
             className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
             onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}>
+            onMouseLeave={handleIdLeave}
+          >
             {editingId ? (
-            <input 
-              type="number"
-              value={tempId}
-              onChange={(e) => setTempId(parseInt(e.target.value))}
-              onBlur={handleIdSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleIdSave();
-                if (e.key === "Escape") {
+              <input
+                type="number"
+                value={tempId}
+                onChange={(e) => setTempId(parseInt(e.target.value))}
+                onBlur={handleIdSave}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleIdSave();
+                  if (e.key === "Escape") {
+                    setTempId(booster.orderValue);
+                    setEditingId(false);
+                  }
+                }}
+                className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                autoFocus
+              />
+            ) : (
+              <span
+                className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onClick={() => {
                   setTempId(booster.orderValue);
-                  setEditingId(false);
-                }
-              }}
-              className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              autoFocus
-              />):(
-            <span
-              className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              onClick={() => {
-                setTempId(booster.orderValue);
-                setEditingId(true);
-              }}
-            >
-              Id:{booster.orderValue}
-            </span>)}
-            </div>
+                  setEditingId(true);
+                }}
+              >
+                Id:{booster.orderValue}
+              </span>
+            )}
+          </div>
         </Tooltip>
         <Tooltip content="Delete Booster" show={hoveredTrash}>
           <div
@@ -529,6 +571,19 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
           </div>
         </div>
       </div>
+      <PlaceholderPickerModal
+        type="booster"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          onQuickUpdate({
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          });
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };

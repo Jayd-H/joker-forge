@@ -17,6 +17,7 @@ import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { BoosterData, BoosterType } from "../../data/BalatroUtils";
 import { UserConfigContext } from "../../Contexts";
 import { getObjectName } from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface EditBoosterInfoProps {
   isOpen: boolean;
@@ -39,7 +40,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   formData,
   onFormDataChange,
 }) => {
-  const {userConfig, setUserConfig} = useContext(UserConfigContext)
+  const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [activeTab, setActiveTab] = useState<
     "visual" | "description" | "settings"
   >("visual");
@@ -47,11 +48,14 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [lastDescription, setLastDescription] = useState<string>("");
-  const [autoFormatEnabled, setAutoFormatEnabled] = useState(userConfig.defaultAutoFormat ?? true);
+  const [autoFormatEnabled, setAutoFormatEnabled] = useState(
+    userConfig.defaultAutoFormat ?? true
+  );
   const [lastFormattedText, setLastFormattedText] = useState<string>("");
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
   >({});
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   useEffect(() => {
     const loadCredits = async () => {
@@ -205,7 +209,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     }
 
     if (field === "name") {
-      const tempKey = getObjectName(booster, boosters, value)
+      const tempKey = getObjectName(booster, boosters, value);
       onFormDataChange({
         [field]: value,
         objectKey: generateKeyFromName(tempKey),
@@ -350,7 +354,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     editingBooster && formData.id === editingBooster.id;
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showPlaceholderPicker) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -365,7 +369,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, onSave]);
+  }, [isOpen, showPlaceholderPicker, onSave]);
 
   if (!isOpen) return null;
 
@@ -424,7 +428,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                       </h4>
                       <div className="flex gap-6">
                         <div className="flex-shrink-0">
-                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative">
+                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative group">
                             {formData.imagePreview ? (
                               <img
                                 src={formData.imagePreview}
@@ -437,6 +441,25 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                 <GiftIcon className="h-16 w-16 text-mint opacity-60" />
                               </div>
                             )}
+                            <button
+                              type="button"
+                              onClick={() => setShowPlaceholderPicker(true)}
+                              title="Choose placeholder"
+                              className={[
+                                "absolute top-2 right-2 z-20",
+                                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                                "bg-black/70 backdrop-blur",
+                                "flex items-center justify-center",
+                                "opacity-0 -translate-y-1 pointer-events-none",
+                                "transition-all duration-200 ease-out",
+                                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                                "hover:bg-black/80 active:scale-95",
+                                "cursor-pointer",
+                              ].join(" ")}
+                            >
+                              <PhotoIcon className="h-5 w-5 text-white/90" />
+                            </button>
                           </div>
                           <input
                             type="file"
@@ -493,11 +516,12 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                           <InputField
                             value={formData.objectKey || ""}
                             onChange={(e) =>
-                                handleInputChange(
+                              handleInputChange(
                                 "objectKey",
                                 e.target.value,
                                 false
-                              )                            }
+                              )
+                            }
                             placeholder="Enter booster key"
                             separator={true}
                             label="Booster Key (Code Name)"
@@ -653,25 +677,25 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                                     </label>
                                   </div>
                                 </div>
-                                  <div className="flex items-center gap-3">
-                                    <input
-                                      type="checkbox"
-                                      id="instant_use"
-                                      checked={formData.instant_use || false}
-                                      onChange={(e) =>
-                                        onFormDataChange({
-                                          instant_use: e.target.checked,
-                                        })
-                                      }
-                                      className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
-                                    />
-                                    <label
-                                      htmlFor="instant_use"
-                                      className="text-white-light text-sm"
-                                    >
-                                      Use Selected Card Instantly
-                                    </label>
-                                  </div>
+                                <div className="flex items-center gap-3">
+                                  <input
+                                    type="checkbox"
+                                    id="instant_use"
+                                    checked={formData.instant_use || false}
+                                    onChange={(e) =>
+                                      onFormDataChange({
+                                        instant_use: e.target.checked,
+                                      })
+                                    }
+                                    className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
+                                  />
+                                  <label
+                                    htmlFor="instant_use"
+                                    className="text-white-light text-sm"
+                                  >
+                                    Use Selected Card Instantly
+                                  </label>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -699,11 +723,11 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                           size="sm"
                           variant={autoFormatEnabled ? "primary" : "secondary"}
                           onClick={() => {
-                            setUserConfig(prevConfig => ({
+                            setUserConfig((prevConfig) => ({
                               ...prevConfig,
-                              defaultAutoFormat: !autoFormatEnabled
-                            }))
-                            setAutoFormatEnabled(!autoFormatEnabled)
+                              defaultAutoFormat: !autoFormatEnabled,
+                            }));
+                            setAutoFormatEnabled(!autoFormatEnabled);
                           }}
                           icon={<SparklesIcon className="h-3 w-3" />}
                         >
@@ -944,6 +968,19 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
           </div>
         </div>
       </div>
+      <PlaceholderPickerModal
+        type="booster"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          onFormDataChange({
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          });
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };
