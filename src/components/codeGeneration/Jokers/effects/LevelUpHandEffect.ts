@@ -37,53 +37,53 @@ export const generateLevelUpHandReturn = (
   let handDeterminationCode = "";
   switch (handSelection) {
     case ("specific"):
-      handDeterminationCode = `${targetHandVar} = "${specificHand}"`;
+      handDeterminationCode = `local ${targetHandVar} = "${specificHand}"`;
       break
     case ("random"):
       handDeterminationCode = `
-        available_hands = {}
+        local available_hands = {}
         for hand, value in pairs(G.GAME.hands) do
           if value.visible and value.level >= to_big(1) then
             table.insert(available_hands, hand)
           end
         end
-        ${targetHandVar} = #available_hands > 0 and pseudorandom_element(available_hands, pseudoseed('level_up_hand')) or "High Card"
+        local ${targetHandVar} = #available_hands > 0 and pseudorandom_element(available_hands, pseudoseed('level_up_hand')) or "High Card"
         `;
       break
     case ("most"):
       handDeterminationCode = `
-        temp_played = 0
-        temp_order = math.huge
+        local temp_played = 0
+        local temp_order = math.huge
+        local ${targetHandVar}
         for hand, value in pairs(G.GAME.hands) do 
           if value.played > temp_played and value.visible then
             temp_played = value.played
             temp_order = value.order
             ${targetHandVar} = hand
-          else if value.played == temp_played and value.visible then
+          elseif value.played == temp_played and value.visible then
             if value.order < temp_order then
               temp_order = value.order
               ${targetHandVar} = hand
             end
-          end
           end
         end
       `;
       break
     case ("least"):
       handDeterminationCode = `
-        temp_played = math.huge
-        temp_order = math.huge
+        local temp_played = math.huge
+        local temp_order = math.huge
+        local ${targetHandVar}
         for hand, value in pairs(G.GAME.hands) do 
           if value.played < temp_played and value.visible then
             temp_played = value.played
             temp_order = value.order
             ${targetHandVar} = hand
-          else if value.played == temp_played and value.visible then
+          elseif value.played == temp_played and value.visible then
             if value.order < temp_order then
               temp_order = value.order
               ${targetHandVar} = hand
             end
-          end
           end
         end
       `;
@@ -91,11 +91,11 @@ export const generateLevelUpHandReturn = (
     case ("current"):
       if (triggerType === "hand_discarded") {
         handDeterminationCode = `
-          text, poker_hands, text_disp, loc_disp_text = G.FUNCS.get_poker_hand_info(G.hand.highlighted)
-          ${targetHandVar} = text
+          local text, poker_hands, text_disp, loc_disp_text = G.FUNCS.get_poker_hand_info(G.hand.highlighted)
+          local ${targetHandVar} = text
         `;
       } else {
-        handDeterminationCode = `${targetHandVar} = (context.scoring_name or "High Card")`;
+        handDeterminationCode = `local ${targetHandVar} = (context.scoring_name or "High Card")`;
       }
       break
   }
@@ -107,7 +107,7 @@ export const generateLevelUpHandReturn = (
       __PRE_RETURN_CODE_END__
       level_up = ${valueCode},
       level_up_hand = ${targetHandVar}`,
-    message: customMessage ? `${customMessage}` : `localize('k_level_up_ex')`,
+    message: customMessage ? `"${customMessage}"` : `localize('k_level_up_ex')`,
     colour: "G.C.RED",
     configVariables: configVariables.length > 0 ? configVariables : undefined
   }

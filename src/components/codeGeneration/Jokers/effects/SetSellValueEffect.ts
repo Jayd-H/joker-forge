@@ -10,7 +10,7 @@ export const generateSetSellValueReturn = (
   sameTypeCount: number = 0
 ): EffectReturn => {
   const target = (effect.params?.target as string) || "specific";
-  const operation:string = (effect.params?.operation as string) || "add";
+  const operation: string = (effect.params?.operation as string) || "add";
   const specificTarget = (effect.params?.specific_target as string) || "self";
 
   const variableName =
@@ -42,38 +42,45 @@ export const generateSetSellValueReturn = (
         end
         local `}
     switch (specificTarget) {
-    case "right":
-      targetJokerLogic += `target_card = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
-      break;
-    case "left":
-      targetJokerLogic += `target_card = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
-      break;
-    case "self":
-      targetJokerLogic += `target_card = G.jokers.cards[my_post]`;
-      break;
-    case "first":
-      targetJokerLogic += `target_card = G.jokers.cards[1]`;
-      break
-    case "last":
-      targetJokerLogic += `target_card = G.jokers.cards[#G.jokers]`;
-      break
-    case "random":
-      targetJokerLogic += `chosenTarget = pseudorandom(3456543, 1, #G.jokers.cards) or nil
+      case "right":
+        targetJokerLogic += `target_card = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
+        break;
+      case "left":
+        targetJokerLogic += `target_card = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
+        break;
+      case "self":
+        targetJokerLogic += `target_card = G.jokers.cards[my_post]`;
+        break;
+      case "first":
+        targetJokerLogic += `target_card = G.jokers.cards[1]`;
+        break
+      case "last":
+        targetJokerLogic += `target_card = G.jokers.cards[#G.jokers]`;
+        break
+      case "random":
+        targetJokerLogic += `chosenTarget = pseudorandom(3456543, 1, #G.jokers.cards) or nil
         target_card = G.jokers.cards[chosenTarget]
         end`;
-      break;}
-    sellValueCode += `${targetJokerLogic}`}
-  if (target == "all_jokers" || target == "all") {
+        break;
+    }
+    sellValueCode += `${targetJokerLogic}`
+  }
+  if (target === "all_jokers" || target === "all") {
     sellValueCode += ``
-    if (target == "all") {
-       sellValueCode += `for _, area in ipairs({ G.jokers, G.consumeables }) do
+    if (target === "all") {
+      sellValueCode += `for _, area in ipairs({ G.jokers, G.consumeables }) do
        `}
     sellValueCode += `for i, target_card in ipairs(`
-    if (target == "all_jokers") {sellValueCode += `G.jokers.cards`}
-    else {sellValueCode += `area.cards`}
+    if (target === "all_jokers") {
+      sellValueCode += `G.jokers.cards`
+    }
+    else {
+      sellValueCode += `area.cards`
+    }
+
     sellValueCode += `) do
-                if target_card.set_cost then`            
-  switch (operation) {
+                if target_card.set_cost then`
+    switch (operation) {
       case "add":
         sellValueCode += `
             target_joker.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
@@ -87,28 +94,35 @@ export const generateSetSellValueReturn = (
       case "set":
         sellValueCode += `
             target_joker.ability.extra_value = ${valueCode}
-            target_joker:set_cost()`;}
-  if (target == "all_jokers" || target == "all") {sellValueCode += `
+            target_joker:set_cost()`;
+    }
+    if (target === "all_jokers" || target === "all") {
+      sellValueCode += `
             end
         end`
-    if (target == "all"){sellValueCode +=`
+      if (target === "all") {
+        sellValueCode += `
     end`
-  }}}
+      }
+    }
+  }
 
   let messageType, messageOperation
-  const typeKey:Array <Array<string>> = [["specific",''], ["all_jokers",'All Jokers '], ["all",'All cards ']];
-  const operationKey:Array <Array<string>> = [
-    ["add",`+"..tostring(${valueCode}).." Sell Value"`], 
-    ["subtract",`-"..tostring(${valueCode}).." Sell Value"`],
-    ["set",`Sell Value: $"..tostring(${valueCode})`]];
- operationKey.forEach(entry=> {
-  if (entry[0]==operation){messageOperation = entry[1]}})
- typeKey.forEach(entry=> {
-  if (entry[0]==target){messageType = entry[1]}})
+  const typeKey: Array<Array<string>> = [["specific", ''], ["all_jokers", 'All Jokers '], ["all", 'All cards ']];
+  const operationKey: Array<Array<string>> = [
+    ["add", `+"..tostring(${valueCode}).." Sell Value"`],
+    ["subtract", `-"..tostring(${valueCode}).." Sell Value"`],
+    ["set", `Sell Value: $"..tostring(${valueCode})`]];
+  operationKey.forEach(entry => {
+    if (entry[0] == operation) { messageOperation = entry[1] }
+  })
+  typeKey.forEach(entry => {
+    if (entry[0] == target) { messageType = entry[1] }
+  })
 
   messageText = customMessage
-            ? `"${customMessage}"`
-            : `"${messageType}${messageOperation}`
+    ? `"${customMessage}"`
+    : `"${messageType}${messageOperation}`
 
   const result: EffectReturn = {
     statement: isScoring
