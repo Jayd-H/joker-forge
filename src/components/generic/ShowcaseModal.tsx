@@ -14,8 +14,7 @@ import {
   UserVariable,
 } from "../data/BalatroUtils";
 import { getAllVariables } from "../codeGeneration/Jokers/variableUtils";
-// file "html-to-image" doesn't exist, and causes site to crash, so I've temp disabled it
-// import { toPng } from "html-to-image";
+import { toPng } from "html-to-image";
 
 interface ShowcaseModalProps {
   isOpen: boolean;
@@ -86,15 +85,12 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
 
   const handleDownload = async () => {
     if (!showcaseRef.current) return;
-/* Due to crash errors on the site, (see top of the doc as well) 
-I've temporarily disabled toPng function, As the site can work without it */
-/*
     try {
       const dataUrl = await toPng(showcaseRef.current, {
-        //quality: 1,
-        //pixelRatio: 2,
-        //backgroundColor: "#1a1a2e",
-        //cacheBust: true,
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: "#1a1a2e",
+        cacheBust: true,
       });
 
       const link = document.createElement("a");
@@ -106,7 +102,7 @@ I've temporarily disabled toPng function, As the site can work without it */
       alert(
         "Screenshot failed. Please use your browser's screenshot feature instead."
       );
-    }*/
+    }
   };
 
   const allVariables = getAllVariables(joker);
