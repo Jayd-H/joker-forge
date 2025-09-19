@@ -403,7 +403,7 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
                             Upload a Sound
                           </Button>
                           <p className="text-xs text-white-darker ml-97.75 w-40">
-                          Only accepts .ogg giles                          
+                          Only accepts .ogg files                          
                           </p>
                         </div>
                         <InputField

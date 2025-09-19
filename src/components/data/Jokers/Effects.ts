@@ -549,6 +549,13 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "decrement", label: "Decrement by value" },
           { value: "multiply", label: "Multiply by value" },
           { value: "divide", label: "Divide by value" },
+          { value: "power", label: "Power by value" },
+          { value: "absolute", label: "Make the value Absolute"},
+          { value: "natural_log", label: "Natural logarithm the value"},
+          { value: "log10", label: "Standard logarithm the value"},
+          { value: "square_root", label: "Square root the value"},
+          { value: "ceil", label: "Round value up"},
+          { value: "floor", label: "Round value down"},
         ],
       },
       {
@@ -556,6 +563,13 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Value",
         default: 1,
+        showWhen: {
+          parameter: "operation",
+          values: [
+            "set", "increment", "decrement",
+            "multiply", "divide", "power"
+          ]
+        }
       },
     ],
     category: "Variables",

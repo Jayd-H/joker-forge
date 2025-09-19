@@ -348,7 +348,7 @@ export const exportModCode = async (
       const soundsFolder = zip.folder("assets")!.folder("sounds");
 
       sounds.forEach((sound) => {
-        const soundData = sound.soundString.replace("data:audio/ogg;base64,", "") 
+        const soundData = sound.soundString.replace(/^data:.+\/ogg;base64,/, "");
         soundsFolder!.file(`${sound.key}.ogg`, soundData, { base64: true });
       })
     }

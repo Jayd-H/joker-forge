@@ -42,7 +42,7 @@ export const generateShuffleJokerReturn = (
 
   return {
     statement: `__PRE_RETURN_CODE__${jokerShuffleCode}__PRE_RETURN_CODE_END__`,
-    message: customMessage ?? `"Shuffle!"`,
+    message: customMessage ? `"${customMessage}"` : `"Shuffle!"`,
     colour: "G.C.ORANGE"
   }
 };
