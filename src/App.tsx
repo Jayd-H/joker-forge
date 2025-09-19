@@ -87,7 +87,7 @@ import {
 import Alert from "./components/generic/Alert";
 import ConfirmationPopup from "./components/generic/ConfirmationPopup";
 import ExportModal from "./components/generic/ExportModal";
-import DonationNotification from "./components/generic/DonationNotification";
+// import DonationNotification from "./components/generic/DonationNotification";
 import RestoreProgressModal from "./components/generic/RestoreProgressModal";
 import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
@@ -128,8 +128,8 @@ interface AutoSaveData {
 }
 
 const AUTO_SAVE_KEY = "joker-forge-autosave";
-const DONATION_DISMISSED_KEY = "joker-forge-donation-dismissed";
-const DONATION_SHOW_DELAY = 1000 * 60 * 5; // 5 minutes
+//const DONATION_DISMISSED_KEY = "joker-forge-donation-dismissed";
+//const DONATION_SHOW_DELAY = 1000 * 60 * 5; // 5 minutes
 
 const FloatingTabDock: React.FC<{
   activeTab:
@@ -302,8 +302,8 @@ function AppContent() {
   const [jokersRaritiesTab, setJokersRaritiesTab] = useState<
     "jokers" | "rarities"
   >("jokers");
-  const [showDonationNotification, setShowDonationNotification] =
-    useState(false);
+  // const [showDonationNotification, setShowDonationNotification] =
+  useState(false);
 
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const statusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -468,6 +468,8 @@ function AppContent() {
     modMetadata.prefix,
   ]);
 
+  /*
+
   useEffect(() => {
     const checkDonationDismissal = () => {
       const stored = localStorage.getItem(DONATION_DISMISSED_KEY);
@@ -484,6 +486,8 @@ function AppContent() {
       }
     };
 
+  
+
     const isDonationDismissed = checkDonationDismissal();
 
     if (!isDonationDismissed) {
@@ -499,6 +503,7 @@ function AppContent() {
     };
   }, []);
 
+
   const handleDonationClose = () => {
     setShowDonationNotification(false);
   };
@@ -508,6 +513,7 @@ function AppContent() {
     setShowDonationNotification(false);
   };
 
+  
   const handleDonationDismissTemporarily = () => {
     const dismissData = {
       dismissed: true,
@@ -516,6 +522,7 @@ function AppContent() {
     localStorage.setItem(DONATION_DISMISSED_KEY, JSON.stringify(dismissData));
     setShowDonationNotification(false);
   };
+  */
 
   const loadFromLocalStorage = useCallback((): {
     modMetadata: ModMetadata;
@@ -867,7 +874,7 @@ function AppContent() {
 
         setModMetadata(normalizedData.metadata);
         setJokers(normalizedData.jokers);
-        setSounds(normalizedData.sounds)
+        setSounds(normalizedData.sounds);
         setConsumables(normalizedData.consumables);
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
@@ -1078,7 +1085,7 @@ function AppContent() {
         setEnhancements(normalizedData.enhancements || []);
         setSeals(normalizedData.seals || []);
         setEditions(normalizedData.editions || []);
-        setSounds(normalizedData.sounds)
+        setSounds(normalizedData.sounds);
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
         setSelectedBoosterId(null);
@@ -1519,7 +1526,6 @@ function AppContent() {
           />
         </Routes>
       </motion.div>
-
       {showFloatingDock && (
         <FloatingTabDock
           activeTab={getActiveTab()}
@@ -1528,12 +1534,14 @@ function AppContent() {
         />
       )}
 
+      {/*
       <DonationNotification
         isVisible={showDonationNotification}
         onClose={handleDonationClose}
         onDonate={handleDonationDonate}
         onDismissTemporarily={handleDonationDismissTemporarily}
       />
+      */}
 
       <AnimatePresence>
         {autoSaveStatus !== "idle" && (
@@ -1560,19 +1568,16 @@ function AppContent() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <RestoreProgressModal
         isVisible={showRestoreModal}
         onRestore={handleRestoreAutoSave}
         onDiscard={handleDiscardAutoSave}
         getAutoSaveMetadata={getAutoSaveMetadata}
       />
-
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
       />
-
       <Alert
         isVisible={alert.isVisible}
         type={alert.type}
@@ -1580,7 +1585,6 @@ function AppContent() {
         content={alert.content}
         onClose={hideAlert}
       />
-
       <ConfirmationPopup
         isVisible={confirmation.isVisible}
         type={confirmation.type}
