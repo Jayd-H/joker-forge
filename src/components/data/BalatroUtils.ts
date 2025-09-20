@@ -29,6 +29,7 @@ export interface ModMetadata {
   provides: string[];
   dump_loc?: boolean;
   iconImage?: string;
+  gameImage?: string;
   hasUserUploadedIcon?: boolean;
 }
 
@@ -140,6 +141,18 @@ export interface RarityData {
   name: string;
   badge_colour: string;
   default_weight: number;
+}
+
+export interface QuipsData {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  imagePreview: string;
+  badge_colour: string;
+  default_weight: number;
+  placeholderCreditIndex?: number;
+  hasUserUploadedImage?: boolean;
 }
 
 export interface ConsumableData {
@@ -1298,10 +1311,11 @@ export const VANILLA_EDITIONS = [
   { key: "e_negative", value: "e_negative", label: "Negative (+1 Joker slot)" },
 ] as const;
 
+// Sticker
 export const STICKERS = [
-  { key: "eternal", value: "eternal", label: "Eternal" },
-  { key: "rental", value: "rental", label: "Rental" },
-  { key: "perishable", value: "perishable", label: "Perishable" },
+  { key: "eternal", value: "eternal", label: "Eternal (Can't be sold or destroyed)" },
+  { key: "rental", value: "rental", label: "Rental (Lose money at end of round)" },
+  { key: "perishable", value: "perishable", label: "Perishable (Debuffed after 3 rounds)" },
 ] as const;
 
 export const STICKER_KEYS = STICKERS.map((sticker) => sticker.key);

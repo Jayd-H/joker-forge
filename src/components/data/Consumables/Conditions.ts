@@ -78,6 +78,14 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Card Selection",
   },
+    {
+    id: "joker_selected",
+    label: "Joker Selected",
+    description: "Check if a joker is selected/highlighted",
+    applicableTriggers: ["consumable_used"],
+    params: [],
+    category: "Card Selection",
+  },
   {
     id: "player_money",
     label: "Player Money",

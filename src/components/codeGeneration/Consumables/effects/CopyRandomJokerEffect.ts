@@ -2,6 +2,7 @@ import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateCopyRandomJokerReturn = (effect: Effect): EffectReturn => {
+  const type = effect.params?.type || "random";
   const amount = effect.params?.amount || 1;
   const edition = effect.params?.edition || "none";
   const customMessage = effect.customMessage;
@@ -51,6 +52,19 @@ export const generateCopyRandomJokerReturn = (effect: Effect): EffectReturn => {
                         copied_joker:add_to_deck()
                         G.jokers:emplace(copied_joker)
                         _first_materialize = true`;
+  if (type === "selected") {
+  copyJokerCode = `
+__PRE_RETURN_CODE__
+    use = function(self, card)
+        local self_card = G.jokers.highlighted[1]
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            local copied_joker = copy_card(joker_to_copy, nil, nil, nil, false)
+            copied_joker:start_materialize(nil, _first_materialize)
+            copied_joker:add_to_deck()
+            G.jokers:emplace(copied_joker)
+             _first_materialize = true`;
+}
 
   // Handle edition application
   if (edition === "remove") {
