@@ -191,7 +191,6 @@ export const exportModCode = async (
     const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
-    const hasGameIcon = !!(metadata.hasUserUploadedIcon || metadata.gameImage);
 
     const mainLuaCode = generateMainLuaCode(
       sortedJokers,
@@ -203,7 +202,6 @@ export const exportModCode = async (
       sortedSeals,
       sortedEditions,
       hasModIcon,
-      hasGameIcon,
       metadata
     );
     zip.file(metadata.main_file, mainLuaCode);
@@ -334,24 +332,6 @@ export const exportModCode = async (
       }
     }
 
-    let gameIconData: string | undefined;
-    if (metadata.hasUserUploadedIcon && metadata.gameImage) {
-      gameIconData = metadata.gameImage;
-    } else if (!metadata.hasUserUploadedIcon) {
-      try {
-        const response = await fetch("/images/balatro.png");
-        const blob = await response.blob();
-        gameIconData = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(blob);
-        });
-      } catch {
-        console.log("Default game icon not available");
-        gameIconData = undefined;
-      }
-    }
-
     await addCustomShadersToZip(zip, customShaders);
 
     await addAtlasToZip(
@@ -361,8 +341,7 @@ export const exportModCode = async (
       sortedBoosters,
       sortedEnhancements,
       sortedSeals,
-      modIconData,
-      gameIconData
+      modIconData
     );
 
     if (sounds.length > 0) {
@@ -401,8 +380,8 @@ const generateMainLuaCode = (
   seals: SealData[],
   editions: EditionData[],
   hasModIcon: boolean,
-  hasGameIcon: boolean,
-  metadata: ModMetadata): string => {
+  metadata: ModMetadata
+): string => {
   let output = "";
 
   if (hasModIcon) {
@@ -413,19 +392,6 @@ const generateMainLuaCode = (
     py = 34,
     atlas_table = "ASSET_ATLAS"
 }):register()
-
-`;
-  }
-  if (hasGameIcon) {
-    output += `SMODS.Atlas({
-    key = "balatro", 
-    path = "balatro.png", 
-    px = 333,
-    py = 216,
-    prefix_config = { key = false },
-    atlas_table = "ASSET_ATLAS"
-}):register()
-
 
 `;
   }
