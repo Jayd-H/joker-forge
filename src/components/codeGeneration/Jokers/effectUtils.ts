@@ -10,6 +10,7 @@ import { generateEditDiscardReturn } from "./effects/EditDiscardEffect";
 import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateLevelUpHandReturn } from "./effects/LevelUpHandEffect";
 import { generateAddCardToDeckReturn } from "./effects/AddCardToDeckEffect";
+import { generateAddModifiersReturn } from "./effects/EditJokerEffect";
 import { generateCopyCardToDeckReturn } from "./effects/CopyCardToDeckEffect";
 import { generateDeleteCardReturn } from "./effects/DeleteCardEffect";
 import { generateEditCardReturn } from "./effects/EditCardEffect";
@@ -753,6 +754,8 @@ const generateSingleEffect = (
       return generateChangeSuitVariableReturn(effect);
     case "change_rank_variable":
       return generateChangeRankVariableReturn(effect);
+    case "edit_joker":
+      return generateAddModifiersReturn(effect, triggerType, modprefix);
     case "change_pokerhand_variable":
       return generateChangePokerHandVariableReturn(effect);
     case "permanent_bonus":
