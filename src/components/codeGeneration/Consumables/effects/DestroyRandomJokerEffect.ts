@@ -5,11 +5,12 @@ import { generateGameVariableCode } from "../gameVariableUtils";
 export const generateDestroyRandomJokerReturn = (
   effect: Effect
 ): EffectReturn => {
+  const selection_method = effect.params?.selection_method || "random";
   const amount = effect.params?.amount || 1;
   const amountCode = generateGameVariableCode(amount);
   const customMessage = effect.customMessage;
 
-  const destroyJokerCode = `
+  let destroyJokerCode = `
             __PRE_RETURN_CODE__
             local jokers_to_destroy = {}
             local deletable_jokers = {}
@@ -58,6 +59,19 @@ export const generateDestroyRandomJokerReturn = (
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
 
+  if (selection_method === "selected") {
+    destroyJokerCode = `
+           __PRE_RETURN_CODE__
+        local self_card = G.jokers.highlighted[1]
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            card:juice_up(0.3, 0.5)
+            return true end }))
+        self_card:start_dissolve()
+        delay(0.6)
+    __PRE_RETURN_CODE_END__`;
+}
+    
   const configVariables =
     typeof amount === "string" && amount.startsWith("GAMEVAR:")
       ? []
