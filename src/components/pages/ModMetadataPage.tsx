@@ -40,6 +40,7 @@ export const DEFAULT_MOD_METADATA: ModMetadata = {
   gameImage: "/images/balatro.png",
   iconImage: "/images/modicon.png",
   hasUserUploadedIcon: false,
+  hasUserUploadedGameIcon: false,
 };
 
 const validateModMetadata = (metadata: ModMetadata): ModMetadataValidation => {
@@ -622,7 +623,7 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
                       const processedImage = await processGameIconImage(file);
                       updateMetadata({
                         gameImage: processedImage,
-                        hasUserUploadedIcon: true,
+                        hasUserUploadedGameIcon: true,
                       });
                     } catch (error) {
                       console.error("Failed to process game icon:", error);
