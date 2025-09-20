@@ -238,93 +238,6 @@ export const processModIcon = async (
   }
 };
 
-// ALSO THIS FUNCTION IS FUCKING STUPID AND SHOULD NOT EXIST BUT IT DOES BECUASE BROWSER SUPPORT IS FUCKING STUPID
-export const processGameIcon = async (
-  iconDataUrl: string,
-  scale: number = 1
-): Promise<string> => {
-  try {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) {
-      throw new Error("Failed to get canvas context");
-    }
-
-    canvas.width = 333 * scale;
-    canvas.height = 216 * scale;
-
-    canvas.style.imageRendering = "pixelated";
-    canvas.style.imageRendering = "-moz-crisp-edges";
-    canvas.style.imageRendering = "crisp-edges";
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        if (scale === 1) {
-          // No scaling needed, direct draw
-          ctx.imageSmoothingEnabled = false;
-          ctx.drawImage(img, 0, 0, 333, 216);
-        } else {
-          // Create a temporary 1x canvas first
-          const tempCanvas = document.createElement("canvas");
-          const tempCtx = tempCanvas.getContext("2d");
-
-          if (!tempCtx) {
-            reject(new Error("Failed to get temp canvas context"));
-            return;
-          }
-
-          tempCanvas.width = 333;
-          tempCanvas.height = 216;
-          tempCtx.imageSmoothingEnabled = false;
-
-          // Draw to 1x first
-          tempCtx.drawImage(img, 0, 0, 333, 216);
-
-          // Now scale up using putImageData for pixel-perfect scaling
-          const imageData = tempCtx.getImageData(0, 0, 333, 216);
-          const scaledImageData = ctx.createImageData(333 * scale, 216 * scale);
-
-          for (let y = 0; y < 216; y++) {
-            for (let x = 0; x < 333; x++) {
-              const sourceIndex = (y * 333 + x) * 4;
-              const r = imageData.data[sourceIndex];
-              const g = imageData.data[sourceIndex + 1];
-              const b = imageData.data[sourceIndex + 2];
-              const a = imageData.data[sourceIndex + 3];
-
-              // Scale this pixel up
-              for (let sy = 0; sy < scale; sy++) {
-                for (let sx = 0; sx < scale; sx++) {
-                  const targetIndex =
-                    ((y * scale + sy) * (333 * scale) + (x * scale + sx)) * 4;
-                  scaledImageData.data[targetIndex] = r;
-                  scaledImageData.data[targetIndex + 1] = g;
-                  scaledImageData.data[targetIndex + 2] = b;
-                  scaledImageData.data[targetIndex + 3] = a;
-                }
-              }
-            }
-          }
-
-          ctx.putImageData(scaledImageData, 0, 0);
-        }
-
-        resolve(canvas.toDataURL("image/png"));
-      };
-
-      img.onerror = () => reject(new Error("Failed to load mod icon"));
-      img.src = iconDataUrl;
-    });
-  } catch (error) {
-    console.error("Error processing game icon:", error);
-    throw error;
-  }
-};
-
 export const dataURLToBlob = (dataUrl: string): Blob => {
   const arr = dataUrl.split(",");
   const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
@@ -346,8 +259,7 @@ export const addAtlasToZip = async (
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
-  modIconData?: string,
-  gameIconData?: string
+  modIconData?: string
 ): Promise<Record<string, Record<number, { x: number; y: number }>>> => {
   try {
     const assetsFolder = zip.folder("assets");
@@ -369,16 +281,6 @@ export const addAtlasToZip = async (
       assets2xFolder!.file("ModIcon.png", modIcon2xBlob);
     }
 
-    if (gameIconData) {
-      const gameIcon1xResult = await processGameIcon(gameIconData, 1);
-      const gameIcon1xBlob = dataURLToBlob(gameIcon1xResult);
-      assets1xFolder!.file("balatro.png", gameIcon1xBlob);
-
-      const gameIcon2xResult = await processGameIcon(gameIconData, 2);
-      const gameIcon2xBlob = dataURLToBlob(gameIcon2xResult);
-      assets2xFolder!.file("balatro.png", gameIcon2xBlob);
-    }
-    
     if (jokers.length > 0) {
       const jokerAtlas1xResult = await processImages(jokers, 1);
       const jokerAtlas1xBlob = dataURLToBlob(jokerAtlas1xResult.atlasDataUrl);

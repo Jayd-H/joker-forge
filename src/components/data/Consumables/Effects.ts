@@ -1194,28 +1194,15 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
-    id: "copy_joker",
-    label: "Copy Joker",
-    description: "Create copies of jokers in your joker area",
+    id: "copy_random_joker",
+    label: "Copy Random Joker",
+    description: "Create copies of random jokers in your joker area",
     applicableTriggers: ["consumable_used"],
     params: [
-       {
-        id: "selection_method",
-        type: "select",
-        label: "Selection Method",
-        options: [
-          { value: "random", label: "Random Joker" },
-          { value: "selected", label: "Selected Joker" },
-        ],
-      },
       {
         id: "amount",
         type: "number",
         label: "Number of Jokers to Copy",
-        showWhen: {
-          parameter: "selection_method",
-          values: ["random"],
-        },
         default: 1,
         min: 1,
         max: 5,
@@ -1239,72 +1226,19 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
-    id: "destroy_joker",
-    label: "Destroy Joker",
+    id: "destroy_random_joker",
+    label: "Destroy Random Joker",
     description:
-      "Destroy jokers from your joker area (eternal jokers are safe)",
+      "Destroy random jokers from your joker area (eternal jokers are safe)",
     applicableTriggers: ["consumable_used"],
     params: [
-        {
-        id: "selection_method",
-        type: "select",
-        label: "Destroy Joker",
-        options: [
-          { value: "random", label: "Random Joker" },
-          { value: "selected", label: "Selected Joker" },
-        ],
-      },
       {
         id: "amount",
         type: "number",
         label: "Number of Jokers to Destroy",
-          showWhen: {
-          parameter: "selection_method",
-          values: ["random"],
-        },
         default: 1,
         min: 1,
         max: 5,
-      },
-    ],
-    category: "Jokers",
-  },
-    {
-    id: "edit_selected_joker",
-    label: "Edit Selected Joker",
-    description:
-      "Apply Modifiers to selected Joker",
-    applicableTriggers: ["consumable_used"],
-    params: [
-      {
-        id: "sticker",
-        type: "select",
-        label: "Sticker",
-        options: [
-          { value: "none", label: "No Sticker" },
-          ...STICKERS.map((sticker) => ({
-            key: sticker.key,
-            value: sticker.value,
-            label: sticker.label,
-          })),
-        { value: "remove", label: "Remove Sticker" },
-        ],
-        default: "none",
-      },
-      {
-        id: "edition",
-        type: "select",
-        label: "Edition",
-        options: [
-          { value: "none", label: "No Edition" },
-          { value: "remove", label: "Remove Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
-          { value: "random", label: "Random Edition" },
-        ],
-        default: "none",
       },
     ],
     category: "Jokers",
