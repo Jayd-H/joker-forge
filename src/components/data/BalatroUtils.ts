@@ -31,6 +31,7 @@ export interface ModMetadata {
   iconImage?: string;
   gameImage?: string;
   hasUserUploadedIcon?: boolean;
+  hasUserUploadedGameIcon?: boolean;
 }
 
 export interface UserConfig {

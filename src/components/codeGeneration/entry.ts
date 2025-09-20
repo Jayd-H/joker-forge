@@ -191,7 +191,7 @@ export const exportModCode = async (
     const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
-    const hasGameIcon = !!(metadata.hasUserUploadedIcon || metadata.gameImage);
+    const hasGameIcon = !!(metadata.hasUserUploadedGameIcon || metadata.gameImage);
 
     const mainLuaCode = generateMainLuaCode(
       sortedJokers,
@@ -335,9 +335,9 @@ export const exportModCode = async (
     }
 
     let gameIconData: string | undefined;
-    if (metadata.hasUserUploadedIcon && metadata.gameImage) {
+    if (metadata.hasUserUploadedGameIcon && metadata.gameImage) {
       gameIconData = metadata.gameImage;
-    } else if (!metadata.hasUserUploadedIcon) {
+    } else if (!metadata.hasUserUploadedGameIcon) {
       try {
         const response = await fetch("/images/balatro.png");
         const blob = await response.blob();
