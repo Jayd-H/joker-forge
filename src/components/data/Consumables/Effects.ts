@@ -1298,10 +1298,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "No Edition" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
+          ...EDITIONS(),
           { value: "random", label: "Random Edition" },
         ],
         default: "none",

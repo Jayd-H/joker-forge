@@ -14,7 +14,7 @@ import { generateEditCardsReturn } from "./effects/EditCardsEffect";
 import { generateEditCardsInHandReturn } from "./effects/EditCardsInHandEffect";
 import { generateCreateJokerReturn } from "./effects/CreateJokerEffect";
 import { generateIncrementRankReturn } from "./effects/IncrementRankEffect";
-import { generateSetStickerReturn } from "./effects/EditSelectedJokerEffect";
+import { generateEditSelectedJokerReturn } from "./effects/EditSelectedJokerEffect";
 import { generateAddCardsToHandReturn } from "./effects/AddCardsToHandEffect";
 import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
 import { generateCopyRandomJokerReturn } from "./effects/CopyRandomJokerEffect";
@@ -373,7 +373,7 @@ const generateSingleEffect = (
       return generateEditCardsInHandReturn(effect);
 
     case "edit_selected_joker":
-      return generateSetStickerReturn(effect);
+      return generateEditSelectedJokerReturn(effect);
 
     case "create_joker":
       return generateCreateJokerReturn(effect, modprefix);

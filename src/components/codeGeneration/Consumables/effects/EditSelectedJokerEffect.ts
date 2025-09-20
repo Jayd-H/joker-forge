@@ -1,7 +1,7 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
-export const generateSetStickerReturn = (effect: Effect): EffectReturn => {
+export const generateEditSelectedJokerReturn = (effect: Effect): EffectReturn => {
   const sticker = effect.params?.sticker || "none";
   const edition = effect.params?.edition || "none";
   const customMessage = effect.customMessage;
@@ -116,7 +116,7 @@ if (edition !== "none") {
                     trigger = 'after',
                     delay = 0.1,
                     func = function()
-                        G.jokers.highlighted[i]:set_${sticker}(true)
+                        G.jokers.highlighted[i]:add_sticker('${sticker}', true)
                         return true
                     end
                 }))

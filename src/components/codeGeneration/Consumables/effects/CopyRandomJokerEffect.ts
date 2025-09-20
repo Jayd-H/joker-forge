@@ -2,7 +2,7 @@ import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateCopyRandomJokerReturn = (effect: Effect): EffectReturn => {
-  const type = effect.params?.type || "random";
+  const selection_method = effect.params?.selection_method || "random";
   const amount = effect.params?.amount || 1;
   const edition = effect.params?.edition || "none";
   const customMessage = effect.customMessage;
@@ -52,29 +52,29 @@ export const generateCopyRandomJokerReturn = (effect: Effect): EffectReturn => {
                         copied_joker:add_to_deck()
                         G.jokers:emplace(copied_joker)
                         _first_materialize = true`;
-  if (type === "selected") {
+  if (selection_method === "selected") {
   copyJokerCode = `
 __PRE_RETURN_CODE__
-    use = function(self, card)
+        local _first_materialize = nil
         local self_card = G.jokers.highlighted[1]
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
-            local copied_joker = copy_card(joker_to_copy, nil, nil, nil, false)
+            local copied_joker = copy_card(self_card, set_edition, nil, nil, false)
             copied_joker:start_materialize(nil, _first_materialize)
-            copied_joker:add_to_deck()
+            self_card:add_to_deck()
             G.jokers:emplace(copied_joker)
-             _first_materialize = true`;
+            _first_materialize = true`;
 }
 
   // Handle edition application
   if (edition === "remove") {
     copyJokerCode += `
-                        copied_joker:set_edition(nil, true)`;
+              copied_joker:set_edition(nil, true)`;
   } else if (edition === "random") {
     copyJokerCode += `
-                        local edition = poll_edition('copy_joker_edition', nil, true, true, 
-                            { 'e_polychrome', 'e_holo', 'e_foil' })
-                        copied_joker:set_edition(edition, true)`;
+              local edition = poll_edition('copy_joker_edition', nil, true, true, 
+                  { 'e_polychrome', 'e_holo', 'e_foil' })
+              copied_joker:set_edition(edition, true)`;
   } else if (edition !== "none") {
     const editionMap: Record<string, string> = {
       e_foil: "foil",
@@ -84,9 +84,18 @@ __PRE_RETURN_CODE__
     };
     const editionLua = editionMap[edition as keyof typeof editionMap] || "foil";
     copyJokerCode += `
-                        copied_joker:set_edition({ ${editionLua} = true }, true)`;
+              copied_joker:set_edition({ ${editionLua} = true }, true)`;
   }
 
+if (selection_method === "selected") {
+copyJokerCode += `
+                        return true
+                    end
+                }))
+            delay(0.6)
+            __PRE_RETURN_CODE_END__`;
+}
+if (selection_method === "random") {
   copyJokerCode += `
                         return true
                     end
@@ -94,7 +103,7 @@ __PRE_RETURN_CODE__
             end
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
-
+}
   const result: EffectReturn = {
     statement: copyJokerCode,
     colour: "G.C.SECONDARY_SET.Spectral",
