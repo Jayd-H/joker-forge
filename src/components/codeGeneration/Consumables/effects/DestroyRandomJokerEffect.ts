@@ -5,6 +5,7 @@ import { generateGameVariableCode } from "../gameVariableUtils";
 export const generateDestroyRandomJokerReturn = (
   effect: Effect
 ): EffectReturn => {
+  const type = effect.params?.type || "random";
   const amount = effect.params?.amount || 1;
   const amountCode = generateGameVariableCode(amount);
   const customMessage = effect.customMessage;
@@ -58,6 +59,20 @@ export const generateDestroyRandomJokerReturn = (
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
 
+  if (type === "selected") {
+           `__PRE_RETURN_CODE__
+    use = function(self, card)
+        local self_card = G.jokers.highlighted[1]
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            card:juice_up(0.3, 0.5)
+            ease_dollars(card.ability.money, true)
+            return true end }))
+        self_card:start_dissolve()
+        delay(0.6)
+    end,`;
+}
+    
   const configVariables =
     typeof amount === "string" && amount.startsWith("GAMEVAR:")
       ? []
