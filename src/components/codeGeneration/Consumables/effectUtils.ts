@@ -16,6 +16,7 @@ import { generateCreateJokerReturn } from "./effects/CreateJokerEffect";
 import { generateIncrementRankReturn } from "./effects/IncrementRankEffect";
 import { generateEditSelectedJokerReturn } from "./effects/EditSelectedJokerEffect";
 import { generateAddCardsToHandReturn } from "./effects/AddCardsToHandEffect";
+import { generateSetAnteReturn } from "./effects/SetAnteEffect";
 import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
 import { generateCopyRandomJokerReturn } from "./effects/CopyRandomJokerEffect";
 import { generateDestroyRandomJokerReturn } from "./effects/DestroyRandomJokerEffect";
@@ -380,6 +381,9 @@ const generateSingleEffect = (
 
     case "increment_rank":
       return generateIncrementRankReturn(effect);
+
+    case "set_ante":
+      return generateSetAnteReturn(effect);
 
     case "add_cards_to_hand":
       return generateAddCardsToHandReturn(effect);
