@@ -5,7 +5,7 @@ import { generateGameVariableCode } from "../gameVariableUtils";
 export const generateSetAnteReturn = (effect: Effect): EffectReturn => {
 
   const operation = effect.params?.operation || "set";
-  const value = effect.params?.value || 5;
+  const value = effect.params?.value ?? 5;
   const valueCode = generateGameVariableCode(value);
 
   const customMessage = effect.customMessage;
@@ -16,7 +16,7 @@ export const generateSetAnteReturn = (effect: Effect): EffectReturn => {
     case "set": {
       const setMessage = customMessage
         ? `"${customMessage}"`
-        : `"+"..tostring(${valueCode}).." Ante set to"`;
+        : `"Ante set to "..tostring(${valueCode})`;
       anteCode = `
             __PRE_RETURN_CODE__
 local mod = ${valueCode} - G.GAME.round_resets.ante
@@ -24,7 +24,7 @@ local mod = ${valueCode} - G.GAME.round_resets.ante
 		G.E_MANAGER:add_event(Event({
 			func = function()
 				G.GAME.round_resets.blind_ante = ${valueCode}
-        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.YELLOW})
 				return true
 			end,
 		}))
@@ -35,7 +35,7 @@ local mod = ${valueCode} - G.GAME.round_resets.ante
     case "add": {
       const addMessage = customMessage
         ? `"${customMessage}"`
-        : `"-"..tostring(${valueCode}).." Ante +"`;
+        : `"+"..tostring(${valueCode}).." Ante"`;
       anteCode = `
             __PRE_RETURN_CODE__
 local mod = ${valueCode}
@@ -43,7 +43,7 @@ local mod = ${valueCode}
 		G.E_MANAGER:add_event(Event({
 			func = function()
 				G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
-        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.BLUE})
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.YELLOW})
 				return true
 			end,
 		}))
@@ -54,7 +54,7 @@ local mod = ${valueCode}
     case "subtract": {
       const subtractMessage = customMessage
         ? `"${customMessage}"`
-        : `"Ante - "..tostring(${valueCode})`;
+        : `"-"..tostring(${valueCode}).." Ante"`;
       anteCode = `
             __PRE_RETURN_CODE__
 local mod = -${valueCode}
@@ -73,20 +73,21 @@ local mod = -${valueCode}
     default: {
       const defaultMessage = customMessage
         ? `"${customMessage}"`
-        : `"+"..tostring(${valueCode}).." Voucher Slots"`;
+        : `"Ante set to "..tostring(${valueCode})`;
       anteCode = `
             __PRE_RETURN_CODE__
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.4,
-                func = function()
-                    card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${defaultMessage}, colour = G.C.BLUE})
-                    SMODS.change_voucher_limit(${valueCode})
-                    return true
-                end
-            }))
+local mod = ${valueCode} - G.GAME.round_resets.ante
+		ease_ante(mod)
+		G.E_MANAGER:add_event(Event({
+			func = function()
+				G.GAME.round_resets.blind_ante = ${valueCode}
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${defaultMessage}, colour = G.C.YELLOW})
+				return true
+			end,
+		}))
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
+      break;
     }
   }
 
