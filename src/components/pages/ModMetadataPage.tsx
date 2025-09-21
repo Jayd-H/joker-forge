@@ -592,22 +592,22 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
 <div className="border-t border-black-lighter pt-6 mt-6">
           <h4 className="text-white-light font-medium text-sm mb-4 tracking-wider flex items-center gap-2">
             <PhotoIcon className="h-4 w-4 text-mint" />
-            BALATRO ICON (333x216px)
+            BALATRO LOGO (333x216px)
           </h4>
           <div className="flex flex-col items-center">
-            <div className="w-333 h-216 rounded-lg flex flex-col items-center justify-center relative">
+            <div className="w-233 h-151 rounded-lg flex flex-col items-center justify-center relative">
               {metadata.gameImage ? (
                 <img
                   src={metadata.gameImage}
                   alt="Game Icon"
-                  className="w-333 h-216 object-contain rounded"
+                  className="w-233 h-151 object-contain rounded"
                   style={{ imageRendering: "pixelated" }}
                 />
               ) : (
                 <>
                   <PhotoIcon className="h-8 w-8 text-white-darker mb-2" />
                   <span className="text-white-darker text-xs text-center">
-                    No icon uploaded
+                    No Logo uploaded
                     <br />
                     333x216 recommended
                   </span>
@@ -646,7 +646,7 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
                 }
               }}
             >
-              Change Icon
+              Change Logo
             </Button>
           </div>
         </div>
