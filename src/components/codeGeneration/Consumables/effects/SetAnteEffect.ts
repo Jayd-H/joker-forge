@@ -64,7 +64,8 @@ local mod = -${valueCode}
 				G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
         card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
 				return true
-			end
+			end,
+    }))
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
       break;
