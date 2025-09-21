@@ -37,8 +37,10 @@ export const DEFAULT_MOD_METADATA: ModMetadata = {
   dependencies: ["Steamodded (>=1.0.0~BETA-0827c)"],
   conflicts: [],
   provides: [],
+  gameImage: "/images/balatro.png",
   iconImage: "/images/modicon.png",
   hasUserUploadedIcon: false,
+  hasUserUploadedGameIcon: false,
 };
 
 const validateModMetadata = (metadata: ModMetadata): ModMetadataValidation => {
@@ -323,6 +325,33 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
     });
   };
 
+    const processGameIconImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        reject(new Error("Failed to get canvas context"));
+        return;
+      }
+
+      img.onload = () => {
+        
+        canvas.width = 333 ;
+        canvas.height = 216;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, 333, 216);
+
+        resolve(canvas.toDataURL("image/png"));
+      };
+
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const isValidHexColor = (color: string) =>
     /^[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(color);
 
@@ -557,6 +586,68 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
                   "MOD"}
               </div>
             </div>
+          </div>
+        </div>
+
+<div className="border-t border-black-lighter pt-6 mt-6">
+          <h4 className="text-white-light font-medium text-sm mb-4 tracking-wider flex items-center gap-2">
+            <PhotoIcon className="h-4 w-4 text-mint" />
+            BALATRO ICON (333x216px)
+          </h4>
+          <div className="flex flex-col items-center">
+            <div className="w-333 h-216 rounded-lg flex flex-col items-center justify-center relative">
+              {metadata.gameImage ? (
+                <img
+                  src={metadata.gameImage}
+                  alt="Game Icon"
+                  className="w-333 h-216 object-contain rounded"
+                  style={{ imageRendering: "pixelated" }}
+                />
+              ) : (
+                <>
+                  <PhotoIcon className="h-8 w-8 text-white-darker mb-2" />
+                  <span className="text-white-darker text-xs text-center">
+                    No icon uploaded
+                    <br />
+                    333x216 recommended
+                  </span>
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    try {
+                      const processedImage = await processGameIconImage(file);
+                      updateMetadata({
+                        gameImage: processedImage,
+                        hasUserUploadedGameIcon: true,
+                      });
+                    } catch (error) {
+                      console.error("Failed to process game icon:", error);
+                    }
+                  }
+                  e.target.value = "";
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                const fileInput = document.querySelector(
+                  'input[type="file"]'
+                ) as HTMLInputElement | null;
+                if (fileInput) {
+                  fileInput.click();
+                }
+              }}
+            >
+              Change Icon
+            </Button>
           </div>
         </div>
 

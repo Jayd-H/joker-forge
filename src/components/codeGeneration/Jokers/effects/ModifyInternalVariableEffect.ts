@@ -35,38 +35,60 @@ export const generateModifyInternalVariableReturn = (
   const isScoring = scoringTriggers.includes(triggerType);
 
   let operationCode = "";
-  let messageText = "";
+  const messageText = customMessage ? `"${customMessage}"` : undefined;
   let messageColor = "G.C.WHITE";
 
   switch (operation) {
     case "set":
       operationCode = `card.ability.extra.${variableName} = ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.BLUE";
       break;
     case "increment":
       operationCode = `card.ability.extra.${variableName} = (card.ability.extra.${variableName}) + ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.GREEN";
       break;
     case "decrement":
       operationCode = `card.ability.extra.${variableName} = math.max(0, (card.ability.extra.${variableName}) - ${valueCode})`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.RED";
       break;
     case "multiply":
       operationCode = `card.ability.extra.${variableName} = (card.ability.extra.${variableName}) * ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.MULT";
       break;
     case "divide":
       operationCode = `card.ability.extra.${variableName} = (card.ability.extra.${variableName}) / ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.MULT";
+      break;
+    case "power":
+      operationCode = `card.ability.extra.${variableName} = (card.ability.extra.${variableName}) ^ ${valueCode}`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "absolute":
+      operationCode = `card.ability.extra.${variableName} = math.abs(card.ability.extra.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "natural_log":
+      operationCode = `card.ability.extra.${variableName} = math.log(card.ability.extra.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "log10":
+      operationCode = `card.ability.extra.${variableName} = math.log10(card.ability.extra.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "square_root":
+      operationCode = `card.ability.extra.${variableName} = math.sqrt(card.ability.extra.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "ceil":
+      operationCode = `card.ability.extra.${variableName} = math.ceil(card.ability.extra.${variableName})`;
+      messageColor = "G.C.BLUE";
+      break;
+    case "floor":
+      operationCode = `card.ability.extra.${variableName} = math.floor(card.ability.extra.${variableName})`;
+      messageColor = "G.C.BLUE";
       break;
     default:
       operationCode = `card.ability.extra.${variableName} = (card.ability.extra.${variableName}) + ${valueCode}`;
-      messageText = customMessage ? `"${customMessage}"` : "";
       messageColor = "G.C.GREEN";
   }
 
@@ -75,7 +97,7 @@ export const generateModifyInternalVariableReturn = (
       statement: `__PRE_RETURN_CODE__
                 ${operationCode}
                 __PRE_RETURN_CODE_END__`,
-      message: messageText || undefined,
+      message: messageText,
       colour: messageColor,
     };
   } else {
@@ -84,7 +106,7 @@ export const generateModifyInternalVariableReturn = (
                     ${operationCode}
                     return true
                 end`,
-      message: messageText || undefined,
+      message: messageText,
       colour: messageColor,
     };
   }

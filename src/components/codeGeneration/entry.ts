@@ -204,6 +204,7 @@ export const exportModCode = async (
     const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
+    const hasGameIcon = !!(metadata.hasUserUploadedGameIcon || metadata.gameImage);
 
     const mainLuaCode = generateMainLuaCode(
       sortedJokers,
@@ -215,6 +216,7 @@ export const exportModCode = async (
       sortedSeals,
       sortedEditions,
       hasModIcon,
+      hasGameIcon,
       metadata
     );
     zip.file(metadata.main_file, mainLuaCode);
@@ -345,6 +347,24 @@ export const exportModCode = async (
       }
     }
 
+    let gameIconData: string | undefined;
+    if (metadata.hasUserUploadedGameIcon && metadata.gameImage) {
+      gameIconData = metadata.gameImage;
+    } else if (!metadata.hasUserUploadedGameIcon) {
+      try {
+        const response = await fetch("/images/balatro.png");
+        const blob = await response.blob();
+        gameIconData = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+      } catch {
+        console.log("Default game icon not available");
+        gameIconData = undefined;
+      }
+    }
+
     await addCustomShadersToZip(zip, customShaders);
 
     await addAtlasToZip(
@@ -354,14 +374,15 @@ export const exportModCode = async (
       sortedBoosters,
       sortedEnhancements,
       sortedSeals,
-      modIconData
+      modIconData,
+      gameIconData
     );
 
     if (sounds.length > 0) {
       const soundsFolder = zip.folder("assets")!.folder("sounds");
 
       sounds.forEach((sound) => {
-        const soundData = sound.soundString.replace("data:audio/ogg;base64,", "") 
+        const soundData = sound.soundString.replace(/^data:.+\/ogg;base64,/, "");
         soundsFolder!.file(`${sound.key}.ogg`, soundData, { base64: true });
       })
     }
@@ -393,8 +414,8 @@ const generateMainLuaCode = (
   seals: SealData[],
   editions: EditionData[],
   hasModIcon: boolean,
-  metadata: ModMetadata
-): string => {
+  hasGameIcon: boolean,
+  metadata: ModMetadata): string => {
   let output = "";
 
   if (hasModIcon) {
@@ -405,6 +426,19 @@ const generateMainLuaCode = (
     py = 34,
     atlas_table = "ASSET_ATLAS"
 }):register()
+
+`;
+  }
+  if (hasGameIcon) {
+    output += `SMODS.Atlas({
+    key = "balatro", 
+    path = "balatro.png", 
+    px = 333,
+    py = 216,
+    prefix_config = { key = false },
+    atlas_table = "ASSET_ATLAS"
+}):register()
+
 
 `;
   }

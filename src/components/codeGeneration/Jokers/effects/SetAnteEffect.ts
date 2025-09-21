@@ -20,7 +20,7 @@ export const generateSetAnteReturn = (
     variableName
   )
 
-  const customMessage = effect.customMessage;
+  const customMessage = effect.customMessage ? `"${effect.customMessage}"` : undefined;
   let anteCode = "";
   let messageText = "";
 
