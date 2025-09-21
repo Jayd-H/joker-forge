@@ -3,6 +3,7 @@ import {
   PencilSquareIcon,
   BanknotesIcon,
   SparklesIcon,
+  Cog6ToothIcon,
   CakeIcon,
   UserGroupIcon,
   CursorArrowRaysIcon,
@@ -48,6 +49,10 @@ export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Hand Effects",
     icon: HandRaisedIcon,
+  },
+    {
+    label: "Game Rules",
+    icon: Cog6ToothIcon,
   },
   {
     label: "Consumables",
@@ -251,6 +256,17 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "perma_mult", label: "Permanent Mult" },
           { value: "h_mult", label: "Held Mult" },
           { value: "h_chips", label: "Held Chips" },
+          { value: "perma_x_chips", label: "Permanent X Chips" },
+          { value: "perma_x_mult", label: "Permanent X Mult" },
+          { value: "perma_h_chips", label: "Permanent Held Chips" },
+          { value: "perma_h_mult", label: "Permanent Held Mult" },
+          { value: "perma_h_x_chips", label: "Permanent Held X Chips" },
+          { value: "perma_h_x_mult", label: "Permanent Held X Mult" },
+          { value: "perma_p_dollars", label: "Permanent Dollars (on scoring)" },
+          {
+            value: "perma_h_dollars",
+            label: "Permanent Held Dollars (end of round)",
+          },
         ],
         default: "perma_bonus",
       },
@@ -419,6 +435,33 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Shop Effects",
   },
+    {
+      id: "set_ante",
+      label: "Set Ante Level",
+      description: "Modify the current ante level",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "operation",
+          type: "select",
+          label: "Operation",
+          options: [
+            { value: "set", label: "Set to" },
+            { value: "add", label: "Add" },
+            { value: "subtract", label: "Subtract" },
+          ],
+          default: "set",
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Amount",
+          default: 1,
+          min: 1,
+        },
+      ],
+      category: "Game Rules",
+    },
   {
     id: "edit_hands",
     label: "Edit Hands",
