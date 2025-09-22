@@ -605,7 +605,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "all", label: "All Jokers" },
           { value: "random", label: "Random Joker" },
-          { value: "selected", label: "Selected Joker" },
+          { value: "selected", label: "By Selection" },
         ],
         default: "all",
       },

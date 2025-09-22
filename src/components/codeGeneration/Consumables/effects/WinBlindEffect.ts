@@ -14,7 +14,7 @@ export const generateWinBlindReturn = (
 
   return {
     statement: `__PRE_RETURN_CODE__${WinBlindCode}__PRE_RETURN_CODE_END__`,
-    message: customMessage ? `"${customMessage}"` : `"Shuffle!"`,
+    message: customMessage ? `"${customMessage}"` : `"Win!"`,
     colour: "G.C.ORANGE"
   }
 };

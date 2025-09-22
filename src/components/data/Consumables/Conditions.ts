@@ -11,8 +11,15 @@ import {
   COMPARISON_OPERATORS,
   CONSUMABLE_SETS,
   CUSTOM_CONSUMABLES,
+  EDITIONS,
+  ENHANCEMENTS,
   PLANET_CARDS,
+  RANKS,
+  RARITIES,
+  SEALS,
   SPECTRAL_CARDS,
+  SUIT_GROUPS,
+  SUITS,
   TAROT_CARDS,
   VOUCHERS,
 } from "../BalatroUtils";
@@ -41,6 +48,10 @@ export const CONSUMABLE_CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Game Context",
     icon: InformationCircleIcon,
+  },
+{
+    label: "Deck & Jokers",
+    icon: ArchiveBoxIcon,
   },
   {
     label: "Special",
@@ -86,6 +97,191 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     params: [],
     category: "Card Selection",
   },
+  {
+      id: "deck_size",
+      label: "Deck Size",
+      description: "Check the size of the deck",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "size_type",
+          type: "select",
+          label: "Size Type",
+          options: [
+            { value: "remaining", label: "Remaining in Deck" },
+            { value: "total", label: "Total Deck Size" },
+          ],
+          default: "remaining",
+        },
+        {
+          id: "operator",
+          type: "select",
+          label: "Operator",
+          options: [...COMPARISON_OPERATORS],
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Number of Cards",
+          default: 52,
+        },
+      ],
+      category: "Deck & Jokers",
+    },
+  {
+      id: "specific_joker",
+      label: "Specific Joker",
+      description: "Check if a specific joker is in your collection",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "operator",
+          type: "select",
+          label: "Condition",
+          options: [
+            { value: "has", label: "Has this joker" },
+            { value: "does_not_have", label: "Does not have this joker" },
+          ],
+          default: "has",
+        },
+        {
+          id: "joker_key",
+          type: "text",
+          label: "Joker Key (e.g., j_joker, j_greedy_joker, or just joker)",
+          default: "j_joker",
+        },
+      ],
+      category: "Deck & Jokers",
+    },
+  {
+      id: "joker_count",
+      label: "Joker Count",
+      description: "Check how many jokers the player has",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "operator",
+          type: "select",
+          label: "Operator",
+          options: [...COMPARISON_OPERATORS],
+        },
+        {
+          id: "rarity",
+          type: "select",
+          label: "Rarity",
+          options: () => [{ value: "any", label: "Any Rarity" }, ...RARITIES()],
+          default: "any",
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Number of Jokers",
+          min: 0,
+          default: 1,
+        },
+      ],
+      category: "Deck & Jokers",
+    },
+  {
+      id: "deck_count",
+      label: "Deck Count",
+      description: "Count cards in your entire deck by property",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "property_type",
+          type: "select",
+          label: "Property Type",
+          options: [
+            { value: "rank", label: "Rank" },
+            { value: "suit", label: "Suit" },
+            { value: "enhancement", label: "Enhancement" },
+            { value: "seal", label: "Seal" },
+            { value: "edition", label: "Edition" },
+          ],
+          default: "enhancement",
+        },
+        {
+          id: "rank",
+          type: "select",
+          label: "Rank",
+          options: [{ value: "any", label: "Any Rank" }, ...RANKS],
+          showWhen: {
+            parameter: "property_type",
+            values: ["rank"],
+          },
+        },
+        {
+          id: "suit",
+          type: "select",
+          label: "Suit",
+          options: [
+            { value: "any", label: "Any Suit" },
+            ...SUIT_GROUPS,
+            ...SUITS,
+          ],
+          showWhen: {
+            parameter: "property_type",
+            values: ["suit"],
+          },
+        },
+        {
+          id: "enhancement",
+          type: "select",
+          label: "Enhancement",
+          options: () => [
+            { value: "any", label: "Any Enhancement" },
+            { value: "none", label: "No Enhancement" },
+            ...ENHANCEMENTS(),
+          ],
+          showWhen: {
+            parameter: "property_type",
+            values: ["enhancement"],
+          },
+        },
+        {
+          id: "seal",
+          type: "select",
+          label: "Seal",
+          options: () => [
+            { value: "any", label: "Any Seal" },
+            { value: "none", label: "No Seal" },
+            ...SEALS(),
+          ],
+          showWhen: {
+            parameter: "property_type",
+            values: ["seal"],
+          },
+        },
+        {
+          id: "edition",
+          type: "select",
+          label: "Edition",
+          options: [
+            { value: "any", label: "Any Edition" },
+            { value: "none", label: "No Edition" },
+            ...EDITIONS(),
+          ],
+          showWhen: {
+            parameter: "property_type",
+            values: ["edition"],
+          },
+        },
+        {
+          id: "operator",
+          type: "select",
+          label: "Operator",
+          options: [...COMPARISON_OPERATORS],
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Count",
+          default: 1,
+        },
+      ],
+      category: "Deck & Jokers",
+    },
   {
     id: "player_money",
     label: "Player Money",
@@ -157,6 +353,29 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
         label: "Voucher",
         options: [...VOUCHERS()],
         default: "v_overstock_norm",
+      },
+    ],
+    category: "Game Context",
+  },
+  {
+    id: "check_blind_requirements",
+    label: "Blind Requirements",
+    description:
+      "Check what percentage of the blind requirement the current base hand score represents (e.g., 110% means you've exceeded the blind by 10%, values over 100% check if you've exceeded the blind)",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [...COMPARISON_OPERATORS],
+        default: "greater_equals",
+      },
+      {
+        id: "percentage",
+        type: "number",
+        label: "Percentage (%)",
+        default: 25,
       },
     ],
     category: "Game Context",

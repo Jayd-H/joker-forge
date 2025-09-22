@@ -1556,6 +1556,14 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Game State",
   },
   {
+    id: "joker_selected",
+    label: "Joker Selected",
+    description: "Check if a joker is selected/highlighted",
+    applicableTriggers:  [...GENERIC_TRIGGERS],
+    params: [],
+    category: "Deck & Jokers",
+  },
+  {
     id: "voucher_redeemed",
     label: "Voucher Redeemed",
     description: "Check if a specific Voucher was redeemed during the run",

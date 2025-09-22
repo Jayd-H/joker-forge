@@ -10,7 +10,12 @@ import { generateConsumableCountConditionCode } from "./conditions/ConsumableCou
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
 import { generateBlindTypeConditionCode } from "./conditions/BlindTypeCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
+import { generateCheckBlindRequirementsConditionCode } from "./conditions/BlindRequirementsCondition";
 import { generateBlindNameConditionCode } from "./conditions/BlindNameCondition";
+import { generateDeckCountConditionCode } from "./conditions/DeckCountCondition";
+import { generateSpecificJokerConditionCode } from "./conditions/SpecificJokerCondition";
+import { generateDeckSizeConditionCode } from "./conditions/DeckSizeCondition";
+import { generateJokerCountConditionCode } from "./conditions/JokerCountCondition";
 import { generateJokerSelectedConditionCode } from "./conditions/JokerSelected";
 
 export const generateConditionChain = (rule: Rule): string => {
@@ -117,9 +122,22 @@ const generateSingleConditionCode = (
       
     case "blind_type":
       return generateBlindTypeConditionCode([singleConditionRule]);
+
+          case "specific_joker":
+            return generateSpecificJokerConditionCode([singleConditionRule]);
+
+ case "joker_count":
+      return generateJokerCountConditionCode([singleConditionRule]);
+
       
     case "in_blind":
       return generateInBlindConditionCode([singleConditionRule]);
+
+          case "deck_size":
+            return generateDeckSizeConditionCode([singleConditionRule]);
+      
+          case "check_blind_requirements":
+            return generateCheckBlindRequirementsConditionCode([singleConditionRule]);
 
     case "consumable_count":
       return generateConsumableCountConditionCode([singleConditionRule]);
@@ -129,6 +147,9 @@ const generateSingleConditionCode = (
     
     case "check_flag":
       return generateCheckFlagConditionCode([singleConditionRule]);
+
+      case "deck_count":
+        return generateDeckCountConditionCode([singleConditionRule]);
 
     case "system_condition":
       return generateSystemConditionCode([singleConditionRule]);

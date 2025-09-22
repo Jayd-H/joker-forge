@@ -64,6 +64,7 @@ import { generateBossBlindTypeConditionCode } from "./conditions/BossBlindTypeCo
 import { generateJokerFlippedConditionCode, generateThisJokerFlippedConditionCode } from "./conditions/JokerFlippedCondition";
 import { generateWhichTagConditionCode } from "./conditions/WhichTagCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
+import { generateJokerSelectedConditionCode } from "./conditions/JokerSelected";
 
 export const generateConditionChain = (
   rule: Rule,
@@ -252,6 +253,9 @@ const generateSingleConditionCode = (
 
     case "check_blind_requirements":
       return generateCheckBlindRequirementsConditionCode([singleConditionRule]);
+
+          case "joker_selected":
+            return generateJokerSelectedConditionCode([singleConditionRule]);
 
     case "glass_card_destroyed":
       return generateGlassCardDestroyedConditionCode();

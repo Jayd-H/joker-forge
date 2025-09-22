@@ -17,11 +17,9 @@ export const generateFlipJokerReturn = (
  } else if (selectionMethod === "selected") {
     jokerFlipCode += `if #G.jokers.cards > 0 then
 for i = 1, #G.jokers.highlighted do
-      if joker == card then
-        joker:flip(stay_flipped)
+          G.jokers.highlighted[i]:flip()
         break
-      end
-    end
+     end
     end`;
   } else if (selectionMethod === "random") {
     jokerFlipCode += `if #G.jokers.cards > 0 then
