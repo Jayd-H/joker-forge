@@ -27,6 +27,8 @@ import { generateFoolEffectReturn } from "./effects/FoolEffect";
 import { generateDrawCardsReturn } from "./effects/DrawCardsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
 import { generateEditDiscardSizeReturn } from "./effects/EditDiscardSizeEffect";
+import { generateDisableBossBlindReturn } from "./effects/DisableBossBlindEffect";
+import { generateShuffleJokerReturn } from "./effects/ShuffleJokersEffect";
 import { generateEditBoosterSlotsReturn } from "./effects/EditBoosterSlotsEffect";
 import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect";
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
@@ -36,6 +38,8 @@ import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffe
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
+import { generateModifyBlindRequirementReturn } from "./effects/ModifyBlindRequirementEffect";
 
 export interface EffectReturn {
   statement: string;
@@ -385,8 +389,17 @@ const generateSingleEffect = (
     case "set_ante":
       return generateSetAnteReturn(effect);
 
+          case "modify_blind_requirement":
+            return generateModifyBlindRequirementReturn(effect);
+
+    case "disable_boss_blind":
+      return generateDisableBossBlindReturn(effect);
+
     case "add_cards_to_hand":
       return generateAddCardsToHandReturn(effect);
+
+    case "shuffle_jokers":
+      return generateShuffleJokerReturn(effect);
 
     case "copy_joker":
       return generateCopyRandomJokerReturn(effect);
@@ -438,6 +451,9 @@ const generateSingleEffect = (
           
     case "play_sound":
       return generatePlaySoundReturn(effect, modprefix);
+      
+    case "flip_joker":
+            return generateFlipJokerReturn(effect);
 
     default:
       return {
