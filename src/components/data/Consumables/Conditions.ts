@@ -18,6 +18,7 @@ import {
   RARITIES,
   SEALS,
   SPECTRAL_CARDS,
+  STICKERS,
   SUIT_GROUPS,
   SUITS,
   TAROT_CARDS,
@@ -311,6 +312,30 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Player State",
   },
+    {
+    id: "joker_flipped",
+    label: "Joker is Flipped",
+    description: "Check if the selected joker is flipped (facing back)",
+    applicableTriggers: ["consumable_used"],
+    params: [],
+    category: "Deck & Jokers",
+  },
+  {
+      id: "joker_sticker",
+      label: "Joker Sticker",
+      description: "Check the stickers of the selected joker",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "sticker",
+          type: "select",
+          label: "Sticker",
+          options: [...STICKERS.map(({ value, label }) => ({ value, label }))],
+          default: "eternal",
+        },
+      ],
+      category: "Deck & Jokers",
+    },
   {
     id: "ante_level",
     label: "Ante Level",

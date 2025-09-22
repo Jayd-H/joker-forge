@@ -15,6 +15,10 @@ import { generateBlindNameConditionCode } from "./conditions/BlindNameCondition"
 import { generateDeckCountConditionCode } from "./conditions/DeckCountCondition";
 import { generateSpecificJokerConditionCode } from "./conditions/SpecificJokerCondition";
 import { generateDeckSizeConditionCode } from "./conditions/DeckSizeCondition";
+import { generateJokerFlippedConditionCode } from "./conditions/JokerFlippedCondition";
+import {
+  generateJokerStickerConditionCode,
+} from "./conditions/JokerStickerCondition";
 import { generateJokerCountConditionCode } from "./conditions/JokerCountCondition";
 import { generateJokerSelectedConditionCode } from "./conditions/JokerSelected";
 
@@ -144,6 +148,12 @@ const generateSingleConditionCode = (
       
         case "blind_name":
             return generateBlindNameConditionCode([singleConditionRule]);
+
+              case "joker_sticker":
+                return generateJokerStickerConditionCode([singleConditionRule]);
+
+    case "joker_flipped":
+      return generateJokerFlippedConditionCode();
     
     case "check_flag":
       return generateCheckFlagConditionCode([singleConditionRule]);
