@@ -37,7 +37,9 @@ import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
+import { generateForceGameOverReturn } from "./effects/ForceGameOverEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
 import { generateModifyBlindRequirementReturn } from "./effects/ModifyBlindRequirementEffect";
 
@@ -358,6 +360,12 @@ const generateSingleEffect = (
 
     case "edit_hand_size":
       return generateEditHandSizeReturn(effect);
+
+      case "force_game_over":
+            return generateForceGameOverReturn(effect);
+
+                case "Win_blind":
+                  return generateWinBlindReturn(effect);
 
     case "draw_cards":
       return generateDrawCardsReturn(effect);

@@ -2119,6 +2119,14 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     params: [],
     category: "Special",
   },
+        {
+      id: "Win_blind",
+      label: "Win Current Blind",
+      description: "Forces to Win the current Blind",
+      applicableTriggers: [...GENERIC_TRIGGERS],
+      params: [],
+      category: "Special",
+    },
   {
     id: "juice_up_joker",
     label: "Juice Up The Joker",

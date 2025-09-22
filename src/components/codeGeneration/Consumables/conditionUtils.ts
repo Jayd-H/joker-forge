@@ -8,7 +8,9 @@ import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeem
 import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateConsumableCountConditionCode } from "./conditions/ConsumableCountCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
+import { generateBlindTypeConditionCode } from "./conditions/BlindTypeCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
+import { generateBlindNameConditionCode } from "./conditions/BlindNameCondition";
 import { generateJokerSelectedConditionCode } from "./conditions/JokerSelected";
 
 export const generateConditionChain = (rule: Rule): string => {
@@ -112,12 +114,18 @@ const generateSingleConditionCode = (
 
     case "voucher_redeemed":
       return generateVoucherRedeemedConditionCode([singleConditionRule]);
-
+      
+    case "blind_type":
+      return generateBlindTypeConditionCode([singleConditionRule]);
+      
     case "in_blind":
       return generateInBlindConditionCode([singleConditionRule]);
 
     case "consumable_count":
       return generateConsumableCountConditionCode([singleConditionRule]);
+      
+        case "blind_name":
+            return generateBlindNameConditionCode([singleConditionRule]);
     
     case "check_flag":
       return generateCheckFlagConditionCode([singleConditionRule]);

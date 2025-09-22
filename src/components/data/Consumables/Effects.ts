@@ -657,6 +657,22 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Game Rules",
   },
   {
+      id: "force_game_over",
+      label: "Force Game Over",
+      description: "Forces the run to end (ignores Mr. Bones)",
+      applicableTriggers: ["consumable_used"],
+      params: [],
+      category: "Special",
+    },
+      {
+      id: "Win_blind",
+      label: "Win Current Blind",
+      description: "Forces to Win the current Blind",
+      applicableTriggers: ["consumable_used"],
+      params: [],
+      category: "Special",
+    },
+  {
     id: "edit_joker_slots",
     label: "Edit Joker Slots",
     description: "Add or remove joker slots available in the game",
