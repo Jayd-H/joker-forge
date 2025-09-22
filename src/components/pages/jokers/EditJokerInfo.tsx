@@ -110,6 +110,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   }>({});
 
   const [poolsInput, setPoolsInput] = useState("");
+  const [infoQueueInput, setInfoQueueInput] = useState("");
 
   const rarityOptions = getRarityDropdownOptions(customRarities);
 
@@ -284,6 +285,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
       setPoolsInput((joker.pools || []).join(", "));
+      setInfoQueueInput((joker.info_queues || []).join(", "));
     }
   }, [isOpen, joker]);
 
@@ -1447,6 +1449,56 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         Enter pool names separated by commas. This joker will be
                         available for selection in effects that target these
                         pools.
+                      </p>
+                    </div>
+                    <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
+                      <PuzzlePieceIcon className="h-5 w-5 text-mint" />
+                      Info Queues
+                    </h4>
+                    <div className="space-y-4">
+                      <InputField
+                        value={infoQueueInput}
+                        onChange={(e) => setInfoQueueInput(e.target.value)}
+                        onBlur={() => {
+                          // Parse the infoQueue when user finishes editing
+                          const infoQueues = infoQueueInput
+                            .split(",")
+                            .map((infoQueue) => infoQueue.trim())
+                            .filter((infoQueue) => infoQueue.length > 0);
+
+                          setFormData({
+                            ...formData,
+                            info_queues: infoQueues.length > 0 ? infoQueues : undefined,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            // Parse infoQueue on Enter key
+                            const infoQueues = infoQueueInput
+                              .split(",")
+                              .map((infoQueue) => infoQueue.trim())
+                              .filter((infoQueue) => infoQueue.length > 0);
+
+                            setFormData({
+                              ...formData,
+                              info_queues: infoQueues.length > 0 ? infoQueues : undefined,
+                            });
+                            e.currentTarget.blur();
+                          }
+                        }}
+                        placeholder="j_joker, c_fool, j_modprefix_newjoker"
+                        separator={true}
+                        label="Info Queues"
+                        size="md"
+                      />
+                      <p className="text-xs text-white-darker -mt-2">
+                        Enter object keys separated by commas. This joker will
+                        display seperate windows showing the effects of said
+                        <br/><br/>
+                        Prefixes: Tags - `tag_`; Jokers - `j_`; Consumables - `c_`;
+                        Vouchers - `v_`;
+                        <br/>
+                        Decks - `b_`; Enhancements - `m_`; Editions - `e_`; Packs - `p_`; Seals - None
                       </p>
                     </div>
                   </div>

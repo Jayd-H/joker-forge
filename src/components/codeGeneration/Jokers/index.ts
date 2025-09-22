@@ -1591,7 +1591,7 @@ const generateLocVarsFunction = (
   modPrefix?: string
 ): string | null => {
   const descriptionHasVariables = joker.description.includes("#");
-  if (!descriptionHasVariables) {
+  if (!descriptionHasVariables && (joker.info_queues || []).length === 0) {
     return null;
   }
 
@@ -1603,7 +1603,7 @@ const generateLocVarsFunction = (
     0
   );
 
-  if (maxVariableIndex === 0) {
+  if (maxVariableIndex === 0 && (joker.info_queues || []).length === 0) {
     return null;
   }
 
@@ -1922,8 +1922,54 @@ const generateLocVarsFunction = (
     )}}}`;
     hasReturn = false;
   }
+  let infoQueuesObject: string[] = [];
+  (joker.info_queues || []).forEach((value, i) => {
+    if (value.startsWith("tag_")) {
+      infoQueuesObject.push(`
+        local info_queue_${i} = G.P_TAGS["${value}"]
+        if info_queue_${i} then
+            info_queue[#info_queue + 1] = info_queue_${i}
+        else
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Tag")
+        end`
+      )
+    } else if (
+      value.startsWith("j_") || value.startsWith("c_") ||
+      value.startsWith("v_") || value.startsWith("b_") ||
+      value.startsWith("m_") || value.startsWith("e_") ||
+      value.startsWith("p_")
+    ) {
+      infoQueuesObject.push(`
+        local info_queue_${i} = G.P_CENTERS["${value}"]
+        if info_queue_${i} then
+            info_queue[#info_queue + 1] = info_queue_${i}
+        else
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Object, Did you misspell it or put a wrong prefix?")
+        end`
+      )
+    } else if (value.startsWith("stake_")) {
+      infoQueuesObject.push(`
+        local info_queue_${i} = G.P_STAKES["${value}"]
+        if info_queue_${i} then
+            info_queue[#info_queue + 1] = info_queue_${i}
+        else
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Stake, Did you misspell it?")
+        end`
+      )
+    } else {
+      infoQueuesObject.push(`
+        local info_queue_${i} = G.P_SEALS["${value}"]
+        if info_queue_${i} then
+            info_queue[#info_queue + 1] = info_queue_${i}
+        else
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Object, Did you misspell it or put a wrong prefix?")
+        end`
+      )
+    }
+  })
 
   return `loc_vars = function(self, info_queue, card)
+        ${infoQueuesObject.join("")}
         ${hasReturn ? locVarsReturn : `return ${locVarsReturn}`}
     end`;
 };

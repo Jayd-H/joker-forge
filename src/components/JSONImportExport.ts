@@ -130,6 +130,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
+    info_queues: joker.info_queues || [],
   };
 };
 
