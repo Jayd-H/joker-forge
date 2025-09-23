@@ -814,7 +814,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-23/3 ml-2 z-50"
+                      className="absolute left-full top-1/2 transform -translate-y-22/3 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -836,7 +836,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-75 ml-2 z-50"
+                      className="absolute left-full top-79 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
                         {dropdownResourceMisc.map((item) => {
