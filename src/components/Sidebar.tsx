@@ -652,7 +652,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-10/1 ml-2 z-50"
+                      className="absolute left-full top-1/2 transform -translate-y-49/5 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -732,7 +732,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-26/3 ml-2 z-50"
+                      className="absolute left-full top-1/2 transform -translate-y-43/5 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
