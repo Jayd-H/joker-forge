@@ -71,6 +71,16 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   },  
 ];
 
+const generateDefaultCheckbox = (
+  count: number
+) => {
+  const returnList = []
+  for (let i = 0; i < count; i++){
+    returnList.push(false)
+  }
+  return returnList
+}
+
 export const EFFECT_TYPES: EffectTypeDefinition[] = [
   {
     id: "add_chips",
@@ -1889,8 +1899,20 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Suit" },
           { value: "specific", label: "Specific Suit" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "random",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        default: generateDefaultCheckbox(SUITS.length),
+        showWhen: {
+          parameter: "change_type",
+          values: ["pool"],
+        }
       },
       {
         id: "specific_suit",
@@ -1959,8 +1981,20 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Rank" },
           { value: "specific", label: "Specific Rank" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "random",
+      },
+      {
+        id: "rank_pool",
+        type: "checkbox",
+        label: "Possible Ranks",
+        checkboxOptions: [...RANKS],
+        default: generateDefaultCheckbox(RANKS.length),
+        showWhen: {
+          parameter: "change_type",
+          values: ["pool"],
+        }
       },
       {
         id: "specific_rank",
@@ -1994,11 +2028,23 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Change Type",
         options: [
           { value: "random", label: "Random Poker Hand" },
+          { value: "pool", label: "Random from Pool" },
           { value: "specific", label: "Specific Poker Hand" },
           { value: "most_played", label: "Most Played Hand" },
           { value: "least_played", label: "Least Played Hand" },
         ],
         default: "random",
+      },
+      {
+        id: "pokerhand_pool",
+        type: "checkbox",
+        label: "Possible PokerHands",
+        checkboxOptions: [...POKER_HANDS],
+        default: generateDefaultCheckbox(POKER_HANDS.length),
+        showWhen: {
+          parameter: "change_type",
+          values: ["pool"],
+        }
       },
       {
         id: "specific_pokerhand",
