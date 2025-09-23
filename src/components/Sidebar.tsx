@@ -638,7 +638,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   onMouseLeave={() => setHoveredItem(null)}
                   className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                 >
-                  <ClipboardDocumentListIcon className="h-4 w-4" />
+                  <ClipboardDocumentListIcon className="h-5 w-5" />
                 </motion.button>
 
                 <AnimatePresence>
@@ -718,7 +718,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   onMouseLeave={() => setHoveredItem(null)}
                   className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                 >
-                  <BuildingStorefrontIcon className="h-4 w-4" />
+                  <BuildingStorefrontIcon className="h-5 w-5" />
                 </motion.button>
 
                 <AnimatePresence>
@@ -800,7 +800,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   onMouseLeave={() => setHoveredItem(null)}
                   className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                 >
-                  <NumberedListIcon className="h-4 w-4" />
+                  <NumberedListIcon className="h-5 w-5" />
                 </motion.button>
 
                 <AnimatePresence>
