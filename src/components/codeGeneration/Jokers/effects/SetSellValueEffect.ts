@@ -49,7 +49,7 @@ export const generateSetSellValueReturn = (
         targetJokerLogic += `target_card = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
         break;
       case "self":
-        targetJokerLogic += `target_card = G.jokers.cards[my_post]`;
+        targetJokerLogic += `target_card = G.jokers.cards[my_pos]`;
         break;
       case "first":
         targetJokerLogic += `target_card = G.jokers.cards[1]`;
@@ -58,9 +58,8 @@ export const generateSetSellValueReturn = (
         targetJokerLogic += `target_card = G.jokers.cards[#G.jokers]`;
         break
       case "random":
-        targetJokerLogic += `chosenTarget = pseudorandom(3456543, 1, #G.jokers.cards) or nil
-        target_card = G.jokers.cards[chosenTarget]
-        end`;
+        targetJokerLogic += `chosenTarget = pseudorandom(${effect.id.substring(0,8)}, 1, #G.jokers.cards) or nil
+        target_card = G.jokers.cards[chosenTarget]`;
         break;
     }
     sellValueCode += `${targetJokerLogic}`
