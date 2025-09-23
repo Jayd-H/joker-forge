@@ -674,7 +674,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-50 ml-2 z-50"
+                      className="absolute left-full top-53 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
                         {dropdownResourceCardModification.map((item) => {
