@@ -310,7 +310,7 @@ function AppContent() {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const statusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const clearStatusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const donationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // const donationTimerRef = useRef<NodeJS.Timeout | null>(null);
   const prevDataRef = useRef<{
     modMetadata: ModMetadata;
     jokers: JokerData[];
@@ -845,9 +845,9 @@ function AppContent() {
       if (clearStatusTimeoutRef.current) {
         clearTimeout(clearStatusTimeoutRef.current);
       }
-      if (donationTimerRef.current) {
+      /*if (donationTimerRef.current) {
         clearTimeout(donationTimerRef.current);
-      }
+      }*/
     };
   }, []);
 
