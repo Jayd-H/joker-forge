@@ -1089,7 +1089,7 @@ const Inspector: React.FC<InspectorProps> = ({
             params: {
               ...selectedEffect.params,
               [paramKey]: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
-            },
+            }
           });
           onGameVariableApplied();
         }
@@ -1511,8 +1511,18 @@ const Inspector: React.FC<InspectorProps> = ({
     if (!effectType) return null;
 
     const paramsToRender = effectType.params.filter((param) => {
+      if (param.type == "checkbox") {
+        let index = 0
+        param.checkboxOptions?.map(box => {
+          const checklist = selectedEffect.params[param.id] as Array<boolean>
+          if (checklist) {
+          box.checked = !checklist[index] ? false : true
+          index += 1
+        }})
+      }
       if (!hasShowWhen(param)) return true;
       const { parameter, values } = param.showWhen;
+
       const parentValue = selectedEffect.params[parameter];
       return values.includes(parentValue as string);
     });
@@ -1633,10 +1643,6 @@ const Inspector: React.FC<InspectorProps> = ({
                     onUpdateEffect(selectedRule.id, selectedEffect.id, {
                       params: newParams,
                     });
-                  console.log(`new params`)
-                  console.log(newParams)
-                  console.log(selectedEffect.params)
-                  console.log(value)
                 }}
                   parentValues={selectedEffect.params}
                   availableVariables={availableVariables}

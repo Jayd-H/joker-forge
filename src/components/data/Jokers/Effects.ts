@@ -71,16 +71,6 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   },  
 ];
 
-const generateDefaultCheckbox = (
-  count: number
-) => {
-  const returnList = []
-  for (let i = 0; i < count; i++){
-    returnList.push(false)
-  }
-  return returnList
-}
-
 export const EFFECT_TYPES: EffectTypeDefinition[] = [
   {
     id: "add_chips",
@@ -1908,7 +1898,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "checkbox",
         label: "Possible Suits",
         checkboxOptions: [...SUITS],
-        default: generateDefaultCheckbox(SUITS.length),
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
@@ -1990,7 +1979,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "checkbox",
         label: "Possible Ranks",
         checkboxOptions: [...RANKS],
-        default: generateDefaultCheckbox(RANKS.length),
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
@@ -2040,7 +2028,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "checkbox",
         label: "Possible PokerHands",
         checkboxOptions: [...POKER_HANDS],
-        default: generateDefaultCheckbox(POKER_HANDS.length),
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
