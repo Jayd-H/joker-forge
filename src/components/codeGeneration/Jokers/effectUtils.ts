@@ -96,6 +96,7 @@ import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 import { generateApplyHyperChipsReturn } from "./effects/ApplyHyperChipsEffect";
 import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
+import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 
 
 interface ExtendedEffect extends Effect {
@@ -805,6 +806,8 @@ const generateSingleEffect = (
       return generateFlipJokerReturn(effect);
     case "shuffle_jokers":
       return generateShuffleJokerReturn(effect);
+    case "crash_game":
+      return generateCrashGameReturn(effect);
 
     default:
       return {

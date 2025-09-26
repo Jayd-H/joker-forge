@@ -36,6 +36,7 @@ import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffe
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 
 export interface EffectReturn {
   statement: string;
@@ -438,6 +439,9 @@ const generateSingleEffect = (
           
     case "play_sound":
       return generatePlaySoundReturn(effect, modprefix);
+
+    case "crash_game":
+      return generateCrashGameReturn(effect);
 
     default:
       return {
