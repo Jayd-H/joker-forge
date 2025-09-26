@@ -679,8 +679,7 @@ const getRandomPlaceholderConsumable = async (): Promise<{
 const isPlaceholderConsumable = (imagePath: string): boolean => {
   return (
     imagePath.includes("/images/placeholderconsumables/") ||
-    imagePath.includes("placeholder-consumable") ||
-    imagePath.startsWith("data:image")
+    imagePath.includes("placeholder-consumable")
   );
 };
 

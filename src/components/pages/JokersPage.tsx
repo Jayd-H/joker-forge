@@ -155,8 +155,7 @@ const getRandomPlaceholderJoker = async (): Promise<{
 const isPlaceholderJoker = (imagePath: string): boolean => {
   return (
     imagePath.includes("/images/placeholderjokers/") ||
-    imagePath.includes("placeholder-joker") ||
-    imagePath.startsWith("data:image")
+    imagePath.includes("placeholder-joker")
   );
 };
 
