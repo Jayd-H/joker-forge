@@ -500,6 +500,7 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Joker" },
           { value: "specific", label: "Specific Joker" },
           { value: "position", label: "By Position" },
+          { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
       },

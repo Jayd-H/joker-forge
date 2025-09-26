@@ -16,6 +16,13 @@ export const generateFlipJokerReturn = (
         joker:flip()
       end
     end`;
+ } else if (selectionMethod === "selected") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+for i = 1, #G.jokers.highlighted do
+        G.jokers.highlighted[i]:flip()
+        break
+      end
+    end`;
  } else if (selectionMethod === "self") {
     jokerFlipCode += `if #G.jokers.cards > 0 then
     for _, joker in ipairs(G.jokers.cards) do
