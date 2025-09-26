@@ -39,6 +39,7 @@ import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateForceGameOverReturn } from "./effects/ForceGameOverEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
 import { generateModifyBlindRequirementReturn } from "./effects/ModifyBlindRequirementEffect";
@@ -462,6 +463,9 @@ const generateSingleEffect = (
       
     case "flip_joker":
             return generateFlipJokerReturn(effect);
+
+    case "crash_game":
+      return generateCrashGameReturn(effect);
 
     default:
       return {

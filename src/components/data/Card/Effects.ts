@@ -1171,6 +1171,14 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+    id: "crash_game",
+    label: "Crash the Game",
+    description: "Crash the Game with a Custom message",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [],
+    category: "Special",
+  },
 ];
 
 export function getCardEffectsForTrigger(

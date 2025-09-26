@@ -2341,6 +2341,14 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Probability",
   },
+  {
+    id: "crash_game",
+    label: "Crash the Game",
+    description: "Crash the Game with a Custom message",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [],
+    category: "Special",
+  },
 ];
 
 export function getEffectTypeById(

@@ -1956,7 +1956,7 @@ const generateLocVarsFunction = (
         if info_queue_${i} then
             info_queue[#info_queue + 1] = info_queue_${i}
         else
-            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid ${objectType}, Did you misspell it?")
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid ${objectType} key, Did you misspell it or forgot a modprefix?")
         end`)
   })
 
