@@ -55,9 +55,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     !selectedSection;
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [card, setcard] = useState(false);
-  const [shop, setshop] = useState(false);
-  const [misc, setmisc] = useState(false);
+  const [card, setCard] = useState(false);
+  const [shop, setShop] = useState(false);
+  const [misc, setMisc] = useState(false);
   const version: string = "v0.6.5";
 
   const handleSectionClick = (section: string) => {
@@ -234,7 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 );
               })}
               <button
-                    onClick={() => setcard(!card)}
+                    onClick={() => setCard(!card)}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                   >
                     <ClipboardDocumentListIcon className="h-5 w-5 flex-shrink-0" />
@@ -288,7 +288,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     )}
                 </AnimatePresence>  
                               <button
-                    onClick={() => setshop(!shop)}
+                    onClick={() => setShop(!shop)}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                   >
                     <BuildingStorefrontIcon className="h-5 w-5 flex-shrink-0" />
@@ -342,7 +342,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     )}
                 </AnimatePresence>  
                               <button
-                    onClick={() => setmisc(!misc)}
+                    onClick={() => setMisc(!misc)}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                   >
                     <NumberedListIcon className="h-5 w-5 flex-shrink-0" />
@@ -630,9 +630,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
-                  onClick={() => { setcard(!card);
-                    setshop(false);
-                    setmisc(false);
+                  onClick={() => { setCard(!card);
+                    setShop(false);
+                    setMisc(false);
                   }}
                   onMouseEnter={() => setHoveredItem("card2")}
                   onMouseLeave={() => setHoveredItem(null)}
@@ -686,7 +686,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                               key={item.id}
                               onClick={() => {
                                 handleSectionClick(item.id);
-                                setcard(false);
+                                setCard(false);
                               }}
                               
                               className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
@@ -710,9 +710,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
-                  onClick={() => { setshop(!shop);
-                    setcard(false);
-                    setmisc(false);
+                  onClick={() => { setShop(!shop);
+                    setCard(false);
+                    setMisc(false);
                   }}
                   onMouseEnter={() => setHoveredItem("shop")}                  
                   onMouseLeave={() => setHoveredItem(null)}
@@ -766,7 +766,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                               key={item.id}
                               onClick={() => {
                                 handleSectionClick(item.id);
-                                setshop(false);
+                                setShop(false);
                               }}
                               
                               className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
@@ -790,9 +790,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
-                  onClick={() => { setmisc(!misc);
-                    setcard(false);
-                    setshop(false);
+                  onClick={() => { setMisc(!misc);
+                    setCard(false);
+                    setShop(false);
                   }}
                   onMouseEnter={() => 
                   setHoveredItem("miscs")
@@ -848,7 +848,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                               key={item.id}
                               onClick={() => {
                                 handleSectionClick(item.id);
-                                setmisc(false);
+                                setMisc(false);
                               }}
                               
                               className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
