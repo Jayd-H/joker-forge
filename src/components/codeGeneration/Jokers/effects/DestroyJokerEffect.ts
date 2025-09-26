@@ -23,7 +23,7 @@ export const generateDestroyJokerReturn = (
     ? jokerKey
     : `j_${jokerKey}`;
 
-  const eternalCheck = bypassEternal ? "" : " and not joker.ability.eternal";
+  const eternalCheck = bypassEternal ? "" : " and not SMODS.is_eternal(joker)";
 
   let jokerSelectionCode = "";
   let destroyCode = "";
@@ -70,7 +70,7 @@ export const generateDestroyJokerReturn = (
                 if my_pos and my_pos > 1 then
                     local joker = G.jokers.cards[my_pos - 1]
                     if ${
-                      bypassEternal ? "true" : "not joker.ability.eternal"
+                      bypassEternal ? "true" : "not SMODS.is_eternal(joker)"
                     } and not joker.getting_sliced then
                         target_joker = joker
                     end
@@ -88,7 +88,7 @@ export const generateDestroyJokerReturn = (
                 if my_pos and my_pos < #G.jokers.cards then
                     local joker = G.jokers.cards[my_pos + 1]
                     if ${
-                      bypassEternal ? "true" : "not joker.ability.eternal"
+                      bypassEternal ? "true" : "not SMODS.is_eternal(joker)"
                     } and not joker.getting_sliced then
                         target_joker = joker
                     end

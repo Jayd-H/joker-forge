@@ -1591,7 +1591,7 @@ const generateLocVarsFunction = (
   modPrefix?: string
 ): string | null => {
   const descriptionHasVariables = joker.description.includes("#");
-  if (!descriptionHasVariables) {
+  if (!descriptionHasVariables && (joker.info_queues || []).length === 0) {
     return null;
   }
 
@@ -1603,7 +1603,7 @@ const generateLocVarsFunction = (
     0
   );
 
-  if (maxVariableIndex === 0) {
+  if (maxVariableIndex === 0 && (joker.info_queues || []).length === 0) {
     return null;
   }
 
@@ -1922,8 +1922,46 @@ const generateLocVarsFunction = (
     )}}}`;
     hasReturn = false;
   }
+  let infoQueuesObject: string[] = [];
+  (joker.info_queues || []).forEach((value, i) => {
+    let objectLocation: string;
+    let objectType = "Object";
+
+    if (value.startsWith("tag_")) {
+      objectLocation = `G.P_TAGS["${value}"]`
+      objectType = "Tag";
+
+    } else if (
+      value.startsWith("j_") || value.startsWith("c_") ||
+      value.startsWith("v_") || value.startsWith("b_") ||
+      value.startsWith("m_") || value.startsWith("e_") ||
+      value.startsWith("p_")
+    ) {
+      objectLocation = `G.P_CENTERS["${value}"]`
+
+    } else if (value.startsWith("stake_")) {
+      objectLocation = `G.P_STAKES["${value}"]`
+      objectType = "Stake";
+
+    } else { // yes i made it default to seals because they have no prefix
+      objectLocation = `G.P_SEALS["${value}"]`
+    }
+    /*
+      this is for understandable errors for the user
+      so instead of not showing the infoqueue it crashes saying which key exactly is wrong
+      after further thought this may be useless but ¯\_(ツ)_/¯
+    */
+    infoQueuesObject.push(`
+        local info_queue_${i} = ${objectLocation}
+        if info_queue_${i} then
+            info_queue[#info_queue + 1] = info_queue_${i}
+        else
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid ${objectType}, Did you misspell it?")
+        end`)
+  })
 
   return `loc_vars = function(self, info_queue, card)
+        ${infoQueuesObject.join("")}
         ${hasReturn ? locVarsReturn : `return ${locVarsReturn}`}
     end`;
 };

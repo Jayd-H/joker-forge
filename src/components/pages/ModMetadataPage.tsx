@@ -616,6 +616,7 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
               <input
                 type="file"
                 accept="image/*"
+                id="change_logo_input"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (file) {
@@ -639,7 +640,7 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
               size="sm"
               onClick={() => {
                 const fileInput = document.querySelector(
-                  'input[type="file"]'
+                  '#change_logo_input'
                 ) as HTMLInputElement | null;
                 if (fileInput) {
                   fileInput.click();
@@ -678,6 +679,7 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
               <input
                 type="file"
                 accept="image/*"
+                id="change_icon_input"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (file) {
@@ -701,7 +703,7 @@ const ModMetadataPage: React.FC<ModMetadataPageProps> = ({
               size="sm"
               onClick={() => {
                 const fileInput = document.querySelector(
-                  'input[type="file"]'
+                  '#change_icon_input'
                 ) as HTMLInputElement | null;
                 if (fileInput) {
                   fileInput.click();
