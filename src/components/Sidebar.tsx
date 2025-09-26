@@ -114,7 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "editions", label: "Editions", icon: SparklesIcon },
   ];
 
-  const dropdownResourceShopandConsuble = [
+  const dropdownResourceShopandConsumables = [
     { id: "consumables", label: "Consumables", icon: CakeIcon },
     { id: "boosters", label: "Booster Packs", icon: GiftIcon },
   ];
@@ -313,7 +313,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       >
                         
                         <div className="pl-4 pt-1 space-y-1">
-                          {dropdownResourceShopandConsuble.map((item, index) => {
+                          {dropdownResourceShopandConsumables.map((item, index) => {
                             const Icon = item.icon;
                             const isActive = selectedSection === item.id;
 
@@ -757,7 +757,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       className="absolute left-full top-65 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
-                        {dropdownResourceShopandConsuble.map((item) => {
+                        {dropdownResourceShopandConsumables.map((item) => {
                           const Icon = item.icon;
                           const isActive = selectedSection === item.id;
 
