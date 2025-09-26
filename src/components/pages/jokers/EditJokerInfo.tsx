@@ -1498,7 +1498,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         Prefixes: Tags - `tag_`; Jokers - `j_`; Consumables - `c_`;
                         Vouchers - `v_`;
                         <br/>
-                        Decks - `b_`; Enhancements - `m_`; Editions - `e_`; Packs - `p_`; Seals - None
+                        Enhancements - `m_`; Editions - `e_`; Packs - `p_`; Seals - None
                       </p>
                     </div>
                   </div>

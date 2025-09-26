@@ -1924,48 +1924,40 @@ const generateLocVarsFunction = (
   }
   let infoQueuesObject: string[] = [];
   (joker.info_queues || []).forEach((value, i) => {
+    /*
+      this is understandable errors for the user
+      so instead of not showing the infoqueue it crashes saying which key exactly is wrong
+      after further thought this may be useless but ¯\_(ツ)_/¯
+    */
+    let objectLocation: string;
+    let objectType = "Object";
+
     if (value.startsWith("tag_")) {
-      infoQueuesObject.push(`
-        local info_queue_${i} = G.P_TAGS["${value}"]
-        if info_queue_${i} then
-            info_queue[#info_queue + 1] = info_queue_${i}
-        else
-            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Tag")
-        end`
-      )
+      objectLocation = `G.P_TAGS["${value}"]`
+      objectType = "Tag";
+
     } else if (
       value.startsWith("j_") || value.startsWith("c_") ||
       value.startsWith("v_") || value.startsWith("b_") ||
       value.startsWith("m_") || value.startsWith("e_") ||
       value.startsWith("p_")
     ) {
-      infoQueuesObject.push(`
-        local info_queue_${i} = G.P_CENTERS["${value}"]
-        if info_queue_${i} then
-            info_queue[#info_queue + 1] = info_queue_${i}
-        else
-            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Object, Did you misspell it or put a wrong prefix?")
-        end`
-      )
+      objectLocation = `G.P_CENTERS["${value}"]`
+
     } else if (value.startsWith("stake_")) {
-      infoQueuesObject.push(`
-        local info_queue_${i} = G.P_STAKES["${value}"]
-        if info_queue_${i} then
-            info_queue[#info_queue + 1] = info_queue_${i}
-        else
-            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Stake, Did you misspell it?")
-        end`
-      )
-    } else {
-      infoQueuesObject.push(`
-        local info_queue_${i} = G.P_SEALS["${value}"]
-        if info_queue_${i} then
-            info_queue[#info_queue + 1] = info_queue_${i}
-        else
-            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid Object, Did you misspell it or put a wrong prefix?")
-        end`
-      )
+      objectLocation = `G.P_STAKES["${value}"]`
+      objectType = "Stake";
+
+    } else { // yes i made it default to seals because they have no prefix
+      objectLocation = `G.P_SEALS["${value}"]`
     }
+    infoQueuesObject.push(`
+        local info_queue_${i} = ${objectLocation}
+        if info_queue_${i} then
+            info_queue[#info_queue + 1] = info_queue_${i}
+        else
+            error("JOKERFORGE: Invalid key in infoQueues. \\"${value}\\" isn't a valid ${objectType}, Did you misspell it?")
+        end`)
   })
 
   return `loc_vars = function(self, info_queue, card)
