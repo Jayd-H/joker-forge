@@ -425,7 +425,7 @@ const generateMainLuaCode = (
     px = 34,
     py = 34,
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 `;
   }
@@ -437,7 +437,7 @@ const generateMainLuaCode = (
     py = 216,
     prefix_config = { key = false },
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 
 `;
@@ -450,7 +450,7 @@ const generateMainLuaCode = (
     px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 `;
   }
@@ -462,7 +462,7 @@ const generateMainLuaCode = (
     px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 `;
   }
@@ -474,7 +474,7 @@ const generateMainLuaCode = (
     px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 `;
   }
@@ -486,7 +486,7 @@ const generateMainLuaCode = (
     px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 `;
   }
@@ -498,7 +498,7 @@ const generateMainLuaCode = (
     px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
-}):register()
+})
 
 `;
   }

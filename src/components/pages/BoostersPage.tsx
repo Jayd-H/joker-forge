@@ -580,8 +580,7 @@ const getRandomPlaceholderBooster = async (): Promise<{
 const isPlaceholderBooster = (imagePath: string): boolean => {
   return (
     imagePath.includes("/images/placeholderboosters/") ||
-    imagePath.includes("placeholder-booster") ||
-    imagePath.startsWith("data:image")
+    imagePath.includes("placeholder-booster")
   );
 };
 

@@ -132,6 +132,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     pools: joker.pools || [],
     orderValue: joker.orderValue || 1,
     objectType: "joker",
+    info_queues: joker.info_queues || [],
   };
 };
 

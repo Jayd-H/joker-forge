@@ -8,9 +8,20 @@ import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeem
 import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateConsumableCountConditionCode } from "./conditions/ConsumableCountCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
+import { generateBlindTypeConditionCode } from "./conditions/BlindTypeCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
 import { generateDrawnHandConditionCode } from "./conditions/DrawnHandCondition";
 import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
+import { generateCheckBlindRequirementsConditionCode } from "./conditions/BlindRequirementsCondition";
+import { generateBlindNameConditionCode } from "./conditions/BlindNameCondition";
+import { generateDeckCountConditionCode } from "./conditions/DeckCountCondition";
+import { generateSpecificJokerConditionCode } from "./conditions/SpecificJokerCondition";
+import { generateDeckSizeConditionCode } from "./conditions/DeckSizeCondition";
+import { generateJokerFlippedConditionCode } from "./conditions/JokerFlippedCondition";
+import {
+  generateJokerStickerConditionCode,
+} from "./conditions/JokerStickerCondition";
+import { generateJokerCountConditionCode } from "./conditions/JokerCountCondition";
 import { generateJokerSelectedConditionCode } from "./conditions/JokerSelected";
 
 export const generateConditionChain = (rule: Rule): string => {
@@ -114,18 +125,45 @@ const generateSingleConditionCode = (
 
     case "voucher_redeemed":
       return generateVoucherRedeemedConditionCode([singleConditionRule]);
+      
+    case "blind_type":
+      return generateBlindTypeConditionCode([singleConditionRule]);
 
+    case "specific_joker":
+      return generateSpecificJokerConditionCode([singleConditionRule]);
+
+    case "joker_count":
+      return generateJokerCountConditionCode([singleConditionRule]);
+      
     case "in_blind":
       return generateInBlindConditionCode([singleConditionRule]);
 
     case "drawn_hand":
       return generateDrawnHandConditionCode([singleConditionRule]);
 
+    case "deck_size":
+      return generateDeckSizeConditionCode([singleConditionRule]);
+
+    case "check_blind_requirements":
+      return generateCheckBlindRequirementsConditionCode([singleConditionRule]);
+
     case "consumable_count":
       return generateConsumableCountConditionCode([singleConditionRule]);
+      
+    case "blind_name":
+      return generateBlindNameConditionCode([singleConditionRule]);
+
+    case "joker_sticker":
+      return generateJokerStickerConditionCode([singleConditionRule]);
+
+    case "joker_flipped":
+      return generateJokerFlippedConditionCode();
     
     case "check_flag":
       return generateCheckFlagConditionCode([singleConditionRule]);
+
+    case "deck_count":
+      return generateDeckCountConditionCode([singleConditionRule]);
 
     case "system_condition":
       return generateSystemConditionCode([singleConditionRule]);

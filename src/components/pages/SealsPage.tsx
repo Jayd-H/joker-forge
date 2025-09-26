@@ -155,8 +155,7 @@ const getRandomPlaceholderSeal = async (): Promise<{
 const isPlaceholderSeal = (imagePath: string): boolean => {
   return (
     imagePath.includes("/images/placeholderseals/") ||
-    imagePath.includes("placeholder-seal") ||
-    imagePath.startsWith("data:image")
+    imagePath.includes("placeholder-seal")
   );
 };
 

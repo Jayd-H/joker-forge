@@ -27,6 +27,7 @@ import { generateApplyXChipsReturn } from "./effects/ApplyXChipsEffect";
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateApplyExpMultReturn } from "./effects/ApplyExpMultEffect";
 import { generateApplyExpChipsReturn } from "./effects/ApplyExpChipsEffect";
+import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateShowMessageReturn } from "./effects/ShowMessageEffect";
 import { generateSetDollarsReturn } from "./effects/SetDollarsEffect";
 import {
@@ -96,6 +97,7 @@ import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 import { generateApplyHyperChipsReturn } from "./effects/ApplyHyperChipsEffect";
 import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
+import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 
 
 interface ExtendedEffect extends Effect {
@@ -718,6 +720,8 @@ const generateSingleEffect = (
       return generateDestroyConsumableReturn(effect, triggerType);
     case "copy_consumable":
       return generateCopyConsumableReturn(effect, triggerType);
+    case "Win_blind":
+      return generateWinBlindReturn(effect);
     case "create_joker":
       return generateCreateJokerReturn(effect, triggerType, modprefix);
     case "copy_joker":
@@ -806,6 +810,8 @@ const generateSingleEffect = (
       return generateFlipJokerReturn(effect);
     case "shuffle_jokers":
       return generateShuffleJokerReturn(effect);
+    case "crash_game":
+      return generateCrashGameReturn(effect);
 
     default:
       return {

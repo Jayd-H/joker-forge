@@ -157,8 +157,7 @@ const getRandomPlaceholderEnhancement = async (): Promise<{
 const isPlaceholderEnhancement = (imagePath: string): boolean => {
   return (
     imagePath.includes("/images/placeholderenhancements/") ||
-    imagePath.includes("placeholder-enhancement") ||
-    imagePath.startsWith("data:image")
+    imagePath.includes("placeholder-enhancement")
   );
 };
 

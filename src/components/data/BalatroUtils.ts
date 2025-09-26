@@ -139,6 +139,7 @@ export interface JokerData extends GameObjectData {
   scale_w?: number;
   scale_h?: number;
   pools?: string[];
+  info_queues?: string[];
 }
 
 export interface RarityData {

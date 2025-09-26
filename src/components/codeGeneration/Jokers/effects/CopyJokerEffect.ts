@@ -41,6 +41,20 @@ export const generateCopyJokerReturn = (
                         break
                     end
                 end`;
+  } else if (selectionMethod === "selected") {
+    jokerSelectionCode = `
+        local _first_materialize = nil
+        local self_card = G.jokers.highlighted[1]
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            local copied_joker = copy_card(self_card, set_edition, nil, nil, false)
+            copied_joker:start_materialize(nil, _first_materialize)
+            self_card:add_to_deck()
+            G.jokers:emplace(copied_joker)
+            _first_materialize = true
+                         return true
+                    end
+                }))`;
   } else if (selectionMethod === "position") {
     if (position === "first") {
       jokerSelectionCode = `

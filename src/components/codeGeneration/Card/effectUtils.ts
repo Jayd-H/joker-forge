@@ -30,6 +30,7 @@ import { generateAddHyperMultReturn } from "./effects/AddHyperMultEffect";
 import { generateChangeRankVariableReturn } from "./effects/ChangeRankVariableEffect";
 import { generateChangeSuitVariableReturn } from "./effects/ChangeSuitVariableEffect";
 import { generateChangePokerHandVariableReturn } from "./effects/ChangePokerHandVariableEffect";
+import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 
 export interface ConfigExtraVariable {
   name: string;
@@ -152,6 +153,9 @@ const generateSingleEffect = (
 
     case "edit_playing_card":
       return generateEditPlayingCardReturn(effect, trigger);
+
+    case "crash_game":
+      return generateCrashGameReturn(effect);
 
     default:
       return {

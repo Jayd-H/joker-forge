@@ -23,7 +23,7 @@ export const generateDestroyJokerReturn = (
     ? jokerKey
     : `j_${jokerKey}`;
 
-  const eternalCheck = bypassEternal ? "" : " and not joker.ability.eternal";
+  const eternalCheck = bypassEternal ? "" : " and not SMODS.is_eternal(joker)";
 
   let jokerSelectionCode = "";
   let destroyCode = "";
@@ -37,7 +37,19 @@ export const generateDestroyJokerReturn = (
                         break
                     end
                 end`;
-  } else if (selectionMethod === "position") {
+} else if (selectionMethod === "selected") {
+      jokerSelectionCode = `
+                local self_card = G.jokers.highlighted[1]
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            card:juice_up(0.3, 0.5)
+            return true end }))
+            if joker ~= card${eternalCheck} and not joker.getting_sliced then
+        self_card:start_dissolve()
+                        break
+                    end
+                end`;
+    } else if (selectionMethod === "position") {
     if (position === "first") {
       jokerSelectionCode = `
                 local target_joker = nil
@@ -70,7 +82,7 @@ export const generateDestroyJokerReturn = (
                 if my_pos and my_pos > 1 then
                     local joker = G.jokers.cards[my_pos - 1]
                     if ${
-                      bypassEternal ? "true" : "not joker.ability.eternal"
+                      bypassEternal ? "true" : "not SMODS.is_eternal(joker)"
                     } and not joker.getting_sliced then
                         target_joker = joker
                     end
@@ -88,7 +100,7 @@ export const generateDestroyJokerReturn = (
                 if my_pos and my_pos < #G.jokers.cards then
                     local joker = G.jokers.cards[my_pos + 1]
                     if ${
-                      bypassEternal ? "true" : "not joker.ability.eternal"
+                      bypassEternal ? "true" : "not SMODS.is_eternal(joker)"
                     } and not joker.getting_sliced then
                         target_joker = joker
                     end

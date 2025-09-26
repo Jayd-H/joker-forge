@@ -1017,6 +1017,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Joker" },
           { value: "specific", label: "Specific Joker" },
           { value: "position", label: "By Position" },
+          { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
       },
@@ -1099,6 +1100,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Joker" },
           { value: "specific", label: "Specific Joker" },
           { value: "position", label: "By Position" },
+          { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
       },
@@ -1153,6 +1155,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "sell_value_multiplier",
         type: "number",
         label: "Sell Value Multiplier (0 = disabled)",
+        
         default: 0,
       },
       {
@@ -1204,6 +1207,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Joker" },
           { value: "self", label: "This Joker" },
           { value: "position", label: "By Position" },
+          { value: "selected", label: "By Selection" },
         ],
         default: "all",
       },
@@ -2165,6 +2169,14 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     params: [],
     category: "Special",
   },
+        {
+      id: "Win_blind",
+      label: "Win Current Blind",
+      description: "Forces to Win the current Blind",
+      applicableTriggers: [...GENERIC_TRIGGERS],
+      params: [],
+      category: "Special",
+    },
   {
     id: "juice_up_joker",
     label: "Juice Up The Joker",
@@ -2374,6 +2386,14 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       },
     ],
     category: "Probability",
+  },
+  {
+    id: "crash_game",
+    label: "Crash the Game",
+    description: "Crash the Game with a Custom message",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [],
+    category: "Special",
   },
 ];
 
