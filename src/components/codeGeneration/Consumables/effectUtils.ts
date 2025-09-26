@@ -27,6 +27,8 @@ import { generateFoolEffectReturn } from "./effects/FoolEffect";
 import { generateDrawCardsReturn } from "./effects/DrawCardsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
 import { generateEditDiscardSizeReturn } from "./effects/EditDiscardSizeEffect";
+import { generateDisableBossBlindReturn } from "./effects/DisableBossBlindEffect";
+import { generateShuffleJokerReturn } from "./effects/ShuffleJokersEffect";
 import { generateEditBoosterSlotsReturn } from "./effects/EditBoosterSlotsEffect";
 import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect";
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
@@ -35,7 +37,11 @@ import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
+import { generateForceGameOverReturn } from "./effects/ForceGameOverEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
+import { generateWinBlindReturn } from "./effects/WinBlindEffect";
+import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
+import { generateModifyBlindRequirementReturn } from "./effects/ModifyBlindRequirementEffect";
 
 export interface EffectReturn {
   statement: string;
@@ -355,6 +361,12 @@ const generateSingleEffect = (
     case "edit_hand_size":
       return generateEditHandSizeReturn(effect);
 
+      case "force_game_over":
+            return generateForceGameOverReturn(effect);
+
+                case "Win_blind":
+                  return generateWinBlindReturn(effect);
+
     case "draw_cards":
       return generateDrawCardsReturn(effect);
 
@@ -385,8 +397,17 @@ const generateSingleEffect = (
     case "set_ante":
       return generateSetAnteReturn(effect);
 
+          case "modify_blind_requirement":
+            return generateModifyBlindRequirementReturn(effect);
+
+    case "disable_boss_blind":
+      return generateDisableBossBlindReturn(effect);
+
     case "add_cards_to_hand":
       return generateAddCardsToHandReturn(effect);
+
+    case "shuffle_jokers":
+      return generateShuffleJokerReturn(effect);
 
     case "copy_joker":
       return generateCopyRandomJokerReturn(effect);
@@ -438,6 +459,9 @@ const generateSingleEffect = (
           
     case "play_sound":
       return generatePlaySoundReturn(effect, modprefix);
+      
+    case "flip_joker":
+            return generateFlipJokerReturn(effect);
 
     default:
       return {

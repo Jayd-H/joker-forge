@@ -21,6 +21,9 @@ import {
   KeyIcon,
   SparklesIcon,
   MusicalNoteIcon,
+  ClipboardDocumentListIcon,
+  BuildingStorefrontIcon,
+  NumberedListIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -52,8 +55,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     !selectedSection;
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const version: string = "v0.6.5";
+  const [card, setCard] = useState(false);
+  const [shop, setShop] = useState(false);
+  const [misc, setMisc] = useState(false);
+  const version: string = "v0.6.6";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
@@ -101,11 +106,20 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: "overview", label: "Overview", icon: HomeIcon },
     { id: "metadata", label: "Mod Metadata", icon: DocumentTextIcon },
     { id: "jokers", label: "Jokers", icon: PuzzlePieceIcon },
-    { id: "consumables", label: "Consumables", icon: CakeIcon },
-    { id: "boosters", label: "Booster Packs", icon: GiftIcon },
+  ];
+
+  const dropdownResourceCardModification = [
     { id: "enhancements", label: "Enhancements", icon: StarIcon },
     { id: "seals", label: "Seals", icon: CpuChipIcon },
     { id: "editions", label: "Editions", icon: SparklesIcon },
+  ];
+
+  const dropdownResourceShopandConsumables = [
+    { id: "consumables", label: "Consumables", icon: CakeIcon },
+    { id: "boosters", label: "Booster Packs", icon: GiftIcon },
+  ];
+
+  const dropdownResourceMisc = [
     { id: "sounds", label: "Sounds", icon: MusicalNoteIcon },
   ];
 
@@ -216,8 +230,171 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <Icon className="h-5 w-5 flex-shrink-0" />
                     <span className="text-sm tracking-wide">{item.label}</span>
                   </motion.button>
+                  
                 );
               })}
+              <button
+                    onClick={() => setCard(!card)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                  >
+                    <ClipboardDocumentListIcon className="h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm tracking-wide">Card Modification</span>
+                    <motion.div
+                      animate={{ rotate: card ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="ml-auto"
+                    >
+                      <ChevronDownIcon className="h-5 w-5" />
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence>
+                    {card && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        
+                        <div className="pl-4 pt-1 space-y-1">
+                          {dropdownResourceCardModification.map((item, index) => {
+                            const Icon = item.icon;
+                            const isActive = selectedSection === item.id;
+
+                            return (
+                              <motion.button
+                                key={item.id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.05 * index }}
+                                onClick={() => handleSectionClick(item.id)}
+                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
+                                  isActive
+                                    ? "bg-mint-light text-black-dark font-medium"
+                                    : "text-white-darker hover:text-white-light hover:bg-black-light"
+                                }`}
+                              >
+                                <Icon className="h-4 w-4 flex-shrink-0" />
+                                <span className="text-sm tracking-wide">
+                                  {item.label}
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                </AnimatePresence>  
+                              <button
+                    onClick={() => setShop(!shop)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                  >
+                    <BuildingStorefrontIcon className="h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm tracking-wide">Shop & Consumables</span>
+                    <motion.div
+                      animate={{ rotate: shop ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="ml-auto"
+                    >
+                      <ChevronDownIcon className="h-5 w-5" />
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence>
+                    {shop && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        
+                        <div className="pl-4 pt-1 space-y-1">
+                          {dropdownResourceShopandConsumables.map((item, index) => {
+                            const Icon = item.icon;
+                            const isActive = selectedSection === item.id;
+
+                            return (
+                              <motion.button
+                                key={item.id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.05 * index }}
+                                onClick={() => handleSectionClick(item.id)}
+                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
+                                  isActive
+                                    ? "bg-mint-light text-black-dark font-medium"
+                                    : "text-white-darker hover:text-white-light hover:bg-black-light"
+                                }`}
+                              >
+                                <Icon className="h-4 w-4 flex-shrink-0" />
+                                <span className="text-sm tracking-wide">
+                                  {item.label}
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                </AnimatePresence>  
+                              <button
+                    onClick={() => setMisc(!misc)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                  >
+                    <NumberedListIcon className="h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm tracking-wide">Miscs</span>
+                    <motion.div
+                      animate={{ rotate: misc ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="ml-auto"
+                    >
+                      <ChevronDownIcon className="h-5 w-5" />
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence>
+                    {misc && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        
+                        <div className="pl-4 pt-1 space-y-1">
+                          {dropdownResourceMisc.map((item, index) => {
+                            const Icon = item.icon;
+                            const isActive = selectedSection === item.id;
+
+                            return (
+                              <motion.button
+                                key={item.id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.05 * index }}
+                                onClick={() => handleSectionClick(item.id)}
+                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
+                                  isActive
+                                    ? "bg-mint-light text-black-dark font-medium"
+                                    : "text-white-darker hover:text-white-light hover:bg-black-light"
+                                }`}
+                              >
+                                <Icon className="h-4 w-4 flex-shrink-0" />
+                                <span className="text-sm tracking-wide">
+                                  {item.label}
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                </AnimatePresence>  
             </div>
 
             <div className="mt-8">
@@ -291,6 +468,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden"
                       >
+                        
                         <div className="pl-4 pt-1 space-y-1">
                           {dropdownResourceItems.map((item, index) => {
                             const Icon = item.icon;
@@ -324,6 +502,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
           </nav>
+
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -389,7 +568,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       }}
       className="w-20 rounded-xl m-4 flex flex-col font-lexend relative"
     >
-      <div className="p-4 flex justify-center">
+
+ <div className="p-4 flex justify-center">
         <div className="w-6 h-6 rounded-lg flex items-center justify-center">
           <CodeBracketIcon className="h-5 w-5 text-white" />
         </div>
@@ -442,10 +622,255 @@ const Sidebar: React.FC<SidebarProps> = ({
                       </motion.div>
                     )}
                   </AnimatePresence>
+                  
                 </div>
               );
             })}
+              <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={() => { setCard(!card);
+                    setShop(false);
+                    setMisc(false);
+                  }}
+                  onMouseEnter={() => setHoveredItem("card2")}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                >
+                  <ClipboardDocumentListIcon className="h-5 w-5" />
+                </motion.button>
+
+                <AnimatePresence>
+                  {hoveredItem === "card2" && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-1/2 transform -translate-y-49/5 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
+                        <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
+                          Card Modification
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {card && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, x: -10 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: -10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-53 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
+                        {dropdownResourceCardModification.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = selectedSection === item.id;
+
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                handleSectionClick(item.id);
+                                setCard(false);
+                              }}
+                              
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
+                                isActive
+                                  ? "bg-mint-light text-black-dark font-medium"
+                                  : "text-white-light hover:bg-black-light hover:text-white-lighter"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4 flex-shrink-0" />
+                              <span className="text-sm tracking-wide">
+                                {item.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                              <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={() => { setShop(!shop);
+                    setCard(false);
+                    setMisc(false);
+                  }}
+                  onMouseEnter={() => setHoveredItem("shop")}                  
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                >
+                  <BuildingStorefrontIcon className="h-5 w-5" />
+                </motion.button>
+
+                <AnimatePresence>
+                  {hoveredItem === "shop" && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-1/2 transform -translate-y-43/5 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
+                        <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
+                          Shop & Consumables
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {shop && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, x: -10 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: -10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-65 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
+                        {dropdownResourceShopandConsumables.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = selectedSection === item.id;
+
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                handleSectionClick(item.id);
+                                setShop(false);
+                              }}
+                              
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
+                                isActive
+                                  ? "bg-mint-light text-black-dark font-medium"
+                                  : "text-white-light hover:bg-black-light hover:text-white-lighter"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4 flex-shrink-0" />
+                              <span className="text-sm tracking-wide">
+                                {item.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                              <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={() => { setMisc(!misc);
+                    setCard(false);
+                    setShop(false);
+                  }}
+                  onMouseEnter={() => 
+                  setHoveredItem("miscs")
+                }
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                >
+                  <NumberedListIcon className="h-5 w-5" />
+                </motion.button>
+
+                <AnimatePresence>
+                  {hoveredItem === "miscs" && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-1/2 transform -translate-y-22/3 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
+                        <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
+                          Miscs
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {misc && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, x: -10 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: -10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-79 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
+                        {dropdownResourceMisc.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = selectedSection === item.id;
+
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                handleSectionClick(item.id);
+                                setMisc(false);
+                              }}
+                              
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
+                                isActive
+                                  ? "bg-mint-light text-black-dark font-medium"
+                                  : "text-white-light hover:bg-black-light hover:text-white-lighter"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4 flex-shrink-0" />
+                              <span className="text-sm tracking-wide">
+                                {item.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
           </div>
+
+
 
           <div className="mt-6">
             <div className="space-y-1">
@@ -477,7 +902,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                         }`}
                       />
                     </motion.button>
-
                     <AnimatePresence>
                       {isHovered && (
                         <motion.div
@@ -502,6 +926,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                 );
               })}
+
+
+
 
               <div className="relative">
                 <motion.button
@@ -563,6 +990,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                 handleSectionClick(item.id);
                                 setIsDropdownOpen(false);
                               }}
+                              
                               className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
                                 isActive
                                   ? "bg-mint-light text-black-dark font-medium"
@@ -584,6 +1012,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
         </nav>
+
+
 
         <div className="px-3 pb-4 border-t border-black-light pt-4 mt-4">
           <div className="space-y-2">
