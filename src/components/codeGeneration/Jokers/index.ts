@@ -1924,11 +1924,6 @@ const generateLocVarsFunction = (
   }
   let infoQueuesObject: string[] = [];
   (joker.info_queues || []).forEach((value, i) => {
-    /*
-      this is understandable errors for the user
-      so instead of not showing the infoqueue it crashes saying which key exactly is wrong
-      after further thought this may be useless but ¯\_(ツ)_/¯
-    */
     let objectLocation: string;
     let objectType = "Object";
 
@@ -1951,6 +1946,11 @@ const generateLocVarsFunction = (
     } else { // yes i made it default to seals because they have no prefix
       objectLocation = `G.P_SEALS["${value}"]`
     }
+    /*
+      this is for understandable errors for the user
+      so instead of not showing the infoqueue it crashes saying which key exactly is wrong
+      after further thought this may be useless but ¯\_(ツ)_/¯
+    */
     infoQueuesObject.push(`
         local info_queue_${i} = ${objectLocation}
         if info_queue_${i} then
