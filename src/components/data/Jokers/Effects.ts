@@ -89,6 +89,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 10,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -109,6 +110,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Multiplier",
         default: 1.5,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -129,6 +131,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Exponential Chips Value",
         default: 1.1,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -156,6 +159,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Hyper Chips Value",
         default: 1.1,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -177,6 +181,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 5,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -197,6 +202,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Multiplier",
         default: 1.5,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -217,6 +223,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Exponential Mult Value",
         default: 1.1,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -244,6 +251,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Hyper Mult Value",
         default: 1.1,
+        variableTypes: ["number"],
       },
     ],
     category: "Scoring",
@@ -270,6 +278,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 5,
+        variableTypes: ["number"],
       },
     ],
     category: "Economy",
@@ -285,6 +294,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Debt Amount",
         default: 20,
+        variableTypes: ["number"],
       },
     ],
     category: "Economy",
@@ -305,6 +315,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Repetitions",
         default: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Card Effects",
@@ -327,6 +338,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Hand" },
         ],
         default: "current",
+        variableTypes: ["pokerhand"],
       },
       {
         id: "specific_hand",
@@ -344,6 +356,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Levels",
         default: 1,
         min: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -381,6 +394,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -418,6 +432,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -444,6 +459,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -469,6 +485,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -496,6 +513,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -523,6 +541,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -535,9 +554,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     params: [
       {
         id: "variable_name",
-        type: "text",
+        type: "select",
         label: "Variable Name",
         default: "var1",
+        variableTypes: ["number"],
       },
       {
         id: "operation",
@@ -569,7 +589,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
             "set", "increment", "decrement",
             "multiply", "divide", "power"
           ]
-        }
+        },
+        variableTypes: ["number"],
       },
     ],
     category: "Variables",
@@ -586,6 +607,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "random", label: "Random" }, ...SUITS],
         default: "random",
+        variableTypes: ["suit"],
       },
       {
         id: "rank",
@@ -593,6 +615,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "random", label: "Random" }, ...RANKS],
         default: "random",
+        variableTypes: ["rank"],
       },
       {
         id: "enhancement",
@@ -669,6 +692,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "any", label: "Any Rank" }, ...RANKS],
         default: "any",
+        variableTypes: ["rank"],
       },
       {
         id: "card_suit",
@@ -676,6 +700,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "any", label: "Any Suit" }, ...SUITS],
         default: "any",
+        variableTypes: ["suit"],
       },
     ],
     category: "Card Effects",
@@ -714,6 +739,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
         ],
         default: "none",
+        variableTypes: ["rank"],
       },
       {
         id: "new_suit",
@@ -725,6 +751,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           ...SUITS,
         ],
         default: "none",
+        variableTypes: ["suit"],
       },
       {
         id: "new_enhancement",
@@ -777,6 +804,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "random", label: "Random" }, ...SUITS],
         default: "random",
+        variableTypes: ["suit"],
       },
       {
         id: "rank",
@@ -784,6 +812,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "random", label: "Random" }, ...RANKS],
         default: "random",
+        variableTypes: ["rank"],
       },
       {
         id: "enhancement",
@@ -860,6 +889,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "any", label: "Any Rank" }, ...RANKS],
         default: "any",
+        variableTypes: ["rank"],
       },
       {
         id: "card_suit",
@@ -867,6 +897,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "any", label: "Any Suit" }, ...SUITS],
         default: "any",
+        variableTypes: ["suit"],
       },
     ],
     category: "Card Effects",
@@ -920,6 +951,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Sell Value Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Economy",
@@ -1520,6 +1552,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Card Effects",
@@ -1653,6 +1686,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 2,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -1668,6 +1702,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Number of Free Rerolls",
         default: 1,
+        variableTypes: ["number"],
       },
     ],
     category: "Economy",
@@ -1695,6 +1730,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -1722,6 +1758,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -1749,6 +1786,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Game Rules",
@@ -1795,6 +1833,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Discount Amount",
         default: 1,
+        variableTypes: ["number"],
         showWhen: {
           parameter: "discount_method",
           values: ["flat_reduction", "percentage_reduction"],
@@ -1825,6 +1864,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 1,
+        variableTypes: ["number"]
       },
     ],
     category: "Game Rules",
@@ -1872,6 +1912,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Suit Variable",
         options: [], // Will be populated dynamically with suit variables
+        variableTypes: ["suit"]
       },
       {
         id: "change_type",
@@ -1942,6 +1983,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Rank Variable",
         options: [], // Will be populated dynamically with rank variables
+        variableTypes: ["rank"]
       },
       {
         id: "change_type",
@@ -1978,6 +2020,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Poker Hand Variable",
         options: [], // Will be populated dynamically with poker hand variables
+        variableTypes: ["pokerhand"]
       },
       {
         id: "change_type",
@@ -1996,6 +2039,43 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Poker Hand",
         options: [...POKER_HANDS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Variables",
+  },
+  {
+    id: "change_joker_varaible",
+    label: "Change Joker Variable",
+    description:
+      "Change the value of a joker variable to a specific Joker key",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Joker Variable",
+        options: [], // Will be populated dynamically with joker variables
+        variableTypes: ["joker"]
+      },
+      {
+        id: "change_type",
+        type: "select",
+        label: "Change Type",
+        options: [
+          { value: "random", label: "Random Joker" }, // Add some settings like rarity
+          { value: "specific", label: "Specific Joker" },
+        ],
+        default: "specific",
+      },
+      {
+        id: "specific_joker",
+        type: "text",
+        label: "Joker",
+        options: [],
         showWhen: {
           parameter: "change_type",
           values: ["specific"],
@@ -2040,6 +2120,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "face_cards", label: "Face Cards (J, Q, K)" },
         ],
         default: "J",
+        variableTypes: ["rank"],
       },
     ],
     category: "Card Effects",
@@ -2056,6 +2137,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "First Suit",
         options: [...SUITS],
         default: "Spades",
+        variableTypes: ["suit"],
       },
       {
         id: "suit_2",
@@ -2063,6 +2145,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Second Suit",
         options: [...SUITS],
         default: "Hearts",
+        variableTypes: ["suit"],
       },
     ],
     category: "Card Effects",
@@ -2300,6 +2383,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Amount",
         default: 1,
         min: 0,
+        variableTypes: ["number"],
       },
     ],
     category: "Probability",
@@ -2337,6 +2421,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "number",
         label: "Amount",
         default: 2,
+        variableTypes: ["number"],
       },
     ],
     category: "Probability",

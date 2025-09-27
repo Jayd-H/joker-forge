@@ -255,6 +255,18 @@ export const getSuitVariables = (
   return (item.userVariables || []).filter((v) => v.type === "suit");
 };
 
+export const getNumberVariables = (
+  item: JokerData | EnhancementData
+): UserVariable[] => {
+  return (item.userVariables || []).filter((v) => v.type === "number");
+};
+
+export const getJokerVariables = (
+  item: JokerData | EnhancementData
+): UserVariable[] => {
+  return (item.userVariables || []).filter((v) => v.type === "joker");
+};
+
 export const getRankVariables = (
   item: JokerData | EnhancementData
 ): UserVariable[] => {
@@ -315,6 +327,32 @@ export const addSuitVariablesToOptions = (
   const variableOptions = suitVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (suit variable)`,
+  }));
+
+  return [...baseOptions, ...variableOptions];
+};
+
+export const addNumberVariablesToOptions = (
+  baseOptions: Array<{ value: string; label: string }>,
+  item: JokerData | EnhancementData
+): Array<{ value: string; label: string }> => {
+  const numberVariables = getNumberVariables(item);
+  const variableOptions = numberVariables.map((variable) => ({
+    value: variable.name,
+    label: `${variable.name} (number variable)`,
+  }));
+
+  return [...baseOptions, ...variableOptions];
+};
+
+export const addJokerVariablesToOptions = (
+  baseOptions: Array<{ value: string; label: string }>,
+  item: JokerData | EnhancementData
+): Array<{ value: string; label: string }> => {
+  const jokerVariables = getJokerVariables(item);
+  const variableOptions = jokerVariables.map((variable) => ({
+    value: variable.name,
+    label: `${variable.name} (joker variable)`,
   }));
 
   return [...baseOptions, ...variableOptions];
