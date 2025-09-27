@@ -1925,7 +1925,7 @@ const generateLocVarsFunction = (
     )}}}`;
     hasReturn = false;
   }
-  let infoQueuesObject: string[] = [];
+  const infoQueuesObject: string[] = [];
   (joker.info_queues || []).forEach((value, i) => {
     let objectLocation: string;
     let objectType = "Object";
