@@ -10,7 +10,14 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
   const rank = effect.params?.rank || "random";
   const count = effect.params?.count || 1;
   const customMessage = effect.customMessage;
-
+  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
+  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolRanks = [
+    "'A'","'2'","'3'","'4'","'5'",
+    "'6'","'7'","'8'","'9'","'10'",
+    "'J'","'Q'","'K'"
+  ]
   const countCode = generateGameVariableCode(count);
 
   let addCardsCode = `
@@ -42,6 +49,16 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
   } else if (rank === "random") {
     addCardsCode += `
                         local _rank = pseudorandom_element(SMODS.Ranks, 'add_random_rank').card_key`;
+  } else if (rank === "pool") {
+   const rankPool = []
+      for (let i = 0; i < rankPoolActive.length; i++){
+        if (rankPoolActive[i] == true){
+          rankPool.push(rankPoolRanks[i])
+        }}
+
+    addCardsCode += `
+                        local rank_pool = {${rankPool}}
+                        local _rank = pseudorandom_element(rank_pool, 'random_rank')`
   } else {
     addCardsCode += `
                         local _rank = '${rank}'`;
@@ -51,6 +68,17 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
   if (suit === "random") {
     addCardsCode += `
                         local _suit = pseudorandom_element(SMODS.Suits, 'add_random_suit').key`;
+  } else if (suit === "pool") {
+    
+    const suitPool = []
+      for (let i = 0; i < suitPoolActive.length; i++){
+        if (suitPoolActive[i] == true){
+          suitPool.push(suitPoolSuits[i])
+        }}
+
+    addCardsCode += `
+                        local suit_pool = {${suitPool}}
+                        local _suit = pseudorandom_element(suit_pool, 'random_suit')`
   } else if (suit !== "none") {
     addCardsCode += `
                         local _suit = '${suit}'`;

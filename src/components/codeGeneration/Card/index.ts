@@ -396,8 +396,8 @@ const generateLocVarsFunction = (
         itemType === "enhancement" ? `m_${modPrefix}` : modPrefix;
       const itemKey =
         itemType === "enhancement"
-          ? (item as EnhancementData).enhancementKey
-          : (item as SealData).sealKey;
+          ? (item as EnhancementData).objectKey
+          : (item as SealData).objectKey;
 
       return `loc_vars = function(self, info_queue, card)
         local numerator, denominator = SMODS.get_probability_vars(card, 1, ${abilityPath}.odds, '${keyPrefix}_${itemKey}')
@@ -438,7 +438,7 @@ export const generateEnhancementsCode = (
 
   const enhancementsWithKeys = enhancements.map((enhancement) => ({
     ...enhancement,
-    enhancementKey: enhancement.enhancementKey || slugify(enhancement.name),
+    objectKey: enhancement.objectKey || slugify(enhancement.name),
   }));
 
   const enhancementsCode: Record<string, string> = {};
@@ -451,7 +451,7 @@ export const generateEnhancementsCode = (
       currentPosition,
       modPrefix
     );
-    enhancementsCode[`${enhancement.enhancementKey}.lua`] = result.code;
+    enhancementsCode[`${enhancement.objectKey}.lua`] = result.code;
     currentPosition = result.nextPosition;
   });
 
@@ -466,7 +466,7 @@ export const generateSealsCode = (
 
   const sealsWithKeys = seals.map((seal) => ({
     ...seal,
-    sealKey: seal.sealKey || slugify(seal.name),
+    objectKey: seal.objectKey || slugify(seal.name),
   }));
 
   const sealsCode: Record<string, string> = {};
@@ -479,7 +479,7 @@ export const generateSealsCode = (
       currentPosition,
       modPrefix
     );
-    sealsCode[`${seal.sealKey}.lua`] = result.code;
+    sealsCode[`${seal.objectKey}.lua`] = result.code;
     currentPosition = result.nextPosition;
   });
 
@@ -494,14 +494,14 @@ export const generateEditionsCode = (
 
   const editionsWithKeys = editions.map((edition) => ({
     ...edition,
-    editionKey: edition.editionKey || slugify(edition.name),
+    objectKey: edition.objectKey || slugify(edition.name),
   }));
 
   const editionsCode: Record<string, string> = {};
 
   editionsWithKeys.forEach((edition) => {
     const result = generateSingleEditionCode(edition, modPrefix);
-    editionsCode[`${edition.editionKey}.lua`] = result.code;
+    editionsCode[`${edition.objectKey}.lua`] = result.code;
   });
 
   return { editionsCode };
@@ -778,7 +778,7 @@ const generateSingleEnhancementCode = (
   const nextPosition = currentPosition + 1;
 
   let enhancementCode = `SMODS.Enhancement {
-    key = '${enhancement.enhancementKey}',
+    key = '${enhancement.objectKey}',
     pos = { x = ${col}, y = ${row} },`;
 
   const hasBaseConfig = Object.keys(baseConfig).length > 0;
@@ -886,7 +886,7 @@ const generateSingleEnhancementCode = (
     modPrefix,
     hasNonDiscardDestroy,
     hasRetrigger,
-    enhancement.enhancementKey,
+    enhancement.objectKey,
     "enhancement"
   );
   if (calculateCode) {
@@ -985,7 +985,7 @@ const generateSingleSealCode = (
   const nextPosition = currentPosition + 1;
 
   let sealCode = `SMODS.Seal {
-    key = '${seal.sealKey}',
+    key = '${seal.objectKey}',
     pos = { x = ${col}, y = ${row} },`;
 
   const hasExtraConfig = configItems.length > 0;
@@ -1050,7 +1050,7 @@ const generateSingleSealCode = (
     modPrefix,
     hasNonDiscardDestroy,
     hasRetrigger,
-    seal.sealKey,
+    seal.objectKey,
     "seal"
   );
   if (calculateCode) {
@@ -1072,7 +1072,7 @@ export const generateSingleEditionCode = (
   edition: EditionData,
   modPrefix: string = ""
 ): { code: string; nextPosition: number } => {
-  const editionKey = edition.editionKey || slugify(edition.name);
+  const objectKey = edition.objectKey || slugify(edition.name);
   const activeRules = edition.rules || [];
 
   const configItems: string[] = [];
@@ -1121,7 +1121,7 @@ export const generateSingleEditionCode = (
       randomGroups,
       loopGroups,
       modPrefix,
-      editionKey,
+      objectKey,
       rule.trigger,
       "edition"
     );
@@ -1154,7 +1154,7 @@ export const generateSingleEditionCode = (
   }
 
   editionCode += `SMODS.Edition {
-    key = '${editionKey}',`;
+    key = '${objectKey}',`;
 
   if (typeof edition.shader === "string" && edition.shader !== "false") {
     const isVanilla = isVanillaShader(edition.shader);
@@ -1175,11 +1175,13 @@ export const generateSingleEditionCode = (
     shader = false,`;
   }
 
-  const hasConfig = configItems.length > 0;
-  if (hasConfig) {
+  const hasExtraConfig = configItems.length > 0;
+    if (hasExtraConfig) {
     editionCode += `
     config = {
-        ${configItems.join(",\n        ")}
+        extra = {
+            ${configItems.join(",\n            ")}
+        }
     },`;
   }
 
@@ -1267,7 +1269,7 @@ export const generateSingleEditionCode = (
     modPrefix,
     false,
     false,
-    editionKey,
+    objectKey,
     "edition"
   );
   if (calculateCode) {
@@ -1287,9 +1289,9 @@ export const generateSingleEditionCode = (
 
 export const exportSingleEnhancement = (enhancement: EnhancementData): void => {
   try {
-    const enhancementWithKey = enhancement.enhancementKey
+    const enhancementWithKey = enhancement.objectKey
       ? enhancement
-      : { ...enhancement, enhancementKey: slugify(enhancement.name) };
+      : { ...enhancement, objectKey: slugify(enhancement.name) };
 
     const result = generateSingleEnhancementCode(
       enhancementWithKey,
@@ -1303,7 +1305,7 @@ export const exportSingleEnhancement = (enhancement: EnhancementData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${enhancementWithKey.enhancementKey}.lua`;
+    a.download = `${enhancementWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1316,9 +1318,9 @@ export const exportSingleEnhancement = (enhancement: EnhancementData): void => {
 
 export const exportSingleSeal = (seal: SealData): void => {
   try {
-    const sealWithKey = seal.sealKey
+    const sealWithKey = seal.objectKey
       ? seal
-      : { ...seal, sealKey: slugify(seal.name) };
+      : { ...seal, objectKey: slugify(seal.name) };
 
     const result = generateSingleSealCode(sealWithKey, "Seal", 0, "modprefix");
     const sealCode = result.code;
@@ -1327,7 +1329,7 @@ export const exportSingleSeal = (seal: SealData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${sealWithKey.sealKey}.lua`;
+    a.download = `${sealWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1340,9 +1342,9 @@ export const exportSingleSeal = (seal: SealData): void => {
 
 export const exportSingleEdition = (edition: EditionData): void => {
   try {
-    const editionWithKey = edition.editionKey
+    const editionWithKey = edition.objectKey
       ? edition
-      : { ...edition, editionKey: slugify(edition.name) };
+      : { ...edition, objectKey: slugify(edition.name) };
 
     const result = generateSingleEditionCode(editionWithKey);
     const editionCode = result.code;
@@ -1351,7 +1353,7 @@ export const exportSingleEdition = (edition: EditionData): void => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${editionWithKey.editionKey}.lua`;
+    a.download = `${editionWithKey.objectKey}.lua`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

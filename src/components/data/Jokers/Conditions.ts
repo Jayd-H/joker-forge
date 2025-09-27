@@ -594,7 +594,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
-      "card_destroyed",
+      "card_destroyed",      
     ],
     params: [
       {
@@ -1106,7 +1106,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "check_flag",
     label: "Check Flag",
     description: "Check if a specific flag from your mod is true",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS,],
     params: [
       {
         id: "flag_name",
@@ -1147,7 +1147,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "consumable_count",
     label: "Consumable Count",
     description: "Check how many of a consumable a player has",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability",],
     params: [
       {
         id: "consumable_type",

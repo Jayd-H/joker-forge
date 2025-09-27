@@ -8,7 +8,15 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
   const suit = effect.params?.suit || "none";
   const rank = effect.params?.rank || "none";
   const customMessage = effect.customMessage;
-
+  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
+  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolRanks = [
+    "'A'","'2'","'3'","'4'","'5'",
+    "'6'","'7'","'8'","'9'","'10'",
+    "'J'","'Q'","'K'"
+  ]
+  
   const hasModifications = [enhancement, seal, edition, suit, rank].some(
     (param) => param !== "none"
   );
@@ -46,26 +54,18 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
             end
             delay(0.2)`;
 
-  if (enhancement !== "none") {
+    if (enhancement !== "none") {
+        editCardsCode += `
+            for i = 1, #G.hand.highlighted do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
     if (enhancement === "remove") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        G.hand.highlighted[i]:set_ability(G.P_CENTERS.c_base)
-                        return true
-                    end
-                }))
-            end`;
+        editCardsCode += `
+                        G.hand.highlighted[i]:set_ability(G.P_CENTERS.c_base)`
     } else if (enhancement === "random") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
+        editCardsCode += `
                         local cen_pool = {}
                         for _, enhancement_center in pairs(G.P_CENTER_POOLS["Enhanced"]) do
                             if enhancement_center.key ~= 'm_stone' then
@@ -73,66 +73,43 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
                             end
                         end
                         local enhancement = pseudorandom_element(cen_pool, 'random_enhance')
-                        G.hand.highlighted[i]:set_ability(enhancement)
-                        return true
-                    end
-                }))
-            end`;
+                        G.hand.highlighted[i]:set_ability(enhancement)`
     } else {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        G.hand.highlighted[i]:set_ability(G.P_CENTERS['${enhancement}'])
+        editCardsCode += `
+                        G.hand.highlighted[i]:set_ability(G.P_CENTERS['${enhancement}'])`
+    } 
+
+    editCardsCode += `            
                         return true
                     end
                 }))
-            end`;
-    }
+            end`
   }
 
   if (seal !== "none") {
+    editCardsCode += `
+            for i = 1, #G.hand.highlighted do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
     if (seal === "remove") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        G.hand.highlighted[i]:set_seal(nil, nil, true)
-                        return true
-                    end
-                }))
-            end`;
+        editCardsCode += `
+                        G.hand.highlighted[i]:set_seal(nil, nil, true)`
     } else if (seal === "random") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
+        editCardsCode += `
                         local seal_pool = {'Gold', 'Red', 'Blue', 'Purple'}
                         local random_seal = pseudorandom_element(seal_pool, 'random_seal')
-                        G.hand.highlighted[i]:set_seal(random_seal, nil, true)
-                        return true
-                    end
-                }))
-            end`;
+                        G.hand.highlighted[i]:set_seal(random_seal, nil, true)`
     } else {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        G.hand.highlighted[i]:set_seal("${seal}", nil, true)
+        editCardsCode += `
+                        G.hand.highlighted[i]:set_seal("${seal}", nil, true)`
+    }
+    editCardsCode += `
                         return true
                     end
                 }))
-            end`;
-    }
+            end`
   }
 
   if (edition !== "none") {
@@ -143,106 +120,103 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
       e_negative: "negative",
     };
 
+    editCardsCode += `
+            for i = 1, #G.hand.highlighted do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
+
     if (edition === "remove") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        G.hand.highlighted[i]:set_edition(nil, true)
-                        return true
-                    end
-                }))
-            end`;
+        editCardsCode += `
+                        G.hand.highlighted[i]:set_edition(nil, true)`
     } else if (edition === "random") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
+        editCardsCode += `
                         local edition = poll_edition('random_edition', nil, true, true, 
                             { 'e_polychrome', 'e_holo', 'e_foil' })
-                        G.hand.highlighted[i]:set_edition(edition, true)
-                        return true
-                    end
-                }))
-            end`;
+                        G.hand.highlighted[i]:set_edition(edition, true)`
     } else {
       const editionLua =
         editionMap[edition as keyof typeof editionMap] || "foil";
-      editCardsCode += `
+        editCardsCode += `
+                        G.hand.highlighted[i]:set_edition({ ${editionLua} = true }, true)`
+    }
+    
+    editCardsCode += `
+                        return true
+                    end
+                }))
+            end`
+    }
+
+
+    if (suit !== "none") {
+        editCardsCode += `
             for i = 1, #G.hand.highlighted do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
-                    func = function()
-                        G.hand.highlighted[i]:set_edition({ ${editionLua} = true }, true)
+                    func = function()`
+        if (suit === "random") {
+        editCardsCode += `
+                    local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
+                    assert(SMODS.change_base(G.hand.highlighted[i], _suit.key))`
+        } else if (suit === "pool") {
+
+            const suitPool = []
+            for (let i = 0; i < suitPoolActive.length; i++){
+                if (suitPoolActive[i] == true){
+                    suitPool.push(suitPoolSuits[i])
+            }}
+
+            editCardsCode += `
+                    local suit_pool = {${suitPool}}
+                    local _suit = pseudorandom_element(suit_pool, 'random_suit')
+                    assert(SMODS.change_base(G.hand.highlighted[i], _suit))`
+        } else {
+            editCardsCode += `
+                    assert(SMODS.change_base(G.hand.highlighted[i], '${suit}'))`
+        }
+        editCardsCode += `
                         return true
                     end
                 }))
             end`;
     }
-  }
 
-  if (suit !== "none") {
-    if (suit === "random") {
-      editCardsCode += `
+    if (rank !== "none") {
+        editCardsCode += `
             for i = 1, #G.hand.highlighted do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
-                    func = function()
-                        local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
-                        assert(SMODS.change_base(G.hand.highlighted[i], _suit.key))
-                        return true
-                    end
-                }))
-            end`;
-    } else {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        assert(SMODS.change_base(G.hand.highlighted[i], '${suit}'))
-                        return true
-                    end
-                }))
-            end`;
-    }
-  }
-
-  if (rank !== "none") {
-    if (rank === "random") {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
+                    func = function()`
+        if (rank === "random") {
+            editCardsCode +=`
                         local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
-                        assert(SMODS.change_base(G.hand.highlighted[i], nil, _rank.key))
+                        assert(SMODS.change_base(G.hand.highlighted[i], nil, _rank.key))`
+        } else if (rank === "pool") {
+                const rankPool = []
+                for (let i = 0; i < rankPoolActive.length; i++){
+                    if (rankPoolActive[i] == true){
+                        rankPool.push(rankPoolRanks[i])
+                }}
+
+                editCardsCode += `
+                        local rank_pool = {${rankPool}}
+                        local _rank = pseudorandom_element(rank_pool, 'random_rank')
+                        assert(SMODS.change_base(G.hand.highlighted[i], _rank))`
+        } else {
+        editCardsCode += `
+                        assert(SMODS.change_base(G.hand.highlighted[i], nil, '${rank}'))`
+        }
+
+        editCardsCode += `
                         return true
                     end
                 }))
-            end`;
-    } else {
-      editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        assert(SMODS.change_base(G.hand.highlighted[i], nil, '${rank}'))
-                        return true
-                    end
-                }))
-            end`;
+            end`
     }
-  }
 
   editCardsCode += `
             for i = 1, #G.hand.highlighted do

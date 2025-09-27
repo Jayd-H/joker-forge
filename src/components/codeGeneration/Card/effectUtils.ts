@@ -106,7 +106,7 @@ const generateSingleEffect = (
       return generateLevelUpHandReturn(effect, 0, itemType);
 
     case "create_consumable":
-      return generateCreateConsumableReturn(effect, trigger || "");
+      return generateCreateConsumableReturn(effect);
 
     case "copy_consumable":
       return generateCopyConsumableReturn(effect, trigger || "");

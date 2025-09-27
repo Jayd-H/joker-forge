@@ -16,14 +16,20 @@ import {
   StarIcon,
   EyeSlashIcon as HiddenIcon,
 } from "@heroicons/react/24/solid";
-
+import { PhotoIcon } from "@heroicons/react/24/outline";
 import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
 import { EnhancementData, slugify } from "../../data/BalatroUtils";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface EnhancementCardProps {
   enhancement: EnhancementData;
+  enhancements: EnhancementData[];
   onEditInfo: () => void;
   onEditRules: () => void;
   onDelete: () => void;
@@ -87,6 +93,7 @@ const PropertyIcon: React.FC<{
 
 const EnhancementCard: React.FC<EnhancementCardProps> = ({
   enhancement,
+  enhancements,
   onEditInfo,
   onEditRules,
   onDuplicate,
@@ -99,18 +106,23 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
 
   const [editingName, setEditingName] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [editingId, setEditingId] = useState(false);
+
   const [tempName, setTempName] = useState(enhancement.name);
   const [tempDescription, setTempDescription] = useState(
     enhancement.description
   );
+  const [tempId, setTempId] = useState(enhancement.orderValue);
 
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
+  const [hoveredId, setHoveredId] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
   const [imageLoadError, setImageLoadError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const [nameValidationError, setNameValidationError] = useState<string>("");
 
@@ -126,7 +138,8 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
       return;
     }
 
-    onQuickUpdate({ name: tempName, enhancementKey: slugify(tempName) });
+    const tempKey = getObjectName(enhancement, enhancements, tempName);
+    onQuickUpdate({ name: tempName, objectKey: slugify(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };
@@ -134,6 +147,24 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
   const handleDescriptionSave = () => {
     onQuickUpdate({ description: tempDescription });
     setEditingDescription(false);
+  };
+
+  const handleIdSave = () => {
+    const priorValue = enhancement.orderValue;
+    const newValue = tempId;
+    onQuickUpdate({
+      orderValue: Math.max(1, Math.min(tempId, enhancements.length)),
+    });
+    setEditingId(false);
+    const direction = priorValue > newValue ? "decrease" : "increase";
+    enhancements = updateGameObjectIds(
+      enhancement,
+      enhancements,
+      "change",
+      newValue,
+      direction,
+      priorValue
+    );
   };
 
   const handleButtonHover = (buttonType: string) => {
@@ -170,6 +201,24 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
+  };
+
+  const handleIdHover = () => {
+    if (tooltipDelayTimeout) {
+      clearTimeout(tooltipDelayTimeout);
+    }
+    const timeout = setTimeout(() => {
+      setHoveredId(true);
+    }, 500);
+    setTooltipDelayTimeout(timeout);
+  };
+
+  const handleIdLeave = () => {
+    if (tooltipDelayTimeout) {
+      clearTimeout(tooltipDelayTimeout);
+      setTooltipDelayTimeout(null);
+    }
+    setHoveredId(false);
   };
 
   const isUnlocked = enhancement.unlocked !== false;
@@ -251,7 +300,7 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
   return (
     <div className="flex gap-4 relative">
       <div className="relative flex flex-col items-center">
-        <div className="w-42 z-10 relative">
+        <div className="w-42 z-10 relative group">
           <div className="relative">
             {enhancement.imagePreview && !imageLoadError ? (
               <div className="relative w-full h-full">
@@ -262,14 +311,14 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
                   draggable="false"
                   onError={() => setImageLoadError(true)}
                 />
-                { !enhancement.replace_base_card &&
-                <img
-                  src="/images/aces/HC_A_hearts.png"
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                  draggable="false"
-                />
-                }
+                {!enhancement.replace_base_card && (
+                  <img
+                    src="/images/aces/HC_A_hearts.png"
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                    draggable="false"
+                  />
+                )}
               </div>
             ) : (
               <div className="relative w-full h-full">
@@ -296,6 +345,25 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
                 />
               </div>
             )}
+            <button
+              type="button"
+              onClick={() => setShowPlaceholderPicker(true)}
+              className={[
+                "absolute top-2 right-2 z-20",
+                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                "bg-black/70 backdrop-blur",
+                "flex items-center justify-center",
+                "opacity-0 -translate-y-1 pointer-events-none",
+                "transition-all duration-200 ease-out",
+                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                "hover:bg-black/80 active:scale-95",
+                "cursor-pointer",
+              ].join(" ")}
+              title="Choose placeholder"
+            >
+              <PhotoIcon className="h-4 w-4 text-white-darker" />
+            </button>
           </div>
         </div>
 
@@ -307,6 +375,41 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
+        <Tooltip content="Edit Joker Id" show={hoveredId}>
+          <div
+            className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
+            onMouseEnter={handleIdHover}
+            onMouseLeave={handleIdLeave}
+          >
+            {editingId ? (
+              <input
+                type="number"
+                value={tempId}
+                onChange={(e) => setTempId(parseInt(e.target.value))}
+                onBlur={handleIdSave}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleIdSave();
+                  if (e.key === "Escape") {
+                    setTempId(enhancement.orderValue);
+                    setEditingId(false);
+                  }
+                }}
+                className="bg-black-dark text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                autoFocus
+              />
+            ) : (
+              <span
+                className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                onClick={() => {
+                  setTempId(enhancement.orderValue);
+                  setEditingId(true);
+                }}
+              >
+                Id:{enhancement.orderValue}
+              </span>
+            )}
+          </div>
+        </Tooltip>
         <Tooltip content="Delete Enhancement" show={hoveredTrash}>
           <div
             className="absolute -top-3 -right-3 bg-black-dark border-2 border-balatro-red rounded-lg p-1 hover:bg-balatro-redshadow cursor-pointer transition-colors flex items-center justify-center z-10"
@@ -323,7 +426,15 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
                   confirmText: "Delete Forever",
                   cancelText: "Keep It",
                   confirmVariant: "danger",
-                  onConfirm: () => onDelete(),
+                  onConfirm: () => {
+                    onDelete();
+                    enhancements = updateGameObjectIds(
+                      enhancement,
+                      enhancements,
+                      "remove",
+                      enhancement.orderValue
+                    );
+                  },
                 });
               }}
               className="w-full h-full flex items-center cursor-pointer justify-center"
@@ -497,6 +608,19 @@ const EnhancementCard: React.FC<EnhancementCardProps> = ({
           </div>
         </div>
       </div>
+      <PlaceholderPickerModal
+        type="enhancement"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          onQuickUpdate({
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          });
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };

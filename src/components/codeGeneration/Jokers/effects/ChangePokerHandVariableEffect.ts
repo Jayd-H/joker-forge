@@ -9,6 +9,13 @@ export const generateChangePokerHandVariableReturn = (
   const changeType = (effect.params.change_type as string) || "random";
   const specificPokerHand =
     (effect.params.specific_pokerhand as string) || "High Card";
+  const pokerHandPoolActive = (effect.params.pokerhand_pool as Array<boolean>) || [];
+  const pokerHandPoolPokerHands = [
+    "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
+    "'Straight'","'Flush'","'Full House'","'Four of a Kind'",
+    "'Straight Flush'","'Five of a Kind'","'Flush Five'","'Flush House'"
+  ]
+
 
   let statement = "";
 
@@ -49,6 +56,16 @@ export const generateChangePokerHandVariableReturn = (
                 if ${variableName}_hand then
                     G.GAME.current_round.${variableName}_hand = ${variableName}_hand
                 end
+                __PRE_RETURN_CODE_END__`;
+  } else if (changeType === "pool") {
+    const pokerhand_pool = []
+    for (let i = 0; i < pokerHandPoolActive.length; i++){
+      if (pokerHandPoolActive[i] == true){
+      pokerhand_pool.push(pokerHandPoolPokerHands[i])
+    }}
+    statement = `__PRE_RETURN_CODE__
+                local pokerhand_pool = {${pokerhand_pool}}
+                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(pokerhand_pool, pseudoseed('randomPokerhand'))
                 __PRE_RETURN_CODE_END__`;
   } else {
     statement = `__PRE_RETURN_CODE__

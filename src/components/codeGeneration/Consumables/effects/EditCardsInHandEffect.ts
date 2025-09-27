@@ -10,6 +10,14 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
   const rank = effect.params?.rank || "none";
   const amount = generateGameVariableCode(effect.params?.amount ?? 1);
   const customMessage = effect.customMessage;
+  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
+  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolRanks = [
+    "'A'","'2'","'3'","'4'","'5'",
+    "'6'","'7'","'8'","'9'","'10'",
+    "'J'","'Q'","'K'"
+  ]
 
   // Check if any modifications are actually being made
   const hasModifications = [enhancement, seal, edition, suit, rank].some(
@@ -64,15 +72,16 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             end
             delay(0.2)`;
 
-  // Apply enhancement if specified
-  if (enhancement !== "none") {
-    if (enhancement === "random") {
-      editCardsCode += `
-            for i = 1, #affected_cards do
+    // Apply enhancement if specified
+    if (enhancement !== "none") {
+        editCardsCode += `
+            for i = 1, #G.hand.highlighted do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
-                    func = function()
+                    func = function()`
+        if (enhancement === "random") {
+            editCardsCode += `
                         local cen_pool = {}
                         for _, enhancement_center in pairs(G.P_CENTER_POOLS["Enhanced"]) do
                             if enhancement_center.key ~= 'm_stone' then
@@ -80,55 +89,46 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
                             end
                         end
                         local enhancement = pseudorandom_element(cen_pool, 'random_enhance')
-                        affected_cards[i]:set_ability(enhancement)
-                        return true
-                    end
-                }))
-            end`;
-    } else {
-      editCardsCode += `
+                        affected_cards[i]:set_ability(enhancement)`
+        } else {
+        editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()
-                        affected_cards[i]:set_ability(G.P_CENTERS['${enhancement}'])
+                        affected_cards[i]:set_ability(G.P_CENTERS['${enhancement}'])`
+    }
+    editCardsCode += `
                         return true
                     end
                 }))
-            end`;
+            end`
     }
-  }
 
   // Apply seal if specified
-  if (seal !== "none") {
-    if (seal === "random") {
-      editCardsCode += `
+    if (seal !== "none") {
+        editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
-                    func = function()
+                    func = function()`
+        if (seal === "random") {
+            editCardsCode += `
                         local seal_pool = {'Gold', 'Red', 'Blue', 'Purple'}
                         local random_seal = pseudorandom_element(seal_pool, 'random_seal')
-                        affected_cards[i]:set_seal(random_seal, nil, true)
+                        affected_cards[i]:set_seal(random_seal, nil, true)`
+        } else {
+            editCardsCode += `
+                        affected_cards[i]:set_seal("${seal}", nil, true)`
+        }
+        
+    editCardsCode += `
                         return true
                     end
                 }))
-            end`;
-    } else {
-      editCardsCode += `
-            for i = 1, #affected_cards do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        affected_cards[i]:set_seal("${seal}", nil, true)
-                        return true
-                    end
-                }))
-            end`;
-    }
+            end`
   }
 
   // Apply edition if specified
@@ -172,64 +172,73 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
   }
 
   // Apply suit change if specified
-  if (suit !== "none") {
-    if (suit === "random") {
-      editCardsCode += `
+    if (suit !== "none") {
+        editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
-                    func = function()
+                    func = function()`
+        if (suit === "random") {
+            editCardsCode += `
                         local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
-                        assert(SMODS.change_base(affected_cards[i], _suit.key))
-                        return true
-                    end
-                }))
-            end`;
-    } else {
-      editCardsCode += `
-            for i = 1, #affected_cards do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        assert(SMODS.change_base(affected_cards[i], '${suit}'))
-                        return true
-                    end
-                }))
-            end`;
-    }
-  }
+                        assert(SMODS.change_base(affected_cards[i], _suit.key))`
+        } else if (suit === "pool") {
 
-  // Apply rank change if specified
-  if (rank !== "none") {
-    if (rank === "random") {
-      editCardsCode += `
-            for i = 1, #affected_cards do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
-                        assert(SMODS.change_base(affected_cards[i], nil, _rank.key))
-                        return true
-                    end
-                }))
-            end`;
-    } else {
-      editCardsCode += `
-            for i = 1, #affected_cards do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()
-                        assert(SMODS.change_base(affected_cards[i], nil, '${rank}'))
+            const suitPool = []
+            for (let i = 0; i < suitPoolActive.length; i++){
+                if (suitPoolActive[i] == true){
+                    suitPool.push(suitPoolSuits[i])
+            }}
+
+            editCardsCode += `
+                        local suit_pool = {${suitPool}}
+                        local _suit = pseudorandom_element(suit_pool, 'random_suit')
+                        assert(SMODS.change_base(effected_cards[i], _suit))`
+        } else {
+            editCardsCode += `
+                        assert(SMODS.change_base(affected_cards[i], '${suit}'))`
+        }
+            editCardsCode += `
                         return true
                     end
                 }))
             end`;
     }
-  }
+
+    // Apply rank change if specified
+    if (rank !== "none") {
+        editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
+        if (rank === "random") {
+            editCardsCode += `
+                        local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
+                        assert(SMODS.change_base(affected_cards[i], nil, _rank.key))`
+        } else if (rank === "pool") {
+            const rankPool = []
+            for (let i = 0; i < rankPoolActive.length; i++){
+                if (rankPoolActive[i] == true){
+                    rankPool.push(rankPoolRanks[i])
+            }}
+
+            editCardsCode += `
+                        local rank_pool = {${rankPool}}
+                        local _rank = pseudorandom_element(rank_pool, 'random_rank')
+                        assert(SMODS.change_base(affected_cards[i], nil, _rank))`
+        } else {
+            editCardsCode += `
+                        assert(SMODS.change_base(affected_cards[i], nil, '${rank}'))`
+        }
+        editCardsCode += `
+                        return true
+                    end
+                }))
+            end`;
+    }
 
   // Finish the animation sequence
   editCardsCode += `
