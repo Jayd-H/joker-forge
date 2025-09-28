@@ -44,7 +44,9 @@ export const scanGameObjectIds = function <GameObjectType extends GameObjectData
 
   missingValues.forEach(value=>{
     const objectIndex: number = locateWrongId(data)
-    objectData[objectIndex].orderValue = value
+    if (!isNaN(objectIndex)) {
+      objectData[objectIndex].orderValue = value
+    }
   })
 
   return objectData
