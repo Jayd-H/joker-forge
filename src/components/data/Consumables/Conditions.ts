@@ -99,6 +99,13 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Card Selection",
   },
   {
+    id: "hand_drawn",
+    label: "Hand Drawn",
+    description: "Check if a hand is currently drawn",
+    applicableTriggers: ["consumable_used"],
+    params: [],
+    category: "Game Context",
+  },
       id: "deck_size",
       label: "Deck Size",
       description: "Check the size of the deck",
@@ -283,7 +290,7 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
       ],
       category: "Deck & Jokers",
     },
-  {
+   {
     id: "player_money",
     label: "Player Money",
     description: "Check the player's current money",
@@ -312,7 +319,7 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Player State",
   },
-    {
+  {
     id: "joker_flipped",
     label: "Joker is Flipped",
     description: "Check if the selected joker is flipped (facing back)",
@@ -707,6 +714,33 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+      id: "generic_compare",
+      label: "Generic Compare",
+      description: "Compare two custom values with an operator",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "value1",
+          type: "number",
+          label: "First Value",
+          default: 0,
+        },
+        {
+          id: "operator",
+          type: "select",
+          label: "Operator",
+          options: [...COMPARISON_OPERATORS],
+        },
+        {
+          id: "value2",
+          type: "number",
+          label: "Second Value",
+          default: 0,
+        },
+      ],
+      category: "Special",
+    },
 ];
 
 export function getConsumableConditionsForTrigger(

@@ -8,6 +8,13 @@ export const generateChangeRankVariableReturn = (
   const variableName = (effect.params.variable_name as string) || "rankvar";
   const changeType = (effect.params.change_type as string) || "random";
   const specificRank = (effect.params.specific_rank as string) || "A";
+  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolRanks = [
+    "'A'","'2'","'3'","'4'","'5'",
+    "'6'","'7'","'8'","'9'","'10'",
+    "'J'","'Q'","'K'"
+  ]
+
   let statement = "";
 
   if (changeType === "random") {
@@ -26,6 +33,16 @@ export const generateChangeRankVariableReturn = (
                         end
                     end
                     __PRE_RETURN_CODE_END__`;
+  } else if (changeType === "pool") {
+    const rank_pool = []
+    for (let i = 0; i < rankPoolActive.length; i++){
+      if (rankPoolActive[i] == true){
+      rank_pool.push(rankPoolRanks[i])
+    }}
+    statement = `__PRE_RETURN_CODE__
+                local rank_pool = {${rank_pool}}
+                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(rank_pool, pseudoseed('randomRank'))
+                __PRE_RETURN_CODE_END__`;
   } else {
     const rankId = getRankId(specificRank);
     statement = `__PRE_RETURN_CODE__

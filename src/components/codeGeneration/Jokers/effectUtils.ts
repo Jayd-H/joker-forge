@@ -210,7 +210,7 @@ export function generateEffectReturnStatement(
 
     const processedEffects: EffectReturn[] = [];
     effectReturns.forEach((effect) => {
-      const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+      const { newStatement, preReturnCode } = extractPreReturnCode(
         effect.statement
       );
 
@@ -221,7 +221,7 @@ export function generateEffectReturnStatement(
 
       processedEffects.push({
         ...effect,
-        statement: cleanedStatement,
+        statement: newStatement,
       });
     });
 
@@ -310,7 +310,7 @@ export function generateEffectReturnStatement(
       const processedEffects: EffectReturn[] = [];
 
       effectReturns.forEach((effect) => {
-        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+        const { newStatement, preReturnCode } = extractPreReturnCode(
           effect.statement
         );
 
@@ -322,7 +322,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: cleanedStatement,
+          statement: newStatement,
         });
       });
 
@@ -538,7 +538,7 @@ export function generateEffectReturnStatement(
       const processedEffects: EffectReturn[] = [];
 
       effectReturns.forEach((effect) => {
-        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+        const { newStatement, preReturnCode } = extractPreReturnCode(
           effect.statement
         );
 
@@ -550,7 +550,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: cleanedStatement,
+          statement: newStatement,
         });
       });
 
@@ -661,7 +661,7 @@ export function generateEffectReturnStatement(
           firstEffect,
           triggerType,
           0,
-          modprefix
+          modprefix,
         );
         primaryColour = firstEffectResult.colour || "G.C.WHITE";
       }
@@ -680,8 +680,9 @@ const generateSingleEffect = (
   effect: ExtendedEffect,
   triggerType: string,
   sameTypeCount: number = 0,
-  modprefix: string
+  modprefix: string,
 ): EffectReturn => {
+
   switch (effect.type) {
     case "add_chips":
       return generateAddChipsReturn(effect, sameTypeCount);
@@ -925,7 +926,7 @@ export const processPassiveEffects = (
       rule.effects?.forEach((effect) => {
         let passiveResult: PassiveEffectResult | null = null;
 
-        const jokerKey = joker.jokerKey;
+        const jokerKey = joker.objectKey;
 
         switch (effect.type) {
           case "edit_hand_size":
@@ -1019,7 +1020,7 @@ export const processPassiveEffects = (
 };
 
 function extractPreReturnCode(statement: string): {
-  cleanedStatement: string;
+  newStatement: string;
   preReturnCode?: string;
 } {
   const preReturnStart = "__PRE_RETURN_CODE__";
@@ -1032,18 +1033,18 @@ function extractPreReturnCode(statement: string): {
 
     if (startIndex < endIndex) {
       const preReturnCode = statement.substring(startIndex, endIndex).trim();
-      const cleanedStatement = statement
+      const newStatement = statement
         .replace(
           new RegExp(`${preReturnStart}[\\s\\S]*?${preReturnEnd}`, "g"),
           ""
         )
         .trim();
 
-      return { cleanedStatement, preReturnCode };
+      return { newStatement, preReturnCode };
     }
   }
 
-  return { cleanedStatement: statement };
+  return { newStatement: statement };
 }
 
 function getOrdinalSuffix(num: number): string {
