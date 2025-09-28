@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
+  PuzzlePieceIcon,
   ArrowsUpDownIcon,
   DocumentDuplicateIcon,
   DocumentTextIcon,
@@ -13,7 +14,6 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";
-import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { VoucherData } from "../../data/BalatroUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import RuleBuilder from "../../ruleBuilder/RuleBuilder";
@@ -319,49 +319,34 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
         </div>
 
         <div className="mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative group">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white-darker group-focus-within:text-mint transition-colors" />
-              <input
-                type="text"
-                placeholder="Search vanilla vouchers by name or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-black-darker shadow-2xl border-2 border-black-lighter rounded-lg pl-12 pr-4 py-4 text-white-light tracking-wider placeholder-white-darker focus:outline-none focus:border-mint transition-all duration-200"
-              />
-            </div>
+                  <div className="flex flex-col lg:flex-row gap-4">
+                    <div className="flex-1 relative group">
+                      <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white-darker group-focus-within:text-mint transition-colors" />
+                      <input
+                        type="text"
+                        placeholder="Search vanilla vouchers by name or description..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-black-darker shadow-2xl border-2 border-black-lighter rounded-lg pl-12 pr-4 py-4 text-white-light tracking-wider placeholder-white-darker focus:outline-none focus:border-mint transition-all duration-200"
+                      />
+                    </div>
+        
+                    <div className="flex gap-3">
+                      <div className="relative">
+                        <button
+                          ref={sortButtonRef}
+                          onClick={handleSortMenuToggle}
+                          className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                        >
+                          <ArrowsUpDownIcon className="h-4 w-4" />
+                          <span className="whitespace-nowrap">{currentSortLabel}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="flex gap-3">
-              <div className="relative">
-                <button
-                  ref={sortButtonRef}
-                  onClick={handleSortMenuToggle}
-                  className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                >
-                  <ArrowsUpDownIcon className="h-4 w-4" />
-                  <span className="whitespace-nowrap">{currentSortLabel}</span>
-                </button>
-              </div>
-
-              <div className="relative">
-                <button
-                  ref={filtersButtonRef}
-                  onClick={handleFiltersToggle}
-                  className={`flex items-center gap-2 px-4 py-4 border-2 rounded-lg transition-colors cursor-pointer ${
-                    showFilters
-                      ? "bg-mint-dark text-black-darker border-mint"
-                      : "bg-black-dark text-white-light border-black-lighter hover:border-mint"
-                  }`}
-                >
-                  <FunnelIcon className="h-4 w-4" />
-                  <span>Filters</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <AnimatePresence mode="wait">
+<AnimatePresence mode="wait">
           {loading ? (
             <motion.div
               key="loading"
@@ -380,8 +365,7 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
                 </p>
               </div>
             </motion.div>
-          ) : filteredAndSortedItems.length === 0 &&
-            vanillaVouchers.length > 0 ? (
+          ) : filteredAndSortedItems.length === 0 && vanillaVouchers.length > 0 ? (
             <motion.div
               key="no-results"
               initial={{ opacity: 0, y: 20 }}
@@ -395,18 +379,15 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
                   No Vouchers Found
                 </h3>
                 <p className="text-white-darker text-sm mb-6 leading-relaxed">
-                  No vanilla vouchers match your current search and filter
-                  criteria. Try adjusting your filters or search terms.
+                  No vanilla vouchers match your current search criteria. Try
+                  adjusting your search terms.
                 </p>
                 <Button
                   variant="secondary"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setRarityFilter(null);
-                  }}
+                  onClick={() => setSearchTerm("")}
                   fullWidth
                 >
-                  Clear All Filters
+                  Clear Search
                 </Button>
               </div>
             </motion.div>
@@ -463,7 +444,7 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
             </motion.div>
           )}
         </AnimatePresence>
-
+        
         {showRuleBuilder && currentItemForRules && (
           <RuleBuilder
             isOpen={showRuleBuilder}
@@ -478,88 +459,47 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
       </div>
 
       {showSortMenu &&
-        ReactDOM.createPortal(
-          <div
-            ref={sortMenuRef}
-            className="fixed bg-black-darker border-2 border-black-lighter rounded-xl shadow-xl overflow-hidden"
-            style={{
-              top: `${sortMenuPosition.top}px`,
-              left: `${sortMenuPosition.left}px`,
-              width: `${sortMenuPosition.width}px`,
-              zIndex: 99999,
-            }}
-          >
-            <div className="p-2">
-              <h3 className="text-white-light font-medium text-sm mb-2 px-3 py-1">
-                Sort By
-              </h3>
-              <div className="space-y-1">
-                {sortOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSortBy(option.value);
-                      setShowSortMenu(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
-                      sortBy === option.value
-                        ? "bg-mint/20 border border-mint text-mint"
-                        : "hover:bg-black-lighter text-white-darker hover:text-white-light"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-
-      {showFilters &&
-        ReactDOM.createPortal(
-          <div
-            ref={filtersMenuRef}
-            className="fixed bg-black-darker border-2 border-black-lighter rounded-xl shadow-xl overflow-hidden"
-            style={{
-              top: `${filtersMenuPosition.top}px`,
-              left: `${filtersMenuPosition.left}px`,
-              width: `${filtersMenuPosition.width}px`,
-              zIndex: 99999,
-            }}
-          >
-            <div className="p-3 border-b border-black-lighter">
-              <h3 className="text-white-light font-medium text-sm mb-3">
-                Filter by Rarity
-              </h3>
-              <div className="space-y-1">
-              </div>
-            </div>
-
-            {(searchTerm || rarityFilter !== null) && (
-              <div className="p-3">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSearchTerm("");
-                    setRarityFilter(null);
-                    setShowFilters(false);
+              ReactDOM.createPortal(
+                <div
+                  ref={sortMenuRef}
+                  className="fixed bg-black-darker border-2 border-black-lighter rounded-xl shadow-xl overflow-hidden"
+                  style={{
+                    top: `${sortMenuPosition.top}px`,
+                    left: `${sortMenuPosition.left}px`,
+                    width: `${sortMenuPosition.width}px`,
+                    zIndex: 99999,
                   }}
-                  fullWidth
                 >
-                  Clear All Filters
-                </Button>
-              </div>
-            )}
-          </div>,
-          document.body
-        )}
-    </div>
-  );
-};
+                  <div className="p-2">
+                    <h3 className="text-white-light font-medium text-sm mb-2 px-3 py-1">
+                      Sort By
+                    </h3>
+                    <div className="space-y-1">
+                      {sortOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSortBy(option.value);
+                            setShowSortMenu(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
+                            sortBy === option.value
+                              ? "bg-mint/20 border border-mint text-mint"
+                              : "hover:bg-black-lighter text-white-darker hover:text-white-light"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>,
+                document.body
+              )}
+          </div>
+        );
+      };
 
 interface VanillaVoucherCardProps {
   voucher: VoucherData;
@@ -721,6 +661,13 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
           </div>
         </div>
 
+           <div className="relative z-30">
+          <div className="px-6 py-1 -mt-6 rounded-md bg-black-dark border-2 text-sm tracking-wide font-medium text-balatro-orange">
+            Voucher
+          </div>
+        </div>
+      </div>
+
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
         <div className="flex flex-col h-full">
           <div className="flex-1">
@@ -742,7 +689,7 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
               />
             </div>
 
-            <div className="flex items-center justify-between mb-4 h-8 flex-wrap">
+            <div className="flex items-center justify-between mb-4 px-4 h-8 flex-wrap">
               {propertyIcons.map((iconConfig, index) => (
                 <PropertyIcon
                   key={index}
@@ -774,14 +721,14 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
             <div className="w-px bg-black-lighter py-3"></div>
             <Tooltip content="View Rules" show={hoveredButton === "rules"}>
               <div
-                className="flex flex-1 hover:text-mint-light transition-colors cursor-pointer group"
+                className="flex flex-1 transition-colors cursor-pointer group"
                 onClick={onViewRules}
                 onMouseEnter={() => handleButtonHover("rules")}
                 onMouseLeave={handleButtonLeave}
               >
                 <div className="flex-1 flex items-center justify-center py-3 px-3">
                   <div className="relative">
-                    <BookOpenIcon className="h-6 w-6 group-hover:text-mint-lighter text-white transition-colors" />
+                    <PuzzlePieceIcon className="h-6 w-6 text-white group-hover:text-mint-lighter transition-colors" />
                     {rulesCount > 0 && (
                       <div className="absolute -top-2 -right-2 bg-mint text-black text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm">
                         {rulesCount}
@@ -794,7 +741,6 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

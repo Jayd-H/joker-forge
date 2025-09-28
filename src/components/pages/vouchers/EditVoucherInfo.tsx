@@ -764,15 +764,15 @@ const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
                             {!formData.requires_activetor == false && (
                               <InputField
                                   id={"require_ted"}
-                                  value={voucher.requires || "" }
+                                  value={formData.requires || "" }
                                   onChange={(e) =>
-                                        handleInputChange("requires", e.target.value)
+                                  handleInputChange("requires", e.target.value)
                                    }
-                                         className="col-span-full"
-                                       height="44px"
-                                        separator={false}
-                                      label="Voucher Required"
-                                       placeholder={"v_overstock_norm,v_money_tree..."}
+                                    className="col-span-full"
+                                    height="44px"
+                                  separator={false}
+                                label="Voucher Required"
+                                placeholder={"v_overstock_norm,v_money_tree..."}
                                 />
                               )}
                           </div>
