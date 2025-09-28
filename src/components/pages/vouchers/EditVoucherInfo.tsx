@@ -13,7 +13,6 @@ import {
   PuzzlePieceIcon,
 } from "@heroicons/react/24/outline";
 import InputField from "../../generic/InputField";
-import InputDropdown from "../../generic/InputDropdown";
 import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";

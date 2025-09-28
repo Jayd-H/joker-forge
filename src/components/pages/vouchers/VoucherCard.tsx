@@ -14,7 +14,6 @@ import {
   BookmarkSlashIcon,
 } from "@heroicons/react/24/solid";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-
 import Tooltip from "../../generic/Tooltip";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import { validateJokerName } from "../../generic/validationUtils";
@@ -101,7 +100,6 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
 }) => {
   const rulesCount = voucher.rules?.length || 0;
 
-  const [showSetMenu, setShowSetMenu] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [editingCost, setEditingCost] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);

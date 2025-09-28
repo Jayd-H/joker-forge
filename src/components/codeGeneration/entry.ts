@@ -645,22 +645,6 @@ end
 
 `;
   }
-
-  if (vouchers.length > 0) {
-    output += `local function load_vouchers_folder()
-    local mod_path = SMODS.current_mod.path
-    local vouchers_path = mod_path .. "/vouchers"
-    local files = NFS.getDirectoryItemsInfo(vouchers_path)
-    for i = 1, #files do
-        local file_name = files[i].name
-        if file_name:sub(-4) == ".lua" then
-            assert(SMODS.load_file("vouchers/" .. file_name))()
-        end
-    end
-end
-
-`;
-  }
   
   if (editions.length > 0) {
     const indexArray= createIndexList(editions)
@@ -681,6 +665,27 @@ end
 
 `;
   }
+
+  if (vouchers.length > 0) {
+    const indexArray= createIndexList(vouchers)
+    output += `
+local voucherIndexList = {${indexArray}}
+
+local function load_vouchers_folder()
+    local mod_path = SMODS.current_mod.path
+    local vouchers_path = mod_path .. "/vouchers"
+    local files = NFS.getDirectoryItemsInfo(vouchers_path)
+    for i = 1, #voucherIndexList do
+        local file_name = files[voucherIndexList[i]].name
+        if file_name:sub(-4) == ".lua" then
+            assert(SMODS.load_file("vouchers/" .. file_name))()
+        end
+    end
+end
+
+`;
+  }
+
 
   if (metadata.disable_vanilla) {
     output += `function SMODS.current_mod.reset_game_globals(run_start)
@@ -742,13 +747,13 @@ load_boosters_file()
 `;
   }
 
-    if (vouchers.length > 0) {
-    output += `load_vouchers_folder()
-`;
-  }
-
   if (editions.length > 0) {
     output += `load_editions_folder()
+`;
+  }
+  
+   if (vouchers.length > 0) {
+    output += `load_vouchers_folder()
 `;
   }
 
