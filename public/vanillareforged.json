@@ -15723,6 +15723,50 @@
       "no_collection": false,
       "hasUserUploadedImage": true
     }
+    
+  ],
+  "vouchers": [
+    {
+      "id": "35b3770a-ebf2-48aa-9510-eb6ff7a07e08",
+      "name": "Grabber",
+      "description": "Permanently gain {C:blue}+1{} hand per round",
+      "imagePreview": "data:image/png;base64,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",
+      "voucherKey": "v_grabber",
+      "overlayImagePreview": "",
+      "cost": 10,
+      "unlocked": true,
+      "discovered": true,
+      "requires": "",
+      "requires_activetor": false,
+      "rules": [
+        {
+          "id": "5ae06134-22d3-47f7-b84c-cf3f081365f6",
+          "trigger": "voucher_used",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "35264ba3-56c1-449c-bfad-5633cb8fd059",
+              "type": "edit_hands",
+              "params": {
+                "operation": "add",
+                "value": 1
+              }
+            }
+          ],
+          "randomGroups": [],
+          "loops": [],
+          "position": {
+            "x": 1120,
+            "y": 439.5
+          }
+        }
+      ],
+      "placeholderCreditIndex": 5,
+      "no_collection": false,
+      "can_repeat_soul": false,
+      "hasUserUploadedImage": true
+    }
   ],
   "version": "1.0.0",
   "exportedAt": "2025-08-15T06:03:29.451Z"

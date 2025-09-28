@@ -23,6 +23,7 @@ interface ConsumableCardData extends BaseCardData {
   set: string;
 }
 
+
 interface BoosterCardData extends BaseCardData {
   config: {
     extra: number;
@@ -35,15 +36,22 @@ interface EditionCardData extends BaseCardData {
   shader?: string;
 }
 
+interface VoucherCardData extends BaseCardData {
+  requires?: string;
+  requires_activetor: boolean;
+}
+
+
 type CardData =
   | JokerCardData
   | ConsumableCardData
   | BoosterCardData
   | BaseCardData
-  | EditionCardData;
+  | EditionCardData
+  | VoucherCardData
 
 interface BalatroCardProps {
-  type: "joker" | "consumable" | "booster" | "card" | "edition";
+  type: "joker" | "consumable" | "booster" | "card" | "edition" | "voucher";
   data: CardData;
   onClick?: () => void;
   className?: string;
@@ -274,8 +282,10 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
         return "/images/placeholder-enhancement.png";
       case "edition":
         return "/images/placeholder-edition.png";
+      case "voucher":
+        return "/images/placeholder-edition.png";
       default:
-        return "/images/placeholder-joker.png";
+        return "/images/placeholder-voucher.png";
     }
   };
 
@@ -308,6 +318,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     }
     if (type === "edition") {
       return data.name || "New Edition";
+    }
+    if (type === "voucher") {
+      return data.name || "New Voucher";
     }
     return "";
   };

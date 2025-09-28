@@ -24,6 +24,7 @@ import {
   ClipboardDocumentListIcon,
   BuildingStorefrontIcon,
   NumberedListIcon,
+  BookOpenIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -117,6 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const dropdownResourceShopandConsumables = [
     { id: "consumables", label: "Consumables", icon: CakeIcon },
     { id: "boosters", label: "Booster Packs", icon: GiftIcon },
+    { id: "vouchers", label: "Vouchers", icon: BookOpenIcon },
   ];
 
   const dropdownResourceMisc = [

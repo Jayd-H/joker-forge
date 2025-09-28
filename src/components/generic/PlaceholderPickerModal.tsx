@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { XMarkIcon, PhotoIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 interface PlaceholderPickerModalProps {
-  type: "joker" | "consumable" | "booster" | "enhancement" | "seal";
+  type: "joker" | "consumable" | "booster" | "enhancement" | "seal" | "voucher";
   isOpen: boolean;
   onClose: () => void;
   onSelect: (index: number, src: string) => void;
@@ -14,6 +14,7 @@ const TYPES: PlaceholderPickerModalProps["type"][] = [
   "booster",
   "enhancement",
   "seal",
+  "voucher",
 ];
 
 const DIRS: Record<PlaceholderPickerModalProps["type"], { dir: string; base: string; label: string }> = {
@@ -22,6 +23,7 @@ const DIRS: Record<PlaceholderPickerModalProps["type"], { dir: string; base: str
   booster:      { dir: "/images/placeholderboosters",     base: "placeholder-booster",      label: "Boosters" },
   enhancement:  { dir: "/images/placeholderenhancements", base: "placeholder-enhancement",  label: "Enhancements" },
   seal:         { dir: "/images/placeholderseals",        base: "placeholder-seal",         label: "Seals" },
+  voucher:      { dir: "/images/placeholdervouchers",     base: "placeholder-voucher",      label: "Vouchers" },
 };
 
 const PlaceholderPickerModal: React.FC<PlaceholderPickerModalProps> = ({ type, isOpen, onClose, onSelect }) => {

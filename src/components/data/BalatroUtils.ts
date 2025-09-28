@@ -42,6 +42,7 @@ export interface UserConfig {
     enhancementsFilter?: string;
     sealsFilter?: string;
     editionsFilter?: string;
+    vouchersFilter?: string;
   };
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
@@ -269,6 +270,21 @@ export interface SoundData {
   soundString: string;
 }
 
+export interface VoucherData extends GameObjectData {
+  imagePreview: string;
+  overlayImagePreview?: string;
+  cost?: number;
+  unlocked?: boolean;
+  can_repeat_soul?: boolean;
+  no_collection?: boolean;
+  requires?: string;
+  requires_activetor?: boolean;
+  sound?: string;
+  rules?: Rule[];
+  placeholderCreditIndex?: number;
+  hasUserUploadedImage?: boolean;
+}
+
 // =============================================================================
 // DATA REGISTRY SYSTEM
 // =============================================================================
@@ -281,6 +297,7 @@ interface RegistryState {
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
   modPrefix: string;
 }
 
@@ -292,6 +309,7 @@ let registryState: RegistryState = {
   enhancements: [],
   seals: [],
   editions: [],
+  vouchers: [],
   modPrefix: "",
 };
 
@@ -308,39 +326,39 @@ const VANILLA_CONSUMABLE_SETS = [
   { value: "Spectral", label: "Spectral", key: "spectral" },
 ];
 
-const VANILLA_VOUCHERS_DATA = [
-  { value: "v_overstock_norm", label: "Overstock" },
-  { value: "v_overstock_plus", label: "Overstock Plus" },
-  { value: "v_clearance_sale", label: "Clearance Sale" },
-  { value: "v_liquidation", label: "Liquidation" },
-  { value: "v_hone", label: "Hone" },
-  { value: "v_glow_up", label: "Glow Up" },
-  { value: "v_reroll_surplus", label: "Reroll Surplus" },
-  { value: "v_reroll_glut", label: "Reroll Glut" },
-  { value: "v_crystal_ball", label: "Crystal Ball" },
-  { value: "v_omen_globe", label: "Omen Globe" },
-  { value: "v_telescope", label: "Telescope" },
-  { value: "v_observatory", label: "Observatory" },
-  { value: "v_grabber", label: "Grabber" },
-  { value: "v_nacho_tong", label: "Nacho Tong" },
-  { value: "v_wasteful", label: "Wasteful" },
-  { value: "v_recyclomancy", label: "Recyclomancy" },
-  { value: "v_tarot_merchant", label: "Tarot Merchant" },
-  { value: "v_tarot_tycoon", label: "Tarot Tycoon" },
-  { value: "v_planet_merchant", label: "Planet Merchant" },
-  { value: "v_planet_tycoon", label: "Planet Tycoon" },
-  { value: "v_seed_money", label: "Seed Money" },
-  { value: "v_money_tree", label: "Money Tree" },
-  { value: "v_blank", label: "Blank" },
-  { value: "v_antimatter", label: "Antimatter" },
-  { value: "v_magic_trick", label: "Magic Trick" },
-  { value: "v_illusion", label: "Illusion" },
-  { value: "v_hieroglyph", label: "Hieroglyph" },
-  { value: "v_petroglyph", label: "Petroglyph" },
-  { value: "v_directors_cut", label: "Directors Cut" },
-  { value: "v_retcon", label: "Retcon" },
-  { value: "v_paint_brush", label: "Paint Brush" },
-  { value: "v_palette", label: "Palette" },
+const VANILLA_VOUCHERS = [
+  { key: "v_overstock_norm", value: "v_overstock_norm", label: "Overstock" },
+  {key: "v_overstock_plus", value: "v_overstock_plus", label: "Overstock Plus" },
+  {key: "v_clearance_sale", value: "v_clearance_sale", label: "Clearance Sale" },
+  {key: "v_liquidation", value: "v_liquidation", label: "Liquidation" },
+  {key: "v_hone", value: "v_hone", label: "Hone" },
+  {key: "v_glow_up", value: "v_glow_up", label: "Glow Up" },
+  {key: "v_reroll_surplus", value: "v_reroll_surplus", label: "Reroll Surplus" },
+  {key: "v_reroll_glut", value: "v_reroll_glut", label: "Reroll Glut" },
+  {key: "v_overstock_norm", value: "v_crystal_ball", label: "Crystal Ball" },
+  {key: "v_crystal_ball", value: "v_omen_globe", label: "Omen Globe" },
+  {key: "v_telescope", value: "v_telescope", label: "Telescope" },
+  {key: "v_observatory", value: "v_observatory", label: "Observatory" },
+  {key: "v_grabber", value: "v_grabber", label: "Grabber" },
+  {key: "v_nacho_tong", value: "v_nacho_tong", label: "Nacho Tong" },
+  {key: "v_wasteful", value: "v_wasteful", label: "Wasteful" },
+  {key: "v_recyclomancy", value: "v_recyclomancy", label: "Recyclomancy" },
+  {key: "v_tarot_merchant", value: "v_tarot_merchant", label: "Tarot Merchant" },
+  {key: "v_tarot_tycoon", value: "v_tarot_tycoon", label: "Tarot Tycoon" },
+  {key: "v_planet_merchant", value: "v_planet_merchant", label: "Planet Merchant" },
+  {key: "v_planet_tycoon", value: "v_planet_tycoon", label: "Planet Tycoon" },
+  {key: "v_seed_money", value: "v_seed_money", label: "Seed Money" },
+  {key: "v_money_tree", value: "v_money_tree", label: "Money Tree" },
+  {key: "v_blank", value: "v_blank", label: "Blank" },
+  {key: "v_antimatter", value: "v_antimatter", label: "Antimatter" },
+  {key: "v_magic_trick", value: "v_magic_trick", label: "Magic Trick" },
+  {key: "v_illusion", value: "v_illusion", label: "Illusion" },
+  {key: "v_hieroglyph", value: "v_hieroglyph", label: "Hieroglyph" },
+  {key: "v_petroglyph", value: "v_petroglyph", label: "Petroglyph" },
+  {key: "v_directors_cut", value: "v_directors_cut", label: "Directors Cut" },
+  {key: "v_retcon", value: "v_retcon", label: "Retcon" },
+  {key: "v_paint_brush", value: "v_paint_brush", label: "Paint Brush" },
+  {key: "v_palette", value: "v_palette", label: "Palette" },
 ];
 
 const VANILLA_SEALS = [
@@ -350,7 +368,7 @@ const VANILLA_SEALS = [
   { key: "Purple", value: "Purple", label: "Purple" },
 ];
 
-export const VOUCHERS = () => VANILLA_VOUCHERS_DATA; // integrate with data registry when custom vouchers are a thing
+export const vanilla = () => VANILLA_VOUCHERS; // integrate with data registry when custom vouchers are a thing
 
 export const DataRegistry = {
   update: (
@@ -361,6 +379,7 @@ export const DataRegistry = {
     enhancements: EnhancementData[],
     seals: SealData[],
     editions: EditionData[],
+    vouchers: VoucherData[],
     modPrefix: string
   ) => {
     registryState = {
@@ -371,6 +390,7 @@ export const DataRegistry = {
       enhancements,
       seals,
       editions,
+      vouchers,
       modPrefix,
     };
   },
@@ -476,6 +496,23 @@ export const DataRegistry = {
     return [...vanilla, ...custom];
   },
 
+  getVouchers: (): Array<{ key: string; value: string; label: string }> => {
+
+    const vanilla = VANILLA_VOUCHERS.map((voucher) => ({
+      key: voucher.key,
+      value: voucher.value,
+      label: voucher.label,
+    }));
+
+    const custom = registryState.vouchers.map((voucher) => ({
+      key: `v_${registryState.modPrefix}_${voucher.objectKey}`,
+      value: `v_${registryState.modPrefix}_${voucher.objectKey}`,
+      label: voucher.name || "Unnamed Voucher",
+    }));
+
+    return [...vanilla, ...custom];
+  },
+  
   getState: () => ({ ...registryState }),
 };
 
@@ -491,6 +528,7 @@ export const updateDataRegistry = (
   enhancements: EnhancementData[],
   seals: SealData[],
   editions: EditionData[],
+  vouchers: VoucherData[],
   modPrefix: string
 ) => {
   DataRegistry.update(
@@ -501,6 +539,7 @@ export const updateDataRegistry = (
     enhancements,
     seals,
     editions,
+    vouchers,
     modPrefix
   );
 };
@@ -640,6 +679,38 @@ export const getSealByKey = (
   key: string
 ): { key: string; value: string; label: string } | undefined => {
   return SEALS().find((seal) => seal.key === key);
+};
+
+// =============================================================================
+// VOUCHERS SECTION
+// =============================================================================
+
+export const VOUCHERS = () => DataRegistry.getVouchers();
+export const VOUCHER_KEYS = () => DataRegistry.getVouchers().map((v) => v.key);
+export const VOUCHER_VALUES = () => DataRegistry.getVouchers().map((v) => v.value);
+export const VOUCHER_LABELS = () => DataRegistry.getVouchers().map((v) => v.label);
+
+export const isCustomVoucher = (
+  value: string,
+  customVouchers: VoucherData[] = registryState.vouchers,
+  modPrefix: string = registryState.modPrefix
+): boolean => {
+  return (
+    value.includes("_") &&
+    customVouchers.some((s) => `${modPrefix}_${s.objectKey}` === value)
+  );
+};
+
+export const getVoucherByValue = (
+  value: string
+): { key: string; value: string; label: string } | undefined => {
+  return VOUCHERS().find((voucher) => voucher.value === value);
+};
+
+export const getVoucherByKey = (
+  key: string
+): { key: string; value: string; label: string } | undefined => {
+  return VOUCHERS().find((voucher) => voucher.key === key);
 };
 
 // =============================================================================
