@@ -101,6 +101,7 @@ interface InspectorProps {
 interface ParameterFieldProps {
   param: ConditionParameter | EffectParameter;
   value: unknown;
+  selectedRule: Rule;
   onChange: (value: unknown) => void;
   parentValues?: Record<string, unknown>;
   availableVariables?: Array<{ value: string; label: string }>;
@@ -358,6 +359,7 @@ function hasShowWhen(param: ConditionParameter | EffectParameter): param is (
 const ParameterField: React.FC<ParameterFieldProps> = ({
   param,
   value,
+  selectedRule,
   onChange,
   parentValues = {},
   availableVariables = [],
@@ -439,9 +441,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
   switch (param.type) {
     case "select": {
       let options: Array<{ value: string; label: string }> = [];
-      console.log(param.id)
-      console.log(param.label)
-      console.log(param.variableTypes)
+
       if (typeof param.options === "function") {
         // Check if the function expects parentValues parameter
         if (param.options.length > 0) {
@@ -497,26 +497,30 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
       } else {
 
         if (param.variableTypes?.includes("number") && joker) {
-          options.push(...addNumberVariablesToOptions(options, joker))
+          options = addNumberVariablesToOptions(options, joker)
         }
 
         if (param.variableTypes?.includes("suit") && joker) {
-          options.push(...addSuitVariablesToOptions(options, joker))
+          options = addSuitVariablesToOptions(options, joker)
         }
 
         if (param.variableTypes?.includes("rank") && joker) {
-          options.push(...addRankVariablesToOptions(options, joker))
+          options = addRankVariablesToOptions(options, joker)
         }
 
         if (param.variableTypes?.includes("pokerhand") && joker) {
-          options.push(...addPokerHandVariablesToOptions(options, joker))
+          options = addPokerHandVariablesToOptions(options, joker)
         }
 
         if (param.variableTypes?.includes("joker") && joker) {
-          options.push(...addJokerVariablesToOptions(options, joker))
+          options = addJokerVariablesToOptions(options, joker)
         }
       }
-      // options = [];
+      if (param.variableTypes?.includes("trigger_context")) {
+        if (selectedRule.trigger === "joker_evaluated") {
+            options.push({value: "evaled_joker", label: "Evaluated Joker"})
+        }
+      }
 
       return (
         <InputDropdown
@@ -1205,6 +1209,7 @@ const Inspector: React.FC<InspectorProps> = ({
                 <ParameterField
                   param={param}
                   value={selectedCondition.params[param.id]}
+                  selectedRule={selectedRule}
                   onChange={(value) => {
                     const newParams = {
                       ...selectedCondition.params,
@@ -1575,6 +1580,7 @@ const Inspector: React.FC<InspectorProps> = ({
                 <ParameterField
                   param={param}
                   value={selectedEffect.params[param.id]}
+                  selectedRule={selectedRule}
                   onChange={(value) => {
                     const newParams = {
                       ...selectedEffect.params,

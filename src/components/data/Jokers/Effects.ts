@@ -570,13 +570,53 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "multiply", label: "Multiply by value" },
           { value: "divide", label: "Divide by value" },
           { value: "power", label: "Power by value" },
-          { value: "absolute", label: "Make the value Absolute"},
-          { value: "natural_log", label: "Natural logarithm the value"},
-          { value: "log10", label: "Standard logarithm the value"},
-          { value: "square_root", label: "Square root the value"},
-          { value: "ceil", label: "Round value up"},
-          { value: "floor", label: "Round value down"},
+          { value: "absolute", label: "Make the value Absolute" },
+          { value: "natural_log", label: "Natural logarithm the value" },
+          { value: "log10", label: "Standard logarithm the value" },
+          { value: "square_root", label: "Square root the value" },
+          { value: "ceil", label: "Round value up" },
+          { value: "floor", label: "Round value down" },
+          { value: "index", label: "Set to the index of an owned Joker" },
         ],
+      },
+      {
+        id: "index_method",
+        type: "select",
+        label: "Index Method",
+        showWhen: {
+          parameter: "operation",
+          values: ["index"]
+        },
+        options: [
+          { value: "self", label: "This Joker" },
+          { value: "random", label: "A Random Joker" },
+          { value: "first", label: "Leftmost Joker" },
+          { value: "last", label: "Rightmost Joker" },
+          { value: "left", label: "Joker on my Left" },
+          { value: "right", label: "Joker on my Right" },
+          { value: "key", label: "Joker Key" },
+          { value: "variable", label: "Joker Variable" },
+        ] 
+      },
+      {
+        id: "joker_key",
+        type: "text",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "j_joker",
+        showWhen: {
+          parameter: "index_method",
+          values: ["key"],
+        },
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        showWhen: {
+          parameter: "index_method",
+          values: ["variable"],
+        },
+        variableTypes: ["joker"]
       },
       {
         id: "value",
@@ -934,6 +974,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "target",
           values: ["specific"],},
         default: "self",
+        variableTypes: ["trigger_context"],
       },{
         id: "operation",
         type: "select",
@@ -969,9 +1010,11 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Joker Type",
         options: [
           { value: "random", label: "Random Joker" },
+          { value: "pool", label: "Random from Pool" },
           { value: "specific", label: "Specific Joker" },
         ],
         default: "random",
+        variableTypes: ["joker", "trigger_context"]
       },
       {
         id: "rarity",
@@ -1004,7 +1047,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         default: "",
         showWhen: {
           parameter: "joker_type",
-          values: ["random"],
+          values: ["pool"],
         },
       },
       {
@@ -1017,7 +1060,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       {
         id: "sticker",
         type: "select",
-        label: "Sticker for Copy",
+        label: "Sticker",
         options: [{ value: "none", label: "No Sticker" }, ...STICKERS],
         default: "none",
       },
@@ -1052,6 +1095,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
+        variableTypes: ["joker", "trigger_context"],
       },
       {
         id: "joker_key",
@@ -1135,6 +1179,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
+        variableTypes: ["joker", "trigger_context"],
       },
       {
         id: "joker_key",
@@ -1206,10 +1251,34 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
+        id: "selection_method",
+        type: "select",
+        label: "Selection Method",
+        default: "text",
+        options: [
+          { value: "key", label: "Joker Key" },
+          { value: "variable", label: "Joker Variable" },
+        ]
+      },
+      {
         id: "joker_key",
         type: "text",
         label: "Joker Key ( [modprefix]_joker )",
         default: "joker",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["key"],
+        },
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["variable"],
+        },
+        variableTypes: ["joker"]
       },
       {
         id: "discover",
@@ -1933,6 +2002,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
+        variableTypes: ["suit", "trigger_context"]
       },
     ],
     category: "Variables",
@@ -2004,6 +2074,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
+        variableTypes: ["rank", "trigger_context"]
       },
     ],
     category: "Variables",
@@ -2043,6 +2114,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
+        variableTypes: ["pokerhand", "trigger_context"]
       },
     ],
     category: "Variables",
@@ -2070,6 +2142,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker" },
         ],
         default: "specific",
+        variableTypes: ["joker", "trigger_context"],
       },
       {
         id: "specific_joker",
