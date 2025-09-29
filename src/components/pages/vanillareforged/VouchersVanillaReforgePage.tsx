@@ -7,11 +7,13 @@ import {
   ArrowsUpDownIcon,
   DocumentDuplicateIcon,
   DocumentTextIcon,
-  StarIcon,
   LockOpenIcon,
   LockClosedIcon,
   EyeIcon,
   EyeSlashIcon,
+  BookmarkIcon,
+  BookmarkSlashIcon,
+  EyeSlashIcon as HiddenIcon,
 } from "@heroicons/react/24/outline";
 import { VoucherData } from "../../data/BalatroUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
@@ -525,6 +527,7 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
   const isUnlocked = voucher.unlocked !== false;
   const isDiscovered = voucher.discovered !== false;
   const isRequires = voucher.requires_activetor !== false;
+  const noCollection = voucher.no_collection === true;
 
   const propertyIcons = [
     {
@@ -549,13 +552,23 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
     },
     {
       icon: isRequires ? (
-        <StarIcon className="w-full h-full" />
+        <BookmarkIcon className="w-full h-full" />
       ) : (
-        <StarIcon className="w-full h-full" />
+        <BookmarkSlashIcon className="w-full h-full" />
       ),
       tooltip: isRequires ? "Voucher require" : "Voucher not requried",
       variant: "info" as const,
       isEnabled: isRequires,
+    },
+    {
+      icon: noCollection ? (
+        <EyeSlashIcon className="w-full h-full" />
+      ) : (
+        <HiddenIcon className="w-full h-full" />
+      ),
+      tooltip: noCollection ? "Hidden from Collection" : "Shows in Collection",
+      variant: "disabled" as const,
+     isEnabled: noCollection
     },
   ];
 
