@@ -556,7 +556,7 @@ const VanillaVoucherCard: React.FC<VanillaVoucherCardProps> = ({
       ) : (
         <BookmarkSlashIcon className="w-full h-full" />
       ),
-      tooltip: isRequires ? "Voucher require" : "Voucher not requried",
+      tooltip: isRequires ? "Requires a Voucher" : "Independent",
       variant: "info" as const,
       isEnabled: isRequires,
     },
