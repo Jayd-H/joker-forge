@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [card, setCard] = useState(false);
   const [shop, setShop] = useState(false);
   const [misc, setMisc] = useState(false);
-  const version: string = "v0.6.6";
+  const version: string = "v0.7.1";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
