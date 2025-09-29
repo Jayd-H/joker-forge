@@ -220,33 +220,6 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Economy",
   },
     {
-    id: "edit_Shop_Prices",
-    label: "Edit Shop Prices",
-    description: "Modify the Shop Prices",
-    applicableTriggers: ["voucher_used"],
-    params: [
-      {
-        id: "operation",
-        type: "select",
-        label: "Operation",
-        options: [
-          { value: "add", label: "Add" },
-          { value: "subtract", label: "Subtract" },
-          { value: "set", label: "Set to" },
-        ],
-        default: "add",
-      },
-      {
-        id: "value",
-        type: "number",
-        label: "Amount",
-        default: 1,
-        min: 0,
-      },
-    ],
-    category: "Shop Effects",
-  },
-    {
       id: "set_ante",
       label: "Set Ante Level",
       description: "Modify the current ante level",
