@@ -217,7 +217,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Shop Effects",
+    category: "Economy",
   },
     {
     id: "edit_Shop_Prices",
@@ -290,19 +290,20 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
   },
     {
     id: "edit_item_weight",
-    label: "Edit Item Weight",
+    label: "Edit Card Weight",
     description: "Modify the Rate Probability for Shop Cards",
     applicableTriggers: ["voucher_used"],
     params: [
       {
           id: "selected_card",
           type: "select",
-          label: "Item Card",
+          label: "Type of Card",
           options: [
             { value: "tarot", label: "Tarot" },
             { value: "planet", label: "Planet" },
-            { value: "editon", label: "Editon" },
+            { value: "edition", label: "Edition" },
             { value: "playing_card", label: "Playing Card" },
+            { value: "spectral", label: "Spectral" },
           ],
           default: "tarot",
         },

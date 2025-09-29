@@ -167,7 +167,7 @@ const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
         discovered: voucher.discovered !== false,
         no_collection: voucher.no_collection === true,
         requires: voucher.requires,
-        requires_activetor: voucher.requires_activetor !== false,
+        requires_activetor: voucher.requires_activetor || false,
         can_repeat_soul: voucher.can_repeat_soul === true,
         objectKey: getObjectName(
           voucher,
