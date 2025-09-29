@@ -93,7 +93,7 @@ import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
-import { scanGameObjectIds } from "./components/generic/GameObjectOrdering";
+import { scanGameObjectIds, scanGameObjectKeys } from "./components/generic/GameObjectOrdering";
 
 interface AlertState {
   isVisible: boolean;
@@ -428,15 +428,15 @@ function AppContent() {
       try {
         const data: AutoSaveData = {
           modMetadata: metadata,
-          jokers: scanGameObjectIds(jokerData),
+          jokers: scanGameObjectKeys(scanGameObjectIds(jokerData)),
           sounds: soundData,
-          consumables: scanGameObjectIds(consumableData),
+          consumables: scanGameObjectKeys(scanGameObjectIds(consumableData)),
           customRarities: raritiesData,
           consumableSets: setsData,
-          boosters: scanGameObjectIds(boosterData),
-          enhancements: scanGameObjectIds(enhancementsData),
-          seals: scanGameObjectIds(sealsData),
-          editions: scanGameObjectIds(editionsData),
+          boosters: scanGameObjectKeys(scanGameObjectIds(boosterData)),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(enhancementsData)),
+          seals: scanGameObjectKeys(scanGameObjectIds(sealsData)),
+          editions: scanGameObjectKeys(scanGameObjectIds(editionsData)),
           timestamp: Date.now(),
         };
         localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));
@@ -553,15 +553,15 @@ function AppContent() {
       console.log("Loaded auto-saved project state");
       return {
         modMetadata: data.modMetadata,
-        jokers: scanGameObjectIds(data.jokers),
+        jokers: scanGameObjectKeys(scanGameObjectIds(data.jokers)),
         sounds: data.sounds,
-        consumables: scanGameObjectIds(data.consumables || []),
+        consumables: scanGameObjectKeys(scanGameObjectIds(data.consumables || [])),
         customRarities: data.customRarities || [],
         consumableSets: data.consumableSets || [],
-        boosters: scanGameObjectIds(data.boosters || []),
-        enhancements: scanGameObjectIds(data.enhancements || []),
-        editions: scanGameObjectIds(data.editions || []),
-        seals: scanGameObjectIds(data.seals || []),
+        boosters: scanGameObjectKeys(scanGameObjectIds(data.boosters || [])),
+        enhancements: scanGameObjectKeys(scanGameObjectIds(data.enhancements || [])),
+        editions: scanGameObjectKeys(scanGameObjectIds(data.editions || [])),
+        seals: scanGameObjectKeys(scanGameObjectIds(data.seals || [])),
       };
     } catch (error) {
       console.warn("Failed to load auto-save:", error);
@@ -863,15 +863,15 @@ function AppContent() {
 
         const normalizedData = normalizeImportedModData({
           metadata: savedData.modMetadata,
-          jokers: scanGameObjectIds(savedData.jokers),
+          jokers: scanGameObjectKeys(scanGameObjectIds(savedData.jokers)),
           sounds: savedData.sounds,
-          consumables: scanGameObjectIds(savedData.consumables),
+          consumables: scanGameObjectKeys(scanGameObjectIds(savedData.consumables)),
           customRarities: savedData.customRarities,
           consumableSets: savedData.consumableSets,
-          boosters: scanGameObjectIds(savedData.boosters),
-          enhancements: scanGameObjectIds(savedData.enhancements),
-          seals: scanGameObjectIds(savedData.seals),
-          editions: scanGameObjectIds(savedData.editions),
+          boosters: scanGameObjectKeys(scanGameObjectIds(savedData.boosters)),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(savedData.enhancements)),
+          seals: scanGameObjectKeys(scanGameObjectIds(savedData.seals)),
+          editions: scanGameObjectKeys(scanGameObjectIds(savedData.editions)),
         });
 
         setModMetadata(normalizedData.metadata);
@@ -1097,15 +1097,15 @@ function AppContent() {
 
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
-          jokers: scanGameObjectIds(normalizedData.jokers),
+          jokers: scanGameObjectKeys(scanGameObjectIds(normalizedData.jokers)),
           sounds: normalizedData.sounds,
-          consumables: scanGameObjectIds(normalizedData.consumables),
+          consumables: scanGameObjectKeys(scanGameObjectIds(normalizedData.consumables)),
           customRarities: normalizedData.customRarities,
           consumableSets: normalizedData.consumableSets,
-          boosters: scanGameObjectIds(normalizedData.boosters),
-          enhancements: scanGameObjectIds(normalizedData.enhancements || []),
-          seals: scanGameObjectIds(normalizedData.seals || []),
-          editions: scanGameObjectIds(normalizedData.editions || []),
+          boosters: scanGameObjectKeys(scanGameObjectIds(normalizedData.boosters)),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(normalizedData.enhancements || [])),
+          seals: scanGameObjectKeys(scanGameObjectIds(normalizedData.seals || [])),
+          editions: scanGameObjectKeys(scanGameObjectIds(normalizedData.editions || [])),
         };
         showAlert(
           "success",

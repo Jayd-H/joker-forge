@@ -94,15 +94,28 @@ export const locateWrongId = <GameObjectType extends GameObjectData> (
   return wrongIndex
 }
 
-export const getObjectName = <GameObjectType extends GameObjectData>(
+const generateKeyFromName = <GameObjectType extends GameObjectData> (
+  object: GameObjectType,
+) : string => {
+
+    return (
+      object.name
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9\s]/g, "")
+        .replace(/\s+/g, "_")
+        .replace(/^[0-9]+/, "") || `${object.objectType}`
+    );
+  };
+
+export const getObjectName = <GameObjectType extends GameObjectData> (
   object : GameObjectType,
   data : GameObjectType[],
   value? : string,
 ) => {
-  let newNumber:number|boolean|string
+  let newNumber:number | boolean | string
   let tempName:string = ''
   let currentName 
-  let dupeName:string|null = value||null
+  let dupeName:string | null = value || null
 
   if (dupeName && !data.some(
     dataObject => dataObject.objectKey == dupeName && 
@@ -115,7 +128,8 @@ export const getObjectName = <GameObjectType extends GameObjectData>(
     let count:number = 0
     let looping = true
 
-    currentName = dupeName || object.objectKey
+    currentName = dupeName || (object.objectKey !== "" ? object.objectKey : generateKeyFromName(object))
+
     tempName = currentName
 
     while (looping == true){
@@ -152,7 +166,9 @@ export const scanGameObjectKeys = <GameObjectType extends GameObjectData> (
 
   data.forEach(object1 => {
     data.forEach(object2 => {
-      if (object1.objectKey == object2.objectKey && object1.orderValue > object2.orderValue){
+      if ((object1.objectKey == object2.objectKey && object1.orderValue > object2.orderValue) || 
+          object1.objectKey === "")
+        {
         wrongObjects.push(object1)
       }
     })
