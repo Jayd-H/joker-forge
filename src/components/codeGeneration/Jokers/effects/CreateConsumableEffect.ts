@@ -106,6 +106,7 @@ export const generateCreateConsumableReturn = (
   if (isScoring) {
     return {
       statement: `__PRE_RETURN_CODE__${createCode}
+                end
                 __PRE_RETURN_CODE_END__`,
       message: customMessage
         ? `"${customMessage}"`
