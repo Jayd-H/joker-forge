@@ -108,7 +108,6 @@ const SealCard: React.FC<SealCardProps> = ({
   const [tempDescription, setTempDescription] = useState(seal.description);
   const [tempId, setTempId] = useState(seal.orderValue);
 
-  const [hoveredId, setHoveredId] = useState(false);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
@@ -192,24 +191,6 @@ const SealCard: React.FC<SealCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
-  };
-
-  const handleIdHover = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setHoveredId(true);
-    }, 500);
-    setTooltipDelayTimeout(timeout);
-  };
-
-  const handleIdLeave = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-      setTooltipDelayTimeout(null);
-    }
-    setHoveredId(false);
   };
 
   const isUnlocked = seal.unlocked !== false;
@@ -346,11 +327,9 @@ const SealCard: React.FC<SealCardProps> = ({
         </div>
       </div>
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content="Edit Joker Id" show={hoveredId}>
+        <Tooltip content="Edit Joker Id">
           <div
             className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
-            onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}
           >
             {editingId ? (
               <input

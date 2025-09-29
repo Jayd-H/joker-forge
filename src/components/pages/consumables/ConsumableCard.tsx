@@ -134,7 +134,6 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
   const [hoveredTrash, setHoveredTrash] = useState(false);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
-  const [hoveredId, setHoveredId] = useState(false);
 
   const [imageLoadError, setImageLoadError] = useState(false);
   const [fallbackAttempted, setFallbackAttempted] = useState(false);
@@ -227,24 +226,6 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
       setTooltipDelayTimeout(null);
     }
     setHoveredTrash(false);
-  };
-
-  const handleIdHover = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setHoveredId(true);
-    }, 500);
-    setTooltipDelayTimeout(timeout);
-  };
-
-  const handleIdLeave = () => {
-    if (tooltipDelayTimeout) {
-      clearTimeout(tooltipDelayTimeout);
-      setTooltipDelayTimeout(null);
-    }
-    setHoveredId(false);
   };
 
   const isUnlocked = consumable.unlocked !== false;
@@ -398,11 +379,9 @@ const ConsumableCard: React.FC<ConsumableCardProps> = ({
       </div>
 
       <div className="my-auto border-l-2 pl-4 border-black-light relative flex-1 min-h-fit">
-        <Tooltip content="Edit Joker Id" show={hoveredId}>
+        <Tooltip content="Edit Joker Id">
           <div
             className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
-            onMouseEnter={handleIdHover}
-            onMouseLeave={handleIdLeave}
           >
             {editingId ? (
               <input
