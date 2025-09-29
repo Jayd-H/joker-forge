@@ -7,7 +7,7 @@ export const generateFreeRerollsReturn = (effect: Effect): EffectReturn => {
 
   const valueCode = generateGameVariableCode(value);
 
-  let FreeRerollsCode = `SMODS.change_free_rerolls(${valueCode})`
+  const FreeRerollsCode = `SMODS.change_free_rerolls(${valueCode})`
 
 
   const configVariables =

@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MagnifyingGlassIcon,
-  FunnelIcon,
   PuzzlePieceIcon,
   ArrowsUpDownIcon,
   DocumentDuplicateIcon,
@@ -84,7 +83,6 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
 }) => {
   const { vanillaVouchers, loading } = useAsyncDataLoader();
   const [searchTerm, setSearchTerm] = useState("");
-  const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -96,16 +94,9 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
     left: 0,
     width: 0,
   });
-  const [filtersMenuPosition, setFiltersMenuPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
-  const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
-  const filtersMenuRef = React.useRef<HTMLDivElement>(null);
 
   const sortOptions: SortOption[] = useMemo(
     () => [
@@ -153,14 +144,6 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
       ) {
         setShowSortMenu(false);
       }
-      if (
-        filtersButtonRef.current &&
-        !filtersButtonRef.current.contains(event.target as Node) &&
-        filtersMenuRef.current &&
-        !filtersMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowFilters(false);
-      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -179,17 +162,6 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
       });
     }
   }, [showSortMenu]);
-
-  useEffect(() => {
-    if (showFilters && filtersButtonRef.current) {
-      const rect = filtersButtonRef.current.getBoundingClientRect();
-      setFiltersMenuPosition({
-        top: rect.bottom + 8,
-        left: rect.right - 256,
-        width: 256,
-      });
-    }
-  }, [showFilters]);
 
   const filteredAndSortedItems = useMemo(() => {
     if (loading || !vanillaVouchers.length) return [];
@@ -242,17 +214,9 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
     setShowSortMenu(!showSortMenu);
   };
 
-  const handleFiltersToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (showSortMenu) setShowSortMenu(false);
-    setShowFilters(!showFilters);
-  };
-
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
     "Name (A-Z)";
-
-  const filterKey = `${searchTerm}-${rarityFilter}-${sortBy}`;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -419,7 +383,6 @@ const VouchersVanillaReforgedPage: React.FC<VouchersVanillaReforgedPageProps> = 
             </motion.div>
           ) : (
             <motion.div
-              key={`content-${filterKey}`}
               variants={containerVariants}
               initial="hidden"
               animate="visible"

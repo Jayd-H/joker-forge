@@ -461,7 +461,7 @@ function AppContent() {
           enhancements: scanGameObjectIds(enhancementsData),
           seals: scanGameObjectIds(sealsData),
           editions: scanGameObjectIds(editionsData),
-          vouchers: scanGameObjectIds(vocuhersData),
+          vouchers: scanGameObjectIds(vouchersData),
           timestamp: Date.now(),
         };
         localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));
@@ -1155,7 +1155,7 @@ function AppContent() {
           enhancements: scanGameObjectIds(normalizedData.enhancements || []),
           seals: scanGameObjectIds(normalizedData.seals || []),
           editions: scanGameObjectIds(normalizedData.editions || []),
-          vocuhers: scanGameObjectIds(normalizedData.vouchers || []),
+          vouchers: scanGameObjectIds(normalizedData.vouchers || []),
         };
         showAlert(
           "success",
