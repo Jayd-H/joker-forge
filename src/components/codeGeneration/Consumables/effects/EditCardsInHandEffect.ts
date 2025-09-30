@@ -74,12 +74,6 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
 
     // Apply enhancement if specified
     if (enhancement !== "none") {
-        editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()`
         if (enhancement === "random") {
             editCardsCode += `
                         local cen_pool = {}
