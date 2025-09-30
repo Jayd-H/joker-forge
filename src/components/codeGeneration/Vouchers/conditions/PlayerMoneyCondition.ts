@@ -17,16 +17,16 @@ export const generatePlayerMoneyConditionCode = (rules: Rule[]): string => {
     case "greater_than":
       return `G.GAME.dollars > to_big()`;
     case "greater_than_or_equal":
-      return `G.GAME.dollars >= ${valueCode}`;
+      return `G.GAME.dollars >= to_big()`;
     case "less_than":
-      return `G.GAME.dollars < ${valueCode}`;
+      return `G.GAME.dollars < to_big()`;
     case "less_than_or_equal":
-      return `G.GAME.dollars <= ${valueCode}`;
+      return `G.GAME.dollars <= to_big()`;
     case "equal":
-      return `G.GAME.dollars == ${valueCode}`;
+      return `G.GAME.dollars == to_big()`;
     case "not_equal":
-      return `G.GAME.dollars ~= ${valueCode}`;
+      return `G.GAME.dollars ~= to_big()`;
     default:
-      return `G.GAME.dollars > ${valueCode}`;
+      return `G.GAME.dollars > to_big()`;
   }
 };
