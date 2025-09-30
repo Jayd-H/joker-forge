@@ -57,9 +57,11 @@ import {
   EnhancementData,
   SealData,
   EditionData,
+  VoucherData,
 } from "../data/BalatroUtils";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
+import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 import { UserConfigContext } from "../Contexts";
 
 export type ItemData =
@@ -67,8 +69,9 @@ export type ItemData =
   | ConsumableData
   | EnhancementData
   | SealData
-  | EditionData;
-type ItemType = "joker" | "consumable" | "card";
+  | EditionData
+  | VoucherData
+type ItemType = "joker" | "consumable" | "card" | "voucher";
 
 interface RuleBuilderProps {
   isOpen: boolean;
@@ -110,13 +113,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConditionTypeById
       : itemType === "consumable"
       ? getConsumableConditionTypeById
-      : getCardConditionTypeById;
+      : getCardConditionTypeById
   const getEffectType =
     itemType === "joker"
       ? getEffectTypeById
       : itemType === "consumable"
       ? getConsumableEffectTypeById
-      : getCardEffectTypeById;
+      : itemType === "card"
+      ? getCardEffectTypeById
+      : getVoucherEffectTypeById;
 
   const [rules, setRules] = useState<Rule[]>([]);
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);

@@ -9,6 +9,7 @@ import {
   SealData,
   ModMetadata,
   EditionData,
+  VoucherData,
   isCustomShader,
   getCustomShaderFilepath,
   SoundData,
@@ -16,6 +17,7 @@ import {
 import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
 import { generateConsumablesCode } from "./Consumables/index";
+import { generateVouchersCode } from "./Vouchers/index";
 import { generateBoostersCode } from "./boosters";
 import { ConsumableSetData, slugify, getModPrefix } from "../data/BalatroUtils";
 import { modToJson } from "../JSONImportExport";
@@ -166,7 +168,8 @@ export const exportModCode = async (
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
-  editions: EditionData[] = []
+  editions: EditionData[] = [],
+  vouchers: VoucherData[] = []
 ): Promise<boolean> => {
   try {
     console.log("Generating mod code...");
@@ -188,9 +191,10 @@ export const exportModCode = async (
     const validEnhancements = enhancements.filter((e) => e.id && e.name);
     const validSeals = seals.filter((s) => s.id && s.name);
     const validEditions = editions.filter((e) => e.id && e.name);
+    const validVouchers = vouchers.filter((v) => v.id && v.name);
 
     console.log(
-      `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}, Editions: ${validEditions.length}`
+      `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}, Editions: ${validEditions.length} vouchers: ${validVouchers.length}`
     );
 
     const zip = new JSZip();
@@ -201,6 +205,7 @@ export const exportModCode = async (
     const sortedEnhancements = sortGameObjectForExport(validEnhancements);
     const sortedSeals = sortGameObjectForExport(validSeals);
     const sortedEditions = sortGameObjectForExport(validEditions);
+    const sortedVouchers = sortGameObjectForExport(validVouchers);
     const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
@@ -215,6 +220,7 @@ export const exportModCode = async (
       sortedEnhancements,
       sortedSeals,
       sortedEditions,
+      sortedVouchers,
       hasModIcon,
       hasGameIcon,
       metadata
@@ -231,7 +237,8 @@ export const exportModCode = async (
       sortedBoosters,
       sortedEnhancements,
       sortedSeals,
-      sortedEditions
+      sortedEditions,
+      sortedVouchers
     );
     zip.file(ret.filename, ret.jsonString);
 
@@ -327,6 +334,19 @@ export const exportModCode = async (
         editionsFolder!.file(filename, code);
       });
     }
+    
+    if (sortedVouchers.length > 0) {
+      const { vouchersCode } = generateVouchersCode(sortedVouchers, {
+        modPrefix: metadata.prefix,
+        atlasKey: "CustomVouchers",
+      });
+
+      const vouchersFolder = zip.folder("vouchers");
+      Object.entries(vouchersCode).forEach(([filename, code]) => {
+        vouchersFolder!.file(filename, code);
+      });
+    }
+
     zip.file(`${metadata.id}.json`, generateModJson(metadata));
 
     let modIconData: string | undefined;
@@ -374,6 +394,7 @@ export const exportModCode = async (
       sortedBoosters,
       sortedEnhancements,
       sortedSeals,
+      sortedVouchers,
       modIconData,
       gameIconData
     );
@@ -413,6 +434,7 @@ const generateMainLuaCode = (
   enhancements: EnhancementData[],
   seals: SealData[],
   editions: EditionData[],
+  vouchers: VoucherData[],
   hasModIcon: boolean,
   hasGameIcon: boolean,
   metadata: ModMetadata): string => {
@@ -495,6 +517,18 @@ const generateMainLuaCode = (
     output += `SMODS.Atlas({
     key = "CustomSeals", 
     path = "CustomSeals.png", 
+    px = 62,
+    py = 95, 
+    atlas_table = "ASSET_ATLAS"
+}):register()
+
+`;
+  }
+
+  if (vouchers.length > 0) {
+    output += `SMODS.Atlas({
+    key = "CustomVouchers", 
+    path = "CustomVouchers.png", 
     px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
@@ -617,7 +651,7 @@ end
 
 `;
   }
-
+  
   if (editions.length > 0) {
     const indexArray= createIndexList(editions)
     output += `
@@ -637,6 +671,27 @@ end
 
 `;
   }
+
+  if (vouchers.length > 0) {
+    const indexArray= createIndexList(vouchers)
+    output += `
+local voucherIndexList = {${indexArray}}
+
+local function load_vouchers_folder()
+    local mod_path = SMODS.current_mod.path
+    local vouchers_path = mod_path .. "/vouchers"
+    local files = NFS.getDirectoryItemsInfo(vouchers_path)
+    for i = 1, #voucherIndexList do
+        local file_name = files[voucherIndexList[i]].name
+        if file_name:sub(-4) == ".lua" then
+            assert(SMODS.load_file("vouchers/" .. file_name))()
+        end
+    end
+end
+
+`;
+  }
+
 
   if (metadata.disable_vanilla) {
     output += `function SMODS.current_mod.reset_game_globals(run_start)
@@ -700,6 +755,11 @@ load_boosters_file()
 
   if (editions.length > 0) {
     output += `load_editions_folder()
+`;
+  }
+  
+   if (vouchers.length > 0) {
+    output += `load_vouchers_folder()
 `;
   }
 

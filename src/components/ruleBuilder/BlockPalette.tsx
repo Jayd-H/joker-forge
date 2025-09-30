@@ -50,6 +50,7 @@ import {
   CONSUMABLE_EFFECT_CATEGORIES,
 } from "../data/Consumables/Effects";
 import { CARD_TRIGGERS, CARD_TRIGGER_CATEGORIES } from "../data/Card/Triggers";
+import { VOUCHER_TRIGGERS, VOUCHER_TRIGGER_CATEGORIES } from "../data/Vouchers/Triggers";
 import {
   CARD_CONDITION_CATEGORIES,
   getCardConditionsForTrigger,
@@ -58,6 +59,11 @@ import {
   CARD_EFFECT_CATEGORIES,
   getCardEffectsForTrigger,
 } from "../data/Card/Effects";
+import {
+  VOUCHER_EFFECT_CATEGORIES,
+  getVoucherEffectsForTrigger,
+} from "../data/Vouchers/Effects";
+
 
 interface BlockPaletteProps {
   position: { x: number; y: number };
@@ -67,7 +73,7 @@ interface BlockPaletteProps {
   onAddEffect: (effectType: string) => void;
   onClose: () => void;
   onPositionChange: (position: { x: number; y: number }) => void;
-  itemType: "joker" | "consumable" | "card";
+  itemType: "joker" | "consumable" | "card" | "voucher";
 }
 
 type FilterType = "triggers" | "conditions" | "effects";
@@ -101,42 +107,50 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? TRIGGERS
       : itemType === "consumable"
       ? CONSUMABLE_TRIGGERS
-      : CARD_TRIGGERS;
+      : itemType === "card"
+      ? CARD_TRIGGERS
+      : VOUCHER_TRIGGERS
 
   const triggerCategories =
     itemType === "joker"
       ? TRIGGER_CATEGORIES
       : itemType === "consumable"
       ? CONSUMABLE_TRIGGER_CATEGORIES
-      : CARD_TRIGGER_CATEGORIES;
+      : itemType === "card"
+      ? CARD_TRIGGER_CATEGORIES
+      : VOUCHER_TRIGGER_CATEGORIES
 
   const conditionCategories =
     itemType === "joker"
       ? CONDITION_CATEGORIES
       : itemType === "consumable"
       ? CONSUMABLE_CONDITION_CATEGORIES
-      : CARD_CONDITION_CATEGORIES;
+      : CARD_CONDITION_CATEGORIES
 
   const effectCategories =
     itemType === "joker"
       ? EFFECT_CATEGORIES
       : itemType === "consumable"
       ? CONSUMABLE_EFFECT_CATEGORIES
-      : CARD_EFFECT_CATEGORIES;
+      : itemType === "card"
+      ? CARD_EFFECT_CATEGORIES
+      : VOUCHER_EFFECT_CATEGORIES
 
   const getConditionsForTriggerFn =
     itemType === "joker"
       ? getConditionsForTrigger
       : itemType === "consumable"
       ? getConsumableConditionsForTrigger
-      : getCardConditionsForTrigger;
+      : getCardConditionsForTrigger
 
   const getEffectsForTriggerFn =
     itemType === "joker"
       ? getEffectsForTrigger
       : itemType === "consumable"
       ? getConsumableEffectsForTrigger
-      : getCardEffectsForTrigger;
+      : itemType === "card"
+      ? getCardEffectsForTrigger
+      : getVoucherEffectsForTrigger;
 
   const style = transform
     ? {

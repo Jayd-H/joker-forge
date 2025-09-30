@@ -8,6 +8,7 @@ import {
   EditionData,
   ModMetadata,
   SoundData,
+  VoucherData,
 } from "./data/BalatroUtils";
 import { RarityData } from "./data/BalatroUtils";
 
@@ -23,6 +24,7 @@ export interface ExportedMod {
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
   version: string;
   exportedAt: string;
 }
@@ -37,6 +39,7 @@ interface ImportableModData {
   enhancements?: EnhancementData[];
   seals?: SealData[];
   editions?: EditionData[];
+  vouchers?: VoucherData[];
 }
 
 export const normalizeImportedModData = (data: ImportableModData) => {
@@ -64,9 +67,10 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   );
   const normalizedSeals = (data.seals || []).map(normalizeSealData);
   const normalizedEditions = (data.editions || []).map(normalizeEditionData);
+  const normalizedVouchers = (data.vouchers || []).map(normalizeVoucherData);
 
   console.log(
-    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions`
+    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers`
   );
 
   return {
@@ -80,6 +84,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
     enhancements: normalizedEnhancements,
     seals: normalizedSeals,
     editions: normalizedEditions,
+    vouchers: normalizedVouchers,
   };
 };
 
@@ -279,6 +284,30 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
   };
 };
 
+const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
+  return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: voucher.editionKey || voucher.objectKey || "",
+    objectType: "voucher",
+    id: voucher.id || "",
+    name: voucher.name || "",
+    description: voucher.description || "",
+    imagePreview: voucher.imagePreview || "",
+    overlayImagePreview: voucher.overlayImagePreview,
+    cost: voucher.cost,
+    unlocked: voucher.unlocked,
+    discovered: voucher.discovered,
+    can_repeat_soul: voucher.can_repeat_soul,
+    requires: voucher.requires || "",
+    requires_activetor: voucher.requires_activetor !== false,
+    no_collection: voucher.no_collection,
+    rules: voucher.rules || [],
+    placeholderCreditIndex: voucher.placeholderCreditIndex,
+    hasUserUploadedImage: voucher.hasUserUploadedImage || false,
+    orderValue: voucher.orderValue || 1,
+  };
+};
+
 const normalizeRarityData = (rarity: RarityData): RarityData => {
   return {
     id: rarity.id || "",
@@ -315,7 +344,8 @@ export const modToJson = (
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
-  editions: EditionData[] = []
+  editions: EditionData[] = [],
+  vouchers: VoucherData[] = []
 ): { filename: string; jsonString: string } => {
   const exportData: ExportedMod = {
     metadata,
@@ -328,6 +358,7 @@ export const modToJson = (
     enhancements,
     seals,
     editions,
+    vouchers,
     version: "1.0.0",
     exportedAt: new Date().toISOString(),
   };
@@ -350,7 +381,8 @@ export const exportModAsJSON = (
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
-  editions: EditionData[] = []
+  editions: EditionData[] = [],
+  vouchers: VoucherData[] = []
 ): void => {
   const ret = modToJson(
     metadata,
@@ -362,7 +394,8 @@ export const exportModAsJSON = (
     boosters,
     enhancements,
     seals,
-    editions
+    editions,
+    vouchers,
   );
   const blob = new Blob([ret.jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -387,6 +420,7 @@ export const importModFromJSON = (): Promise<{
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
 } | null> => {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input");
@@ -441,8 +475,12 @@ export const importModFromJSON = (): Promise<{
             normalizeEditionData
           );
 
+          const normalizedVouchers = (importData.vouchers || []).map(
+            normalizeVoucherData
+          );
+
           console.log(
-            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions`
+            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers`
           );
 
           resolve({
@@ -456,6 +494,7 @@ export const importModFromJSON = (): Promise<{
             enhancements: normalizedEnhancements,
             seals: normalizedSeals,
             editions: normalizedEditions,
+            vouchers: normalizedVouchers,
           });
         } catch (error) {
           console.error("Error parsing mod file:", error);

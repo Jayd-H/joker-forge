@@ -172,10 +172,7 @@ const SECTIONS = {
   vouchers: {
     title: "Vouchers",
     icon: BookOpenIcon,
-    items: VOUCHERS().map((voucher) => ({
-      key: voucher.value,
-      label: voucher.label,
-    })),
+    items: VOUCHERS(),
     color: "text-balatro-green",
   },
 };
