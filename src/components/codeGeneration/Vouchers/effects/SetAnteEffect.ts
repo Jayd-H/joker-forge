@@ -11,16 +11,19 @@ export const generateSetAnteReturn = (effect: Effect): EffectReturn => {
   let anteCode = "";
   
     if (operation === "add") {
-        anteCode += `
-        G.GAME.round_resets.blind_ante + ${valueCode}
+        anteCode += `local mod = ${valueCode}
+        ease_ante(mod)
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
         `;
   } else if (operation === "subtract") {
-        anteCode += `
-        G.GAME.round_resets.blind_ante - ${valueCode}
+        anteCode += `local mod = -${valueCode}
+        ease_ante(mod)
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
         `;
   } else if (operation === "set") {
-        anteCode += `
-G.GAME.round_resets.blind_ante = ${valueCode}
+        anteCode += `local mod = ${valueCode} - G.GAME.round_resets.ante
+        ease_ante(mod)
+     G.GAME.round_resets.blind_ante = ${valueCode}
         `;
   }
 

@@ -12,18 +12,18 @@ export const generateEditDiscardsReturn = (effect: Effect): EffectReturn => {
 
   if (operation === "add") {
         editDiscardCode += `
-        G.GAME.round_resets.hands = G.GAME.round_resets.hands + ${valueCode}
+        G.GAME.round_resets.discards = G.GAME.round_resets.discards + ${valueCode}
         ease_discard(${valueCode})
         `;
   } else if (operation === "subtract") {
         editDiscardCode += `
-        G.GAME.round_resets.hands = G.GAME.round_resets.hands - ${valueCode}
+        G.GAME.round_resets.discards = G.GAME.round_resets.discards - ${valueCode}
         ease_discard(-${valueCode})
         `;
   } else if (operation === "set") {
         editDiscardCode += `
-        G.GAME.round_resets.hands = ${valueCode}
-        ease_discard(${valueCode} - G.GAME.current_round.discard_left)
+        G.GAME.round_resets.discards = ${valueCode}
+        ease_discard(${valueCode} - G.GAME.current_round.discards_left)
         `;
   }
 
