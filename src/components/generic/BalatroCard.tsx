@@ -283,9 +283,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       case "edition":
         return "/images/placeholder-edition.png";
       case "voucher":
-        return "/images/placeholder-edition.png";
-      default:
         return "/images/placeholder-voucher.png";
+      default:
+        return "/images/placeholder-joker.png";
     }
   };
 

@@ -15,7 +15,7 @@ export const generatePlayerMoneyConditionCode = (rules: Rule[]): string => {
 
   switch (operator) {
     case "greater_than":
-      return `G.GAME.dollars > ${valueCode}`;
+      return `G.GAME.dollars > to_big()`;
     case "greater_than_or_equal":
       return `G.GAME.dollars >= ${valueCode}`;
     case "less_than":

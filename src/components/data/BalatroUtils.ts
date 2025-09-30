@@ -368,8 +368,6 @@ const VANILLA_SEALS = [
   { key: "Purple", value: "Purple", label: "Purple" },
 ];
 
-export const vanilla = () => VANILLA_VOUCHERS; // integrate with data registry when custom vouchers are a thing
-
 export const DataRegistry = {
   update: (
     customRarities: RarityData[],
