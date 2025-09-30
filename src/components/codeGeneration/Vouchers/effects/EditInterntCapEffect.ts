@@ -14,7 +14,7 @@ export const generateEditInterestCapReturn = (effect: Effect): EffectReturn => {
         CapSizeCode += `
         G.E_MANAGER:add_event(Event({
             func = function()
-        G.GAME.interest_cap + ${valueCode}
+        G.GAME.interest_cap = G.GAME.interest_cap +${valueCode}
                 return true
             end
         }))
@@ -23,7 +23,7 @@ export const generateEditInterestCapReturn = (effect: Effect): EffectReturn => {
         CapSizeCode += `
         G.E_MANAGER:add_event(Event({
             func = function()
-        G.GAME.interest_cap - ${valueCode}
+        G.GAME.interest_cap = G.GAME.interest_cap -${valueCode}
                 return true
             end
         }))

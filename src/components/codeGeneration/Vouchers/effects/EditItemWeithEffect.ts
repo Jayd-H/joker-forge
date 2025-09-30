@@ -5,7 +5,7 @@ import { generateGameVariableCode } from "../gameVariableUtils";
 export const generateEditItemWeightReturn = (effect: Effect): EffectReturn => {
   const operation = effect.params?.operation || "add";
   const value = effect.params?.value;
-  const selected_card = effect.params?.selected_card || "tarot";
+  const selected_Card = effect.params?.selected_Consumable || "tarot";
 
   const valueCode = generateGameVariableCode(value);
 
@@ -15,7 +15,7 @@ export const generateEditItemWeightReturn = (effect: Effect): EffectReturn => {
         ItemWeightCode += `
         G.E_MANAGER:add_event(Event({
             func = function()
-        G.GAME.${selected_card}_rate + ${valueCode}
+        G.GAME.${selected_Card}_rate = G.GAME.${selected_Card}_rate +${valueCode}
                 return true
             end
         }))
@@ -24,7 +24,7 @@ export const generateEditItemWeightReturn = (effect: Effect): EffectReturn => {
         ItemWeightCode += `
         G.E_MANAGER:add_event(Event({
             func = function()
-       G.GAME.${selected_card}_rate - ${valueCode}
+        G.GAME.${selected_Card}_rate = G.GAME.${selected_Card}_rate -${valueCode}
                 return true
             end
         }))
@@ -33,7 +33,7 @@ export const generateEditItemWeightReturn = (effect: Effect): EffectReturn => {
         ItemWeightCode += `
         G.E_MANAGER:add_event(Event({
             func = function()
-        G.GAME.${selected_card}_rate = ${valueCode}
+        G.GAME.${selected_Card}_rate = ${valueCode}
                 return true
             end
         }))
