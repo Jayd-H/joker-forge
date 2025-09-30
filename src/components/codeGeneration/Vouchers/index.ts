@@ -1,5 +1,4 @@
 import { VoucherData } from "../../data/BalatroUtils";
-import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
@@ -263,13 +262,9 @@ const generateRedeemFunction = (
   let useFunction = ` redeem = function(self, card)`;
 
   rules.forEach((rule) => {
-    const conditionCode = generateConditionChain(rule);
 
     let ruleCode = "";
-    if (conditionCode) {
-      ruleCode += `
-        if ${conditionCode} then`;
-    }
+  
 
     const regularEffects = rule.effects || [];
     const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
@@ -291,11 +286,6 @@ const generateRedeemFunction = (
     if (effectResult.statement) {
       ruleCode += `
             ${effectResult.statement}`;
-    }
-
-    if (conditionCode) {
-      ruleCode += `
-        end`;
     }
 
     useFunction += ruleCode;
