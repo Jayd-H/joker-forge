@@ -32,10 +32,9 @@ export const generateEditShopPricesReturn = (effect: Effect): EffectReturn => {
 
     if (operation === "add") {
         ItemPriceCode += `
-        local mod = ${valueCode}
          G.E_MANAGER:add_event(Event({
             func = function()
-           G.GAME.discount_percent = G.GAME.discount_percent + mod
+           G.GAME.discount_percent = (G.GAME.discount_percent or 0) +${valueCode}
            for _, v in pairs(G.I.CARD) do
                     if v.set_cost then v:set_cost() end
                 return true
@@ -45,10 +44,9 @@ export const generateEditShopPricesReturn = (effect: Effect): EffectReturn => {
         `;
   } else if (operation === "subtract") {
         ItemPriceCode += `
-        local mod = -${valueCode}
         G.E_MANAGER:add_event(Event({
             func = function()
-       G.GAME.discount_percent = G.GAME.discount_percent + mod
+        G.GAME.discount_percent = (G.GAME.discount_percent or 0) -${valueCode}
        for _, v in pairs(G.I.CARD) do
                     if v.set_cost then v:set_cost() end
                 return true
@@ -74,7 +72,7 @@ export const generateEditShopPricesReturn = (effect: Effect): EffectReturn => {
   const configVariables =
     typeof value === "string" && value.startsWith("GAMEVAR:")
       ? []
-      : [`item_prices = ${value}`];
+      : [`items_prices = ${value}`];
 
   return {
     statement: ItemPriceCode,
