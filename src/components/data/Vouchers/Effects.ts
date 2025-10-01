@@ -266,34 +266,49 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Economy",
   },
     {
+    id: "edit_raity_weight",
+    label: "Edit Rarity Weight",
+    description: "Modify the Rate Probability for Joker raritys in the Shop",
+    applicableTriggers: ["voucher_used"],
+    params: [
+      {
+          id: "key_rarity",
+          type: "text",
+          label: "Joker Rarity Key (modprefix_key)",
+          default: "",
+        },
+       {
+          id: "operation",
+          type: "select",
+          label: "Operation",
+          options: [
+            { value: "set", label: "Set to" },
+            { value: "add", label: "Add" },
+            { value: "subtract", label: "Subtract" },
+          ],
+          default: "set",
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Amount",
+          default: 1,
+          min: 1,
+        },
+      ],
+    category: "Shop Effects",
+  },
+  {
     id: "edit_item_weight",
     label: "Edit Card Weight",
     description: "Modify the Rate Probability for Shop Cards",
     applicableTriggers: ["voucher_used"],
     params: [
       {
-          id: "selected_card",
-          type: "select",
-          label: "Type of Card",
-          options: [
-            { value: "none", label: "No Card" },
-            { value: "tarot", label: "tarot" },
-            { value: "planet", label: "planet" },
-            { value: "edition", label: "edition" },
-            { value: "playing_card", label: "playing card" },
-            { value: "spectral", label: "spectral" },
-          ],
-          default: "none",
-        },
-        {
-          id: "selected_rarity",
-          type: "select",
-          label: "Rarity of Joker",
-          options: [
-            { value: "none", label: "No Rarity" },
-            ...RARITIES(),
-          ],
-          default: "none",
+          id: "key",
+          type: "text",
+          label: "Card Key (modprefix_key)",
+          default: "",
         },
        {
           id: "operation",
