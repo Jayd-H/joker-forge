@@ -174,7 +174,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
   const [currentVoucherForRules, setCurrentVoucherForRules] =
     useState<VoucherData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState(userConfig.filters.vouchersFilter ?? "name-asc");
+  const [sortBy, setSortBy] = useState(userConfig.filters.vouchersFilter ?? "name-id-desc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
