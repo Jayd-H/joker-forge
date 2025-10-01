@@ -23,6 +23,7 @@ import {
   getObjectName,
 } from "../../generic/GameObjectOrdering";
 import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
+import { generateKeyFromName } from "./EditVoucherInfo";
 
 interface VoucherCardProps {
   voucher: VoucherData;
@@ -137,7 +138,7 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
     }
 
     const tempKey = getObjectName(voucher, vouchers, tempName);
-    onQuickUpdate({ name: tempName, objectKey: tempKey });
+    onQuickUpdate({ name: tempName, objectKey: generateKeyFromName(tempKey) });
     setEditingName(false);
     setNameValidationError("");
   };
