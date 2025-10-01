@@ -11,6 +11,10 @@ import {
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
+import {
+  RARITIES,
+} from "../BalatroUtils";
+
 
 export const VOUCHER_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
@@ -272,13 +276,24 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
           type: "select",
           label: "Type of Card",
           options: [
+            { value: "none", label: "No Card" },
             { value: "tarot", label: "tarot" },
             { value: "planet", label: "planet" },
             { value: "edition", label: "edition" },
             { value: "playing_card", label: "playing card" },
             { value: "spectral", label: "spectral" },
           ],
-          default: "tarot",
+          default: "none",
+        },
+        {
+          id: "selected_rarity",
+          type: "select",
+          label: "Rarity of Joker",
+          options: [
+            { value: "none", label: "No Rarity" },
+            ...RARITIES(),
+          ],
+          default: "none",
         },
        {
           id: "operation",
