@@ -197,6 +197,43 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Shop Effects",
   },
   {
+    id: "edit_booster_packs",
+    label: "Edit Boosters Packs",
+    description: "Modify the values the of booster packs available in shop",
+    applicableTriggers: ["voucher_used"],
+    params: [
+      {
+        id: "selected_type",
+        type: "select",
+        label: "Edit Type",
+        options: [
+          { value: "size", label: "Cards slots" },
+          { value: "choice", label: "Choices" },
+        ],
+        default: "size",
+      },
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Shop Effects",
+  },
+  {
     id: "edit_interest_cap",
     label: "Edit Interest Cap",
     description: "Modify the Cap on Interest Earned in each round",
