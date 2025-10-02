@@ -407,6 +407,73 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
         ],
       },
     ],
+  },{
+    id: "scoring",
+    label: "Scoring",
+    icon: HandRaisedIcon,
+    variables: [],
+    subcategories: [
+      {
+        id: "chips",
+        label: "Chips",
+        variables: [
+          {
+            id: "blind_chip_req",
+            label: "Blind Chip Requirement",
+            description: "The Chip Requirement for the current Blind",
+            category: "scoring",
+            subcategory: "chips",
+            code: "G.GAME.blind.chips"
+          },
+          {
+            id: "current_chip_total",
+            label: "Current Chip Total",
+            description: "Current Amount of Scored Chips towards the Blind Requirement",
+            category: "scoring",
+            subcategory: "chips",
+            code: "G.GAME.chips"
+          },
+          {
+            id: "initial_scoring_chips",
+            label: "Initial Scoring Chips",
+            description: "The Initial Amount of Chips of the played Poker Hand",
+            category: "scoring",
+            subcategory: "chips",
+            code: "G.GAME.current_round.current_hand.chips"
+          },
+          {
+            id: "current_scoring_chips",
+            label: "Current Scoring Chips",
+            description: "The Current Amount of Chips in scoring",
+            category: "scoring",
+            subcategory: "chips",
+            code: "hand_chips"
+          },
+        ],
+      },
+      {
+        id: "mult",
+        label: "Mult",
+        variables: [
+          {
+            id: "initial_scoring_mult",
+            label: "Initial Scoring Mult",
+            description: "The Initial Amount of Mult of the played Poker Hand",
+            category: "scoring",
+            subcategory: "mult",
+            code: "G.GAME.current_round.current_hand.chips"
+          },
+          {
+            id: "current_scoring_mult",
+            label: "Current Scoring Mult",
+            description: "The Current Amount of Mult in scoring",
+            category: "scoring",
+            subcategory: "mult",
+            code: "mult"
+          },
+        ],
+      },
+    ],
   },
   {
     id: "hand",
