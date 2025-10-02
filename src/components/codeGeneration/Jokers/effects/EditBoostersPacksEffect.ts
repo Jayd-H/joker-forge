@@ -26,70 +26,82 @@ export const generateEditBoostersReturn = (
 
 if (selected_type !== "none") { 
  if (selected_type === "size") {
-    if (operation === "add") {
+    switch (operation) {
+    case "add": {
+      const addMessage = customMessage
+        ? `"${customMessage}"`
+        : `"+"..tostring(${valueCode}).." Booster Size"`;
         EditBoosterCode += `
-        G.E_MANAGER:add_event(Event({
             func = function()
+        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
         G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) +${valueCode}
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.DARK_EDITION})
                 return true
-            end
-        }))
-        `;
-  } else if (operation === "subtract") {
+            end`;
+    break;
+    }
+    case "subtract": {
+      const subtractMessage = customMessage
+        ? `"${customMessage}"`
+        : `"-"..tostring(${valueCode}).." Booster Size"`;
         EditBoosterCode += `
-        G.E_MANAGER:add_event(Event({
             func = function()
+            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
         G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) -${valueCode}
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.DARK_EDITION})
                 return true
-            end
-        }))
-        `;
-  } else if (operation === "set") {
+            end`;
+     break;
+    }
+    case "set": {
+      const setMessage = customMessage
+        ? `"${customMessage}"`
+        : `"Booster Size "..tostring(${valueCode})`;
         EditBoosterCode += `
-        G.E_MANAGER:add_event(Event({
             func = function()
+            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
         G.GAME.modifiers.booster_size_mod = ${valueCode}
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.DARK_EDITION})
                 return true
-            end
-        }))
-        `;
+            end`;
   }
+ }
 }
 
 if (selected_type === "choice") {
-    if (operation === "add") {
+    switch (operation) {
+    case "add": {
+      const addMessage = customMessage
+        ? `"${customMessage}"`
+        : `"+"..tostring(${valueCode}).." Booster Choice"`;
         EditBoosterCode += `
-        G.E_MANAGER:add_event(Event({
             func = function()
+        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
         G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) +${valueCode}
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.DARK_EDITION})
                 return true
-            end
-        }))
-        `;
-  } else if (operation === "subtract") {
+            end`;
+  break;
+    }
+    case "subtract": {
+      const subtractMessage = customMessage
+        ? `"${customMessage}"`
+        : `"-"..tostring(${valueCode}).." Booster Choice"`;
         EditBoosterCode += `
-        G.E_MANAGER:add_event(Event({
             func = function()
+            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
         G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) -${valueCode}
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.DARK_EDITION})
                 return true
-            end
-        }))
-        `;
-  } else if (operation === "set") {
+            end`;
+  break;
+    }
+    case "set": {
+      const setMessage = customMessage
+        ? `"${customMessage}"`
+        : `"Booster Choice "..tostring(${valueCode})`;
         EditBoosterCode += `
-        G.E_MANAGER:add_event(Event({
             func = function()
+        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
         G.GAME.modifiers.booster_choice_mod = ${valueCode}
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.DARK_EDITION})
                 return true
-            end
-        }))
-        `;
+            end`;
+   }
   }
  }
 }
@@ -97,6 +109,6 @@ if (selected_type === "choice") {
   return {
     statement: EditBoosterCode,
     colour: "G.C.BLUE",
-    configVariables,
+    configVariables: configVariables.length > 0 ? configVariables : undefined,
   };
 };

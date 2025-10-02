@@ -28,8 +28,8 @@ export const generateEditShopCardsSlotsReturn = (
         ? `"${customMessage}"`
         : `"+"..tostring(${valueCode}).." Shop Slots"`;
       statement = `func = function()
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
-                SMODS.change_shop_size(${valueCode})
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.YELLOW})
+                change_shop_size(${valueCode})
                 return true
             end`;
       break;
@@ -40,7 +40,7 @@ export const generateEditShopCardsSlotsReturn = (
         : `"-"..tostring(${valueCode}).." Shop Slots"`;
       statement = `func = function()
                 card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
-                SMODS.change_shop_size(-${valueCode})
+                change_shop_size(-${valueCode})
                 return true
             end`;
       break;
@@ -54,7 +54,7 @@ export const generateEditShopCardsSlotsReturn = (
                 local target_shop_slots = ${valueCode}
                 local difference = target_shop_slots - current_shop_slots
                 card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
-                SMODS.change_shop_size(difference)
+                change_shop_size(difference)
                 return true
             end`;
       break;
@@ -64,8 +64,8 @@ export const generateEditShopCardsSlotsReturn = (
         ? `"${customMessage}"`
         : `"+"..tostring(${valueCode}).." Shop Slots"`;
       statement = `func = function()
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
-                SMODS.change_shop_size(${valueCode})
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.YELLOW})
+                change_shop_size(${valueCode})
                 return true
             end`;
       break;
