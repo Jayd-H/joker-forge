@@ -11,9 +11,6 @@ import {
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
-import {
-  RARITIES,
-} from "../BalatroUtils";
 
 
 export const VOUCHER_EFFECT_CATEGORIES: CategoryDefinition[] = [

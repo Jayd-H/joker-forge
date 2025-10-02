@@ -10,8 +10,8 @@ import { generateEditBoosterSlotsReturn } from "./effects/EditBoosterSlotsEffect
 import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect";
 import { generateEditInterestCapReturn } from "./effects/EditInterntCapEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
-import { generateEditItemWeightReturn } from "./effects/EditItemWeithEffect";
-import { generateEditRarityWeightReturn } from "./effects/EditRarityWeithEffect";
+import { generateEditItemWeightReturn } from "./effects/EditItemWeightEffect";
+import { generateEditRarityWeightReturn } from "./effects/EditRarityWeightEffect";
 import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateEditRellorPriceReturn } from "./effects/EditRellorPriceEffect";
 import {

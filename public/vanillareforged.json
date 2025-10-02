@@ -15842,8 +15842,8 @@
           "conditionGroups": [],
           "effects": [
             {
-              "id": "f983f62f-c0f9-4a15-9e76-aec3a79bba3d",
-              "type": "edit_discards",
+              "id": "9a8f4cbd-6167-4bfe-8f13-81fe4d5f9e6e",
+              "type": "edit_shop_slots",
               "params": {
                 "operation": "add",
                 "value": 1
@@ -15965,7 +15965,7 @@
               "id": "84252890-e0a0-464c-bfb9-745276c8261b",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "playing_card",
+                "key": "playing_card",
                 "operation": "set",
                 "value": 4
               }
@@ -16086,13 +16086,13 @@
               "id": "390285a0-4d58-42f9-a666-c0b7d969d429",
               "type": "set_ante",
               "params": {
-                "operation": "set",
+                "operation": "subtract",
                 "value": 1
               }
             },
             {
               "id": "7e1bcd3b-6990-4f4c-9d13-7e692a3a8880",
-              "type": "edit_discards",
+              "type": "edit_hands",
               "params": {
                 "operation": "subtract",
                 "value": 1
@@ -16134,9 +16134,9 @@
               "id": "c09022d1-0be6-432a-adf4-64be27c02e2d",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "editon",
+                "key": "editon",
                 "operation": "set",
-                "value": 2
+                "value": 20
               }
             }
           ],
@@ -16175,9 +16175,9 @@
               "id": "ecf4c702-59b4-44c1-b1e1-80dbd622c8a2",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "planet",
+                "key": "planet",
                 "operation": "set",
-                "value": 2
+                "value": 20
               }
             }
           ],
@@ -16216,9 +16216,9 @@
               "id": "579d594a-6836-46a1-8372-d7d599c9cd88",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "tarot",
+                "key": "tarot",
                 "operation": "set",
-                "value": 2
+                "value": 20
               }
             }
           ],
@@ -16421,8 +16421,7 @@
               "id": "3aea8cbe-c483-474c-87a5-76d2c4b2d4c2",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "edition",
-                "selected_rarity": "none",
+                "key": "edition",
                 "operation": "set",
                 "value": 40
               }
@@ -16636,8 +16635,7 @@
               "id": "a5606ce6-4b56-46d9-b800-f3ebcbeb6850",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "planet",
-                "selected_rarity": "none",
+                "key": "planet",
                 "operation": "set",
                 "value": 40
               }
@@ -16679,8 +16677,7 @@
               "id": "abab458d-cf18-49ab-bb96-d6876caef31a",
               "type": "edit_item_weight",
               "params": {
-                "selected_card": "tarot",
-                "selected_rarity": "none",
+                "key": "tarot",
                 "operation": "set",
                 "value": 40
               }
