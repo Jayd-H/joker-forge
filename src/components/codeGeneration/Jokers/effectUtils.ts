@@ -23,10 +23,12 @@ import { generatePassiveHandSize } from "./effects/EditHandSizeEffect";
 import { generatePassiveHand } from "./effects/EditHandEffect";
 import { generatePassiveDiscard } from "./effects/EditDiscardEffect";
 import { generatePassiveCombineRanks } from "./effects/CombineRanksEffect";
+import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateApplyXChipsReturn } from "./effects/ApplyXChipsEffect";
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateApplyExpMultReturn } from "./effects/ApplyExpMultEffect";
 import { generateApplyExpChipsReturn } from "./effects/ApplyExpChipsEffect";
+import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateShowMessageReturn } from "./effects/ShowMessageEffect";
 import { generateSetDollarsReturn } from "./effects/SetDollarsEffect";
@@ -786,6 +788,10 @@ const generateSingleEffect = (
       return generateBeatCurrentBlindReturn(effect);
     case "fix_probability":
       return generateFixProbabilityReturn(effect, sameTypeCount);
+      case "edit_booster_packs":
+         return generateEditBoostersReturn(effect, sameTypeCount);
+      case "edit_shop_slots":
+          return generateEditShopCardsSlotsReturn(effect,sameTypeCount);
     case "mod_probability":
       return generateModProbabilityReturn(effect, sameTypeCount);
     case "force_game_over":

@@ -40,7 +40,25 @@ effect: Effect,
             end
         }))
         `;
-  }
+  } else if (operation === "multiply") {
+        ItemWeightCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.${key}_rate = G.GAME.${key}_rate *${valueCode}
+                return true
+            end
+        }))
+        `;
+  } else if (operation === "divide") {
+        ItemWeightCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.${key}_rate = G.GAME.${key}_rate /${valueCode}
+                return true
+            end
+        }))
+        `;
+  }    
 
   const configVariables =
     typeof value === "string" && value.startsWith("GAMEVAR:")

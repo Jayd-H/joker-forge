@@ -34,8 +34,10 @@ import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generatePermaBonusReturn } from "./effects/PermaBonusEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
+import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
+import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateForceGameOverReturn } from "./effects/ForceGameOverEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
@@ -412,6 +414,12 @@ const generateSingleEffect = (
 
     case "copy_joker":
       return generateCopyRandomJokerReturn(effect);
+
+      case "edit_booster_packs":
+            return generateEditBoostersReturn(effect);
+
+    case "edit_shop_slots":
+        return generateEditShopCardsSlotsReturn(effect);
 
     case "destroy_joker":
       return generateDestroyRandomJokerReturn(effect);
