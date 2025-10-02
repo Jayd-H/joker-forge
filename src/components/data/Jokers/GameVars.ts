@@ -450,6 +450,14 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             subcategory: "chips",
             code: "hand_chips"
           },
+          {
+            id: "cumulative_chips",
+            label: "Cumulative Chips",
+            description: "The Cumulative Chip Total of all scoring cards",
+            category: "scoring",
+            subcategory: "chips",
+            code: "(function() local chips_sum = 0; for _, playing_card in pairs(context.scoring_hand or {}) do chips_sum = chips_sum + playing_card.base.nominal end; return chips_sum end)"
+          },
         ],
       },
       {
