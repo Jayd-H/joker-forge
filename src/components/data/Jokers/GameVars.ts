@@ -7,6 +7,7 @@ import {
   BanknotesIcon,
   ChartBarIcon,
   HandRaisedIcon,
+  FireIcon,
 } from "@heroicons/react/24/outline";
 
 export interface GameVariable {
@@ -410,7 +411,7 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
   },{
     id: "scoring",
     label: "Scoring",
-    icon: HandRaisedIcon,
+    icon: FireIcon,
     variables: [],
     subcategories: [
       {
@@ -461,7 +462,7 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             description: "The Initial Amount of Mult of the played Poker Hand",
             category: "scoring",
             subcategory: "mult",
-            code: "G.GAME.current_round.current_hand.chips"
+            code: "G.GAME.current_round.current_hand.mult"
           },
           {
             id: "current_scoring_mult",
@@ -470,6 +471,22 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             category: "scoring",
             subcategory: "mult",
             code: "mult"
+          },
+          {
+            id: "highest_card_mult",
+            label: "Highest Card Mult",
+            description: "Mult value from the highest rank card in hand",
+            category: "scoring",
+            subcategory: "mult",
+            code: "(function() local max = 0; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id > max then max = card.base.id end end; return max end)()",
+          },
+          {
+            id: "lowest_card_mult",
+            label: "Lowest Card Mult",
+            description: "Mult value from the lowest rank card in hand",
+            category: "scoring",
+            subcategory: "mult",
+            code: "(function() local min = 14; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id < min then min = card.base.id end end; return min end)()",
           },
         ],
       },
@@ -1390,22 +1407,6 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             category: "special",
             subcategory: "hand_position",
             code: "(G.hand and G.hand.cards[#G.hand.cards] and G.hand.cards[#G.hand.cards].base.id or 0)",
-          },
-          {
-            id: "highest_card_mult",
-            label: "Highest Card Mult",
-            description: "Mult value from the highest rank card in hand",
-            category: "special",
-            subcategory: "hand_position",
-            code: "(function() local max = 0; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id > max then max = card.base.id end end; return max end)()",
-          },
-          {
-            id: "lowest_card_mult",
-            label: "Lowest Card Mult",
-            description: "Mult value from the lowest rank card in hand",
-            category: "special",
-            subcategory: "hand_position",
-            code: "(function() local min = 14; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id < min then min = card.base.id end end; return min end)()",
           },
         ],
       },
