@@ -1,3 +1,4 @@
+import { SUITS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -8,7 +9,8 @@ export const generateChangeSuitVariableReturn = (
   const changeType = (effect.params.change_type as string) || "random";
   const specificSuit = (effect.params.specific_suit as string) || "Spades";
   const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
-  const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
+  const suitPoolSuits = SUITS.map(suit => suit.value)
+  
 
   let statement = "";
 

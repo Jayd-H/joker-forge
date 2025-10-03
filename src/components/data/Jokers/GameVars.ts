@@ -898,30 +898,35 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
     id: "jokers",
     label: "Jokers",
     icon: FaceSmileIcon,
-    variables: [
-      {
-        id: "joker_count",
-        label: "Joker Count",
-        description: "Number of jokers currently held",
-        category: "jokers",
-        code: "#(G.jokers and G.jokers.cards or {})",
-      },
+    variables: [],
+    subcategories: [
       {
         id: "joker_slots",
-        label: "Total Joker Slots",
-        description: "Total number of joker slots available",
-        category: "jokers",
-        code: "G.jokers and G.jokers.config.card_limit or 0",
+        label: "Joker Slots",
+        variables: [
+          {
+            id: "joker_count",
+            label: "Joker Count",
+            description: "Number of jokers currently held",
+            category: "jokers",
+            code: "#(G.jokers and G.jokers.cards or {})",
+          },
+          {
+            id: "joker_slots",
+            label: "Total Joker Slots",
+            description: "Total number of joker slots available",
+            category: "jokers",
+            code: "G.jokers and G.jokers.config.card_limit or 0",
+          },
+          {
+            id: "free_joker_slots",
+            label: "Free Joker Slots",
+            description: "Number of empty joker slots",
+            category: "jokers",
+            code: "((G.jokers and G.jokers.config.card_limit or 0) - #(G.jokers and G.jokers.cards or {}))",
+          },
+        ]
       },
-      {
-        id: "free_joker_slots",
-        label: "Free Joker Slots",
-        description: "Number of empty joker slots",
-        category: "jokers",
-        code: "((G.jokers and G.jokers.config.card_limit or 0) - #(G.jokers and G.jokers.cards or {}))",
-      },
-    ],
-    subcategories: [
       {
         id: "joker_rarities",
         label: "Jokers by Rarity",
@@ -964,6 +969,14 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
         id: "joker_economics",
         label: "Joker Economics",
         variables: [
+          {
+            id: "self_sell_value",
+            label: "This Joker Sell Value",
+            description: "The sell value of only this joker",
+            category: "jokers",
+            subcategory: "joker_economics",
+            code: "(function() for _, joker in ipairs(G.jokers and G.jokers.cards or {}) do if joker == card then return joker.sell_cost end end end)()",
+          },
           {
             id: "other_jokers_sell_value",
             label: "Other Jokers Sell Value",
