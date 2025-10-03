@@ -2381,7 +2381,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       {
         id: "sound_key",
         type: "text",
-        label: "Sound Key (modprefix_key)",
+        label: "Sound Key (modprefix_key) or (key)",
         default: "",
       },
     ],

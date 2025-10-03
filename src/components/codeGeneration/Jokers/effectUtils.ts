@@ -801,7 +801,7 @@ const generateSingleEffect = (
     case "emit_flag":
       return generateEmitFlagReturn(effect, modprefix);
     case "play_sound":
-      return generatePlaySoundReturn(effect, modprefix);
+      return generatePlaySoundReturn(effect);
     case "juice_up_card":
       return generateJuiceUpReturn(effect, sameTypeCount, "card");
     case "edit_play_size":

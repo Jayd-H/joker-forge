@@ -467,7 +467,7 @@ const generateSingleEffect = (
       return generateEmitFlagReturn(effect, modprefix);
           
     case "play_sound":
-      return generatePlaySoundReturn(effect, modprefix);
+      return generatePlaySoundReturn(effect);
       
     case "flip_joker":
             return generateFlipJokerReturn(effect);
