@@ -65,7 +65,7 @@ export const generateChangePokerHandVariableReturn = (
     }}
     statement = `__PRE_RETURN_CODE__
                 local pokerhand_pool = {${pokerhand_pool}}
-                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(pokerhand_pool, pseudoseed('randomPokerhand'))
+                G.GAME.current_round.${variableName}_hand = pseudorandom_element(pokerhand_pool, pseudoseed('randomPokerhand'))
                 __PRE_RETURN_CODE_END__`;
   } else {
     statement = `__PRE_RETURN_CODE__
