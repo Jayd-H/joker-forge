@@ -10,7 +10,9 @@ import { generateEditBoosterSlotsReturn } from "./effects/EditBoosterSlotsEffect
 import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect";
 import { generateEditInterestCapReturn } from "./effects/EditInterntCapEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
-import { generateEditItemWeightReturn } from "./effects/EditItemWeithEffect";
+import { generateEditItemWeightReturn } from "./effects/EditItemWeightEffect";
+import { generateEditRarityWeightReturn } from "./effects/EditRarityWeightEffect";
+import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateEditRellorPriceReturn } from "./effects/EditRellorPriceEffect";
 import {
   generateConsumableSlots,
@@ -359,11 +361,17 @@ case "edit_shop_slots":
     case "edit_voucher_slots":
       return generateEditVoucherSlotsReturn(effect);
 
+      case "edit_booster_packs":
+      return generateEditBoostersReturn(effect);
+
     case "edit_joker_slots":
       return generateEditJokerSlotsReturn(effect);
     
  case "edit_item_weight":
       return generateEditItemWeightReturn(effect);     
+
+  case "edit_raity_weight":
+      return generateEditRarityWeightReturn(effect); 
 
  case "edit_interest_cap":
       return generateEditInterestCapReturn(effect);  

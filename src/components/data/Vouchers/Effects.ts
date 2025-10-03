@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
 
+
 export const VOUCHER_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Selected Cards",
@@ -193,6 +194,43 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Shop Effects",
   },
   {
+    id: "edit_booster_packs",
+    label: "Edit Boosters Packs",
+    description: "Modify the values the of booster packs available in shop",
+    applicableTriggers: ["voucher_used"],
+    params: [
+      {
+        id: "selected_type",
+        type: "select",
+        label: "Edit Type",
+        options: [
+          { value: "size", label: "Cards slots" },
+          { value: "choice", label: "Choices" },
+        ],
+        default: "size",
+      },
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Shop Effects",
+  },
+  {
     id: "edit_interest_cap",
     label: "Edit Interest Cap",
     description: "Modify the Cap on Interest Earned in each round",
@@ -262,23 +300,49 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Economy",
   },
     {
+    id: "edit_raity_weight",
+    label: "Edit Rarity Weight",
+    description: "Modify the Rate Probability for Joker raritys in the Shop",
+    applicableTriggers: ["voucher_used"],
+    params: [
+      {
+          id: "key_rarity",
+          type: "text",
+          label: "Joker Rarity Key (modprefix_key)",
+          default: "",
+        },
+       {
+          id: "operation",
+          type: "select",
+          label: "Operation",
+          options: [
+            { value: "set", label: "Set to" },
+            { value: "add", label: "Add" },
+            { value: "subtract", label: "Subtract" },
+          ],
+          default: "set",
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Amount",
+          default: 1,
+          min: 1,
+        },
+      ],
+    category: "Shop Effects",
+  },
+  {
     id: "edit_item_weight",
     label: "Edit Card Weight",
     description: "Modify the Rate Probability for Shop Cards",
     applicableTriggers: ["voucher_used"],
     params: [
       {
-          id: "selected_card",
-          type: "select",
-          label: "Type of Card",
-          options: [
-            { value: "tarot", label: "tarot" },
-            { value: "planet", label: "planet" },
-            { value: "edition", label: "edition" },
-            { value: "playing_card", label: "playing card" },
-            { value: "spectral", label: "spectral" },
-          ],
-          default: "tarot",
+          id: "key",
+          type: "text",
+          label: "Card Key (modprefix_key)",
+          default: "",
         },
        {
           id: "operation",
