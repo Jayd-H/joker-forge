@@ -37,6 +37,24 @@ export const generateEditInterestCapReturn = (effect: Effect): EffectReturn => {
             end
         }))
         `;
+  } else if (operation === "multiply") {
+        CapSizeCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.interest_cap = G.GAME.interest_cap *${valueCode}
+                return true
+            end
+        }))
+        `;
+  } else if (operation === "divide") {
+        CapSizeCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.interest_cap = G.GAME.interest_cap /${valueCode}
+                return true
+            end
+        }))
+        `;
   }
 
   const configVariables =

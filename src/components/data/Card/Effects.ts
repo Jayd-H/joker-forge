@@ -22,6 +22,7 @@ import {
   SEALS,
   ENHANCEMENTS,
   SUITS,
+  TAGS,
 } from "../BalatroUtils";
 import { GENERIC_TRIGGERS, SCORING_TRIGGERS } from "./Triggers";
 
@@ -408,6 +409,35 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Scoring",
   },
+  {
+      id: "create_tag",
+      label: "Create Tag",
+      description: "Create a specific or random tag",
+      applicableTriggers: SCORING_TRIGGERS,
+      params: [
+        {
+          id: "tag_type",
+          type: "select",
+          label: "Tag Type",
+          options: [
+            { value: "random", label: "Random Tag" },
+            { value: "specific", label: "Specific Tag" },
+          ],
+          default: "random",
+        },
+        {
+          id: "specific_tag",
+          type: "select",
+          label: "Specific Tag",
+          options: [...TAGS],
+          showWhen: {
+            parameter: "tag_type",
+            values: ["specific"],
+          },
+        },
+      ],
+      category: "Consumables",
+    },
   {
     id: "create_joker",
     label: "Create Joker",

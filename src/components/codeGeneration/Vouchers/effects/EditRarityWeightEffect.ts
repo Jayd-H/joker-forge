@@ -40,7 +40,26 @@ effect: Effect,
             end
         }))
         `;
+  } else if (operation === "multiply") {
+        RarityWeightCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.${key_rarity}_mod = G.GAME.${key_rarity}_mod *${valueCode}
+                return true
+            end
+        }))
+        `;
+  } else if (operation === "divide") {
+        RarityWeightCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.${key_rarity}_mod = G.GAME.${key_rarity}_mod /${valueCode}
+                return true
+            end
+        }))
+        `;
   }
+  
 
 
 

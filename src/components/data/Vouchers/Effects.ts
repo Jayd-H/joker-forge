@@ -244,6 +244,8 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "add", label: "Add" },
           { value: "subtract", label: "Subtract" },
           { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
         ],
         default: "add",
       },
@@ -302,7 +304,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     {
     id: "edit_raity_weight",
     label: "Edit Rarity Weight",
-    description: "Modify the Rate Probability for Joker raritys in the Shop",
+    description: "Modify the Rate Probability for Joker Raritys in the Shop",
     applicableTriggers: ["voucher_used"],
     params: [
       {
@@ -316,11 +318,13 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
           type: "select",
           label: "Operation",
           options: [
-            { value: "set", label: "Set to" },
-            { value: "add", label: "Add" },
-            { value: "subtract", label: "Subtract" },
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
           ],
-          default: "set",
+          default: "add",
         },
         {
           id: "value",
@@ -349,11 +353,13 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
           type: "select",
           label: "Operation",
           options: [
-            { value: "set", label: "Set to" },
-            { value: "add", label: "Add" },
-            { value: "subtract", label: "Subtract" },
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
           ],
-          default: "set",
+          default: "add",
         },
         {
           id: "value",
