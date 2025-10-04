@@ -118,7 +118,7 @@ export const generateConfigVariables = (
   if (itemType === "seal") {
     abilityPath = "card.ability.seal.extra";
   } else if (itemType === "edition") {
-    abilityPath = "card.edition";
+    abilityPath = "card.edition.extra";
   } else {
     abilityPath = "card.ability.extra";
   }
