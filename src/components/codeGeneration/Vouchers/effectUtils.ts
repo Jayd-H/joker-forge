@@ -380,7 +380,7 @@ case "edit_shop_slots":
       return generateEmitFlagReturn(effect, modprefix);
           
     case "play_sound":
-      return generatePlaySoundReturn(effect, modprefix);
+      return generatePlaySoundReturn(effect);
       
 
     default:
