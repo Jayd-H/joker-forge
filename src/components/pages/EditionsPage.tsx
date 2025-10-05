@@ -87,7 +87,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
       {
         value: "id",
         label: "Id Value",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
+        sortFn: (a, b) => a.orderValue - b.orderValue,
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -101,14 +101,14 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
       {
         value: "rules",
         label: "Rules",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
+        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
       },
       {
         value: "weight",
         label: "Weight",
-        sortFn: (a, b) => (b.weight || 0) - (a.weight || 0),
+        sortFn: (a, b) => (a.weight || 0) - (b.weight || 0),
         ascText: "Low to High",
         descText: "High to Low",
       },
@@ -272,10 +272,13 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [editions, searchTerm, sortBy, sortOptions]);
+  }, [editions, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

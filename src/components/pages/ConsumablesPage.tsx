@@ -753,7 +753,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       {
         value: "id",
         label: "Id Value",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
+        sortFn: (a, b) => a.orderValue - b.orderValue,
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -781,7 +781,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       {
         value: "rules",
         label: "Rules",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
+        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -1127,10 +1127,13 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     );
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions]);
+  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions, sortDirection]);
 
   const filteredAndSortedSets = useMemo(() => {
     const filtered = consumableSets.filter(

@@ -223,14 +223,14 @@ const JokersPage: React.FC<JokersPageProps> = ({
       {
         value: "id",
         label: "Id Value",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
+        sortFn: (a, b) => a.orderValue - b.orderValue,
         ascText: "Least to Most",
         descText: "Most to Least",
       },
       {
         value: "name",
         label: "Name",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
+        sortFn: (a, b) => a.name.localeCompare(b.name),
         ascText: "A-Z",
         descText: "Z-A",
       },
@@ -238,8 +238,8 @@ const JokersPage: React.FC<JokersPageProps> = ({
         value: "rarity",
         label: "Rarity",
         sortFn: (a, b) => {
-          const aNum = typeof b.rarity === "number" ? b.rarity : 999;
-          const bNum = typeof a.rarity === "number" ? a.rarity : 999;
+          const aNum = typeof a.rarity === "number" ? a.rarity : 999;
+          const bNum = typeof b.rarity === "number" ? b.rarity : 999;
           return aNum - bNum;
         },
         ascText: "Low to High",
@@ -248,14 +248,14 @@ const JokersPage: React.FC<JokersPageProps> = ({
       {
         value: "cost",
         label: "Cost",
-        sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
+        sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
         ascText: "Low to High",
         descText: "High to Low",
       },
       {
         value: "rules",
         label: "Rules",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
+        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -473,7 +473,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
-      if (sortDirection === "asc") {
+      if (sortDirection === "desc") {
         filtered.reverse()
       }
     }

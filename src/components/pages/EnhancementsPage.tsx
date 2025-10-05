@@ -202,7 +202,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       {
         value: "id",
         label: "Id Value",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
+        sortFn: (a, b) => a.orderValue - b.orderValue,
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -216,7 +216,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       {
         value: "rules",
         label: "Rules",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
+        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -402,10 +402,13 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [enhancements, searchTerm, sortBy, sortOptions]);
+  }, [enhancements, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

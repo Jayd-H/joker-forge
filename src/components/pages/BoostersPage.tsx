@@ -642,7 +642,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       {
         value: "id",
         label: "Id Value",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
+        sortFn: (a, b) => a.orderValue - b.orderValue,
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -876,16 +876,19 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [boosters, searchTerm, sortBy, sortOptions]);
+  }, [boosters, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    "Id Value";
 
   const currentSortDirectionLabel =
     currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :

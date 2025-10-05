@@ -199,7 +199,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
             {
         value: "id",
         label: "Id Value",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
+        sortFn: (a, b) => a.orderValue - b.orderValue,
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -213,7 +213,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
       {
         value: "rules",
         label: "Rules",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
+        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -392,10 +392,13 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [vouchers, searchTerm, sortBy, sortOptions]);
+  }, [vouchers, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 
