@@ -35,15 +35,7 @@ export interface ModMetadata {
 }
 
 export interface UserConfig {
-  filters: {
-    jokersFilter?: string;
-    consumablesFilter?: string;
-    boostersFilter?: string;
-    enhancementsFilter?: string;
-    sealsFilter?: string;
-    editionsFilter?: string;
-    vouchersFilter?: string;
-  };
+  pageData: Array<{ objectType: string, filter: string, direction: string }>;
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
 }

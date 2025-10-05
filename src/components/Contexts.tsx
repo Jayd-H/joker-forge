@@ -14,9 +14,25 @@ interface UserConfigContextType {
   setUserConfig: React.Dispatch<React.SetStateAction<UserConfig>>;
 }
 
+const generateBasicPageData = () => {
+  const dataList: Array<{ objectType: string, filter: string, direction: string }> = []
+  const gameObjectTypes = [
+    "joker", "consumable", "enhancement",
+    "seal", "edition", "voucher", "booster"
+  ]
+
+  let i = 0
+  gameObjectTypes.forEach(type => {
+    dataList.push({objectType: type, filter: "id", direction: "asc"})
+    i += 1
+  })
+
+  return dataList
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const UserConfigContext = createContext<UserConfigContextType>({
-  userConfig: { filters: {}, defaultAutoFormat: true, defaultGridSnap: false },
+  userConfig: { pageData: generateBasicPageData(), defaultAutoFormat: true, defaultGridSnap: false },
   setUserConfig: () => {},
 });
 
@@ -28,17 +44,18 @@ export const UserConfigProvider = ({ children }: ContextProviderProps) => {
   const loadUserConfig = useCallback((): UserConfig => {
     try {
       const stored = localStorage.getItem(USER_CONFIG_KEY);
-      return stored
+      // @ts-ignore
+      return stored && !stored.filters
         ? JSON.parse(stored)
         : {
-            filters: {},
+            pageData: generateBasicPageData(),
             defaultAutoFormat: true,
             defaultGridSnap: false,
           };
     } catch (err) {
       console.error("Failed to parse userConfig from localStorage", err);
       return {
-        filters: {},
+        pageData: generateBasicPageData(),
         defaultAutoFormat: true,
         defaultGridSnap: false,
       };

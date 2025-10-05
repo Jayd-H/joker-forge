@@ -43,6 +43,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: VoucherData, b: VoucherData) => number;
+  ascText: string,
+  descText: string,
 };
 
 let availablePlaceholders: string[] | null = null;
@@ -174,7 +176,13 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
   const [currentVoucherForRules, setCurrentVoucherForRules] =
     useState<VoucherData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState(userConfig.filters.vouchersFilter ?? "name-id-desc");
+
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
+  const [sortBy, setSortBy] = useState(
+        userConfig.pageData[itemTypes.indexOf("voucher")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+      userConfig.pageData[itemTypes.indexOf("voucher")].direction ?? "asc")
+
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -183,59 +191,38 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
   const sortOptions: SortOption[] = useMemo(
     () => [
-      {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
+            {
+        value: "id",
+        label: "Id Value",
         sortFn: (a, b) => b.orderValue - a.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
-      {
-        value: "name-asc",
-        label: "Name (A-Z)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => a.name.localeCompare(b.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
-      },
-      {
-        value: "cost-asc",
+        value: "cost",
         label: "Cost (Low to High)",
         sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
-      },
-      {
-        value: "cost-desc",
-        label: "Cost (High to Low)",
-        sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
-      },
-      {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Low to High",
+        descText: "High to Low",
       },
     ],
     []
@@ -373,6 +360,21 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     }
   };
 
+  const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("voucher")].direction = direction
+      return ({...config})
+    })
+  }
+
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);
@@ -395,9 +397,15 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     return filtered;
   }, [vouchers, searchTerm, sortBy, sortOptions]);
 
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
+
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
     "Id Value (Most to Least)";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   return (
     <div className="min-h-screen">
@@ -455,6 +463,14 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
+              <button
+                ref={sortDirectionButtonRef}
+                onClick={handleSortDirectionToggle}
+                className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+              >
+                <ArrowsUpDownIcon className="h-4 w-4" />
+                <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -572,13 +588,12 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig(prevConfig => ({
-                        ...prevConfig,
-                        filters: {
-                          ...prevConfig.filters,
-                          vouchersFilter: option.value
-                        }
-                      }))
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("voucher")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}

@@ -44,6 +44,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: JokerData, b: JokerData) => number;
+  ascText: string;
+  descText: string;
 };
 
 let availablePlaceholders: string[] | null = null;
@@ -178,9 +180,13 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
   const [sortBy, setSortBy] = useState(
-    userConfig.filters.jokersFilter ?? "id-desc"
-  );
+        userConfig.pageData[itemTypes.indexOf("joker")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+    userConfig.pageData[itemTypes.indexOf("joker")].direction ?? "asc")
+
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -194,6 +200,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
   const filtersMenuRef = React.useRef<HTMLDivElement>(null);
@@ -214,62 +221,43 @@ const JokersPage: React.FC<JokersPageProps> = ({
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
+        value: "id",
+        label: "Id Value",
         sortFn: (a, b) => b.orderValue - a.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
-      {
-        value: "name-asc",
-        label: "Name (A-Z)",
-        sortFn: (a, b) => a.name.localeCompare(b.name),
-      },
-      {
-        value: "name-desc",
-        label: "Name (Z-A)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => b.name.localeCompare(a.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "rarity-asc",
-        label: "Rarity (Low to High)",
+        value: "rarity",
+        label: "Rarity",
         sortFn: (a, b) => {
-          const aNum = typeof a.rarity === "number" ? a.rarity : 999;
-          const bNum = typeof b.rarity === "number" ? b.rarity : 999;
+          const aNum = typeof b.rarity === "number" ? b.rarity : 999;
+          const bNum = typeof a.rarity === "number" ? a.rarity : 999;
           return aNum - bNum;
         },
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "rarity-desc",
-        label: "Rarity (High to Low)",
-        sortFn: (a, b) => {
-          const aNum = typeof a.rarity === "number" ? a.rarity : 999;
-          const bNum = typeof b.rarity === "number" ? b.rarity : 999;
-          return bNum - aNum;
-        },
-      },
-      {
-        value: "cost-asc",
-        label: "Cost (Low to High)",
-        sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
-      },
-      {
-        value: "cost-desc",
-        label: "Cost (High to Low)",
+        value: "cost",
+        label: "Cost",
         sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
     ],
     []
@@ -444,6 +432,20 @@ const JokersPage: React.FC<JokersPageProps> = ({
     }
   };
 
+  const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("joker")].direction = direction
+      return ({...config})
+    })
+  }
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (showFilters) setShowFilters(false);
@@ -471,10 +473,13 @@ const JokersPage: React.FC<JokersPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "asc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [jokers, searchTerm, rarityFilter, sortBy, sortOptions]);
+  }, [jokers, searchTerm, rarityFilter, sortBy, sortOptions, sortDirection]);
 
   const rarityOptions = [
     { value: null, label: "All Rarities", count: jokers.length },
@@ -515,9 +520,15 @@ const JokersPage: React.FC<JokersPageProps> = ({
     }
   };
 
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
+
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    currentSortMethod?.label ||
+    "Id Value";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   return (
     <div className="min-h-screen">
@@ -575,6 +586,14 @@ const JokersPage: React.FC<JokersPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
+                <button
+                  ref={sortDirectionButtonRef}
+                  onClick={handleSortDirectionToggle}
+                  className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                >
+                  <ArrowsUpDownIcon className="h-4 w-4" />
+                  <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+                </button>
             </div>
           </div>
         </div>
@@ -708,14 +727,14 @@ const JokersPage: React.FC<JokersPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig((prevConfig) => ({
-                        ...prevConfig,
-                        filters: {
-                          ...prevConfig.filters,
-                          jokersFilter: option.value,
-                        },
-                      }));
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("joker")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                       setSortBy(option.value);
+                      setSortDirection(sortDirection)
                       setShowSortMenu(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
