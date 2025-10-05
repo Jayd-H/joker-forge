@@ -1,3 +1,4 @@
+import { POKER_HANDS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -10,11 +11,9 @@ export const generateChangePokerHandVariableReturn = (
   const specificPokerHand =
     (effect.params.specific_pokerhand as string) || "High Card";
   const pokerHandPoolActive = (effect.params.pokerhand_pool as Array<boolean>) || [];
-  const pokerHandPoolPokerHands = [
-    "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
-    "'Straight'","'Flush'","'Full House'","'Four of a Kind'",
-    "'Straight Flush'","'Five of a Kind'","'Flush Five'","'Flush House'"
-  ]
+  const pokerHandPoolPokerHands = POKER_HANDS.map(hand => hand.value)
+
+
 
 
   let statement = "";
@@ -65,7 +64,7 @@ export const generateChangePokerHandVariableReturn = (
     }}
     statement = `__PRE_RETURN_CODE__
                 local pokerhand_pool = {${pokerhand_pool}}
-                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(pokerhand_pool, pseudoseed('randomPokerhand'))
+                G.GAME.current_round.${variableName}_hand = pseudorandom_element(pokerhand_pool, pseudoseed('randomPokerhand'))
                 __PRE_RETURN_CODE_END__`;
   } else {
     statement = `__PRE_RETURN_CODE__

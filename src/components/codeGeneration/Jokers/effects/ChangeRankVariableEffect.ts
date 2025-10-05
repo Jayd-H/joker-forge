@@ -1,5 +1,5 @@
 import type { Effect } from "../../../ruleBuilder/types";
-import { getRankId } from "../../../data/BalatroUtils";
+import { getRankId, RANKS } from "../../../data/BalatroUtils";
 import { EffectReturn } from "../effectUtils";
 
 export const generateChangeRankVariableReturn = (
@@ -9,11 +9,7 @@ export const generateChangeRankVariableReturn = (
   const changeType = (effect.params.change_type as string) || "random";
   const specificRank = (effect.params.specific_rank as string) || "A";
   const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
-  const rankPoolRanks = [
-    "'A'","'2'","'3'","'4'","'5'",
-    "'6'","'7'","'8'","'9'","'10'",
-    "'J'","'Q'","'K'"
-  ]
+  const rankPoolRanks = RANKS.map(rank => rank.value)
 
   let statement = "";
 
