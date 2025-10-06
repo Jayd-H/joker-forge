@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, startTransition } from "react";
+import React, { useState, useMemo, useEffect, startTransition, useContext } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -24,6 +24,7 @@ import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import RuleBuilder from "../../ruleBuilder/RuleBuilder";
 import Button from "../../generic/Button";
 import Tooltip from "../../generic/Tooltip";
+import { UserConfigContext } from "../../Contexts";
 
 interface JokersVanillaReforgedPageProps {
   onDuplicateToProject?: (item: JokerData) => void;
@@ -89,13 +90,18 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
   onDuplicateToProject,
   onNavigateToJokers,
 }) => {
+  const { userConfig, setUserConfig } = useContext(UserConfigContext)
   const { vanillaJokers, loading } = useAsyncDataLoader();
   const [searchTerm, setSearchTerm] = useState("");
   const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   
-  const [sortBy, setSortBy] = useState("id");
-  const [sortDirection, setSortDirection] = useState("asc")
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
+  const [sortBy, setSortBy] = useState(
+    userConfig.pageData[itemTypes.indexOf("vanilla_joker")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+    userConfig.pageData[itemTypes.indexOf("vanilla_joker")].direction ?? "asc")
+
 
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
@@ -290,9 +296,17 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
   };
 
   const handleSortDirectionToggle = () => {
+    let direction = "asc"
     if (sortDirection === "asc") {
       setSortDirection("desc")
-    } else setSortDirection("asc")  
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("vanilla_joker")].direction = direction
+      return ({...config})
+    })
   }
 
   const handleSortMenuToggle = (e: React.MouseEvent) => {
@@ -590,6 +604,11 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
                       setSortBy(option.value);
                       setShowSortMenu(false);
                       setSortDirection(sortDirection)
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("vanilla_joker")].filter = option.value
+                        return ({...config})
+                      })
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                       sortBy === option.value
