@@ -1625,6 +1625,31 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Jokers",
   },
+    {
+        id: "edit_card_apperance",
+        label: "Edit Card Apperance",
+        description: "Modify if a Card can appear or not the current Run",
+        applicableTriggers: ["consumable_used"],
+        params: [
+          {
+              id: "key",
+              type: "text",
+              label: "Card Key (itemkey_key) or (itemkey_modprefix_key)",
+              default: "",
+            },
+           {
+              id: "card_apperance",
+              type: "select",
+              label: "Card Apperance",
+              options: [
+              { value: "appear", label: "Can Appear" },
+              { value: "disapper", label: "Can't Appear" },
+              ],
+              default: "appear",
+            },
+          ],
+        category: "Special",
+      },
   {
     id: "emit_flag",
     label: "Emit Flag",

@@ -39,6 +39,7 @@ interface EditionCardData extends BaseCardData {
 interface VoucherCardData extends BaseCardData {
   requires?: string;
   requires_activetor: boolean;
+  calculate_function?: boolean;
 }
 
 

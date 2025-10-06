@@ -55,6 +55,7 @@ import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 
 import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
+import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 
 import  Checkbox  from "../generic/Checkbox";
@@ -973,7 +974,9 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getConditionTypeById
       : itemType === "consumable"
       ? getConsumableConditionTypeById
-      : getCardConditionTypeById
+      : itemType === "card"
+      ? getCardConditionTypeById
+      : getVoucherConditionTypeById;
 
   const getEffectType =
     itemType === "joker"
