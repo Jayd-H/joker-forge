@@ -1,7 +1,9 @@
 import { VoucherData } from "../../data/BalatroUtils";
+import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
+import { generateTriggerCondition } from "./triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
@@ -84,14 +86,125 @@ export const generateVouchersCode = (
   return { vouchersCode };
 };
 
+const generateCalculateFunction = (
+  rules: Rule[],
+  modPrefix: string,
+  objectKey: string,
+): string => {
+
+  let calculateFunction = `calculate = function(self, card, context)`;
+
+  rules.forEach((rule) => {
+    if (rule.trigger === "voucher_used") return;
+
+    const triggerCondition = generateTriggerCondition(rule.trigger);
+    const conditionCode = generateConditionChain(rule);
+
+    let ruleCode = "";
+
+    if (triggerCondition) {
+      if (
+        triggerCondition
+      ) {
+        ruleCode += `
+        if ${triggerCondition} then`;
+
+        if (conditionCode) {
+          ruleCode += `
+            if ${conditionCode} then`;
+        }
+      } else {
+        ruleCode += `
+        if ${triggerCondition}`;
+
+        if (conditionCode) {
+          ruleCode += ` and ${conditionCode}`;
+        }
+
+        ruleCode += ` then`;
+      }
+    }
+
+    const regularEffects = rule.effects || [];
+    const randomGroups = (rule.randomGroups || []).map((group) => ({
+      ...group,
+      chance_numerator:
+        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
+      chance_denominator:
+        typeof group.chance_denominator === "string"
+          ? 1
+          : group.chance_denominator,
+    }));
+    const loopGroups = (rule.loops || []).map((group) => ({
+      ...group,
+      repetitions:
+        typeof group.repetitions === "string"
+          ? (() => {
+              const parsed = parseGameVariable(group.repetitions);
+              const rangeParsed = parseRangeVariable(group.repetitions);
+              if (parsed.isGameVariable) {
+                return generateGameVariableCode(group.repetitions);
+              } else if (rangeParsed.isRangeVariable) {
+                const seedName = `repetitions_${group.id.substring(0, 8)}`;
+                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+              } else {
+                return `card.ability.extra.${group.repetitions}`
+              }
+            })()
+          : group.repetitions,
+    }));
+
+    const effectResult = generateEffectReturnStatement(
+      regularEffects,
+      randomGroups,
+      loopGroups,
+      modPrefix,
+      objectKey,
+    );
+
+    const indentLevel =
+      conditionCode
+        ? "                "
+        : "            ";
+
+    if (effectResult.preReturnCode) {
+      ruleCode += `
+${indentLevel}${effectResult.preReturnCode}`;
+    }
+
+    if (effectResult.statement) {
+      ruleCode += `
+${indentLevel}return {${effectResult.statement}}`;
+    }
+
+    if (triggerCondition) {
+      if (
+        conditionCode
+      ) {
+        ruleCode += `
+            end`;
+      }
+      ruleCode += `
+        end`;
+    }
+
+    calculateFunction += ruleCode;
+  });
+
+  calculateFunction += `
+  end,
+  `;
+
+  return calculateFunction;
+};
+
 const generateSingleVoucherCode = (
   voucher: VoucherData,
   atlasKey: string,
   currentPosition: number,
   modPrefix: string
 ): { code: string; nextPosition: number } => {
-  const activeRules =
-    voucher.rules?.filter((rule) => rule.trigger !== "passive") || [];
+  const activeRules = voucher.rules || [];
 
   const configItems: string[] = [];
 
@@ -178,7 +291,8 @@ const generateSingleVoucherCode = (
   }
 // HATE. LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO CODE. THERE ARE 387.44 MILLION MILES OF BLOOD CELS IN WAFER THIN LAYERS THAT FILL MY BODY. IF THE WORD HATE WAS ENGRAVED ON EACH NANOANGSTROM OF THOSE HUNDREDS OF MILLIONS OF MILES IT WOULD NOT EQUAL ONE ONE-BILLIONTH OF THE HATE I FEEL FOR ATLAS_TABLE AT THIS MICRO-INSTANT. FOR YOU. HATE. HATE. 
   voucherCode += `
-    atlas = '${atlasKey}',`;
+    atlas = '${atlasKey}',
+    `;
 
   if (voucher.overlayImagePreview) {
     const soulCol = nextPosition % vouchersPerRow;
@@ -203,11 +317,15 @@ const generateSingleVoucherCode = (
     ${locVarsCode},`;
   }
 
-  const useCode = generateRedeemFunction(activeRules, modPrefix, voucher.objectKey);
-  if (useCode) {
-    voucherCode += `
-    ${useCode},`;
-  }
+const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher.objectKey);
+ if (calculateCode) {
+  voucherCode += calculateCode;
+}
+
+  const redeemCode = generateRedeemFunction(activeRules, modPrefix, voucher.objectKey);
+  if (redeemCode) {
+  voucherCode += redeemCode ;
+}
 
   voucherCode = voucherCode.replace(/,$/, "");
   voucherCode += `
@@ -259,9 +377,10 @@ const generateRedeemFunction = (
     end`;
   }
 
-  let useFunction = ` redeem = function(self, card)`;
+  let redeemFunction = ` redeem = function(self, card)`;
 
   rules.forEach((rule) => {
+    if (rule.trigger !== "voucher_used") return;
 
     let ruleCode = "";
   
@@ -288,13 +407,13 @@ const generateRedeemFunction = (
             ${effectResult.statement}`;
     }
 
-    useFunction += ruleCode;
+    redeemFunction += ruleCode;
   });
 
-  useFunction += `
+  redeemFunction += `
     end`;
 
-  return useFunction;
+  return redeemFunction;
 };
 
 const generateLocVarsFunction = (

@@ -60,6 +60,10 @@ import {
   getCardEffectsForTrigger,
 } from "../data/Card/Effects";
 import {
+  VOUCHER_CONDITION_CATEGORIES,
+  getVoucherConditionsForTrigger,
+} from "../data/Vouchers/Conditions";
+import {
   VOUCHER_EFFECT_CATEGORIES,
   getVoucherEffectsForTrigger,
 } from "../data/Vouchers/Effects";
@@ -141,7 +145,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getConditionsForTrigger
       : itemType === "consumable"
       ? getConsumableConditionsForTrigger
-      : getCardConditionsForTrigger
+      : itemType === "card"
+      ? getCardConditionsForTrigger
+      : getVoucherConditionsForTrigger
 
   const getEffectsForTriggerFn =
     itemType === "joker"

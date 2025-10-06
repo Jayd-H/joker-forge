@@ -46,6 +46,7 @@ import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 
 import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
+import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 
 interface RuleCardProps {
@@ -116,7 +117,9 @@ const SortableCondition: React.FC<{
       ? getConditionTypeById
       : itemType === "consumable"
       ? getConsumableConditionTypeById
-      : getCardConditionTypeById
+      : itemType === "card"
+      ? getCardConditionTypeById
+      : getVoucherConditionTypeById
   const conditionType = getConditionType(condition.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =

@@ -208,16 +208,6 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
         sortFn: (a, b) => b.name.localeCompare(a.name),
       },
       {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
-      },
-      {
         value: "cost-asc",
         label: "Cost (Low to High)",
         sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),

@@ -34,6 +34,7 @@ import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generatePermaBonusReturn } from "./effects/PermaBonusEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
+import { generateEditApperanceReturn } from "./effects/EditCardApperance";
 import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
@@ -432,6 +433,9 @@ const generateSingleEffect = (
 
     case "convert_left_to_right":
       return generateConvertLeftToRightReturn(effect);
+
+      case "edit_card_apperance":
+            return generateEditApperanceReturn(effect);
 
     case "fool_effect":
       return generateFoolEffectReturn(effect);
