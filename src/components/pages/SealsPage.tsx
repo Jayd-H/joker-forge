@@ -226,7 +226,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -432,7 +432,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
     }
 
     return filtered;
-  }, [seals, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateSeal]);
+  }, [seals, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

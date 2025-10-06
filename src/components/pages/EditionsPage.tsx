@@ -121,7 +121,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -317,7 +317,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     }
 
     return filtered;
-  }, [editions, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateEdition]);
+  }, [editions, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

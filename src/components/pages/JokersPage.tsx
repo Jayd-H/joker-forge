@@ -268,7 +268,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -519,7 +519,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
     }
 
     return filtered;
-  }, [jokers, searchTerm, rarityFilter, sortBy, sortOptions, sortDirection, handleUpdateJoker]);
+  }, [jokers, searchTerm, rarityFilter, sortBy, sortOptions, sortDirection]);
 
   const rarityOptions = [
     { value: null, label: "All Rarities", count: jokers.length },

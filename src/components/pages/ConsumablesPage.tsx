@@ -795,7 +795,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   const setSortOptions: SortOption<ConsumableSetData>[] = useMemo(
@@ -1174,7 +1174,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     }
 
     return filtered;
-  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions, sortDirection, handleUpdateConsumable]);
+  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions, sortDirection]);
 
   const filteredAndSortedSets = useMemo(() => {
     const filtered = consumableSets.filter(

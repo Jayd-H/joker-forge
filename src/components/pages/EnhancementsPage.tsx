@@ -230,7 +230,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -449,7 +449,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     }
 
     return filtered;
-  }, [enhancements, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateEnhancement]);
+  }, [enhancements, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

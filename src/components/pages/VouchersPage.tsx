@@ -233,7 +233,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -438,7 +438,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     }
 
     return filtered;
-  }, [vouchers, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateVoucher]);
+  }, [vouchers, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

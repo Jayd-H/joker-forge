@@ -676,7 +676,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
         descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -922,7 +922,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     }
 
     return filtered;
-  }, [boosters, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateBooster]);
+  }, [boosters, searchTerm, sortBy, sortOptions, sortDirection]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 
