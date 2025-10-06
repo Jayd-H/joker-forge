@@ -60,7 +60,6 @@ import {
   getCardEffectsForTrigger,
 } from "../data/Card/Effects";
 import {
-  VOUCHER_CONDITION_CATEGORIES,
   getVoucherConditionsForTrigger,
 } from "../data/Vouchers/Conditions";
 import {
