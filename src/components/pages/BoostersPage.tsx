@@ -637,6 +637,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("booster")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
@@ -666,6 +667,13 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
         sortFn: (a, b) => a.weight - b.weight,
         ascText: "Low to High",
         descText: "High to Low",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -729,6 +737,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     setEditingBooster(newBooster);
     setFormData(newBooster);
     setShowEditModal(true);
+    handleUpdateBooster(newBooster)
   };
 
   const handleEditBooster = (booster: BoosterData) => {
@@ -742,6 +751,28 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     setShowRulesModal(true);
   };
 
+  const handleUpdateBooster = (updatedBooster: BoosterData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("booster")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("booster")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedBooster.objectKey )) {
+        config.pageData[itemTypes.indexOf("booster")].editList.splice(dataList.indexOf(updatedBooster.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("booster")].editList.push(updatedBooster.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveBooster = () => {
     if (!formData.name?.trim()) return;
 
@@ -752,6 +783,12 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       ...formData,
       id: editingBooster?.id || crypto.randomUUID(),
     };
+
+    boosters.forEach(booster => {
+      if (booster.id === boosterToSave.id) {
+        handleUpdateBooster(boosterToSave, "change", booster.objectKey ) 
+      }
+    })
 
     if (isEditing) {
       setBoosters((prev) =>
@@ -770,6 +807,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       setBoosters((prev) =>
         prev.map((b) => (b.id === editingRules.id ? updatedBooster : b))
       );
+      handleUpdateBooster(updatedBooster)
     }
     setShowRulesModal(false);
     setEditingRules(null);
@@ -804,7 +842,8 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     if (selectedBoosterId === boosterId) {
       const remainingBoosters = boosters.filter((booster) => booster.id !== boosterId);
       setSelectedBoosterId(remainingBoosters.length > 0 ? remainingBoosters[0].id : null);
-    boosters = updateGameObjectIds(removedBooster, boosters, 'remove', removedBooster.orderValue)
+      boosters = updateGameObjectIds(removedBooster, boosters, 'remove', removedBooster.orderValue)
+      handleUpdateBooster(removedBooster, "delete")
     }};
 
   const handleDuplicateBooster = async (booster: BoosterData) => {
@@ -822,6 +861,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       };
       setBoosters([...boosters, duplicatedBooster]);
       boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
+      handleUpdateBooster(duplicatedBooster)
     } else {
       const duplicatedBooster: BoosterData = {
         ...booster,
@@ -831,6 +871,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       };
       setBoosters([...boosters, duplicatedBooster]);
       boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
+      handleUpdateBooster(duplicatedBooster)
     }
   };
 
@@ -858,7 +899,6 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     })
   }
 
-
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);
@@ -882,7 +922,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     }
 
     return filtered;
-  }, [boosters, searchTerm, sortBy, sortOptions, sortDirection]);
+  }, [boosters, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateBooster]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

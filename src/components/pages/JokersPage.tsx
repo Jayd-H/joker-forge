@@ -218,6 +218,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
     setShowcaseJoker(null);
   };
 
+  const editData = userConfig.pageData[itemTypes.indexOf("joker")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
@@ -258,6 +259,13 @@ const JokersPage: React.FC<JokersPageProps> = ({
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -348,13 +356,42 @@ const JokersPage: React.FC<JokersPageProps> = ({
     newJoker.objectKey = getObjectName(newJoker,jokers,newJoker.objectKey)
     setJokers([...jokers, newJoker]);
     setEditingJoker(newJoker);
+    handleUpdateJoker(newJoker)
   };
 
   const handleSaveJoker = (updatedJoker: JokerData) => {
+    jokers.forEach(joker => {
+      if (joker.id === updatedJoker.id) {
+        handleUpdateJoker(updatedJoker, "change", joker.objectKey ) 
+      }
+    })
+
     setJokers((prev) =>
       prev.map((joker) => (joker.id === updatedJoker.id ? updatedJoker : joker))
     );
   };
+
+  const handleUpdateJoker = (updatedJoker: JokerData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("joker")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("joker")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedJoker.objectKey)) {
+        config.pageData[itemTypes.indexOf("joker")].editList.splice(dataList.indexOf(updatedJoker.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("joker")].editList.push(updatedJoker.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
 
   const handleDeleteJoker = (jokerId: string) => {
     const removedJoker = jokers.filter(joker => joker.id !== jokerId)[0]
@@ -363,7 +400,8 @@ const JokersPage: React.FC<JokersPageProps> = ({
     if (selectedJokerId === jokerId) {
       const remainingJokers = jokers.filter((joker) => joker.id !== jokerId);
       setSelectedJokerId(remainingJokers.length > 0 ? remainingJokers[0].id : null);
-    jokers = updateGameObjectIds(removedJoker, jokers, 'remove', removedJoker.orderValue)
+      jokers = updateGameObjectIds(removedJoker, jokers, 'remove', removedJoker.orderValue)
+      handleUpdateJoker(removedJoker, "delete")
   }};
 
   const handleDuplicateJoker = async (joker: JokerData) => {
@@ -381,6 +419,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
       };
       setJokers([...jokers, duplicatedJoker]);
       jokers = updateGameObjectIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
+      handleUpdateJoker(duplicatedJoker)
     } else {
       const duplicatedJoker: JokerData = {
         ...joker,
@@ -390,6 +429,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
       };
       setJokers([...jokers, duplicatedJoker]);
       jokers = updateGameObjectIds(duplicatedJoker, jokers, 'insert', duplicatedJoker.orderValue)
+      handleUpdateJoker(duplicatedJoker)
     }
   };
 
@@ -479,7 +519,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
     }
 
     return filtered;
-  }, [jokers, searchTerm, rarityFilter, sortBy, sortOptions, sortDirection]);
+  }, [jokers, searchTerm, rarityFilter, sortBy, sortOptions, sortDirection, handleUpdateJoker]);
 
   const rarityOptions = [
     { value: null, label: "All Rarities", count: jokers.length },

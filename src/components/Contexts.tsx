@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { UserConfig } from "./data/BalatroUtils";
+import { PageData, UserConfig } from "./data/BalatroUtils";
 
 const USER_CONFIG_KEY = "joker-forge-user-config";
 
@@ -21,17 +21,21 @@ const gameObjectTypes = [
   ]
 
 const generatePageData = (stored: string | null ) => {
-  const dataList: Array<{ objectType: string, filter: string, direction: string }> = []
-  let itemTypes: Array <string> = []
+  const dataList: PageData[] = []
+  let itemTypes: string[] = []
+  let userConfig: UserConfig
+
   if (stored) {
-    const userConfig: UserConfig = JSON.parse(stored)
+    userConfig = JSON.parse(stored)
     itemTypes = userConfig.pageData.map(item => item.objectType)
   }
 
   let i = 0
   gameObjectTypes.forEach(type => {
     if (!itemTypes.includes(type)) {
-      dataList.push({objectType: type, filter: "id", direction: "asc"})
+      dataList.push({objectType: type, filter: 'id', direction: 'asc', editList: []})
+    } else {
+      dataList.push(userConfig.pageData[i])
     }
     i += 1
   })
@@ -53,11 +57,14 @@ export const UserConfigProvider = ({ children }: ContextProviderProps) => {
   const loadUserConfig = useCallback((): UserConfig => {
     try {
       const stored = localStorage.getItem(USER_CONFIG_KEY);
-      // @ts-ignore
-      return (stored && !stored.filters && stored.length === gameObjectTypes.length)
-        ? JSON.parse(stored)
+      return (stored)
+        ? { 
+          pageData: generatePageData(stored),
+          defaultAutoFormat: true,
+          defaultGridSnap: false,
+        }
         : {
-            pageData: generatePageData(stored),
+            pageData: generatePageData(null),
             defaultAutoFormat: true,
             defaultGridSnap: false,
           }

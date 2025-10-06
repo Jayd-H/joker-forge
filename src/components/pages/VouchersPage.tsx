@@ -194,6 +194,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
   const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("voucher")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
             {
@@ -223,6 +224,13 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
         sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
         ascText: "Low to High",
         descText: "High to Low",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -276,9 +284,38 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     newVoucher.objectKey = getObjectName(newVoucher,vouchers,newVoucher.objectKey)
     setVouchers([...vouchers, newVoucher]);
     setEditingVoucher(newVoucher);
+    handleUpdateVoucher(newVoucher)
   };
 
+  const handleUpdateVoucher = (updatedVoucher: VoucherData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("voucher")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("voucher")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedVoucher.objectKey)) {
+        config.pageData[itemTypes.indexOf("voucher")].editList.splice(dataList.indexOf(updatedVoucher.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("voucher")].editList.push(updatedVoucher.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveVoucher = (updatedVoucher: VoucherData) => {
+    vouchers.forEach(voucher => {
+      if (voucher.id === updatedVoucher.id) {
+        handleUpdateVoucher(updatedVoucher, "change", voucher.objectKey ) 
+      }
+    })
+
     setVouchers((prev) =>
       prev.map((voucher) => (voucher.id === updatedVoucher.id ? updatedVoucher : voucher))
     );
@@ -290,7 +327,8 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
 
     if (selectedVoucherId === voucherId) {const remainingVouchers = vouchers.filter((voucher) => voucher.id !== voucherId);
       setSelectedVoucherId(remainingVouchers.length > 0 ? remainingVouchers[0].id : null);
-    vouchers = updateGameObjectIds(removedVoucher, vouchers, 'remove', removedVoucher.orderValue)
+      vouchers = updateGameObjectIds(removedVoucher, vouchers, 'remove', removedVoucher.orderValue)
+      handleUpdateVoucher(removedVoucher, "delete")
   }};
 
   const handleDuplicateVoucher = async (voucher: VoucherData) => {
@@ -308,6 +346,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
       };
       setVouchers([...vouchers, duplicatedVoucher]);
       vouchers = updateGameObjectIds(duplicatedVoucher, vouchers, 'insert', duplicatedVoucher.orderValue)
+      handleUpdateVoucher(duplicatedVoucher)
     } else {
       const duplicatedVoucher: VoucherData = {
         ...voucher,
@@ -318,6 +357,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
       };
       setVouchers([...vouchers, duplicatedVoucher]);
       vouchers = updateGameObjectIds(duplicatedVoucher, vouchers, 'insert', duplicatedVoucher.orderValue)
+      handleUpdateVoucher(duplicatedVoucher)
     }
   };
 
@@ -398,7 +438,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     }
 
     return filtered;
-  }, [vouchers, searchTerm, sortBy, sortOptions, sortDirection]);
+  }, [vouchers, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateVoucher]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

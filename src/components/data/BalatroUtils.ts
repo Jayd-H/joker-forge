@@ -34,8 +34,15 @@ export interface ModMetadata {
   hasUserUploadedGameIcon?: boolean;
 }
 
+export interface PageData {
+  objectType: string,
+  filter: string,
+  direction: string,
+  editList: string[],
+}
+
 export interface UserConfig {
-  pageData: Array<{ objectType: string, filter: string, direction: string }>;
+  pageData: PageData[];
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
 }

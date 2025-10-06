@@ -82,6 +82,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
   const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("edition")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
@@ -111,6 +112,13 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
         sortFn: (a, b) => (a.weight || 0) - (b.weight || 0),
         ascText: "Low to High",
         descText: "High to Low",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -163,9 +171,38 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     newEdition.objectKey = getObjectName(newEdition,editions,newEdition.objectKey)
     setEditions([...editions, newEdition]);
     setEditingEdition(newEdition);
+    handleUpdateEdition(newEdition)
   };
 
+  const handleUpdateEdition = (updatedEdition: EditionData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("edition")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("edition")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedEdition.objectKey)) {
+        config.pageData[itemTypes.indexOf("edition")].editList.splice(dataList.indexOf(updatedEdition.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("edition")].editList.push(updatedEdition.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveEdition = (updatedEdition: EditionData) => {
+    editions.forEach(edition => {
+      if (edition.id === updatedEdition.id) {
+        handleUpdateEdition(updatedEdition, "change", edition.objectKey ) 
+      }
+    })
+
     setEditions((prev) =>
       prev.map((edition) =>
         edition.id === updatedEdition.id ? updatedEdition : edition
@@ -180,7 +217,8 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     if (selectedEditionId === editionId) {
       const remainingEditions = editions.filter((edition) => edition.id !== editionId);
       setSelectedEditionId(remainingEditions.length > 0 ? remainingEditions[0].id : null);
-    editions = updateGameObjectIds(removedEdition, editions, 'remove', removedEdition.orderValue)
+      editions = updateGameObjectIds(removedEdition, editions, 'remove', removedEdition.orderValue)
+      handleUpdateEdition(removedEdition, "delete")
     }};
 
   const handleDuplicateEdition = async (edition: EditionData) => {
@@ -194,6 +232,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     };
     setEditions([...editions, duplicatedEdition]);
     editions = updateGameObjectIds(duplicatedEdition, editions, 'insert', duplicatedEdition.orderValue)
+    handleUpdateEdition(duplicatedEdition)
   };
 
   const handleExportEdition = (edition: EditionData) => {
@@ -278,7 +317,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     }
 
     return filtered;
-  }, [editions, searchTerm, sortBy, sortOptions, sortDirection]);
+  }, [editions, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateEdition]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

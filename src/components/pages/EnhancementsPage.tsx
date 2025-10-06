@@ -197,6 +197,8 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
   const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("enhancement")].editList
+
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
@@ -219,6 +221,13 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -274,9 +283,39 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     newEnhancement.objectKey = getObjectName(newEnhancement,enhancements,newEnhancement.objectKey)
     setEnhancements([...enhancements, newEnhancement]);
     setEditingEnhancement(newEnhancement);
+    handleUpdateEnhancement(newEnhancement)
   };
 
+  const handleUpdateEnhancement = (updatedEnhancement: EnhancementData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("enhancement")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("enhancement")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedEnhancement.objectKey )) {
+        config.pageData[itemTypes.indexOf("enhancement")].editList.splice(dataList.indexOf(updatedEnhancement.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("enhancement")].editList.push(updatedEnhancement.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveEnhancement = (updatedEnhancement: EnhancementData) => {
+
+    enhancements.forEach(enhancement => {
+      if (enhancement.id === updatedEnhancement.id) {
+        handleUpdateEnhancement(updatedEnhancement, "change", enhancement.objectKey ) 
+      }
+    })
+
     setEnhancements((prev) =>
       prev.map((enhancement) =>
         enhancement.id === updatedEnhancement.id
@@ -294,6 +333,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
       const remainingEnhancements = enhancements.filter((enhancement) => enhancement.id !== enhancementId);
       setSelectedEnhancementId(remainingEnhancements.length > 0 ? remainingEnhancements[0].id : null);
       enhancements = updateGameObjectIds(removedEnhancement, enhancements, 'remove', removedEnhancement.orderValue)
+      handleUpdateEnhancement(removedEnhancement, "delete")
   }};
 
   const handleDuplicateEnhancement = async (enhancement: EnhancementData) => {
@@ -310,6 +350,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
         orderValue: enhancement.orderValue+1
       };
       setEnhancements([...enhancements, duplicatedEnhancement]);
+      handleUpdateEnhancement(duplicatedEnhancement)
       enhancements = updateGameObjectIds(duplicatedEnhancement, enhancements, 'insert', duplicatedEnhancement.orderValue)
     } else {
       const duplicatedEnhancement: EnhancementData = {
@@ -319,6 +360,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
         objectKey: slugify(`$${dupeName}`),
         orderValue: enhancement.orderValue+1
       };
+      handleUpdateEnhancement(duplicatedEnhancement)
       setEnhancements([...enhancements, duplicatedEnhancement]);
       enhancements = updateGameObjectIds(duplicatedEnhancement, enhancements, 'insert', duplicatedEnhancement.orderValue)
     }
@@ -382,7 +424,6 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     })
   }
 
-
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);
@@ -408,7 +449,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     }
 
     return filtered;
-  }, [enhancements, searchTerm, sortBy, sortOptions, sortDirection]);
+  }, [enhancements, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateEnhancement]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

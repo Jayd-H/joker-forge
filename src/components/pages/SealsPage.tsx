@@ -194,6 +194,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
   const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("seal")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
@@ -216,6 +217,13 @@ const SealsPage: React.FC<SealsPageProps> = ({
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -270,9 +278,38 @@ const SealsPage: React.FC<SealsPageProps> = ({
     newSeal.objectKey = getObjectName(newSeal,seals,newSeal.objectKey)
     setSeals([...seals, newSeal]);
     setEditingSeal(newSeal);
+    handleUpdateSeal(newSeal)
   };
 
+  const handleUpdateSeal = (updatedSeal: SealData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("seal")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("seal")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedSeal.objectKey)) {
+        config.pageData[itemTypes.indexOf("seal")].editList.splice(dataList.indexOf(updatedSeal.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("seal")].editList.push(updatedSeal.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveSeal = (updatedSeal: SealData) => {
+    seals.forEach(seal => {
+      if (seal.id === updatedSeal.id) {
+        handleUpdateSeal(updatedSeal, "change", seal.objectKey ) 
+      }
+    })
+
     setSeals((prev) =>
       prev.map((seal) => (seal.id === updatedSeal.id ? updatedSeal : seal))
     );
@@ -284,7 +321,8 @@ const SealsPage: React.FC<SealsPageProps> = ({
 
     if (selectedSealId === sealId) {const remainingSeals = seals.filter((seal) => seal.id !== sealId);
       setSelectedSealId(remainingSeals.length > 0 ? remainingSeals[0].id : null);
-    seals = updateGameObjectIds(removedSeal, seals, 'remove', removedSeal.orderValue)
+      seals = updateGameObjectIds(removedSeal, seals, 'remove', removedSeal.orderValue)
+      handleUpdateSeal(removedSeal, "delete")
   }};
 
   const handleDuplicateSeal = async (seal: SealData) => {
@@ -302,6 +340,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
       };
       setSeals([...seals, duplicatedSeal]);
       seals = updateGameObjectIds(duplicatedSeal, seals, 'insert', duplicatedSeal.orderValue)
+      handleUpdateSeal(duplicatedSeal)
     } else {
       const duplicatedSeal: SealData = {
         ...seal,
@@ -312,6 +351,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
       };
       setSeals([...seals, duplicatedSeal]);
       seals = updateGameObjectIds(duplicatedSeal, seals, 'insert', duplicatedSeal.orderValue)
+      handleUpdateSeal(duplicatedSeal)
     }
   };
 
@@ -392,7 +432,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
     }
 
     return filtered;
-  }, [seals, searchTerm, sortBy, sortOptions, sortDirection]);
+  }, [seals, searchTerm, sortBy, sortOptions, sortDirection, handleUpdateSeal]);
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 

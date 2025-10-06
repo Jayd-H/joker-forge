@@ -748,6 +748,8 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
   const filtersMenuRef = React.useRef<HTMLDivElement>(null);
 
+
+  const editData = userConfig.pageData[itemTypes.indexOf("consumable")].editList
   const consumableSortOptions: SortOption<ConsumableData>[] = useMemo(
     () => [
       {
@@ -784,6 +786,13 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
     []
@@ -891,6 +900,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     newConsumable.objectKey = getObjectName(newConsumable,consumables,newConsumable.objectKey)
     setConsumables([...consumables, newConsumable]);
     setEditingConsumable(newConsumable);
+    handleUpdateConsumable(newConsumable)
   };
 
   const handleAddNewSet = () => {
@@ -976,6 +986,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       },
     });
   };
+  
   const handleDuplicateSet = (set: ConsumableSetData) => {
     const duplicated: ConsumableSetData = {
       ...set,
@@ -996,7 +1007,35 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     );
   };
 
+  const handleUpdateConsumable = (updatedConsumable: ConsumableData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("consumable")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("consumable")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedConsumable.objectKey)) {
+        config.pageData[itemTypes.indexOf("consumable")].editList.splice(dataList.indexOf(updatedConsumable.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("consumable")].editList.push(updatedConsumable.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveConsumable = (updatedConsumable: ConsumableData) => {
+    consumables.forEach(consumable => {
+      if (consumable.id === updatedConsumable.id) {
+        handleUpdateConsumable(updatedConsumable, "change", consumable.objectKey ) 
+      }
+    })
+
     setConsumables((prev) =>
       prev.map((consumable) =>
         consumable.id === updatedConsumable.id ? updatedConsumable : consumable
@@ -1012,6 +1051,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       const remainingConsumables = consumables.filter((consumable) => consumable.id !== consumableId);
       setSelectedConsumableId(remainingConsumables.length > 0 ? remainingConsumables[0].id : null)
       consumables = updateGameObjectIds(removedConsumable, consumables, 'remove', removedConsumable.orderValue)
+      handleUpdateConsumable(removedConsumable, "delete")
   }};
 
   const handleDuplicateConsumable = async (consumable: ConsumableData) => {
@@ -1028,6 +1068,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         orderValue: consumable.orderValue+1,
       };
       setConsumables([...consumables, duplicatedConsumable]);
+      handleUpdateConsumable(duplicatedConsumable)
       consumables = updateGameObjectIds(duplicatedConsumable, consumables, 'insert', duplicatedConsumable.orderValue)
     } else {
       const duplicatedConsumable: ConsumableData = {
@@ -1038,6 +1079,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         orderValue: consumable.orderValue+1,
       };
       setConsumables([...consumables, duplicatedConsumable]);
+      handleUpdateConsumable(duplicatedConsumable)
       consumables = updateGameObjectIds(duplicatedConsumable, consumables, 'insert', duplicatedConsumable.orderValue)
   }};
 
@@ -1098,7 +1140,6 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     })
   }
 
-
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (showFilters) setShowFilters(false);
@@ -1133,7 +1174,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     }
 
     return filtered;
-  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions, sortDirection]);
+  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions, sortDirection, handleUpdateConsumable]);
 
   const filteredAndSortedSets = useMemo(() => {
     const filtered = consumableSets.filter(
