@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, startTransition } from "react";
+import React, { useState, useMemo, useEffect, startTransition, useContext } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -24,6 +24,7 @@ import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import RuleBuilder from "../../ruleBuilder/RuleBuilder";
 import Button from "../../generic/Button";
 import Tooltip from "../../generic/Tooltip";
+import { UserConfigContext } from "../../Contexts";
 
 interface JokersVanillaReforgedPageProps {
   onDuplicateToProject?: (item: JokerData) => void;
@@ -34,6 +35,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: JokerData, b: JokerData) => number;
+  ascText: string;
+  descText: string;
 };
 
 const useAsyncDataLoader = () => {
@@ -87,11 +90,19 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
   onDuplicateToProject,
   onNavigateToJokers,
 }) => {
+  const { userConfig, setUserConfig } = useContext(UserConfigContext)
   const { vanillaJokers, loading } = useAsyncDataLoader();
   const [searchTerm, setSearchTerm] = useState("");
   const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState("name-asc");
+  
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
+  const [sortBy, setSortBy] = useState(
+    userConfig.pageData[itemTypes.indexOf("vanilla_joker")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+    userConfig.pageData[itemTypes.indexOf("vanilla_joker")].direction ?? "asc")
+
+
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentItemForRules, setCurrentItemForRules] =
@@ -108,6 +119,7 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
   const filtersMenuRef = React.useRef<HTMLDivElement>(null);
@@ -115,52 +127,43 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
-        sortFn: (a, b) => a.name.localeCompare(b.name),
+        value: "id",
+        label: "Id Value",
+        sortFn: (a, b) => b.orderValue - a.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => b.name.localeCompare(a.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "rarity-asc",
-        label: "Rarity (Low to High)",
+        value: "rarity",
+        label: "Rarity",
         sortFn: (a, b) => {
-          const aNum = typeof a.rarity === "number" ? a.rarity : 999;
-          const bNum = typeof b.rarity === "number" ? b.rarity : 999;
-          return Number(aNum) - Number(bNum);
+          const aNum = typeof b.rarity === "number" ? b.rarity : 999;
+          const bNum = typeof a.rarity === "number" ? a.rarity : 999;
+          return aNum - bNum;
         },
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "rarity-desc",
-        label: "Rarity (High to Low)",
-        sortFn: (a, b) => {
-          const aNum = typeof a.rarity === "number" ? a.rarity : 999;
-          const bNum = typeof b.rarity === "number" ? b.rarity : 999;
-          return Number(bNum) - Number(aNum);
-        },
-      },
-      {
-        value: "cost-asc",
-        label: "Cost (Low to High)",
-        sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
-      },
-      {
-        value: "cost-desc",
-        label: "Cost (High to Low)",
+        value: "cost",
+        label: "Cost",
         sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
     ],
     []
@@ -231,10 +234,13 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "asc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [vanillaJokers, searchTerm, rarityFilter, sortBy, sortOptions, loading]);
+  }, [vanillaJokers, searchTerm, rarityFilter, sortBy, sortOptions, loading, sortDirection]);
 
   const rarityOptions = useMemo(
     () => [
@@ -289,6 +295,20 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
     setCurrentItemForRules(null);
   };
 
+  const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("vanilla_joker")].direction = direction
+      return ({...config})
+    })
+  }
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (showFilters) setShowFilters(false);
@@ -316,9 +336,15 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
     }
   };
 
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
+
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    currentSortMethod?.label ||
+    "Id Value";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   const filterKey = `${searchTerm}-${rarityFilter}-${sortBy}`;
 
@@ -410,6 +436,14 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
+              <button
+                ref={sortDirectionButtonRef}
+                onClick={handleSortDirectionToggle}
+                className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+              >
+                <ArrowsUpDownIcon className="h-4 w-4" />
+                <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+              </button>
 
               <div className="relative">
                 <button
@@ -569,6 +603,12 @@ const JokersVanillaReforgedPage: React.FC<JokersVanillaReforgedPageProps> = ({
                       e.stopPropagation();
                       setSortBy(option.value);
                       setShowSortMenu(false);
+                      setSortDirection(sortDirection)
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("vanilla_joker")].filter = option.value
+                        return ({...config})
+                      })
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                       sortBy === option.value
@@ -925,7 +965,15 @@ const VanillaJokerCard: React.FC<VanillaJokerCardProps> = ({
                 {joker.name}
               </h3>
             </div>
-
+            <div
+              className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
+            > 
+              <span
+                className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              >
+                Id:{joker.orderValue}
+              </span>
+            </div>
             <div className="mb-4 h-12 flex items-start overflow-hidden">
               <div
                 className="text-white-darker text-sm leading-relaxed w-full line-clamp-3"
