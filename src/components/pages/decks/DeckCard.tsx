@@ -9,6 +9,7 @@ import {
   EyeIcon,
   EyeSlashIcon,
   ArrowDownTrayIcon,
+  FaceSmileIcon,
   FaceFrownIcon,
   CurrencyDollarIcon,
   ReceiptPercentIcon,
@@ -269,7 +270,11 @@ const DeckCard: React.FC<DeckCardProps> = ({
       onClick: () => onQuickUpdate({ no_interest: !noInterest }),
     },
     {
-      icon: <FaceFrownIcon className="w-full h-full" />,
+      icon: noFaces ? (
+        <FaceFrownIcon className="w-full h-full" />
+      ) : (
+        <FaceSmileIcon className="w-full h-full" />
+      ),
       tooltip: noFaces
         ? "No Faces"
         : "With Face Cards",

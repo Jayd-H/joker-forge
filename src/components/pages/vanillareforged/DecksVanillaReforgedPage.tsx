@@ -13,6 +13,7 @@ import {
   EyeSlashIcon,
   CurrencyDollarIcon,
   FaceFrownIcon,
+  FaceSmileIcon,
   ReceiptPercentIcon,
   EyeSlashIcon as HiddenIcon,
 } from "@heroicons/react/24/outline";
@@ -562,7 +563,11 @@ const VanillaDeckCard: React.FC<VanillaDeckCardProps> = ({
       isEnabled: noInterest,
     },
     {
-      icon: <FaceFrownIcon className="w-full h-full" />,
+      icon: noFaces ? (
+        <FaceFrownIcon className="w-full h-full" />
+      ) : (
+        <FaceSmileIcon className="w-full h-full" />
+      ),
       tooltip: noFaces
         ? "No Faces"
         : "With Face Cards",
@@ -632,7 +637,7 @@ const VanillaDeckCard: React.FC<VanillaDeckCardProps> = ({
         </div>
 
            <div className="relative z-30">
-          <div className="px-6 py-1 -mt-6 rounded-md bg-black-dark border-2 text-sm tracking-wide font-medium text-balatro-orange">
+          <div className="px-6 py-1 -mt-6 rounded-md bg-black-dark border-2 text-sm tracking-wide font-medium text-balatro-green">
             Deck
           </div>
         </div>

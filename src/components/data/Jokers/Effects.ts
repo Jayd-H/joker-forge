@@ -872,6 +872,33 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Card Effects",
   },
   {
+        id: "edit_win_ante",
+        label: "Set Winner Ante",
+        description: "Set the Final Ante where the Player Win's the Game",
+        applicableTriggers: [...GENERIC_TRIGGERS],
+        params: [
+           {
+              id: "operation",
+              type: "select",
+              label: "Operation",
+              options: [
+              { value: "add", label: "Add" },
+              { value: "subtract", label: "Subtract" },
+              { value: "set", label: "Set to" },
+              ],
+              default: "set",
+            },
+            {
+              id: "value",
+              type: "number",
+              label: "Amount",
+              default: 1,
+              min: 1,
+            },
+          ],
+        category: "Game Rules",
+  },
+  {
     id: "set_sell_value",
     label: "Edit Sell Value",
     description: "Modify the sell value of jokers/consumables",
