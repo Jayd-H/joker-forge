@@ -1055,7 +1055,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         type: "select",
         label: "Variable Name",
         default: "var1",
-        variableTypes: ["number", "rank", "suit", "pokerhand", "joker"]
+        variableTypes: ["number"]
       },
       {
         id: "operator",

@@ -18,6 +18,7 @@ import {
   addPokerHandVariablesToOptions,
   addNumberVariablesToOptions,
   addJokerVariablesToOptions,
+  getNumberVariables,
 } from "../codeGeneration/Jokers/variableUtils";
 
 import { getTriggerById } from "../data/Jokers/Triggers";
@@ -983,7 +984,7 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getCardEffectTypeById
       : getVoucherEffectTypeById;
 
-  const availableVariables = getAllVariables(joker).map(
+  const availableVariables = getNumberVariables(joker).map(
     (variable: { name: string }) => ({
       value: variable.name,
       label: variable.name,
