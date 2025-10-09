@@ -598,8 +598,6 @@ const VanillaDeckCard: React.FC<VanillaDeckCardProps> = ({
   return (
     <div className="flex gap-4 relative">
       <div className="relative flex flex-col items-center">
-        <div className="px-4 -mb-6 z-20 py-1 rounded-md border-2 font-bold transition-all bg-black tracking-widest border-balatro-money text-balatro-money w-18 text-center">
-        </div>
 
         <div className="w-42 z-10 relative">
           <div className="relative">
