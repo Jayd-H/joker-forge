@@ -232,6 +232,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "group", label: "Suit Group" },
         ],
+        variableTypes: ["suit"]
       },
       {
         id: "specific_suit",
@@ -305,6 +306,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Rank" },
           { value: "group", label: "Rank Group" },
         ],
+        variableTypes: ["rank"]
       },
       {
         id: "specific_rank",
@@ -388,6 +390,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "group", label: "Suit Group" },
         ],
+        variableTypes: ["suit"]
       },
       {
         id: "specific_suit",
@@ -450,6 +453,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Rank" },
           { value: "group", label: "Rank Group" },
         ],
+        variableTypes: ["rank"]
       },
       {
         id: "specific_rank",
@@ -517,6 +521,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Rank" },
           { value: "group", label: "Rank Group" },
         ],
+        variableTypes: ["rank"]
       },
       {
         id: "specific_rank",
@@ -561,6 +566,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "group", label: "Suit Group" },
         ],
+        variableTypes: ["suit"]
       },
       {
         id: "specific_suit",
@@ -992,6 +998,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "check_type",
           values: ["rank"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "specific_suit",
@@ -1002,6 +1009,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "check_type",
           values: ["suit"],
         },
+        variableTypes: ["suit"]
       },
     ],
     category: "Card",
@@ -1755,6 +1763,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "property_type",
           values: ["rank"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "suit",
@@ -1769,6 +1778,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "property_type",
           values: ["suit"],
         },
+        variableTypes: ["suit"]
       },
       {
         id: "enhancement",
