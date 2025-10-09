@@ -2214,11 +2214,49 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Change Type",
         options: [
-          { value: "random", label: "Random Joker" }, // Add some settings like rarity
+          { value: "random", label: "Random Joker" }, 
           { value: "specific", label: "Specific Joker Key" },
         ],
         default: "specific",
         variableTypes: ["joker", "trigger_context"],
+      },
+      {
+        id: "random_type",
+        type: "select",
+        label: "Random from Type",
+        options: [
+          { value: "all", label: "Random From All Jokers" }, 
+          { value: "unlocked", label: "Random from Unlocked Jokers" },
+          { value: "locked", label: "Random from Locked Jokers" },
+          { value: "pool", label: "Random from Pool" },
+          { value: "owned", label: "Random from Owned Jokers" },
+          { value: "rarity", label: "Random from specific Rarity" },
+        ],
+        default: "all",
+        showWhen: {
+          parameter: "change_type",
+          values: ["random"],
+        },
+      },
+      {
+        id: "rarity",
+        type: "select",
+        label: "Rarity",
+        options: [...RARITIES()],
+        showWhen: {
+          parameter: "random_type",
+          values: ["rarity"],
+        },
+      },
+      {
+        id: "joker_pool",
+        type: "text",
+        label: "Pool",
+        options: [],
+        showWhen: {
+          parameter: "random_type",
+          values: ["pool"],
+        },
       },
       {
         id: "specific_joker",

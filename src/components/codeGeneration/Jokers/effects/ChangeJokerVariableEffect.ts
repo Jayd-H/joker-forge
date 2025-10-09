@@ -7,6 +7,9 @@ export const generateChangeJokerVariableReturn = (
   const variableName = (effect.params.variable_name as string) || "jokervar";
   const changeType = (effect.params.change_type as string) || "random";
   const specificJoker = (effect.params.specific_joker as string) || "j_joker";
+  const randomType = (effect.params.random_type as string) || "all";
+  const rarity = (effect.params.rarity as string) || "1";
+  const pool = (effect.params.pool as string) || "";
   
 
   let statement = `__PRE_RETURN_CODE__`
@@ -14,11 +17,58 @@ export const generateChangeJokerVariableReturn = (
 
   if (changeType === "evaled_joker") {
     valueCode = "context.other_joker.config.center.key"
+  } else if (changeType === "selected_joker") {
+    valueCode = "G.jokers.highlighted[1]"
   } else if (changeType === "specific") {
     valueCode = specificJoker
   } else if (changeType === "random") {
+
     valueCode = "random_joker_result"
-    statement += `` // Add random joker evaluation
+    statement +=  `local possible_jokers = {}`
+
+    if (randomType === "unlocked") {
+      statement += `
+      for i = 1, #G.P_CENTERS do
+        if G.P_CENTERS[i].config.center.unlocked == true then
+          possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
+        end
+      end`
+    } else if (randomType === "locked") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if G.P_CENTERS[i].config.center.unlocked == false then
+            possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
+          end
+        end`
+    } else if (randomType === "pool") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if G.P_CENTERS[i].config.center.pool == ${pool} then
+            possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
+          end
+        end`
+    } else if (randomType === "owned") {
+      statement += `
+        for i = 1, #G.jokers.cards do
+          possible_jokers[#possible_jokers + 1] = G.jokers.cards[i].config.center.key
+        end`
+    } else if (randomType === "rarity") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if G.P_CENTERS[i].config.center.rarity == ${rarity} then
+            possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
+          end
+        end`
+    } else {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
+        end`
+    }
+
+    statement += `
+      local random_joker_result = pseudorandom_element(possible_jokers, 'random joker')`
+
   } else {
     valueCode = changeType
   }
