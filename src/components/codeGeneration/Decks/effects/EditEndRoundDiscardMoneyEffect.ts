@@ -10,15 +10,7 @@ export const generateEditEndRoundDiscardMoneyReturn = (effect: Effect): EffectRe
 
   let DiscardMoneyCode = "";
 
-    if (operation === "add") {
-        DiscardMoneyCode += `
-         G.GAME.modifiers.money_per_discard =  G.GAME.modifiers.money_per_discard + ${valueCode}
-        `;
-  } else if (operation === "subtract") {
-        DiscardMoneyCode += `
-         G.GAME.modifiers.money_per_discard =  G.GAME.modifiers.money_per_discard - ${valueCode}
-        `;
-  } else if (operation === "set") {
+    if (operation === "set") {
         DiscardMoneyCode += `
            G.GAME.modifiers.money_per_discard = ${valueCode}
         `;

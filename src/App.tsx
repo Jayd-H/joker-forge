@@ -64,7 +64,11 @@ const SealsVanillaReforgedPage = lazy(
 );
 
 const VouchersVanillaReforgedPage = lazy(
-  () => import("./components/pages/vanillareforged/VouchersVanillaReforgePage")
+  () => import("./components/pages/vanillareforged/VouchersVanillaReforgedPage")
+);
+
+const DecksVanillaReforgedPage = lazy(
+  () => import("./components/pages/vanillareforged/DecksVanillaReforgedPage")
 );
 
 
@@ -223,7 +227,7 @@ const FloatingTabDock: React.FC<{
       id: "decks" as const,
       icon: ClipboardIcon,
       label: "Decks",
-    },
+    }
   ];
 
   const tabs = isVanillaMode ? vanillaTabs : regularTabs;
@@ -1651,7 +1655,7 @@ function AppContent() {
               </Suspense>
             }
           />
-                    <Route
+          <Route
             path="/vanilla/vouchers"
             element={
               <Suspense
@@ -1669,6 +1673,29 @@ function AppContent() {
                   }}
                   onNavigateToVouchers={() => {
                     navigate("/vouchers");
+                  }}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/vanilla/decks"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <DecksVanillaReforgedPage
+                  onDuplicateToProject={(item) => {
+                    setDecks([...decks, item as DeckData]);
+                  }}
+                  onNavigateToDecks={() => {
+                    navigate("/decks");
                   }}
                 />
               </Suspense>

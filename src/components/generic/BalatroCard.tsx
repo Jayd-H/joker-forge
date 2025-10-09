@@ -41,6 +41,12 @@ interface VoucherCardData extends BaseCardData {
   requires_activetor: boolean;
 }
 
+interface DeckCardData extends BaseCardData {
+  no_interest?: boolean;
+  no_faces?: boolean;
+  erratic_deck?: boolean;
+}
+
 
 type CardData =
   | JokerCardData
@@ -49,6 +55,7 @@ type CardData =
   | BaseCardData
   | EditionCardData
   | VoucherCardData
+  | DeckCardData
 
 interface BalatroCardProps {
   type: "joker" | "consumable" | "booster" | "card" | "edition" | "voucher" | "deck";

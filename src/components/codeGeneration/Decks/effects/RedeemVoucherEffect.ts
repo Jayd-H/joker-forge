@@ -9,10 +9,10 @@ export const generateRedeemVoucherReturn = (
 const configVariables =
     typeof voucherKey === "string" && voucherKey.startsWith("GAMEVAR:")
       ? []
-      : [`vouchers = {'${voucherKey}'}`];
+      : [`vouchers = { "${voucherKey}" }`];
 
   return {
-    statement: "",
+    statement: `-- Start With a Voucher`,
     colour: "G.C.RED",
     configVariables,
   };

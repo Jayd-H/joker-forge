@@ -188,11 +188,9 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Operation",
         options: [
-          { value: "add", label: "Add" },
-          { value: "subtract", label: "Subtract" },
           { value: "set", label: "Set" },
         ],
-        default: "add",
+        default: "set",
       },
       {
         id: "value",

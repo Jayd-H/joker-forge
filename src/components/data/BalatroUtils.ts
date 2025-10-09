@@ -384,6 +384,15 @@ const VANILLA_VOUCHERS = [
   {key: "v_palette", value: "v_palette", label: "Palette" },
 ];
 
+
+const VANILLA_DECKS = [
+  {key: "b_red", value: "b_red", label: "Red Deck" },
+  {key: "b_blue", value: "b_blue", label: "Blue Deck" },
+  {key: "b_yellow", value: "b_yellow", label: "Yellow Deck" },
+  {key: "b_green", value: "b_green", label: "Green Deck" },
+  {key: "b_black", value: "b_black", label: "Black Deck" },
+];
+
 const VANILLA_SEALS = [
   { key: "Gold", value: "Gold", label: "Gold" },
   { key: "Red", value: "Red", label: "Red" },
@@ -538,13 +547,19 @@ export const DataRegistry = {
   
   getDecks: (): Array<{ key: string; value: string; label: string }> => {
 
+    const vanilla = VANILLA_DECKS.map((deck) => ({
+      key: deck.key,
+      value: deck.value,
+      label: deck.label,
+    }));
+
     const custom = registryState.decks.map((deck) => ({
       key: `b_${registryState.modPrefix}_${deck.objectKey}`,
       value: `b_${registryState.modPrefix}_${deck.objectKey}`,
       label: deck.name || "Unnamed Deck",
     }));
 
-    return [...custom];
+    return [...vanilla, ...custom];
   },
 
   getState: () => ({ ...registryState }),

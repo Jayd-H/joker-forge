@@ -12,11 +12,11 @@ export const generateEditEndRoundHandMoneyReturn = (effect: Effect): EffectRetur
 
     if (operation === "add") {
         HandMoneyCode += `
-        G.GAME.modifiers.money_per_hand = G.GAME.modifiers.money_per_hand + ${valueCode}
+        G.GAME.modifiers.money_per_hand =  (G.GAME.modifiers.money_per_hand or 1) +${valueCode}
         `;
   } else if (operation === "subtract") {
         HandMoneyCode += `
-        G.GAME.modifiers.money_per_hand = G.GAME.modifiers.money_per_hand - ${valueCode}
+        G.GAME.modifiers.money_per_hand =  (G.GAME.modifiers.money_per_hand or 1) -${valueCode}
         `;
   } else if (operation === "set") {
         HandMoneyCode += `

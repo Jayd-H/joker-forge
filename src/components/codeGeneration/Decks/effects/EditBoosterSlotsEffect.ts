@@ -12,15 +12,35 @@ export const generateEditBoosterSlotsReturn = (effect: Effect): EffectReturn => 
 
     if (operation === "add") {
         boosterSlotsCode += `
-         G.GAME.starting_params.booster_slots = G.GAME.starting_params.booster_slots + ${valueCode}
+         G.E_MANAGER:add_event(Event({
+                func = function()
+                    SMODS.change_booster_limit(${valueCode})
+                    return true
+                end
+            }))
         `;
   } else if (operation === "subtract") {
         boosterSlotsCode += `
-        G.GAME.starting_params.booster_slots = G.GAME.starting_params.booster_slots - ${valueCode}
+        G.E_MANAGER:add_event(Event({
+                func = function()
+                    SMODS.change_booster_limit(-${valueCode})
+                    return true
+                end
+            }))
         `;
   } else if (operation === "set") {
         boosterSlotsCode += `
-        G.GAME.starting_params.booster_slots = ${valueCode}
+        G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    local current_booster_slots = G.GAME.modifiers.extra_boosters
+                    local target_booster_slots = ${valueCode}
+                    local difference = target_booster_slots - current_booster_slots
+                    SMODS.change_booster_limit(difference)
+                    return true
+                end
+            }))
         `;
   }
   const configVariables =

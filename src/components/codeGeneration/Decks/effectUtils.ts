@@ -17,7 +17,6 @@ import { generateCreateJokerReturn } from "./effects/CreateJokerEffect";
 import { generateCreateConsumableReturn } from "./effects/CreateConsumableEffect";
 import { generateEditItemWeightReturn } from "./effects/EditItemWeightEffect";
 import { generateEditWinnerAnteReturn } from "./effects/EditWinnerAnteEffect";
-import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateEditApperanceReturn } from "./effects/EditCardApperance";
 import { generateEditRarityWeightReturn } from "./effects/EditRarityWeightEffect";
 import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
@@ -28,7 +27,7 @@ import {
 } from "./effects/EditConsumableSlotsEffect";
 import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
-import { generateFreeRerollsReturn, generateEditShopPricesReturn} from "./effects/DiscountItemsEffect";
+import { generateFreeRerollsReturn} from "./effects/DiscountItemsEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 
 export interface ConfigExtraVariable {
@@ -58,7 +57,7 @@ export function generateEffectReturnStatement(
   randomGroups: RandomGroup[] = [],
   loopGroups: LoopGroup[] = [],
   modprefix: string,
-  voucherKey?: string
+  deckKey?: string
 ): ReturnStatementResult {
   if (regularEffects.length === 0 && randomGroups.length === 0 && loopGroups.length === 0) {
     return {
@@ -204,7 +203,7 @@ export function generateEffectReturnStatement(
                 ${groupPreReturnCode}${groupContent}`;
       }
 
-      const probabilityStatement = `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `c_${modprefix}_${voucherKey}`}', ${group.respect_probability_effects === false})`
+      const probabilityStatement = `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `c_${modprefix}_${deckKey}`}', ${group.respect_probability_effects === false})`
       
       const groupStatement = `if ${probabilityStatement} then
                 ${fullGroupContent}
@@ -367,9 +366,6 @@ const generateSingleEffect = (
     case "edit_discard_size":
       return generateEditDiscardSizeReturn(effect);
 
-      case "edit_Shop_Prices":
-      return generateEditShopPricesReturn(effect);
-
       case "create_joker":
           return generateCreateJokerReturn(effect, modprefix);
         
@@ -387,9 +383,6 @@ case "edit_shop_slots":
 
     case "edit_voucher_slots":
       return generateEditVoucherSlotsReturn(effect);
-
-      case "create_tag":
-            return generateCreateTagReturn(effect);
 
       case "edit_booster_packs":
       return generateEditBoostersReturn(effect);

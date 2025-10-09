@@ -67,32 +67,6 @@ export const generateEditShopPricesReturn = (effect: Effect): EffectReturn => {
             end
         }))
         `;
-  } else if (operation === "multiply") {
-        ItemPriceCode += `
-        local mod = ${valueCode} - G.GAME.discount_percent
-        G.E_MANAGER:add_event(Event({
-            func = function()
-        G.GAME.discount_percent = (G.GAME.discount_percent or 0) *${valueCode}
-        for _, v in pairs(G.I.CARD) do
-                    if v.set_cost then v:set_cost() end
-                return true
-                end
-            end
-        }))
-        `;
-  } else if (operation === "divide") {
-        ItemPriceCode += `
-        local mod = ${valueCode} - G.GAME.discount_percent
-        G.E_MANAGER:add_event(Event({
-            func = function()
-        G.GAME.discount_percent = (G.GAME.discount_percent or 0) /${valueCode}
-        for _, v in pairs(G.I.CARD) do
-                    if v.set_cost then v:set_cost() end
-                return true
-                end
-            end
-        }))
-        `;
   }
 
   const configVariables =

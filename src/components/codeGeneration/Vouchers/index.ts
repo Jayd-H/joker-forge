@@ -2,7 +2,6 @@ import { VoucherData } from "../../data/BalatroUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
-import { generateTriggerCondition } from "./triggerUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
@@ -205,11 +204,6 @@ const generateSingleVoucherCode = (
     voucherCode += `
     ${locVarsCode},`;
   }
-
-const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher.objectKey);
- if (calculateCode) {
-  voucherCode += calculateCode;
-}
 
   const redeemCode = generateRedeemFunction(activeRules, modPrefix, voucher.objectKey);
   if (redeemCode) {

@@ -135,9 +135,9 @@ const generateSingleDeckCode = (
 
   if (effectsConfig.trim()) {
     deckCode += `
-    config = { extra = {
+    config = {
         ${effectsConfig}
-    } },`;
+    },`;
   }
 
   deckCode += `
