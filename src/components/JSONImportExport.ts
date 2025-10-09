@@ -8,6 +8,7 @@ import {
   EditionData,
   ModMetadata,
   SoundData,
+  VoucherData,
 } from "./data/BalatroUtils";
 import { RarityData } from "./data/BalatroUtils";
 
@@ -23,6 +24,7 @@ export interface ExportedMod {
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
   version: string;
   exportedAt: string;
 }
@@ -37,6 +39,7 @@ interface ImportableModData {
   enhancements?: EnhancementData[];
   seals?: SealData[];
   editions?: EditionData[];
+  vouchers?: VoucherData[];
 }
 
 export const normalizeImportedModData = (data: ImportableModData) => {
@@ -47,7 +50,6 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   if (!data.jokers || !Array.isArray(data.jokers)) {
     throw new Error("Invalid mod data - missing or invalid jokers data");
   }
-
   const normalizedJokers = data.jokers.map(normalizeJokerData);
   const normalizedSounds = (data.sounds || []).map(normalizeSoundData);
   const normalizedConsumables = (data.consumables || []).map(
@@ -65,9 +67,10 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   );
   const normalizedSeals = (data.seals || []).map(normalizeSealData);
   const normalizedEditions = (data.editions || []).map(normalizeEditionData);
+  const normalizedVouchers = (data.vouchers || []).map(normalizeVoucherData);
 
   console.log(
-    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions`
+    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers`
   );
 
   return {
@@ -81,11 +84,14 @@ export const normalizeImportedModData = (data: ImportableModData) => {
     enhancements: normalizedEnhancements,
     seals: normalizedSeals,
     editions: normalizedEditions,
+    vouchers: normalizedVouchers,
   };
 };
 
 const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
   return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: joker.jokerKey || joker.objectKey || "",
     id: joker.id || "",
     name: joker.name || "",
     description: joker.description || "",
@@ -114,7 +120,6 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     rules: joker.rules || [],
     userVariables: joker.userVariables || [],
     placeholderCreditIndex: joker.placeholderCreditIndex,
-    jokerKey: joker.jokerKey || "",
     hasUserUploadedImage: joker.hasUserUploadedImage || false,
     cardAppearance: joker.cardAppearance || {
       buf: true,
@@ -130,6 +135,8 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     scale_h: joker.scale_h || 100,
     scale_w: joker.scale_w || 100,
     pools: joker.pools || [],
+    orderValue: joker.orderValue || 1,
+    objectType: "joker",
     info_queues: joker.info_queues || [],
   };
 };
@@ -148,6 +155,8 @@ const normalizeConsumableData = (
   consumable: ConsumableData
 ): ConsumableData => {
   return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: consumable.consumableKey || consumable.objectKey || "",
     id: consumable.id || "",
     name: consumable.name || "",
     description: consumable.description || "",
@@ -161,13 +170,17 @@ const normalizeConsumableData = (
     can_repeat_soul: consumable.can_repeat_soul,
     rules: consumable.rules || [],
     placeholderCreditIndex: consumable.placeholderCreditIndex,
-    consumableKey: consumable.consumableKey || "",
+    objectType: "consumable",
     hasUserUploadedImage: consumable.hasUserUploadedImage || false,
+    orderValue: consumable.orderValue || 1,
   };
 };
 
 const normalizeBoosterData = (booster: BoosterData): BoosterData => {
   return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: booster.boosterKey || booster.objectKey || "",
+    objectType: "booster",
     id: booster.id || "",
     name: booster.name || "",
     description: booster.description || "",
@@ -188,8 +201,8 @@ const normalizeBoosterData = (booster: BoosterData): BoosterData => {
     discovered: booster.discovered,
     hidden: booster.hidden,
     placeholderCreditIndex: booster.placeholderCreditIndex,
-    boosterKey: booster.boosterKey || "",
     hasUserUploadedImage: booster.hasUserUploadedImage || false,
+    orderValue: booster.orderValue || 1,
   };
 };
 
@@ -197,11 +210,13 @@ const normalizeEnhancementData = (
   enhancement: EnhancementData
 ): EnhancementData => {
   return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: enhancement.enhancementKey || enhancement.objectKey || "",
+    objectType: "enhancement",
     id: enhancement.id || "",
     name: enhancement.name || "",
     description: enhancement.description || "",
     imagePreview: enhancement.imagePreview || "",
-    enhancementKey: enhancement.enhancementKey || "",
     atlas: enhancement.atlas,
     pos: enhancement.pos || { x: 0, y: 0 },
     any_suit: enhancement.any_suit,
@@ -217,16 +232,19 @@ const normalizeEnhancementData = (
     placeholderCreditIndex: enhancement.placeholderCreditIndex,
     hasUserUploadedImage: enhancement.hasUserUploadedImage || false,
     weight: enhancement.weight ?? 5,
+    orderValue: enhancement.orderValue || 1,
   };
 };
 
 const normalizeSealData = (seal: SealData): SealData => {
   return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: seal.sealKey || seal.objectKey || "",
+    objectType: "seal",
     id: seal.id || "",
     name: seal.name || "",
     description: seal.description || "",
     imagePreview: seal.imagePreview || "",
-    sealKey: seal.sealKey || "",
     atlas: seal.atlas,
     pos: seal.pos || { x: 0, y: 0 },
     badge_colour: seal.badge_colour || "#FFFFFF",
@@ -237,15 +255,18 @@ const normalizeSealData = (seal: SealData): SealData => {
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
     hasUserUploadedImage: seal.hasUserUploadedImage || false,
+    orderValue: seal.orderValue || 1,
   };
 };
 
 const normalizeEditionData = (edition: EditionData): EditionData => {
   return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: edition.editionKey || edition.objectKey || "",
+    objectType: "edition",
     id: edition.id || "",
     name: edition.name || "",
     description: edition.description || "",
-    editionKey: edition.editionKey || "",
     shader: edition.shader || false,
     unlocked: edition.unlocked,
     discovered: edition.discovered,
@@ -259,6 +280,31 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
     disable_shadow: edition.disable_shadow,
     disable_base_shader: edition.disable_base_shader,
     rules: edition.rules || [],
+    orderValue: edition.orderValue || 1,
+  };
+};
+
+const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
+  return {
+    //@ts-expect-error: backwards compatibility
+    objectKey: voucher.editionKey || voucher.objectKey || "",
+    objectType: "voucher",
+    id: voucher.id || "",
+    name: voucher.name || "",
+    description: voucher.description || "",
+    imagePreview: voucher.imagePreview || "",
+    overlayImagePreview: voucher.overlayImagePreview,
+    cost: voucher.cost,
+    unlocked: voucher.unlocked,
+    discovered: voucher.discovered,
+    can_repeat_soul: voucher.can_repeat_soul,
+    requires: voucher.requires || "",
+    requires_activetor: voucher.requires_activetor !== false,
+    no_collection: voucher.no_collection,
+    rules: voucher.rules || [],
+    placeholderCreditIndex: voucher.placeholderCreditIndex,
+    hasUserUploadedImage: voucher.hasUserUploadedImage || false,
+    orderValue: voucher.orderValue || 1,
   };
 };
 
@@ -298,7 +344,8 @@ export const modToJson = (
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
-  editions: EditionData[] = []
+  editions: EditionData[] = [],
+  vouchers: VoucherData[] = []
 ): { filename: string; jsonString: string } => {
   const exportData: ExportedMod = {
     metadata,
@@ -311,6 +358,7 @@ export const modToJson = (
     enhancements,
     seals,
     editions,
+    vouchers,
     version: "1.0.0",
     exportedAt: new Date().toISOString(),
   };
@@ -333,7 +381,8 @@ export const exportModAsJSON = (
   boosters: BoosterData[] = [],
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
-  editions: EditionData[] = []
+  editions: EditionData[] = [],
+  vouchers: VoucherData[] = []
 ): void => {
   const ret = modToJson(
     metadata,
@@ -345,7 +394,8 @@ export const exportModAsJSON = (
     boosters,
     enhancements,
     seals,
-    editions
+    editions,
+    vouchers,
   );
   const blob = new Blob([ret.jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -370,6 +420,7 @@ export const importModFromJSON = (): Promise<{
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
 } | null> => {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input");
@@ -424,8 +475,12 @@ export const importModFromJSON = (): Promise<{
             normalizeEditionData
           );
 
+          const normalizedVouchers = (importData.vouchers || []).map(
+            normalizeVoucherData
+          );
+
           console.log(
-            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions`
+            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers`
           );
 
           resolve({
@@ -439,6 +494,7 @@ export const importModFromJSON = (): Promise<{
             enhancements: normalizedEnhancements,
             seals: normalizedSeals,
             editions: normalizedEditions,
+            vouchers: normalizedVouchers,
           });
         } catch (error) {
           console.error("Error parsing mod file:", error);

@@ -100,19 +100,21 @@ export interface ConditionTypeDefinition {
 // Interface for effect parameter options
 export interface EffectParameterOption {
   value: string;
-  label: string;
+  label: string;  
+  checked?: boolean;
 }
 
 // Interface for effect parameters
 export interface EffectParameter {
   id: string;
-  type: "select" | "number" | "range" | "text";
+  type: "select" | "number" | "range" | "text" | "checkbox";
   label: string;
   description?: string;
   options?:
     | EffectParameterOption[]
     | (() => EffectParameterOption[])
     | ((parentValues: Record<string, unknown>) => EffectParameterOption[]);
+  checkboxOptions?: EffectParameterOption[]
   min?: number;
   max?: number;
   default?: unknown;

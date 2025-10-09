@@ -24,6 +24,7 @@ import {
   ClipboardDocumentListIcon,
   BuildingStorefrontIcon,
   NumberedListIcon,
+  BookOpenIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -58,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [card, setCard] = useState(false);
   const [shop, setShop] = useState(false);
   const [misc, setMisc] = useState(false);
-  const version: string = "v0.6.6";
+  const version: string = "v0.7.1";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
@@ -76,9 +77,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       return;
     }
 
-    //if (section === "support") {
-    //  window.open("https://ko-fi.com/jaydchw", "_blank");
-    //  return;
+    // if (section === "support") {
+    //   window.open("https://ko-fi.com/jaydchw", "_blank");
+    // return;
     //}
 
     onSectionChange?.(section);
@@ -117,6 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const dropdownResourceShopandConsumables = [
     { id: "consumables", label: "Consumables", icon: CakeIcon },
     { id: "boosters", label: "Booster Packs", icon: GiftIcon },
+    { id: "vouchers", label: "Vouchers", icon: BookOpenIcon },
   ];
 
   const dropdownResourceMisc = [
@@ -124,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const visibleResourceItems = [
-    //{ id: "support", label: "Support", icon: HeartIcon },
+    // { id: "support", label: "Support", icon: HeartIcon },
     { id: "vanilla", label: "Vanilla Reforged", icon: FolderIcon },
   ];
 

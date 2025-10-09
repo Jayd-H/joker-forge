@@ -12,6 +12,7 @@ import {
   TagIcon,
   BeakerIcon,
   BookOpenIcon,
+  MusicalNoteIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -25,6 +26,7 @@ import {
   BOSS_BLINDS,
   TAGS,
   VOUCHERS,
+  SOUNDS,
 } from "../data/BalatroUtils";
 
 interface KeyItemProps {
@@ -172,11 +174,14 @@ const SECTIONS = {
   vouchers: {
     title: "Vouchers",
     icon: BookOpenIcon,
-    items: VOUCHERS().map((voucher) => ({
-      key: voucher.value,
-      label: voucher.label,
-    })),
+    items: VOUCHERS(),
     color: "text-balatro-green",
+  },
+  sounds: {
+    title: "Sounds",
+    icon: MusicalNoteIcon,
+    items: SOUNDS.map((sound) => ({ key: sound.value, label: sound.label })),
+    color: "text-balatro-gold",
   },
 };
 

@@ -42,6 +42,7 @@ export interface UserConfig {
     enhancementsFilter?: string;
     sealsFilter?: string;
     editionsFilter?: string;
+    vouchersFilter?: string;
   };
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
@@ -89,10 +90,17 @@ export interface UserVariable {
   initialJoker?: string;
 }
 
-export interface JokerData {
+export interface GameObjectData {
   id: string;
   name: string;
+  objectType: string;
+  objectKey: string;
   description: string;
+  orderValue: number;
+  discovered?: boolean;
+}
+
+export interface JokerData extends GameObjectData {
   imagePreview: string;
   overlayImagePreview?: string;
   rarity: number | string;
@@ -101,7 +109,6 @@ export interface JokerData {
   eternal_compat?: boolean;
   perishable_compat?: boolean;
   unlocked?: boolean;
-  discovered?: boolean;
   force_eternal?: boolean;
   force_perishable?: boolean;
   force_rental?: boolean;
@@ -118,7 +125,6 @@ export interface JokerData {
   rules?: Rule[];
   userVariables?: UserVariable[];
   placeholderCreditIndex?: number;
-  jokerKey?: string;
   hasUserUploadedImage?: boolean;
   cardAppearance: {
     // this uses the "source keys" as keys
@@ -146,21 +152,16 @@ export interface RarityData {
   default_weight: number;
 }
 
-export interface ConsumableData {
-  id: string;
-  name: string;
-  description: string;
+export interface ConsumableData extends GameObjectData{
   imagePreview: string;
   overlayImagePreview?: string;
   set: "Tarot" | "Planet" | "Spectral" | string;
   cost?: number;
   unlocked?: boolean;
-  discovered?: boolean;
   hidden?: boolean;
   can_repeat_soul?: boolean;
   rules?: Rule[];
   placeholderCreditIndex?: number;
-  consumableKey?: string;
   hasUserUploadedImage?: boolean;
 }
 
@@ -192,10 +193,7 @@ export interface BoosterCardRule {
   pool?: string;
 }
 
-export interface BoosterData {
-  id: string;
-  name: string;
-  description: string;
+export interface BoosterData extends GameObjectData{
   imagePreview: string;
   cost: number;
   weight: number;
@@ -213,19 +211,13 @@ export interface BoosterData {
   card_rules: BoosterCardRule[];
   background_colour?: string;
   special_colour?: string;
-  discovered?: boolean;
   hidden?: boolean;
   placeholderCreditIndex?: number;
-  boosterKey?: string;
   hasUserUploadedImage?: boolean;
 }
 
-export interface EnhancementData {
-  id: string;
-  name: string;
-  description: string;
+export interface EnhancementData extends GameObjectData{
   imagePreview: string;
-  enhancementKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
   any_suit?: boolean;
@@ -234,7 +226,6 @@ export interface EnhancementData {
   no_suit?: boolean;
   always_scores?: boolean;
   unlocked?: boolean;
-  discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
   weight?: number;
@@ -243,17 +234,12 @@ export interface EnhancementData {
   hasUserUploadedImage?: boolean;
 }
 
-export interface SealData {
-  id: string;
-  name: string;
-  description: string;
+export interface SealData extends GameObjectData{
   imagePreview: string;
-  sealKey: string;
   atlas?: string;
   pos?: { x: number; y: number };
   badge_colour?: string;
   unlocked?: boolean;
-  discovered?: boolean;
   no_collection?: boolean;
   rules?: Rule[];
   userVariables?: UserVariable[];
@@ -261,14 +247,9 @@ export interface SealData {
   hasUserUploadedImage?: boolean;
 }
 
-export interface EditionData {
-  id: string;
-  name: string;
-  description: string;
-  editionKey: string;
+export interface EditionData extends GameObjectData{
   shader: string | false;
   unlocked?: boolean;
-  discovered?: boolean;
   no_collection?: boolean;
   in_shop?: boolean;
   weight?: number;
@@ -290,6 +271,21 @@ export interface SoundData {
   soundString: string;
 }
 
+export interface VoucherData extends GameObjectData {
+  imagePreview: string;
+  overlayImagePreview?: string;
+  cost?: number;
+  unlocked?: boolean;
+  can_repeat_soul?: boolean;
+  no_collection?: boolean;
+  requires?: string;
+  requires_activetor?: boolean;
+  sound?: string;
+  rules?: Rule[];
+  placeholderCreditIndex?: number;
+  hasUserUploadedImage?: boolean;
+}
+
 // =============================================================================
 // DATA REGISTRY SYSTEM
 // =============================================================================
@@ -302,6 +298,7 @@ interface RegistryState {
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
   modPrefix: string;
 }
 
@@ -313,6 +310,7 @@ let registryState: RegistryState = {
   enhancements: [],
   seals: [],
   editions: [],
+  vouchers: [],
   modPrefix: "",
 };
 
@@ -329,39 +327,39 @@ const VANILLA_CONSUMABLE_SETS = [
   { value: "Spectral", label: "Spectral", key: "spectral" },
 ];
 
-const VANILLA_VOUCHERS_DATA = [
-  { value: "v_overstock_norm", label: "Overstock" },
-  { value: "v_overstock_plus", label: "Overstock Plus" },
-  { value: "v_clearance_sale", label: "Clearance Sale" },
-  { value: "v_liquidation", label: "Liquidation" },
-  { value: "v_hone", label: "Hone" },
-  { value: "v_glow_up", label: "Glow Up" },
-  { value: "v_reroll_surplus", label: "Reroll Surplus" },
-  { value: "v_reroll_glut", label: "Reroll Glut" },
-  { value: "v_crystal_ball", label: "Crystal Ball" },
-  { value: "v_omen_globe", label: "Omen Globe" },
-  { value: "v_telescope", label: "Telescope" },
-  { value: "v_observatory", label: "Observatory" },
-  { value: "v_grabber", label: "Grabber" },
-  { value: "v_nacho_tong", label: "Nacho Tong" },
-  { value: "v_wasteful", label: "Wasteful" },
-  { value: "v_recyclomancy", label: "Recyclomancy" },
-  { value: "v_tarot_merchant", label: "Tarot Merchant" },
-  { value: "v_tarot_tycoon", label: "Tarot Tycoon" },
-  { value: "v_planet_merchant", label: "Planet Merchant" },
-  { value: "v_planet_tycoon", label: "Planet Tycoon" },
-  { value: "v_seed_money", label: "Seed Money" },
-  { value: "v_money_tree", label: "Money Tree" },
-  { value: "v_blank", label: "Blank" },
-  { value: "v_antimatter", label: "Antimatter" },
-  { value: "v_magic_trick", label: "Magic Trick" },
-  { value: "v_illusion", label: "Illusion" },
-  { value: "v_hieroglyph", label: "Hieroglyph" },
-  { value: "v_petroglyph", label: "Petroglyph" },
-  { value: "v_directors_cut", label: "Directors Cut" },
-  { value: "v_retcon", label: "Retcon" },
-  { value: "v_paint_brush", label: "Paint Brush" },
-  { value: "v_palette", label: "Palette" },
+const VANILLA_VOUCHERS = [
+  { key: "v_overstock_norm", value: "v_overstock_norm", label: "Overstock" },
+  {key: "v_overstock_plus", value: "v_overstock_plus", label: "Overstock Plus" },
+  {key: "v_clearance_sale", value: "v_clearance_sale", label: "Clearance Sale" },
+  {key: "v_liquidation", value: "v_liquidation", label: "Liquidation" },
+  {key: "v_hone", value: "v_hone", label: "Hone" },
+  {key: "v_glow_up", value: "v_glow_up", label: "Glow Up" },
+  {key: "v_reroll_surplus", value: "v_reroll_surplus", label: "Reroll Surplus" },
+  {key: "v_reroll_glut", value: "v_reroll_glut", label: "Reroll Glut" },
+  {key: "v_overstock_norm", value: "v_crystal_ball", label: "Crystal Ball" },
+  {key: "v_crystal_ball", value: "v_omen_globe", label: "Omen Globe" },
+  {key: "v_telescope", value: "v_telescope", label: "Telescope" },
+  {key: "v_observatory", value: "v_observatory", label: "Observatory" },
+  {key: "v_grabber", value: "v_grabber", label: "Grabber" },
+  {key: "v_nacho_tong", value: "v_nacho_tong", label: "Nacho Tong" },
+  {key: "v_wasteful", value: "v_wasteful", label: "Wasteful" },
+  {key: "v_recyclomancy", value: "v_recyclomancy", label: "Recyclomancy" },
+  {key: "v_tarot_merchant", value: "v_tarot_merchant", label: "Tarot Merchant" },
+  {key: "v_tarot_tycoon", value: "v_tarot_tycoon", label: "Tarot Tycoon" },
+  {key: "v_planet_merchant", value: "v_planet_merchant", label: "Planet Merchant" },
+  {key: "v_planet_tycoon", value: "v_planet_tycoon", label: "Planet Tycoon" },
+  {key: "v_seed_money", value: "v_seed_money", label: "Seed Money" },
+  {key: "v_money_tree", value: "v_money_tree", label: "Money Tree" },
+  {key: "v_blank", value: "v_blank", label: "Blank" },
+  {key: "v_antimatter", value: "v_antimatter", label: "Antimatter" },
+  {key: "v_magic_trick", value: "v_magic_trick", label: "Magic Trick" },
+  {key: "v_illusion", value: "v_illusion", label: "Illusion" },
+  {key: "v_hieroglyph", value: "v_hieroglyph", label: "Hieroglyph" },
+  {key: "v_petroglyph", value: "v_petroglyph", label: "Petroglyph" },
+  {key: "v_directors_cut", value: "v_directors_cut", label: "Directors Cut" },
+  {key: "v_retcon", value: "v_retcon", label: "Retcon" },
+  {key: "v_paint_brush", value: "v_paint_brush", label: "Paint Brush" },
+  {key: "v_palette", value: "v_palette", label: "Palette" },
 ];
 
 const VANILLA_SEALS = [
@@ -370,8 +368,6 @@ const VANILLA_SEALS = [
   { key: "Blue", value: "Blue", label: "Blue" },
   { key: "Purple", value: "Purple", label: "Purple" },
 ];
-
-export const VOUCHERS = () => VANILLA_VOUCHERS_DATA; // integrate with data registry when custom vouchers are a thing
 
 export const DataRegistry = {
   update: (
@@ -382,6 +378,7 @@ export const DataRegistry = {
     enhancements: EnhancementData[],
     seals: SealData[],
     editions: EditionData[],
+    vouchers: VoucherData[],
     modPrefix: string
   ) => {
     registryState = {
@@ -392,6 +389,7 @@ export const DataRegistry = {
       enhancements,
       seals,
       editions,
+      vouchers,
       modPrefix,
     };
   },
@@ -420,7 +418,7 @@ export const DataRegistry = {
   getConsumables: (): Array<{ value: string; label: string; set: string }> => {
     const custom = registryState.consumables.map((consumable) => ({
       value: `c_${registryState.modPrefix}_${
-        consumable.consumableKey ||
+        consumable.objectKey ||
         (consumable.name
           ? consumable.name.toLowerCase().replace(/\s+/g, "_")
           : "unnamed_consumable")
@@ -438,7 +436,7 @@ export const DataRegistry = {
   }> => {
     const custom = registryState.boosters.map((booster) => ({
       value: `${registryState.modPrefix}_${
-        booster.boosterKey ||
+        booster.objectKey ||
         (booster.name
           ? booster.name.toLowerCase().replace(/\s+/g, "_")
           : "unnamed_booster")
@@ -457,8 +455,8 @@ export const DataRegistry = {
     }));
 
     const custom = registryState.enhancements.map((enhancement) => ({
-      key: `m_${registryState.modPrefix}_${enhancement.enhancementKey}`,
-      value: `m_${registryState.modPrefix}_${enhancement.enhancementKey}`,
+      key: `m_${registryState.modPrefix}_${enhancement.objectKey}`,
+      value: `m_${registryState.modPrefix}_${enhancement.objectKey}`,
       label: enhancement.name || "Unnamed Enhancement",
     }));
 
@@ -473,8 +471,8 @@ export const DataRegistry = {
     }));
 
     const custom = registryState.seals.map((seal) => ({
-      key: `${registryState.modPrefix}_${seal.sealKey}`,
-      value: `${registryState.modPrefix}_${seal.sealKey}`,
+      key: `${registryState.modPrefix}_${seal.objectKey}`,
+      value: `${registryState.modPrefix}_${seal.objectKey}`,
       label: seal.name || "Unnamed Seal",
     }));
 
@@ -489,14 +487,31 @@ export const DataRegistry = {
     }));
 
     const custom = registryState.editions.map((edition) => ({
-      key: `e_${registryState.modPrefix}_${edition.editionKey}`,
-      value: `e_${registryState.modPrefix}_${edition.editionKey}`,
+      key: `e_${registryState.modPrefix}_${edition.objectKey}`,
+      value: `e_${registryState.modPrefix}_${edition.objectKey}`,
       label: edition.name || "Unnamed Edition",
     }));
 
     return [...vanilla, ...custom];
   },
 
+  getVouchers: (): Array<{ key: string; value: string; label: string }> => {
+
+    const vanilla = VANILLA_VOUCHERS.map((voucher) => ({
+      key: voucher.key,
+      value: voucher.value,
+      label: voucher.label,
+    }));
+
+    const custom = registryState.vouchers.map((voucher) => ({
+      key: `v_${registryState.modPrefix}_${voucher.objectKey}`,
+      value: `v_${registryState.modPrefix}_${voucher.objectKey}`,
+      label: voucher.name || "Unnamed Voucher",
+    }));
+
+    return [...vanilla, ...custom];
+  },
+  
   getState: () => ({ ...registryState }),
 };
 
@@ -512,6 +527,7 @@ export const updateDataRegistry = (
   enhancements: EnhancementData[],
   seals: SealData[],
   editions: EditionData[],
+  vouchers: VoucherData[],
   modPrefix: string
 ) => {
   DataRegistry.update(
@@ -522,6 +538,7 @@ export const updateDataRegistry = (
     enhancements,
     seals,
     editions,
+    vouchers,
     modPrefix
   );
 };
@@ -615,7 +632,7 @@ export const isCustomEdition = (
 ): boolean => {
   return (
     value.includes("_") &&
-    customEditions.some((e) => `e_${modPrefix}_${e.editionKey}` === value)
+    customEditions.some((e) => `e_${modPrefix}_${e.objectKey}` === value)
   );
 };
 
@@ -647,7 +664,7 @@ export const isCustomSeal = (
 ): boolean => {
   return (
     value.includes("_") &&
-    customSeals.some((s) => `${modPrefix}_${s.sealKey}` === value)
+    customSeals.some((s) => `${modPrefix}_${s.objectKey}` === value)
   );
 };
 
@@ -661,6 +678,38 @@ export const getSealByKey = (
   key: string
 ): { key: string; value: string; label: string } | undefined => {
   return SEALS().find((seal) => seal.key === key);
+};
+
+// =============================================================================
+// VOUCHERS SECTION
+// =============================================================================
+
+export const VOUCHERS = () => DataRegistry.getVouchers();
+export const VOUCHER_KEYS = () => DataRegistry.getVouchers().map((v) => v.key);
+export const VOUCHER_VALUES = () => DataRegistry.getVouchers().map((v) => v.value);
+export const VOUCHER_LABELS = () => DataRegistry.getVouchers().map((v) => v.label);
+
+export const isCustomVoucher = (
+  value: string,
+  customVouchers: VoucherData[] = registryState.vouchers,
+  modPrefix: string = registryState.modPrefix
+): boolean => {
+  return (
+    value.includes("_") &&
+    customVouchers.some((s) => `${modPrefix}_${s.objectKey}` === value)
+  );
+};
+
+export const getVoucherByValue = (
+  value: string
+): { key: string; value: string; label: string } | undefined => {
+  return VOUCHERS().find((voucher) => voucher.value === value);
+};
+
+export const getVoucherByKey = (
+  key: string
+): { key: string; value: string; label: string } | undefined => {
+  return VOUCHERS().find((voucher) => voucher.key === key);
 };
 
 // =============================================================================
@@ -694,7 +743,7 @@ export const isCustomEnhancement = (
   return (
     value.includes("_") &&
     customEnhancements.some(
-      (e) => `m_${modPrefix}_${e.enhancementKey}` === value
+      (e) => `m_${modPrefix}_${e.objectKey}` === value
     )
   );
 };
@@ -735,7 +784,7 @@ export const getBoosterDropdownOptions = (
 ) => {
   return customBoosters.map((booster) => ({
     value: `${registryState.modPrefix}_${
-      booster.boosterKey ||
+      booster.objectKey ||
       (booster.name
         ? booster.name.toLowerCase().replace(/\s+/g, "_")
         : "unnamed_booster")
@@ -754,7 +803,7 @@ export const getBoosterByKey = (
 
   return customBoosters.find(
     (booster) =>
-      booster.boosterKey === searchKey ||
+      booster.objectKey === searchKey ||
       (booster.name &&
         booster.name.toLowerCase().replace(/\s+/g, "_") === searchKey)
   );
@@ -770,7 +819,7 @@ export const isCustomBooster = (
     customBoosters.some(
       (b) =>
         `${modPrefix}_${
-          b.boosterKey ||
+          b.objectKey ||
           (b.name ? b.name.toLowerCase().replace(/\s+/g, "_") : "unnamed")
         }` === key
     )
@@ -1549,6 +1598,96 @@ export const CONSUMABLE_TYPE_VALUES = CONSUMABLE_TYPES.map(
   (type) => type.value
 );
 export const CONSUMABLE_TYPE_LABELS = CONSUMABLE_TYPES.map(
+  (type) => type.label
+);
+
+export const SOUNDS = [
+  { key: "ambientFire1", value: "ambientFire1", label: "AmbientFire" },
+  { key: "ambientFire2", value: "ambientFire2", label: "AmbientFire 2" },
+  { key: "ambientFire3", value: "ambientFire3", label: "AmbientFire 3" },
+  { key: "ambientOrgan1", value: "ambientOrgan1", label: "AmbientOrgan" },
+  { key: "button", value: "button", label: "Button" },
+  { key: "cancel", value: "cancel", label: "Cancel" },
+  { key: "card1", value: "card1", label: "Card" },
+  { key: "card3", value: "card3", label: "Card 3" },
+  { key: "cardFan2", value: "cardFan2", label: "Card Fan 2" },
+  { key: "cardSlide1", value: "cardSlide1", label: "Card Slide" },
+  { key: "cardSlide2", value: "cardSlide2", label: "Card Slide 2" },
+  { key: "chips1", value: "chips1", label: "Chips" },
+  { key: "chips2", value: "chips2", label: "Chips 2" },
+  { key: "coin1", value: "coin1", label: "Coin" },
+  { key: "coin2", value: "coin2", label: "Coin 2" },
+  { key: "coin3", value: "coin3", label: "Coin 3" },
+  { key: "coin4", value: "coin4", label: "Coin 4" },
+  { key: "coin5", value: "coin5", label: "Coin 5" },
+  { key: "coin6", value: "coin6", label: "Coin 6" },
+  { key: "coin7", value: "coin7", label: "Coin 7" },
+  { key: "crumple1", value: "crumple1", label: "Crumple" },
+  { key: "crumple2", value: "crumple2", label: "Crumple 2" },
+  { key: "crumple3", value: "crumple3", label: "Crumple 3" },
+  { key: "crumple2", value: "crumple2", label: "Crumple 4" },
+  { key: "crumple5", value: "crumple5", label: "Crumple 5" },
+  { key: "crumpleLong1", value: "crumpleLong1", label: "Crumple Long" },
+  { key: "crumpleLong2", value: "crumpleLong2", label: "Crumple Long 2" },
+  { key: "explosion1", value: "explosion1", label: "Explosion" },
+  { key: "explosion_buildup1", value: "explosion_buildup1", label: "Explosion Buildup" },
+  { key: "explosion_release1", value: "explosion_release1", label: "Explosion Release" },
+  { key: "foil1", value: "foil1", label: "Foil" },
+  { key: "foil2", value: "foil2", label: "Foil 2" },
+  { key: "generic1", value: "generic1", label: "Generic" },
+  { key: "glass1", value: "glass1", label: "Glass" },
+  { key: "glass2", value: "glass2", label: "Glass 2" },
+  { key: "glass3", value: "glass3", label: "Glass 3" },
+  { key: "glass4", value: "glass4", label: "Glass 4" },
+  { key: "glass5", value: "glass5", label: "Glass 5" },
+  { key: "glass6", value: "glass6", label: "Glass 6" },
+  { key: "gold_seal", value: "gold_seal", label: "Gold Seal" },
+  { key: "gong", value: "gong", label: "Gong" },
+  { key: "highlight1", value: "highlight1", label: "Highlight" },
+  { key: "highlight2", value: "highlight2", label: "Highlight 2" },
+  { key: "holo1", value: "holo1", label: "Holo" },
+  { key: "introPad1", value: "introPad1", label: "Intro Pad" },
+  { key: "magic_crumple", value: "magic_crumple", label: "Magic Crumple" },
+  { key: "magic_crumple2", value: "magic_crumple2", label: "Magic Crumple 2" },
+  { key: "magic_crumple3", value: "magic_crumple3", label: "Magic Crumple 3" },
+  { key: "multhit1", value: "multhit1", label: "Mult" },
+  { key: "multhit2", value: "multhit2", label: "Mult 2" },
+  { key: "music1", value: "music1", label: "Music" },
+  { key: "music2", value: "music2", label: "Music 2" },
+  { key: "music3", value: "music3", label: "Music 3"},
+  { key: "music4", value: "music4", label: "Music 4" },
+  { key: "music5", value: "music5", label: "Music 5" },
+  { key: "negative", value: "negative", label: "Negative" },
+  { key: "other1", value: "other1", label: "Other" },
+  { key: "paper1", value: "paper1", label: "Paper" },
+  { key: "polychrome1", value: "polychrome1", label: "Polychrome" },
+  { key: "slice1", value: "slice1", label: "Slice" },
+  { key: "splash_buildup", value: "splash_buildup", label: "Splash Buildup" },
+  { key: "tarot1", value: "tarot1", label: "Tarot" },
+  { key: "tarot2", value: "tarot2", label: "Tarot 2" },
+  { key: "timpani", value: "timpani", label: "Timpani" },
+  { key: "voice1", value: "voice1", label: "Voice" },
+  { key: "voice2", value: "voice2", label: "Voice 2" },
+  { key: "voice3", value: "voice3", label: "Voice 3" },
+  { key: "voice4", value: "voice4", label: "Voice 4" },
+  { key: "voice5", value: "voice5", label: "Voice 5" },
+  { key: "voice6", value: "voice6", label: "Voice 6" },
+  { key: "voice7", value: "voice7", label: "Voice 7" },
+  { key: "voice8", value: "voice8", label: "Voice 8" },
+  { key: "voice9", value: "voice9", label: "Voice 9" },
+  { key: "voice10", value: "voice10", label: "Voice 10" },
+  { key: "voice11", value: "voice11", label: "Voice 11" },
+  { key: "whoosh", value: "whoosh", label: "Whoosh" },
+  { key: "whoosh1", value: "whoosh1", label: "Whoosh 1" },
+  { key: "whoosh2", value: "whoosh2", label: "Whoosh 2" },
+  { key: "whoosh_long", value: "whoosh_long", label: "Whoosh Long" },
+  { key: "win", value: "win", label: "Win" },
+] as const;
+
+export const SOUNDS_TYPE_VALUES = SOUNDS.map(
+  (type) => type.value
+);
+export const SOUNDS_TYPE_LABELS = SOUNDS.map(
   (type) => type.label
 );
 

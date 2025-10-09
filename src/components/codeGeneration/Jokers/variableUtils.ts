@@ -6,6 +6,7 @@ import type {
   UserVariable,
   SealData,
   EditionData,
+  VoucherData
 } from "../../data/BalatroUtils";
 import { parseGameVariable } from "../Consumables/gameVariableUtils";
 import { getGameVariableById } from "../../data/Jokers/GameVars";
@@ -626,7 +627,7 @@ export const generateVariableConfig = (variables: VariableInfo[]): string => {
 };
 
 export const getVariableNamesFromItem = (
-  item: JokerData | ConsumableData | EnhancementData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData
 ): string[] => {
   if (!item.rules) return [];
 
@@ -673,7 +674,7 @@ export const getVariableNamesFromItem = (
 };
 
 export const getVariableUsageDetails = (
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData
 ): VariableUsage[] => {
   if (!item.rules) return [];
 
@@ -771,7 +772,7 @@ export const getVariableUsageDetails = (
 };
 
 export const getAllVariables = (
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData
 ): UserVariable[] => {
   // For jokers and enhancements, get user variables if they exist
   const userVars = (item as JokerData | EnhancementData).userVariables || [];
@@ -899,7 +900,7 @@ export const getAllVariables = (
 
   // For jokers, extract explicit variables (consumables/enhancements don't have these complex variables)
   let explicitVariableNames: string[] = [];
-  if ("jokerKey" in item) {
+  if (item.objectType == 'joker') {
     // Check if it's a joker
     explicitVariableNames = getVariableNamesFromItem(item)
       .filter((name) => !userVars.some((uv) => uv.name === name))

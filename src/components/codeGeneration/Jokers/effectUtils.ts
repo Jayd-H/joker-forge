@@ -23,10 +23,12 @@ import { generatePassiveHandSize } from "./effects/EditHandSizeEffect";
 import { generatePassiveHand } from "./effects/EditHandEffect";
 import { generatePassiveDiscard } from "./effects/EditDiscardEffect";
 import { generatePassiveCombineRanks } from "./effects/CombineRanksEffect";
+import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateApplyXChipsReturn } from "./effects/ApplyXChipsEffect";
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateApplyExpMultReturn } from "./effects/ApplyExpMultEffect";
 import { generateApplyExpChipsReturn } from "./effects/ApplyExpChipsEffect";
+import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateShowMessageReturn } from "./effects/ShowMessageEffect";
 import { generateSetDollarsReturn } from "./effects/SetDollarsEffect";
@@ -210,7 +212,7 @@ export function generateEffectReturnStatement(
 
     const processedEffects: EffectReturn[] = [];
     effectReturns.forEach((effect) => {
-      const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+      const { newStatement, preReturnCode } = extractPreReturnCode(
         effect.statement
       );
 
@@ -221,7 +223,7 @@ export function generateEffectReturnStatement(
 
       processedEffects.push({
         ...effect,
-        statement: cleanedStatement,
+        statement: newStatement,
       });
     });
 
@@ -310,7 +312,7 @@ export function generateEffectReturnStatement(
       const processedEffects: EffectReturn[] = [];
 
       effectReturns.forEach((effect) => {
-        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+        const { newStatement, preReturnCode } = extractPreReturnCode(
           effect.statement
         );
 
@@ -322,7 +324,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: cleanedStatement,
+          statement: newStatement,
         });
       });
 
@@ -538,7 +540,7 @@ export function generateEffectReturnStatement(
       const processedEffects: EffectReturn[] = [];
 
       effectReturns.forEach((effect) => {
-        const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+        const { newStatement, preReturnCode } = extractPreReturnCode(
           effect.statement
         );
 
@@ -550,7 +552,7 @@ export function generateEffectReturnStatement(
 
         processedEffects.push({
           ...effect,
-          statement: cleanedStatement,
+          statement: newStatement,
         });
       });
 
@@ -661,7 +663,7 @@ export function generateEffectReturnStatement(
           firstEffect,
           triggerType,
           0,
-          modprefix
+          modprefix,
         );
         primaryColour = firstEffectResult.colour || "G.C.WHITE";
       }
@@ -680,8 +682,9 @@ const generateSingleEffect = (
   effect: ExtendedEffect,
   triggerType: string,
   sameTypeCount: number = 0,
-  modprefix: string
+  modprefix: string,
 ): EffectReturn => {
+
   switch (effect.type) {
     case "add_chips":
       return generateAddChipsReturn(effect, sameTypeCount);
@@ -785,6 +788,10 @@ const generateSingleEffect = (
       return generateBeatCurrentBlindReturn(effect);
     case "fix_probability":
       return generateFixProbabilityReturn(effect, sameTypeCount);
+      case "edit_booster_packs":
+         return generateEditBoostersReturn(effect, sameTypeCount);
+      case "edit_shop_slots":
+          return generateEditShopCardsSlotsReturn(effect,sameTypeCount);
     case "mod_probability":
       return generateModProbabilityReturn(effect, sameTypeCount);
     case "force_game_over":
@@ -794,7 +801,7 @@ const generateSingleEffect = (
     case "emit_flag":
       return generateEmitFlagReturn(effect, modprefix);
     case "play_sound":
-      return generatePlaySoundReturn(effect, modprefix);
+      return generatePlaySoundReturn(effect);
     case "juice_up_card":
       return generateJuiceUpReturn(effect, sameTypeCount, "card");
     case "edit_play_size":
@@ -925,7 +932,7 @@ export const processPassiveEffects = (
       rule.effects?.forEach((effect) => {
         let passiveResult: PassiveEffectResult | null = null;
 
-        const jokerKey = joker.jokerKey;
+        const jokerKey = joker.objectKey;
 
         switch (effect.type) {
           case "edit_hand_size":
@@ -1019,7 +1026,7 @@ export const processPassiveEffects = (
 };
 
 function extractPreReturnCode(statement: string): {
-  cleanedStatement: string;
+  newStatement: string;
   preReturnCode?: string;
 } {
   const preReturnStart = "__PRE_RETURN_CODE__";
@@ -1032,18 +1039,18 @@ function extractPreReturnCode(statement: string): {
 
     if (startIndex < endIndex) {
       const preReturnCode = statement.substring(startIndex, endIndex).trim();
-      const cleanedStatement = statement
+      const newStatement = statement
         .replace(
           new RegExp(`${preReturnStart}[\\s\\S]*?${preReturnEnd}`, "g"),
           ""
         )
         .trim();
 
-      return { cleanedStatement, preReturnCode };
+      return { newStatement, preReturnCode };
     }
   }
 
-  return { cleanedStatement: statement };
+  return { newStatement: statement };
 }
 
 function getOrdinalSuffix(num: number): string {

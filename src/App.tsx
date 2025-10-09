@@ -23,6 +23,7 @@ import {
   DocumentTextIcon,
   GiftIcon,
   SparklesIcon,
+  BookOpenIcon
 } from "@heroicons/react/24/outline";
 
 // Pages
@@ -36,6 +37,7 @@ const ConsumablesPage = lazy(
 );
 const DecksPage = lazy(() => import("./components/pages/DecksPage"));
 const EditionsPage = lazy(() => import("./components/pages/EditionsPage"));
+const VouchersPage = lazy(() => import("./components/pages/VouchersPage"));
 const BoostersPage = lazy(() => import("./components/pages/BoostersPage"));
 const EnhancementsPage = lazy(
   () => import("./components/pages/EnhancementsPage")
@@ -60,6 +62,11 @@ const SealsVanillaReforgedPage = lazy(
   () => import("./components/pages/vanillareforged/SealsVanillaReforgedPage")
 );
 
+const VouchersVanillaReforgedPage = lazy(
+  () => import("./components/pages/vanillareforged/VouchersVanillaReforgePage")
+);
+
+
 const AcknowledgementsPage = lazy(
   () => import("./components/pages/AcknowledgementsPage")
 );
@@ -83,6 +90,7 @@ import {
   ModMetadata,
   EditionData,
   SoundData,
+  VoucherData
 } from "./components/data/BalatroUtils";
 import Alert from "./components/generic/Alert";
 import ConfirmationPopup from "./components/generic/ConfirmationPopup";
@@ -93,6 +101,8 @@ import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
+import { scanGameObjectIds, scanGameObjectKeys } from "./components/generic/GameObjectOrdering";
+
 interface AlertState {
   isVisible: boolean;
   type: "success" | "warning" | "error";
@@ -124,6 +134,7 @@ interface AutoSaveData {
   enhancements: EnhancementData[];
   seals: SealData[];
   editions: EditionData[];
+  vouchers: VoucherData[];
   timestamp: number;
 }
 
@@ -139,7 +150,8 @@ const FloatingTabDock: React.FC<{
     | "boosters"
     | "enhancements"
     | "seals"
-    | "editions";
+    | "editions"
+    | "vouchers";
   onTabChange: (
     tab:
       | "jokers"
@@ -149,6 +161,7 @@ const FloatingTabDock: React.FC<{
       | "enhancements"
       | "seals"
       | "editions"
+      | "vouchers"
   ) => void;
   isVanillaMode: boolean;
 }> = ({ activeTab, onTabChange, isVanillaMode }) => {
@@ -195,6 +208,11 @@ const FloatingTabDock: React.FC<{
       id: "editions" as const,
       icon: SparklesIcon,
       label: "Editions",
+    },
+        {
+      id: "vouchers" as const,
+      icon: BookOpenIcon,
+      label: "Vouchers",
     },
   ];
 
@@ -273,6 +291,9 @@ function AppContent() {
   const [seals, setSeals] = useState<SealData[]>([]);
   const [selectedSealId, setSelectedSealId] = useState<string | null>(null);
 
+  const [vouchers, setVouchers] = useState<VoucherData[]>([]);
+  const [selectedVoucherId, setSelectedVoucherId] = useState<string | null>(null);
+
   const [selectedJokerId, setSelectedJokerId] = useState<string | null>(null);
   const [selectedConsumableId, setSelectedConsumableId] = useState<
     string | null
@@ -308,7 +329,7 @@ function AppContent() {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const statusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const clearStatusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const donationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // const donationTimerRef = useRef<NodeJS.Timeout | null>(null);
   const prevDataRef = useRef<{
     modMetadata: ModMetadata;
     jokers: JokerData[];
@@ -320,6 +341,7 @@ function AppContent() {
     enhancements: EnhancementData[];
     seals: SealData[];
     editions: EditionData[];
+    vouchers: VoucherData[];
   } | null>(null);
 
   const showConfirmation = useCallback(
@@ -356,13 +378,15 @@ function AppContent() {
     | "boosters"
     | "enhancements"
     | "seals"
-    | "editions" => {
+    | "editions"
+    | "vouchers" => {
     const path = location.pathname;
     if (path.includes("/vanilla/consumables")) return "consumables";
     if (path.includes("/vanilla/boosters")) return "boosters";
     if (path.includes("/vanilla/enhancements")) return "enhancements";
     if (path.includes("/vanilla/seals")) return "seals";
     if (path.includes("/vanilla/editions")) return "editions";
+    if (path.includes("/vanilla/vouchers")) return "vouchers";
     return "jokers";
   };
 
@@ -377,6 +401,7 @@ function AppContent() {
       | "enhancements"
       | "seals"
       | "editions"
+      | "vouchers"
   ) => {
     if (isVanillaMode) {
       navigate(`/vanilla/${tab}`);
@@ -421,20 +446,22 @@ function AppContent() {
       boosterData: BoosterData[],
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
-      editionsData: EditionData[]
+      editionsData: EditionData[],
+      vouchersData: VoucherData[],
     ) => {
       try {
         const data: AutoSaveData = {
           modMetadata: metadata,
-          jokers: jokerData,
+          jokers: scanGameObjectKeys(scanGameObjectIds(jokerData)),
           sounds: soundData,
-          consumables: consumableData,
+          consumables: scanGameObjectKeys(scanGameObjectIds(consumableData)),
           customRarities: raritiesData,
           consumableSets: setsData,
-          boosters: boosterData,
-          enhancements: enhancementsData,
-          seals: sealsData,
-          editions: editionsData,
+          boosters: scanGameObjectKeys(scanGameObjectIds(boosterData)),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(enhancementsData)),
+          seals: scanGameObjectKeys(scanGameObjectIds(sealsData)),
+          editions: scanGameObjectKeys(scanGameObjectIds(editionsData)),
+          vouchers: scanGameObjectKeys(scanGameObjectIds(vouchersData)),
           timestamp: Date.now(),
         };
         localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));
@@ -455,6 +482,7 @@ function AppContent() {
       enhancements,
       seals,
       editions,
+      vouchers,
       modMetadata.prefix || ""
     );
   }, [
@@ -465,6 +493,7 @@ function AppContent() {
     enhancements,
     seals,
     editions,
+    vouchers,
     modMetadata.prefix,
   ]);
 
@@ -535,6 +564,7 @@ function AppContent() {
     enhancements: EnhancementData[];
     seals: SealData[];
     editions: EditionData[];
+    vouchers: VoucherData[];
   } | null => {
     try {
       const savedData = localStorage.getItem(AUTO_SAVE_KEY);
@@ -551,15 +581,16 @@ function AppContent() {
       console.log("Loaded auto-saved project state");
       return {
         modMetadata: data.modMetadata,
-        jokers: data.jokers,
+        jokers: scanGameObjectKeys(scanGameObjectIds(data.jokers)),
         sounds: data.sounds,
-        consumables: data.consumables || [],
+        consumables: scanGameObjectKeys(scanGameObjectIds(data.consumables || [])),
         customRarities: data.customRarities || [],
         consumableSets: data.consumableSets || [],
-        boosters: data.boosters || [],
-        enhancements: data.enhancements || [],
-        editions: data.editions || [],
-        seals: data.seals || [],
+        boosters: scanGameObjectKeys(scanGameObjectIds(data.boosters || [])),
+        enhancements: scanGameObjectKeys(scanGameObjectIds(data.enhancements || [])),
+        editions: scanGameObjectKeys(scanGameObjectIds(data.editions || [])),
+        seals: scanGameObjectKeys(scanGameObjectIds(data.seals || [])),
+        vouchers: scanGameObjectKeys(scanGameObjectIds(data.vouchers || [])),
       };
     } catch (error) {
       console.warn("Failed to load auto-save:", error);
@@ -608,7 +639,8 @@ function AppContent() {
       boosterData: BoosterData[],
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
-      editionsData: EditionData[]
+      editionsData: EditionData[],
+      vouchersData: VoucherData[]
     ) => {
       if (!prevDataRef.current) return true;
 
@@ -626,7 +658,8 @@ function AppContent() {
         JSON.stringify(prevData.enhancements) !==
           JSON.stringify(enhancementsData) ||
         JSON.stringify(prevData.seals) !== JSON.stringify(sealsData) ||
-        JSON.stringify(prevData.editions) !== JSON.stringify(editionsData)
+        JSON.stringify(prevData.editions) !== JSON.stringify(editionsData) ||
+        JSON.stringify(prevData.vouchers) !== JSON.stringify(vouchersData)
       );
     },
     []
@@ -643,7 +676,8 @@ function AppContent() {
       boosterData: BoosterData[],
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
-      editionsData: EditionData[]
+      editionsData: EditionData[],
+      vouchersData: VoucherData[]
     ) => {
       if (
         jokerData.length > 0 ||
@@ -654,7 +688,8 @@ function AppContent() {
         boosterData.length > 0 ||
         enhancementsData.length > 0 ||
         sealsData.length > 0 ||
-        editionsData.length > 0
+        editionsData.length > 0 ||
+        vouchersData.length > 0
       )
         return true;
 
@@ -693,7 +728,8 @@ function AppContent() {
       boosterData: BoosterData[],
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
-      editionsData: EditionData[]
+      editionsData: EditionData[],
+      vouchersData: VoucherData[]
     ) => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
@@ -710,7 +746,8 @@ function AppContent() {
           boosterData,
           enhancementsData,
           sealsData,
-          editionsData
+          editionsData,
+          vouchersData
         );
       }, 500);
     },
@@ -743,7 +780,8 @@ function AppContent() {
         boosters,
         enhancements,
         seals,
-        editions
+        editions,
+        vouchers
       )
     )
       return;
@@ -759,7 +797,8 @@ function AppContent() {
         boosters,
         enhancements,
         seals,
-        editions
+        editions,
+        vouchers
       )
     )
       return;
@@ -775,6 +814,7 @@ function AppContent() {
       enhancements,
       seals,
       editions,
+      vouchers,
     };
 
     setAutoSaveStatus("saving");
@@ -789,7 +829,8 @@ function AppContent() {
       boosters,
       enhancements,
       seals,
-      editions
+      editions,
+      vouchers
     );
 
     if (statusTimeoutRef.current) {
@@ -826,6 +867,7 @@ function AppContent() {
     enhancements,
     seals,
     editions,
+    vouchers,
     hasLoadedInitialData,
     debouncedSave,
     hasDataChanged,
@@ -843,9 +885,9 @@ function AppContent() {
       if (clearStatusTimeoutRef.current) {
         clearTimeout(clearStatusTimeoutRef.current);
       }
-      if (donationTimerRef.current) {
+      /*if (donationTimerRef.current) {
         clearTimeout(donationTimerRef.current);
-      }
+      }*/
     };
   }, []);
 
@@ -861,15 +903,16 @@ function AppContent() {
 
         const normalizedData = normalizeImportedModData({
           metadata: savedData.modMetadata,
-          jokers: savedData.jokers,
+          jokers: scanGameObjectKeys(scanGameObjectIds(savedData.jokers)),
           sounds: savedData.sounds,
-          consumables: savedData.consumables,
+          consumables: scanGameObjectKeys(scanGameObjectIds(savedData.consumables)),
           customRarities: savedData.customRarities,
           consumableSets: savedData.consumableSets,
-          boosters: savedData.boosters,
-          enhancements: savedData.enhancements,
-          seals: savedData.seals,
-          editions: savedData.editions,
+          boosters: scanGameObjectKeys(scanGameObjectIds(savedData.boosters)),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(savedData.enhancements)),
+          seals: scanGameObjectKeys(scanGameObjectIds(savedData.seals)),
+          editions: scanGameObjectKeys(scanGameObjectIds(savedData.editions)),
+          vouchers: scanGameObjectKeys(scanGameObjectIds(savedData.vouchers)),
         });
 
         setModMetadata(normalizedData.metadata);
@@ -878,10 +921,11 @@ function AppContent() {
         setConsumables(normalizedData.consumables);
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
-        setBoosters(normalizedData.boosters);
+        setBoosters((normalizedData.boosters));
         setEnhancements(normalizedData.enhancements);
         setSeals(normalizedData.seals);
         setEditions(normalizedData.editions);
+        setVouchers(normalizedData.vouchers);
 
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
@@ -889,6 +933,7 @@ function AppContent() {
         setSelectedEnhancementId(null);
         setSelectedSealId(null);
         setSelectedEditionId(null);
+        setSelectedVoucherId(null);
 
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
@@ -901,6 +946,7 @@ function AppContent() {
           enhancements: normalizedData.enhancements,
           seals: normalizedData.seals,
           editions: normalizedData.editions,
+          vouchers: normalizedData.vouchers,
         };
 
         showAlert(
@@ -976,6 +1022,7 @@ function AppContent() {
     const invalidEnhancements = enhancements.filter((e) => !e.name || !e.id);
     const invalidSeals = seals.filter((s) => !s.name || !s.id);
     const invalidEditions = editions.filter((e) => !e.name || !e.id);
+    const invalidVouchers = vouchers.filter((v) => !v.name || !v.id);
 
     if (
       invalidJokers.length > 0 ||
@@ -983,7 +1030,8 @@ function AppContent() {
       invalidBoosters.length > 0 ||
       invalidEnhancements.length > 0 ||
       invalidSeals.length > 0 ||
-      invalidEditions.length > 0
+      invalidEditions.length > 0 ||
+      invalidVouchers.length > 0
     ) {
       showAlert(
         "error",
@@ -1010,7 +1058,8 @@ function AppContent() {
         boosters,
         enhancements,
         seals,
-        editions
+        editions,
+        vouchers
       );
       setShowExportModal(true);
     } catch (error) {
@@ -1047,7 +1096,8 @@ function AppContent() {
         boosters,
         enhancements,
         seals,
-        editions
+        editions,
+        vouchers
       );
       showAlert(
         "success",
@@ -1078,13 +1128,14 @@ function AppContent() {
         setModMetadata(normalizedData.metadata);
         setJokers(normalizedData.jokers);
         setSounds(normalizedData.sounds);
-        setConsumables(normalizedData.consumables);
+        setConsumables((normalizedData.consumables));
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
         setBoosters(normalizedData.boosters);
         setEnhancements(normalizedData.enhancements || []);
         setSeals(normalizedData.seals || []);
         setEditions(normalizedData.editions || []);
+        setVouchers(normalizedData.vouchers || []);
         setSounds(normalizedData.sounds);
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
@@ -1092,17 +1143,19 @@ function AppContent() {
         setSelectedEnhancementId(null);
         setSelectedSealId(null);
         setSelectedEditionId(null);
+
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
-          jokers: normalizedData.jokers,
+          jokers: scanGameObjectKeys(scanGameObjectIds(normalizedData.jokers)),
           sounds: normalizedData.sounds,
-          consumables: normalizedData.consumables,
+          consumables: scanGameObjectKeys(scanGameObjectIds(normalizedData.consumables)),
           customRarities: normalizedData.customRarities,
           consumableSets: normalizedData.consumableSets,
-          boosters: normalizedData.boosters,
-          enhancements: normalizedData.enhancements || [],
-          seals: normalizedData.seals || [],
-          editions: normalizedData.editions || [],
+          boosters: scanGameObjectKeys(scanGameObjectIds(normalizedData.boosters)),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(normalizedData.enhancements || [])),
+          seals: scanGameObjectKeys(scanGameObjectIds(normalizedData.seals || [])),
+          editions: scanGameObjectKeys(scanGameObjectIds(normalizedData.editions || [])),
+          vouchers: scanGameObjectKeys(scanGameObjectIds(normalizedData.vouchers || [])),
         };
         showAlert(
           "success",
@@ -1269,6 +1322,30 @@ function AppContent() {
             }
           />
           <Route
+            path="/vouchers"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <VouchersPage
+                  modName={modMetadata.name}
+                  vouchers={vouchers}
+                  setVouchers={setVouchers}
+                  selectedVoucherId={selectedVoucherId}
+                  setSelectedVoucherId={setSelectedVoucherId}
+                  modPrefix={modMetadata.prefix || ""}
+                  showConfirmation={showConfirmation}
+                />
+              </Suspense>
+            }
+          />
+          <Route
             path="/boosters"
             element={
               <Suspense
@@ -1360,6 +1437,30 @@ function AppContent() {
                   setEditions={setEditions}
                   selectedEditionId={selectedEditionId}
                   setSelectedEditionId={setSelectedEditionId}
+                  modPrefix={modMetadata.prefix || ""}
+                  showConfirmation={showConfirmation}
+                />
+              </Suspense>
+            }
+          />
+            <Route
+            path="/vouchers"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <VouchersPage
+                  modName={modMetadata.name}
+                  vouchers={vouchers}
+                  setVouchers={setVouchers}
+                  selectedVoucherId={selectedVoucherId}
+                  setSelectedVoucherId={setSelectedVoucherId}
                   modPrefix={modMetadata.prefix || ""}
                   showConfirmation={showConfirmation}
                 />
@@ -1476,6 +1577,29 @@ function AppContent() {
                   }}
                   onNavigateToSeals={() => {
                     navigate("/seals");
+                  }}
+                />
+              </Suspense>
+            }
+          />
+                    <Route
+            path="/vanilla/vouchers"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <VouchersVanillaReforgedPage
+                  onDuplicateToProject={(item) => {
+                    setVouchers([...vouchers, item as VoucherData]);
+                  }}
+                  onNavigateToVouchers={() => {
+                    navigate("/vouchers");
                   }}
                 />
               </Suspense>

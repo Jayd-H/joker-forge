@@ -7,6 +7,7 @@ import {
   BanknotesIcon,
   ChartBarIcon,
   HandRaisedIcon,
+  FireIcon,
 } from "@heroicons/react/24/outline";
 
 export interface GameVariable {
@@ -403,6 +404,97 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             category: "deck",
             subcategory: "deck_composition_seals",
             code: "(function() local count = 0; for _, card in ipairs(G.playing_cards or {}) do if card.seal == 'Purple' then count = count + 1 end end; return count end)()",
+          },
+        ],
+      },
+    ],
+  },{
+    id: "scoring",
+    label: "Scoring",
+    icon: FireIcon,
+    variables: [],
+    subcategories: [
+      {
+        id: "chips",
+        label: "Chips",
+        variables: [
+          {
+            id: "blind_chip_req",
+            label: "Blind Chip Requirement",
+            description: "The Chip Requirement for the current Blind",
+            category: "scoring",
+            subcategory: "chips",
+            code: "G.GAME.blind.chips"
+          },
+          {
+            id: "current_chip_total",
+            label: "Current Chip Total",
+            description: "Current Amount of Scored Chips towards the Blind Requirement",
+            category: "scoring",
+            subcategory: "chips",
+            code: "G.GAME.chips"
+          },
+          {
+            id: "initial_scoring_chips",
+            label: "Initial Scoring Chips",
+            description: "The Initial Amount of Chips of the played Poker Hand",
+            category: "scoring",
+            subcategory: "chips",
+            code: "G.GAME.current_round.current_hand.chips"
+          },
+          {
+            id: "current_scoring_chips",
+            label: "Current Scoring Chips",
+            description: "The Current Amount of Chips in scoring",
+            category: "scoring",
+            subcategory: "chips",
+            code: "hand_chips"
+          },
+          {
+            id: "cumulative_chips",
+            label: "Cumulative Chips",
+            description: "The Cumulative Chip Total of all scoring cards",
+            category: "scoring",
+            subcategory: "chips",
+            code: "(function() local chips_sum = 0; for _, playing_card in pairs(context.scoring_hand or {}) do chips_sum = chips_sum + playing_card.base.nominal end; return chips_sum end)"
+          },
+        ],
+      },
+      {
+        id: "mult",
+        label: "Mult",
+        variables: [
+          {
+            id: "initial_scoring_mult",
+            label: "Initial Scoring Mult",
+            description: "The Initial Amount of Mult of the played Poker Hand",
+            category: "scoring",
+            subcategory: "mult",
+            code: "G.GAME.current_round.current_hand.mult"
+          },
+          {
+            id: "current_scoring_mult",
+            label: "Current Scoring Mult",
+            description: "The Current Amount of Mult in scoring",
+            category: "scoring",
+            subcategory: "mult",
+            code: "mult"
+          },
+          {
+            id: "highest_card_mult",
+            label: "Highest Card Mult",
+            description: "Mult value from the highest rank card in hand",
+            category: "scoring",
+            subcategory: "mult",
+            code: "(function() local max = 0; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id > max then max = card.base.id end end; return max end)()",
+          },
+          {
+            id: "lowest_card_mult",
+            label: "Lowest Card Mult",
+            description: "Mult value from the lowest rank card in hand",
+            category: "scoring",
+            subcategory: "mult",
+            code: "(function() local min = 14; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id < min then min = card.base.id end end; return min end)()",
           },
         ],
       },
@@ -806,30 +898,35 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
     id: "jokers",
     label: "Jokers",
     icon: FaceSmileIcon,
-    variables: [
-      {
-        id: "joker_count",
-        label: "Joker Count",
-        description: "Number of jokers currently held",
-        category: "jokers",
-        code: "#(G.jokers and G.jokers.cards or {})",
-      },
+    variables: [],
+    subcategories: [
       {
         id: "joker_slots",
-        label: "Total Joker Slots",
-        description: "Total number of joker slots available",
-        category: "jokers",
-        code: "G.jokers and G.jokers.config.card_limit or 0",
+        label: "Joker Slots",
+        variables: [
+          {
+            id: "joker_count",
+            label: "Joker Count",
+            description: "Number of jokers currently held",
+            category: "jokers",
+            code: "#(G.jokers and G.jokers.cards or {})",
+          },
+          {
+            id: "joker_slots",
+            label: "Total Joker Slots",
+            description: "Total number of joker slots available",
+            category: "jokers",
+            code: "G.jokers and G.jokers.config.card_limit or 0",
+          },
+          {
+            id: "free_joker_slots",
+            label: "Free Joker Slots",
+            description: "Number of empty joker slots",
+            category: "jokers",
+            code: "((G.jokers and G.jokers.config.card_limit or 0) - #(G.jokers and G.jokers.cards or {}))",
+          },
+        ]
       },
-      {
-        id: "free_joker_slots",
-        label: "Free Joker Slots",
-        description: "Number of empty joker slots",
-        category: "jokers",
-        code: "((G.jokers and G.jokers.config.card_limit or 0) - #(G.jokers and G.jokers.cards or {}))",
-      },
-    ],
-    subcategories: [
       {
         id: "joker_rarities",
         label: "Jokers by Rarity",
@@ -872,6 +969,14 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
         id: "joker_economics",
         label: "Joker Economics",
         variables: [
+          {
+            id: "self_sell_value",
+            label: "This Joker Sell Value",
+            description: "The sell value of only this joker",
+            category: "jokers",
+            subcategory: "joker_economics",
+            code: "(function() for _, joker in ipairs(G.jokers and G.jokers.cards or {}) do if joker == card then return joker.sell_cost end end end)()",
+          },
           {
             id: "other_jokers_sell_value",
             label: "Other Jokers Sell Value",
@@ -1323,22 +1428,6 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             category: "special",
             subcategory: "hand_position",
             code: "(G.hand and G.hand.cards[#G.hand.cards] and G.hand.cards[#G.hand.cards].base.id or 0)",
-          },
-          {
-            id: "highest_card_mult",
-            label: "Highest Card Mult",
-            description: "Mult value from the highest rank card in hand",
-            category: "special",
-            subcategory: "hand_position",
-            code: "(function() local max = 0; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id > max then max = card.base.id end end; return max end)()",
-          },
-          {
-            id: "lowest_card_mult",
-            label: "Lowest Card Mult",
-            description: "Mult value from the lowest rank card in hand",
-            category: "special",
-            subcategory: "hand_position",
-            code: "(function() local min = 14; for _, card in ipairs(G.hand and G.hand.cards or {}) do if card.base.id < min then min = card.base.id end end; return min end)()",
           },
         ],
       },

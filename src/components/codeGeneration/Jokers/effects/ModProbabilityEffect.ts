@@ -25,19 +25,19 @@ export const generateModProbabilityReturn = (
   
   switch (operation) {
     case "increment": {
-      statement += `${chance_part} = ${chance_part} + ${valueCode}`;
+      statement += `${chance_part} = ${chance_part} + (${valueCode})`;
       break;
     }
     case "decrement": {
-      statement += `${chance_part} = ${chance_part} - ${valueCode}`;
+      statement += `${chance_part} = ${chance_part} - (${valueCode})`;
       break;
     }
     case "multiply": {
-      statement += `${chance_part} = ${chance_part} * ${valueCode}`;
+      statement += `${chance_part} = ${chance_part} * (${valueCode})`;
       break;
     }
     case "divide": {
-      statement += `${chance_part} = ${chance_part} / ${valueCode}`;
+      statement += `${chance_part} = ${chance_part} / (${valueCode})`;
       break;
     }
   }

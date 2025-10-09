@@ -22,6 +22,7 @@ import {
   SEALS,
   ENHANCEMENTS,
   SUITS,
+  TAGS,
 } from "../BalatroUtils";
 import { GENERIC_TRIGGERS, SCORING_TRIGGERS } from "./Triggers";
 
@@ -409,6 +410,35 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Scoring",
   },
   {
+      id: "create_tag",
+      label: "Create Tag",
+      description: "Create a specific or random tag",
+      applicableTriggers: SCORING_TRIGGERS,
+      params: [
+        {
+          id: "tag_type",
+          type: "select",
+          label: "Tag Type",
+          options: [
+            { value: "random", label: "Random Tag" },
+            { value: "specific", label: "Specific Tag" },
+          ],
+          default: "random",
+        },
+        {
+          id: "specific_tag",
+          type: "select",
+          label: "Specific Tag",
+          options: [...TAGS],
+          showWhen: {
+            parameter: "tag_type",
+            values: ["specific"],
+          },
+        },
+      ],
+      category: "Consumables",
+    },
+  {
     id: "create_joker",
     label: "Create Joker",
     description:
@@ -643,105 +673,117 @@ export const CARD_EFFECT_TYPES: EffectTypeDefinition[] = [
           ...CONSUMABLE_SETS(),
         ],
         default: "random",
-      },
-      {
+      },{
         id: "specific_card",
         type: "select",
         label: "Specific Card",
         options: (parentValues: Record<string, unknown>) => {
           const selectedSet = parentValues?.set as string;
-
           if (!selectedSet || selectedSet === "random") {
             return [{ value: "random", label: "Random from Set" }];
           }
-
           // Handle vanilla sets
           if (selectedSet === "Tarot") {
             const vanillaCards = TAROT_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Tarot")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];
-          }
-
+            ];}
           if (selectedSet === "Planet") {
             const vanillaCards = PLANET_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Planet")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];
-          }
-
+            ];}
           if (selectedSet === "Spectral") {
             const vanillaCards = SPECTRAL_CARDS.map((card) => ({
               value: card.key,
               label: card.label,
             }));
-
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Spectral")
               .map((consumable) => ({
                 value: consumable.value,
                 label: consumable.label,
               }));
-
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];
           }
-
           // Handle custom sets
+          // Remove mod prefix to get the actual set key
           const setKey = selectedSet.includes("_")
             ? selectedSet.split("_").slice(1).join("_")
             : selectedSet;
-
           const customConsumablesInSet = CUSTOM_CONSUMABLES().filter(
             (consumable) =>
               consumable.set === setKey || consumable.set === selectedSet
           );
-
           return [
             { value: "random", label: "Random from Set" },
             ...customConsumablesInSet,
-          ];
-        },
+          ];},
         default: "random",
-      },
-      {
+      },{
+        id: "soulable",
+        type: "select",
+        label: "Soulable",
+        options: [
+          { value: "y", label: "Yes" },
+          { value: "n", label: "No" },
+        ],
+        showWhen: {
+          parameter: "specific_card",
+          values: ["random"],
+        },
+        default:"n",
+      },{
         id: "is_negative",
         type: "select",
         label: "Edition",
         options: [
-          { value: "none", label: "No Edition" },
-          { value: "negative", label: "Negative Edition" },
+          { value: "n", label: "No Edition" },
+          { value: "y", label: "Negative Edition" },
         ],
-        default: "none",
+        default: "n",
+      },{
+        id: "count",
+        type: "number",
+        label: "Number of Cards",
+        default: 1,
+        min: 1,
+        max: 5,
+      },{
+        id: "ignore_slots",
+        type: "select",
+        label: "Ignore Slots",
+        options: [
+          { value: "y", label: "True" },
+          { value: "n", label: "False" },
+        ],
+        default:"n",
       },
     ],
     category: "Consumables",

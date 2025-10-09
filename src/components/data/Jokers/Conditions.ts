@@ -594,7 +594,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
       "card_discarded",
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
-      "card_destroyed",
+      "card_destroyed",      
     ],
     params: [
       {
@@ -848,50 +848,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Hand",
   },
   {
-    id: "cumulative_chips",
-    label: "Cumulative Chips",
-    applicableTriggers: [
-      "hand_played",
-      "card_scored",
-      "after_hand_played",
-      "before_hand_played",
-    ],
-    description: "Check the sum of chips in hand",
-    params: [
-      {
-        id: "hand",
-        type: "select",
-        label: "Hand Selection",
-        options: [
-          { value: "played", label: "Played Hand" },
-          { value: "held", label: "Held in Hand" },
-        ],
-      },
-      {
-        id: "check",
-        type: "select",
-        label: "Check",
-        options: [
-          { value: "base", label: "Base Chips" },
-          { value: "total", label: "Total Chips" },
-        ],
-      },
-      {
-        id: "operator",
-        type: "select",
-        label: "Operator",
-        options: [...COMPARISON_OPERATORS],
-      },
-      {
-        id: "value",
-        type: "number",
-        label: "Amount",
-        default: 0,
-      },
-    ],
-    category: "Hand",
-  },
-  {
     id: "generic_compare",
     label: "Generic Compare",
     description: "Compare two custom values with an operator",
@@ -1120,7 +1076,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "check_flag",
     label: "Check Flag",
     description: "Check if a specific flag from your mod is true",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS,],
     params: [
       {
         id: "flag_name",
@@ -1161,7 +1117,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "consumable_count",
     label: "Consumable Count",
     description: "Check how many of a consumable a player has",
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability",],
     params: [
       {
         id: "consumable_type",

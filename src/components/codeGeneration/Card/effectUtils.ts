@@ -18,6 +18,7 @@ import { generateBalanceReturn } from "./effects/BalanceEffect";
 import { generateDrawCardsReturn } from "./effects/DrawCardsEffect";
 import { generateCreateLastPlayedPlanetReturn } from "./effects/CreateLastPlayedPlanetEffect";
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
+import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateModifyInternalVariableReturn } from "./effects/ModifyInternalVariableEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateEditPlayingCardReturn } from "./effects/EditPlayingCardEffect";
@@ -93,6 +94,9 @@ const generateSingleEffect = (
     case "retrigger_card":
       return generateRetriggerReturn(effect, 0, itemType);
 
+      case "create_tag":
+            return generateCreateTagReturn(effect);
+
     case "create_joker":
       return generateCreateJokerReturn(effect);
 
@@ -106,7 +110,7 @@ const generateSingleEffect = (
       return generateLevelUpHandReturn(effect, 0, itemType);
 
     case "create_consumable":
-      return generateCreateConsumableReturn(effect, trigger || "");
+      return generateCreateConsumableReturn(effect);
 
     case "copy_consumable":
       return generateCopyConsumableReturn(effect, trigger || "");
@@ -149,7 +153,7 @@ const generateSingleEffect = (
       return generateEmitFlagReturn(effect, getModPrefix());
     
     case "play_sound":
-      return generatePlaySoundReturn(effect, getModPrefix());
+      return generatePlaySoundReturn(effect);
 
     case "edit_playing_card":
       return generateEditPlayingCardReturn(effect, trigger);

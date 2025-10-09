@@ -55,7 +55,12 @@ import { SelectedItem } from "./types";
 import { getCardTriggerById } from "../data/Card/Triggers";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
-import Checkbox from "../generic/Checkbox";
+
+import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
+import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
+
+import  Checkbox  from "../generic/Checkbox";
+
 
 interface InspectorProps {
   position: { x: number; y: number };
@@ -95,7 +100,7 @@ interface InspectorProps {
   selectedGameVariable: GameVariable | null;
   onGameVariableApplied: () => void;
   selectedItem: SelectedItem;
-  itemType: "joker" | "consumable" | "card";
+  itemType: "joker" | "consumable" | "card" | "voucher";
 }
 
 interface ParameterFieldProps {
@@ -112,7 +117,7 @@ interface ParameterFieldProps {
   onGameVariableApplied?: () => void;
   isEffect?: boolean;
   joker?: JokerData;
-  itemType?: "joker" | "consumable" | "card";
+  itemType: "joker" | "consumable" | "card" | "voucher";
 }
 
 interface ChanceInputProps {
@@ -125,7 +130,7 @@ interface ChanceInputProps {
   onOpenGameVariablesPanel: () => void;
   selectedGameVariable?: GameVariable | null;
   onGameVariableApplied?: () => void;
-  itemType?: "joker" | "consumable" | "card";
+  itemType: "joker" | "consumable" | "card" | "voucher";
 }
 
 const ChanceInput: React.FC<ChanceInputProps> = React.memo(
@@ -391,7 +396,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
     if (param.type === "number" && typeof value === "number") {
       setInputValue(value.toString());
     }
-  }, [param.type, value]);
+  }, [param.type, value]);        
 
   React.useEffect(() => {
     const isVar =
@@ -865,6 +870,47 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
       );
     }
 
+    case "checkbox" : {
+      const boxes = param.checkboxOptions || []
+
+      return (
+        <div className="flex flex-col w-full select-none overflow-y-auto">
+            {param.label && (
+        <div className={`flex justify-center`}>
+          <div className="bg-black border-2 border-black-light rounded-md px-4 pb-2 -mb-2 relative">
+            <span className={`text-white-light text-sm`}>
+              {param.label}
+            </span>
+          </div>
+        </div>
+      )}
+    <div  className="bg-black-dark border-2 border-black-lighter rounded-md pb-1 pt-1 -mb-2 relative">
+      {boxes?.map((checkbox) => (
+        <div 
+          className="px-4 pb-2 -mb-2 relative"
+          key={checkbox.value}>
+          <input
+            type="checkbox"
+            checked={checkbox.checked}
+            onChange={() => {
+              const index = boxes.indexOf(checkbox)
+              if (param.checkboxOptions && Array.isArray(value)) {
+                param.checkboxOptions[index].checked = value[index] == true ? false : true
+              }
+              onChange(boxes[index].checked)
+            }}
+            className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
+          />
+          <label className="px-2 text-white-light text-sm">
+            {checkbox.label}
+          </label>
+        </div>
+      ))}
+      </div>
+    </div>  
+      );
+    }
+
     default:
       return null;
   }
@@ -917,21 +963,25 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getTriggerById
       : itemType === "consumable"
       ? getConsumableTriggerById
-      : getCardTriggerById;
+      : itemType === "card"
+      ? getCardTriggerById
+      : getVoucherTriggerById;
 
   const getConditionType =
     itemType === "joker"
       ? getConditionTypeById
       : itemType === "consumable"
       ? getConsumableConditionTypeById
-      : getCardConditionTypeById;
+      : getCardConditionTypeById
 
   const getEffectType =
     itemType === "joker"
       ? getEffectTypeById
       : itemType === "consumable"
       ? getConsumableEffectTypeById
-      : getCardEffectTypeById;
+      : itemType === "card"
+      ? getCardEffectTypeById
+      : getVoucherEffectTypeById;
 
   const availableVariables = getAllVariables(joker).map(
     (variable: { name: string }) => ({
@@ -1046,7 +1096,7 @@ const Inspector: React.FC<InspectorProps> = ({
             params: {
               ...selectedEffect.params,
               [paramKey]: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
-            },
+            }
           });
           onGameVariableApplied();
         }
@@ -1353,7 +1403,7 @@ const Inspector: React.FC<InspectorProps> = ({
                       switch (itemType) {
                         case "joker":
                           classPrefix = "j";
-                          key = joker.jokerKey || "";
+                          key = joker.objectKey || "";
                           break;
                         case "consumable":
                           classPrefix = "c";
@@ -1367,7 +1417,7 @@ const Inspector: React.FC<InspectorProps> = ({
                           break;
                         default:
                           classPrefix = "j";
-                          key = joker.jokerKey || "";
+                          key = joker.objectKey || "";
                       }
                       const modPrefix = getModPrefix();
 
@@ -1469,8 +1519,18 @@ const Inspector: React.FC<InspectorProps> = ({
     if (!effectType) return null;
 
     const paramsToRender = effectType.params.filter((param) => {
+      if (param.type == "checkbox") {
+        let index = 0
+        param.checkboxOptions?.map(box => {
+          const checklist = selectedEffect.params[param.id] as Array<boolean>
+          if (checklist) {
+          box.checked = !checklist[index] ? false : true
+          index += 1
+        }})
+      }
       if (!hasShowWhen(param)) return true;
       const { parameter, values } = param.showWhen;
+
       const parentValue = selectedEffect.params[parameter];
       return values.includes(parentValue as string);
     });
@@ -1581,7 +1641,10 @@ const Inspector: React.FC<InspectorProps> = ({
                   param={param}
                   value={selectedEffect.params[param.id]}
                   selectedRule={selectedRule}
-                  onChange={(value) => {
+                  onChange={(value) => { 
+                    if (param.type == "checkbox"){
+                      value = param.checkboxOptions?.map(box => box.checked ? true : false) 
+                    }
                     const newParams = {
                       ...selectedEffect.params,
                       [param.id]: value,
@@ -1589,7 +1652,7 @@ const Inspector: React.FC<InspectorProps> = ({
                     onUpdateEffect(selectedRule.id, selectedEffect.id, {
                       params: newParams,
                     });
-                  }}
+                }}
                   parentValues={selectedEffect.params}
                   availableVariables={availableVariables}
                   onCreateVariable={handleCreateVariable}

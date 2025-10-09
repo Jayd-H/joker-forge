@@ -1,3 +1,4 @@
+import { SUITS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -7,6 +8,9 @@ export const generateChangeSuitVariableReturn = (
   const variableName = (effect.params.variable_name as string) || "suitvar";
   const changeType = (effect.params.change_type as string) || "random";
   const specificSuit = (effect.params.specific_suit as string) || "Spades";
+  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolSuits = SUITS.map(suit => suit.value)
+  
 
   let statement = "";
 
@@ -24,6 +28,16 @@ export const generateChangeSuitVariableReturn = (
                         G.GAME.current_round.${variableName}_card.suit = ${variableName}_card.base.suit
                     end
                 end
+                __PRE_RETURN_CODE_END__`;
+  } else if (changeType === "pool") {
+    const suitPool = []
+    for (let i = 0; i < suitPoolActive.length; i++){
+      if (suitPoolActive[i] == true){
+      suitPool.push(suitPoolSuits[i])
+    }}
+    statement = `__PRE_RETURN_CODE__
+                local suit_pool = {${suitPool}}
+                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(suit_pool, pseudoseed('randomSuit'))
                 __PRE_RETURN_CODE_END__`;
   } else {
     statement = `__PRE_RETURN_CODE__

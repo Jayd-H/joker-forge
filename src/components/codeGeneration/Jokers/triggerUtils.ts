@@ -1,5 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 
+
 interface TriggerContext {
   check: string;
   comment: string;
@@ -7,7 +8,7 @@ interface TriggerContext {
 
 export const generateTriggerContext = (
   triggerType: string,
-  rules: Rule[]
+  rules: Rule[],
 ): TriggerContext => {
   const hasRetriggerEffects = rules.some((rule) =>
     rule.effects.some((effect) => effect.type === "retrigger_cards")
@@ -219,7 +220,6 @@ export const generateTriggerContext = (
         check: `context.pseudorandom_result ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
         comment: "-- When chance roll succeeds/failes",
       };
-
     case "hand_played":
     default:
       return {

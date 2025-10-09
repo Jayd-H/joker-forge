@@ -86,7 +86,9 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
 
   const handleDownload = async () => {
     if (!showcaseRef.current) return;
+    
     try {
+
       const dataUrl = await toPng(showcaseRef.current, {
         quality: 1,
         pixelRatio: 2,

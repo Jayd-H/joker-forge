@@ -17,6 +17,7 @@ import {
   EnhancementData,
   SealData,
   EditionData,
+  VoucherData
 } from "../data/BalatroUtils";
 
 interface InfoDescriptionBoxProps {
@@ -25,8 +26,8 @@ interface InfoDescriptionBoxProps {
   onKeyDown: (
     e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => void;
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData;
-  itemType: "joker" | "consumable" | "enhancement" | "seal" | "edition";
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData;
+  itemType: "joker" | "consumable" | "enhancement" | "seal" | "edition" | "voucher";
   textAreaId: string;
   autoFormatEnabled: boolean;
   onAutoFormatToggle: () => void;

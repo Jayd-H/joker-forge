@@ -1417,7 +1417,6 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Specific Card",
         options: (parentValues: Record<string, unknown>) => {
           const selectedSet = parentValues?.set as string;
-
           if (!selectedSet || selectedSet === "random") {
             return [{ value: "random", label: "Random from Set" }];
           }
@@ -1437,8 +1436,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];
-          }
+            ];}
           if (selectedSet === "Planet") {
             const vanillaCards = PLANET_CARDS.map((card) => ({
               value: card.key,
@@ -1454,8 +1452,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];
-          }
+            ];}
           if (selectedSet === "Spectral") {
             const vanillaCards = SPECTRAL_CARDS.map((card) => ({
               value: card.key,
@@ -1471,17 +1468,17 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
-            ];}
+            ];
+          }
           // Handle custom sets
+          // Remove mod prefix to get the actual set key
           const setKey = selectedSet.includes("_")
             ? selectedSet.split("_").slice(1).join("_")
             : selectedSet;
-
           const customConsumablesInSet = CUSTOM_CONSUMABLES().filter(
             (consumable) =>
               consumable.set === setKey || consumable.set === selectedSet
           );
-
           return [
             { value: "random", label: "Random from Set" },
             ...customConsumablesInSet,
@@ -1492,23 +1489,39 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Soulable",
         options: [
-          { value: "true", label: "Yes" },
-          { value: "nil", label: "No" },
+          { value: "y", label: "Yes" },
+          { value: "n", label: "No" },
         ],
         showWhen: {
           parameter: "specific_card",
           values: ["random"],
         },
-        default:"nil",
+        default:"n",
       },{
         id: "is_negative",
         type: "select",
         label: "Edition",
         options: [
-          { value: "y", label: "No Edition" },
-          { value: "n", label: "Negative Edition" },
+          { value: "n", label: "No Edition" },
+          { value: "y", label: "Negative Edition" },
         ],
-        default: "none",
+        default: "n",
+      },{
+        id: "count",
+        type: "number",
+        label: "Number of Cards",
+        default: 1,
+        min: 1,
+        max: 5,
+      },{
+        id: "ignore_slots",
+        type: "select",
+        label: "Ignore Slots",
+        options: [
+          { value: "y", label: "True" },
+          { value: "n", label: "False" },
+        ],
+        default:"n",
       },
     ],
     category: "Consumables",
@@ -1721,6 +1734,70 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     description: "Instantly beat the current boss blind",
     applicableTriggers: ["after_hand_played"],
     params: [],
+    category: "Game Rules",
+  },
+  {
+    id: "edit_booster_packs",
+    label: "Edit Boosters Packs",
+    description: "Modify the values the of booster packs available in shop",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "selected_type",
+        type: "select",
+        label: "Edit Type",
+        options: [
+          { value: "size", label: "Cards slots" },
+          { value: "choice", label: "Choices" },
+        ],
+        default: "size",
+      },
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Game Rules",
+  },
+  {
+    id: "edit_shop_slots",
+    label: "Edit Shop Cards Slots",
+    description: "Modify the Card slots of the shop ",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
     category: "Game Rules",
   },
   {
@@ -1990,8 +2067,19 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Suit" },
           { value: "specific", label: "Specific Suit" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "random",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["pool"],
+        }
       },
       {
         id: "specific_suit",
@@ -2062,8 +2150,19 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Rank" },
           { value: "specific", label: "Specific Rank" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "random",
+      },
+      {
+        id: "rank_pool",
+        type: "checkbox",
+        label: "Possible Ranks",
+        checkboxOptions: [...RANKS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["pool"],
+        }
       },
       {
         id: "specific_rank",
@@ -2099,11 +2198,22 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Change Type",
         options: [
           { value: "random", label: "Random Poker Hand" },
+          { value: "pool", label: "Random from Pool" },
           { value: "specific", label: "Specific Poker Hand" },
           { value: "most_played", label: "Most Played Hand" },
           { value: "least_played", label: "Least Played Hand" },
         ],
         default: "random",
+      },
+      {
+        id: "pokerhand_pool",
+        type: "checkbox",
+        label: "Possible PokerHands",
+        checkboxOptions: [...POKER_HANDS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["pool"],
+        }
       },
       {
         id: "specific_pokerhand",
@@ -2427,7 +2537,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       {
         id: "sound_key",
         type: "text",
-        label: "Sound Key (modprefix_key)",
+        label: "Sound Key (modprefix_key) or (key)",
         default: "",
       },
     ],

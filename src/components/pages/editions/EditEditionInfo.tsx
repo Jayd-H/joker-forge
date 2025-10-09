@@ -30,10 +30,15 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
 
 interface EditEditionInfoProps {
   isOpen: boolean;
   edition: EditionData;
+  editions: EditionData[];
   onClose: () => void;
   onSave: (edition: EditionData) => void;
   onDelete: (editionId: string) => void;
@@ -74,6 +79,7 @@ const shaderOptions = [
 const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
   isOpen,
   edition,
+  editions,
   onClose,
   onSave,
   onDelete,
@@ -173,14 +179,18 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         disable_shadow: edition.disable_shadow === true,
         disable_base_shader: edition.disable_base_shader === true,
         badge_colour: edition.badge_colour || "#FFAA00",
-        editionKey: edition.editionKey || slugify(edition.name),
+        objectKey: getObjectName(
+          edition,
+          editions,
+          edition.objectKey || slugify(edition.name)
+        ),
         sound: edition.sound || "foil1",
       });
       setLastDescription(edition.description || "");
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, edition]);
+  }, [isOpen, edition, editions]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -253,10 +263,11 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      const tempKey = getObjectName(edition, editions, value);
       setFormData({
         ...formData,
         [field]: value,
-        editionKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -292,6 +303,12 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
       onConfirm: () => {
         onDelete(edition.id);
         onClose();
+        editions = updateGameObjectIds(
+          edition,
+          editions,
+          "remove",
+          edition.orderValue
+        );
       },
     });
   };
@@ -478,10 +495,10 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                         </div>
 
                         <InputField
-                          value={formData.editionKey || ""}
+                          value={formData.objectKey || ""}
                           onChange={(e) =>
                             handleInputChange(
-                              "editionKey",
+                              "objectKey",
                               e.target.value,
                               false
                             )

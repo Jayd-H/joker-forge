@@ -25,10 +25,16 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import { UserConfigContext } from "../../Contexts";
+import {
+  updateGameObjectIds,
+  getObjectName,
+} from "../../generic/GameObjectOrdering";
+import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 
 interface EditSealInfoProps {
   isOpen: boolean;
   seal: SealData;
+  seals: SealData[];
   onClose: () => void;
   onSave: (seal: SealData) => void;
   onDelete: (sealId: string) => void;
@@ -74,6 +80,7 @@ const predefinedColors = [
 const EditSealInfo: React.FC<EditSealInfoProps> = ({
   isOpen,
   seal,
+  seals,
   onClose,
   onSave,
   onDelete,
@@ -98,6 +105,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
   const [placeholderCredits, setPlaceholderCredits] = useState<
     Record<number, string>
   >({});
+  const [showPlaceholderPicker, setShowPlaceholderPicker] = useState(false);
 
   const [validationResults, setValidationResults] = useState<{
     name?: ValidationResult;
@@ -183,7 +191,11 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
         discovered: seal.discovered !== false,
         no_collection: seal.no_collection === true,
         badge_colour: seal.badge_colour || "#000000",
-        sealKey: seal.sealKey || slugify(seal.name),
+        objectKey: getObjectName(
+          seal,
+          seals,
+          seal.objectKey || slugify(seal.name)
+        ),
         hasUserUploadedImage: seal.hasUserUploadedImage || false,
       });
       setPlaceholderError(false);
@@ -191,10 +203,10 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
       setLastFormattedText("");
       setValidationResults({});
     }
-  }, [isOpen, seal]);
+  }, [isOpen, seal, seals]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showPlaceholderPicker) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -209,7 +221,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, handleSave]);
+  }, [isOpen, showPlaceholderPicker, handleSave]);
 
   if (!isOpen) return null;
 
@@ -264,10 +276,11 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
         [field]: finalValue,
       });
     } else if (field === "name") {
+      const tempKey = getObjectName(seal, seals, value);
       setFormData({
         ...formData,
         [field]: value,
-        sealKey: slugify(value),
+        objectKey: slugify(tempKey),
       });
     } else {
       setFormData({
@@ -350,6 +363,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
       onConfirm: () => {
         onDelete(seal.id);
         onClose();
+        seals = updateGameObjectIds(seal, seals, "remove", seal.orderValue);
       },
     });
   };
@@ -515,7 +529,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                       </h4>
                       <div className="flex gap-6">
                         <div className="flex-shrink-0">
-                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative">
+                          <div className="aspect-[142/190] w-60 rounded-lg overflow-hidden relative group">
                             {formData.imagePreview ? (
                               <img
                                 src={formData.imagePreview}
@@ -547,6 +561,25 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                                 <PhotoIcon className="h-16 w-16 text-white-darker opacity-50" />
                               </div>
                             )}
+                            <button
+                              type="button"
+                              onClick={() => setShowPlaceholderPicker(true)}
+                              title="Choose placeholder"
+                              className={[
+                                "absolute top-2 right-2 z-20",
+                                "w-9 h-9 rounded-full border-2 border-black-lighter",
+                                "bg-black/70 backdrop-blur",
+                                "flex items-center justify-center",
+                                "opacity-0 -translate-y-1 pointer-events-none",
+                                "transition-all duration-200 ease-out",
+                                "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+                                "group-focus-within:opacity-100 group-focus-within:translate-y-0 group-focus-within:pointer-events-auto",
+                                "hover:bg-black/80 active:scale-95",
+                                "cursor-pointer",
+                              ].join(" ")}
+                            >
+                              <PhotoIcon className="h-5 w-5 text-white/90" />
+                            </button>
                           </div>
                           <input
                             type="file"
@@ -603,10 +636,10 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                             />
                           </div>
                           <InputField
-                            value={formData.sealKey || ""}
+                            value={formData.objectKey || ""}
                             onChange={(e) =>
                               handleInputChange(
-                                "sealKey",
+                                "objectKey",
                                 e.target.value,
                                 false
                               )
@@ -836,6 +869,20 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
           </div>
         </div>
       </div>
+      <PlaceholderPickerModal
+        type="seal"
+        isOpen={showPlaceholderPicker}
+        onClose={() => setShowPlaceholderPicker(false)}
+        onSelect={(index, src) => {
+          setFormData((prev) => ({
+            ...prev,
+            imagePreview: src,
+            hasUserUploadedImage: false,
+            placeholderCreditIndex: index,
+          }));
+          setShowPlaceholderPicker(false);
+        }}
+      />
     </div>
   );
 };

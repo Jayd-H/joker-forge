@@ -550,8 +550,22 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "suit",
         type: "select",
         label: "Target Suit",
-        options: [...SUITS, { value: "random", label: "Random Suit" }],
+        options: [
+          ...SUITS, 
+          { value: "random", label: "Random Suit" },
+          { value: "pool", label: "Random from Pool" }
+        ],
         default: "Hearts",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
       },
     ],
     category: "Card Modification",
@@ -569,9 +583,20 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
           { value: "random", label: "Random Rank" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "Ace",
       },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
+      },     
     ],
     category: "Card Modification",
   },
@@ -721,16 +746,40 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Rank" },
           { value: "Face Cards", label: "Face Cards" },
           { value: "Numbered Cards", label: "Numbered Cards" },
+          { value: "pool", label: "Random from pool" },
           ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
         ],
         default: "random",
       },
       {
+        id: "rank_pool",
+        type: "checkbox",
+        label: "Possible Ranks",
+        checkboxOptions: [...RANKS],
+        showWhen: {
+          parameter: "rank",
+          values: ["pool"],
+        }
+      },
+      {
         id: "suit",
         type: "select",
         label: "Suit",
-        options: [{ value: "none", label: "Random Suit" }, ...SUITS],
+        options: [
+          { value: "none", label: "Random Suit" },
+          { value: "pool", label: "Random from pool" },
+          ...SUITS],
         default: "none",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
       },
       {
         id: "enhancement",
@@ -788,8 +837,19 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           })),
           { value: "random", label: "Random Hand" },
           { value: "all", label: "All Hands" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "Pair",
+      },
+      {
+        id: "pokerhand_pool",
+        type: "checkbox",
+        label: "Possible PokerHands",
+        checkboxOptions: [...POKER_HANDS],
+        showWhen: {
+          parameter: "hand_type",
+          values: ["pool"],
+        }
       },
       {
         id: "levels",
@@ -965,7 +1025,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "specific_card",
           values: ["random"],
         },
-        default:"nil",
+        default:"n",
       },{
         id: "is_negative",
         type: "select",
@@ -974,7 +1034,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "n", label: "No Edition" },
           { value: "y", label: "Negative Edition" },
         ],
-        default: "none",
+        default: "n",
       },{
         id: "count",
         type: "number",
@@ -982,6 +1042,15 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         default: 1,
         min: 1,
         max: 5,
+      },{
+        id: "ignore_slots",
+        type: "select",
+        label: "Ignore Slots",
+        options: [
+          { value: "y", label: "True" },
+          { value: "n", label: "False" },
+        ],
+        default:"n",
       },
     ],
     category: "Consumables",
@@ -1133,6 +1202,70 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Consumables",
   },
   {
+    id: "edit_booster_packs",
+    label: "Edit Boosters Packs",
+    description: "Modify the values the of booster packs available in shop",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "selected_type",
+        type: "select",
+        label: "Edit Type",
+        options: [
+          { value: "size", label: "Cards slots" },
+          { value: "choice", label: "Choices" },
+        ],
+        default: "size",
+      },
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Shop Effects",
+  },
+  {
+    id: "edit_shop_slots",
+    label: "Edit Shop Cards Slots",
+    description: "Modify the Card slots of the shop ",
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Shop Effects",
+  },
+  {
     id: "redeem_voucher",
     label: "Redeem Voucher",
     description: "Redeem a specific or random voucher",
@@ -1221,8 +1354,19 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "No Change" },
           ...SUITS,
           { value: "random", label: "Random Suit" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "none",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
       },
       {
         id: "rank",
@@ -1232,9 +1376,20 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "No Change" },
           ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
           { value: "random", label: "Random Rank" },
+          { value: "pool", label: "Random from Pool" },
         ],
         default: "none",
       },
+      {
+        id: "rank_pool",
+        type: "checkbox",
+        label: "Possible Ranks",
+        checkboxOptions: [...RANKS],
+        showWhen: {
+          parameter: "rank",
+          values: ["pool"],
+        }
+      },      
     ],
     category: "Card Modification",
   },

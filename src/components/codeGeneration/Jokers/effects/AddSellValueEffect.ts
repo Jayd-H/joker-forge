@@ -38,7 +38,8 @@ export const generateAddSellValueReturn = (
                 break
             end
         end
-        local `}
+        local `
+      }
     switch (specificTarget) {
       case "right":
         targetJokerLogic += `target_joker = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
