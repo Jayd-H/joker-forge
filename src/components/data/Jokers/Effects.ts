@@ -2363,6 +2363,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Position" },
         ],
         default: "right",
+        variableTypes: ["joker"]
       },
       {
         id: "specific_index",
