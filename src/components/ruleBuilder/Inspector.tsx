@@ -464,6 +464,18 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         }));
       }
 
+      if (param.variableTypes?.includes("trigger_context")) {
+        if (selectedRule.trigger === "joker_evaluated" && param.variableTypes?.includes("joker")) {
+            options.push({value: "evaled_joker", label: "Evaluated Joker"})
+        }
+
+        if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
+          condition => condition.id === "joker_selected"
+        ))) {
+          options.push({value: "selected_joker", label: "Selected Joker"})
+        }
+      }
+
       if (param.id === "variable_name" && joker && param.label) {
         if (param.variableTypes?.includes("number")) {
           const numberVariables =
@@ -520,11 +532,6 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
         if (param.variableTypes?.includes("joker") && joker) {
           options = addJokerVariablesToOptions(options, joker)
-        }
-      }
-      if (param.variableTypes?.includes("trigger_context")) {
-        if (selectedRule.trigger === "joker_evaluated") {
-            options.push({value: "evaled_joker", label: "Evaluated Joker"})
         }
       }
 

@@ -1071,22 +1071,11 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Selection Method",
         options: [
           { value: "random", label: "Random Joker" },
-          { value: "specific", label: "Specific Joker" },
           { value: "position", label: "By Position" },
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        variableTypes: ["joker", "trigger_context"],
-      },
-      {
-        id: "joker_key",
-        type: "text",
-        label: "Joker Key (e.g., j_joker, j_greedy_joker)",
-        default: "j_joker",
-        showWhen: {
-          parameter: "selection_method",
-          values: ["specific"],
-        },
+        variableTypes: ["trigger_context", "joker"],
       },
       {
         id: "position",
@@ -1235,7 +1224,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "selection_method",
         type: "select",
         label: "Selection Method",
-        default: "text",
+        default: "key",
         options: [
           { value: "key", label: "Joker Key" },
           { value: "variable", label: "Joker Variable" },
@@ -2207,7 +2196,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Variables",
   },
   {
-    id: "change_joker_varaible",
+    id: "change_joker_variable",
     label: "Change Joker Variable",
     description:
       "Change the value of a joker variable to a specific Joker key",
