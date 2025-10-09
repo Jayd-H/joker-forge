@@ -38,6 +38,7 @@ import {
   SealData,
   EditionData,
   VoucherData,
+  DeckData,
 } from "../data/BalatroUtils";
 import { WrenchIcon } from "@heroicons/react/24/solid";
 
@@ -48,6 +49,9 @@ import { getCardEffectTypeById } from "../data/Card/Effects";
 import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
 import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
+
+import { getDeckTriggerById } from "../data/Decks/Triggers";
+import { getDeckEffectTypeById } from "../data/Decks/Effects";
 
 interface RuleCardProps {
   rule: Rule;
@@ -78,8 +82,8 @@ interface RuleCardProps {
     position: { x: number; y: number }
   ) => void;
   isRuleSelected: boolean;
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData | DeckData;
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
   generateConditionTitle: (condition: Condition) => string;
   generateEffectTitle: (effect: Effect) => string;
   getParameterCount: (params: Record<string, unknown>) => number;
@@ -101,7 +105,7 @@ const SortableCondition: React.FC<{
   onDelete: () => void;
   parameterCount: number;
   dynamicTitle: string;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }> = ({
   condition,
   isSelected,
@@ -169,7 +173,7 @@ const SortableEffect: React.FC<{
   parameterCount: number;
   dynamicTitle: string;
   randomGroupId?: string;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }> = ({
   effect,
   isSelected,
@@ -186,7 +190,9 @@ const SortableEffect: React.FC<{
       ? getConsumableEffectTypeById
       : itemType === "card"
       ? getCardEffectTypeById
-      : getVoucherEffectTypeById;
+      : itemType === "voucher"
+      ? getVoucherEffectTypeById
+      : getDeckEffectTypeById;
   const effectType = getEffectType(effect.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -339,7 +345,9 @@ const RuleCard: React.FC<RuleCardProps> = ({
       ? getConsumableTriggerById
       : itemType === "card"
       ? getCardTriggerById
-      : getVoucherTriggerById;
+      : itemType === "voucher"
+      ? getVoucherTriggerById
+      : getDeckTriggerById;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [groupOperators, setGroupOperators] = useState<Record<string, string>>(

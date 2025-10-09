@@ -4,6 +4,7 @@ import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
 import { generateTriggerCondition } from "./triggerUtils";
+import { generateUnlockFunction } from "./unlockUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
@@ -257,7 +258,8 @@ const generateSingleVoucherCode = (
   voucherCode += `
     loc_txt = {
         name = '${voucher.name}',
-        text = ${formatVoucherDescription(voucher)}
+        text = ${formatVoucherDescription(voucher.description)},
+        unlock = ${formatVoucherDescription(voucher.unlockDescription)}
     },`;
 
   if (voucher.cost !== undefined) {
@@ -326,6 +328,10 @@ const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher.
   if (redeemCode) {
   voucherCode += redeemCode ;
 }
+
+if (voucher.unlockTrigger) {
+      voucherCode += `${generateUnlockFunction(voucher)}`;
+    }
 
   voucherCode = voucherCode.replace(/,$/, "");
   voucherCode += `
@@ -561,25 +567,24 @@ const generateLocVarsFunction = (
     end`;
 };
 
-const formatVoucherDescription = (voucher: VoucherData): string => {
-  const formatted = voucher.description.replace(/<br\s*\/?>/gi, "[s]");
+const formatVoucherDescription = (description: string) => {
+  const formatted = description.replace(/<br\s*\/?>/gi, "[s]");
 
   const escaped = formatted.replace(/\n/g, "[s]");
   const lines = escaped.split("[s]").map((line) => line.trim());
+  // .filter((line) => line.length > 0);
 
   if (lines.length === 0) {
     lines.push(escaped.trim());
   }
 
-  return `{
-${lines
-  .map(
-    (line, i) =>
-      `        [${i + 1}] = '${line
-        .replace(/\\/g, "\\\\")
-        .replace(/"/g, '\\"')
-        .replace(/'/g, "\\'")}'`
-  )
-  .join(",\n")}
-    }`;
+  return `{\n${lines
+    .map(
+      (line, i) =>
+        `            [${i + 1}] = '${line
+          .replace(/\\/g, "\\\\")
+          .replace(/"/g, '\\"')
+          .replace(/'/g, "\\'")}'`
+    )
+    .join(",\n")}\n        }`;
 };

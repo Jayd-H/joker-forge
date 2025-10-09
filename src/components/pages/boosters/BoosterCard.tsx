@@ -14,6 +14,7 @@ import {
   Cog6ToothIcon,
   HandRaisedIcon,
   PhotoIcon,
+  BookOpenIcon,
 } from "@heroicons/react/24/outline";
 import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
 import Tooltip from "../../generic/Tooltip";
@@ -216,6 +217,8 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
         return <SparklesIconSolid className="w-full h-full" />;
       case "playing_card":
         return <RectangleStackIcon className="w-full h-full" />;
+      case "voucher":
+        return <BookOpenIcon className="w-full h-full" />;
       default:
         return <CubeIcon className="w-full h-full" />;
     }
@@ -229,6 +232,8 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
         return "Consumable Pack";
       case "playing_card":
         return "Playing Card Pack";
+      case "voucher":
+        return "Voucher Pack";
       default:
         return "Unknown Pack";
     }
@@ -242,6 +247,8 @@ const BoosterCard: React.FC<BoosterCardProps> = ({
         return "text-mint border-mint";
       case "playing_card":
         return "text-balatro-blue border-balatro-blue";
+      case "voucher":
+        return "text-balatro-orange border-balatro-orange";
       default:
         return "text-balatro-gold-new border-balatro-gold-new";
     }

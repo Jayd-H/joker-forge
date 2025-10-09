@@ -21,8 +21,8 @@ export const generateEditPlaySizeReturn = (effect: Effect): EffectReturn => {
   } else if (operation === "set") {
         statement += `
             local current_hand_size = G.hand.config.card_limit
-              local target_hand_size = ${valueCode}
-                 local difference = target_hand_size - current_hand_size
+                    local target_hand_size = ${valueCode}
+                    local difference = target_hand_size - current_hand_size
                     SMODS.change_play_limit(difference)
         `;
   }

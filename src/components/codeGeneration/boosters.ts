@@ -311,6 +311,9 @@ const generateDefaultCreateCardFunction = (boosterType: string): string => {
     case "playing_card":
       code += `            set = "Playing Card",\n`;
       break;
+      case "voucher":
+      code += `            set = "Voucher",\n`;
+      break;
     case "consumable":
     default:
       code += `            set = "Tarot",\n`;
@@ -391,6 +394,9 @@ const generateParticlesFunction = (boosterType: string): string => {
       code += `        })\n`;
       code += `        G.booster_pack_sparkles.fade_alpha = 1\n`;
       code += `        G.booster_pack_sparkles:fade(1, 0)\n`;
+      break;
+      case "voucher":
+      code += `        -- No particles for voucher packs\n`;
       break;
   }
 
