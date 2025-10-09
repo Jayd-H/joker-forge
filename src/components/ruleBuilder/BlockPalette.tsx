@@ -51,6 +51,7 @@ import {
 } from "../data/Consumables/Effects";
 import { CARD_TRIGGERS, CARD_TRIGGER_CATEGORIES } from "../data/Card/Triggers";
 import { VOUCHER_TRIGGERS, VOUCHER_TRIGGER_CATEGORIES } from "../data/Vouchers/Triggers";
+import { DECK_TRIGGERS, DECK_TRIGGER_CATEGORIES } from "../data/Decks/Triggers";
 import {
   CARD_CONDITION_CATEGORIES,
   getCardConditionsForTrigger,
@@ -63,7 +64,10 @@ import {
   VOUCHER_EFFECT_CATEGORIES,
   getVoucherEffectsForTrigger,
 } from "../data/Vouchers/Effects";
-
+import {
+  DECK_EFFECT_CATEGORIES,
+  getDeckEffectsForTrigger,
+} from "../data/Decks/Effects";
 
 interface BlockPaletteProps {
   position: { x: number; y: number };
@@ -73,7 +77,7 @@ interface BlockPaletteProps {
   onAddEffect: (effectType: string) => void;
   onClose: () => void;
   onPositionChange: (position: { x: number; y: number }) => void;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }
 
 type FilterType = "triggers" | "conditions" | "effects";
@@ -109,7 +113,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONSUMABLE_TRIGGERS
       : itemType === "card"
       ? CARD_TRIGGERS
-      : VOUCHER_TRIGGERS
+      : itemType === "voucher"
+      ? VOUCHER_TRIGGERS
+      : DECK_TRIGGERS
 
   const triggerCategories =
     itemType === "joker"
@@ -118,7 +124,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONSUMABLE_TRIGGER_CATEGORIES
       : itemType === "card"
       ? CARD_TRIGGER_CATEGORIES
-      : VOUCHER_TRIGGER_CATEGORIES
+      : itemType === "voucher"
+      ? VOUCHER_TRIGGER_CATEGORIES
+      : DECK_TRIGGER_CATEGORIES
 
   const conditionCategories =
     itemType === "joker"
@@ -134,7 +142,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONSUMABLE_EFFECT_CATEGORIES
       : itemType === "card"
       ? CARD_EFFECT_CATEGORIES
-      : VOUCHER_EFFECT_CATEGORIES
+      : itemType === "voucher"
+      ? VOUCHER_EFFECT_CATEGORIES
+      : DECK_EFFECT_CATEGORIES
 
   const getConditionsForTriggerFn =
     itemType === "joker"
@@ -150,7 +160,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getConsumableEffectsForTrigger
       : itemType === "card"
       ? getCardEffectsForTrigger
-      : getVoucherEffectsForTrigger;
+      : itemType === "voucher"
+      ? getVoucherEffectsForTrigger
+      : getDeckEffectsForTrigger
 
   const style = transform
     ? {

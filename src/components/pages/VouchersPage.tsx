@@ -278,6 +278,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
       id: crypto.randomUUID(),
       name: "New Voucher",
       description: "A {C:blue}custom{} voucher with {C:red}unique{} effects.",
+      unlockDescription: "Unlocked by default.",
       imagePreview: placeholderResult.imageData,
       objectKey: slugify("New Voucher"),
       unlocked: true,
@@ -543,7 +544,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
               onSave={handleSaveRules}
               existingRules={currentVoucherForRules.rules || []}
               item={currentVoucherForRules}
-              onUpdateItem={handleUpdateVoucherFromRuleBuilder}
+              onUpdateItem={handleUpdateVoucherFromRuleBuilder as (updates: Partial<any>) => void}
               itemType="voucher"
             />
           </Suspense>
