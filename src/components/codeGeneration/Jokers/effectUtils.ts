@@ -100,6 +100,7 @@ import { generateApplyHyperChipsReturn } from "./effects/ApplyHyperChipsEffect";
 import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
 import { generateCrashGameReturn } from "./effects/CrashGameEffect";
+import { generateChangeJokerVariableReturn } from "./effects/ChangeJokerVariableEffect";
 
 
 interface ExtendedEffect extends Effect {
@@ -762,6 +763,8 @@ const generateSingleEffect = (
       return generateChangeRankVariableReturn(effect);
     case "change_pokerhand_variable":
       return generateChangePokerHandVariableReturn(effect);
+    case "change_joker_variable":
+      return generateChangeJokerVariableReturn(effect);
     case "permanent_bonus":
       return generatePermaBonusReturn(effect, sameTypeCount);
     case "set_ante":

@@ -39,7 +39,19 @@ export const generatePassiveCopyJokerAbility = (
             target_joker = nil
         end`;
       break;
-  }
+    
+    default:
+      targetJokerLogic = `local target_key = card.ability.extra.${selectionMethod}
+      for i = 1, #G.P_CENTERS do
+        if G.P_CENTERS[i].config.center.key = target_key then
+          target_joker = G.P_CENTERS[i]
+          if target_joker == card then
+            target_joker = nil
+          end
+          break
+        end
+      end`
+  } 
 
   const calculateFunction = `
         local target_joker = nil

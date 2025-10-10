@@ -1,12 +1,19 @@
+import { JokerData } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { PassiveEffectResult } from "../effectUtils";
+import { parseSuitVariable } from "../variableUtils";
 
 export const generatePassiveCombineSuits = (
   effect: Effect,
-  jokerKey?: string
+  joker?: JokerData,
 ): PassiveEffectResult => {
   const suit1 = (effect.params?.suit_1 as string) || "Spades";
   const suit2 = (effect.params?.suit_2 as string) || "Hearts";
+  const suitVar1 = parseSuitVariable(effect.params?.suit_1 as string, joker)
+  const suitVar2 = parseSuitVariable(effect.params?.suit_2 as string, joker)
+
+  const returnSuit1 =  suitVar1.isSuitVariable ? suitVar1.code : suit1
+  const returnSuit2 =  suitVar2.isSuitVariable ? suitVar2.code : suit2
 
   return {
     addToDeck: `-- Combine suits effect enabled`,
@@ -15,10 +22,10 @@ export const generatePassiveCombineSuits = (
     locVars: [],
     needsHook: {
       hookType: "combine_suits",
-      jokerKey: jokerKey || "PLACEHOLDER",
+      jokerKey: joker?.objectKey || "PLACEHOLDER",
       effectParams: {
-        suit1,
-        suit2,
+        returnSuit1,
+        returnSuit2,
       },
     },
   };

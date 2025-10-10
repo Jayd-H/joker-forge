@@ -8,6 +8,7 @@ export const generateFlipJokerReturn = (
   const position = (effect.params?.position as string) || "first";
   const specificIndex = effect.params?.specific_index as number;
   const customMessage = effect.customMessage;
+  const jokerVariable = (effect.params?.joker_variable as string) || "j_joker";
 
   let jokerFlipCode = "";
  if (selectionMethod === "all") {
@@ -16,12 +17,16 @@ export const generateFlipJokerReturn = (
         joker:flip()
       end
     end`;
- } else if (selectionMethod === "selected") {
+ } else if (selectionMethod === "selected_joker") {
     jokerFlipCode += `if #G.jokers.cards > 0 then
 for i = 1, #G.jokers.highlighted do
         G.jokers.highlighted[i]:flip()
         break
       end
+    end`;
+ } else if (selectionMethod === "evaled_joker") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+      context.other_joker:flip()
     end`;
  } else if (selectionMethod === "self") {
     jokerFlipCode += `if #G.jokers.cards > 0 then
@@ -88,7 +93,14 @@ for i = 1, #G.jokers.highlighted do
         end`;
         break
     }
-  }
+  } else if (selectionMethod === "variable") {
+    jokerFlipCode += `local joker_to_flip_key = card.ability.extra.${jokerVariable}
+    for i = 1, #G.jokers.cards do
+      if G.jokers.cards[i].key === joker_to_flip_key then
+        G.jokers.cards[i]:flip()
+      end
+    end`;
+ } 
 
   return {
     statement: `__PRE_RETURN_CODE__${jokerFlipCode}__PRE_RETURN_CODE_END__`,

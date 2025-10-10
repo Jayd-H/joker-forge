@@ -34,16 +34,15 @@ export interface ModMetadata {
   hasUserUploadedGameIcon?: boolean;
 }
 
+export interface PageData {
+  objectType: string,
+  filter: string,
+  direction: string,
+  editList: string[],
+}
+
 export interface UserConfig {
-  filters: {
-    jokersFilter?: string;
-    consumablesFilter?: string;
-    boostersFilter?: string;
-    enhancementsFilter?: string;
-    sealsFilter?: string;
-    editionsFilter?: string;
-    vouchersFilter?: string;
-  };
+  pageData: PageData[];
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
 }
@@ -55,7 +54,7 @@ export interface UserConfig {
 export interface UserVariable {
   id: string;
   name: string;
-  type?: "number" | "suit" | "rank" | "pokerhand";
+  type?: "number" | "suit" | "rank" | "pokerhand" | "joker";
   description?: string;
   initialValue?: number;
   initialSuit?: "Spades" | "Hearts" | "Diamonds" | "Clubs";
@@ -87,6 +86,7 @@ export interface UserVariable {
     | "Straight Flush"
     | "Flush House"
     | "Flush Five";
+  initialJoker?: string;
 }
 
 export interface GameObjectData {

@@ -531,6 +531,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: BoosterData, b: BoosterData) => number;
+  ascText: string,
+  descText: string,
 };
 
 const getRandomPlaceholderBooster = async (): Promise<{
@@ -617,9 +619,13 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     objectType: "booster",
   });
   const [searchTerm, setSearchTerm] = useState("");
+
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
   const [sortBy, setSortBy] = useState(
-    userConfig.filters.boostersFilter ?? "id-desc"
-  );
+    userConfig.pageData[itemTypes.indexOf("booster")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+      userConfig.pageData[itemTypes.indexOf("booster")].direction ?? "asc")
+
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -628,52 +634,49 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("booster")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
+        value: "id",
+        label: "Id Value",
         sortFn: (a, b) => a.orderValue - b.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => a.name.localeCompare(b.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "cost-asc",
-        label: "Cost (Low to High)",
+        value: "cost",
+        label: "Cost",
         sortFn: (a, b) => a.cost - b.cost,
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "cost-desc",
-        label: "Cost (High to Low)",
-        sortFn: (a, b) => b.cost - a.cost,
-      },
-      {
-        value: "weight-asc",
-        label: "Weight (Low to High)",
+        value: "weight",
+        label: "Weight ",
         sortFn: (a, b) => a.weight - b.weight,
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "weight-desc",
-        label: "Weight (High to Low)",
-        sortFn: (a, b) => b.weight - a.weight,
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -734,6 +737,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     setEditingBooster(newBooster);
     setFormData(newBooster);
     setShowEditModal(true);
+    handleUpdateBooster(newBooster)
   };
 
   const handleEditBooster = (booster: BoosterData) => {
@@ -747,6 +751,28 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     setShowRulesModal(true);
   };
 
+  const handleUpdateBooster = (updatedBooster: BoosterData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("booster")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("booster")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedBooster.objectKey )) {
+        config.pageData[itemTypes.indexOf("booster")].editList.splice(dataList.indexOf(updatedBooster.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("booster")].editList.push(updatedBooster.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveBooster = () => {
     if (!formData.name?.trim()) return;
 
@@ -757,6 +783,12 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       ...formData,
       id: editingBooster?.id || crypto.randomUUID(),
     };
+
+    boosters.forEach(booster => {
+      if (booster.id === boosterToSave.id) {
+        handleUpdateBooster(boosterToSave, "change", booster.objectKey ) 
+      }
+    })
 
     if (isEditing) {
       setBoosters((prev) =>
@@ -775,6 +807,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       setBoosters((prev) =>
         prev.map((b) => (b.id === editingRules.id ? updatedBooster : b))
       );
+      handleUpdateBooster(updatedBooster)
     }
     setShowRulesModal(false);
     setEditingRules(null);
@@ -809,7 +842,8 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     if (selectedBoosterId === boosterId) {
       const remainingBoosters = boosters.filter((booster) => booster.id !== boosterId);
       setSelectedBoosterId(remainingBoosters.length > 0 ? remainingBoosters[0].id : null);
-    boosters = updateGameObjectIds(removedBooster, boosters, 'remove', removedBooster.orderValue)
+      boosters = updateGameObjectIds(removedBooster, boosters, 'remove', removedBooster.orderValue)
+      handleUpdateBooster(removedBooster, "delete")
     }};
 
   const handleDuplicateBooster = async (booster: BoosterData) => {
@@ -827,6 +861,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       };
       setBoosters([...boosters, duplicatedBooster]);
       boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
+      handleUpdateBooster(duplicatedBooster)
     } else {
       const duplicatedBooster: BoosterData = {
         ...booster,
@@ -836,6 +871,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       };
       setBoosters([...boosters, duplicatedBooster]);
       boosters = updateGameObjectIds(duplicatedBooster, boosters, 'insert', duplicatedBooster.orderValue)
+      handleUpdateBooster(duplicatedBooster)
     }
   };
 
@@ -848,6 +884,20 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
       prev.map((b) => (b.id === booster.id ? updatedBooster : b))
     );
   };
+
+  const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("booster")].direction = direction
+      return ({...config})
+    })
+  }
 
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -866,14 +916,23 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [boosters, searchTerm, sortBy, sortOptions]);
+  }, [boosters, searchTerm, sortBy, sortOptions, sortDirection]);
+
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
+    "Id Value";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   return (
     <div className="min-h-screen">
@@ -934,6 +993,14 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
+                <button
+                  ref={sortDirectionButtonRef}
+                  onClick={handleSortDirectionToggle}
+                  className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                >
+                  <ArrowsUpDownIcon className="h-4 w-4" />
+                  <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+                </button>
             </div>
           </div>
         </div>
@@ -1045,13 +1112,12 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig((prevConfig) => ({
-                        ...prevConfig,
-                        filters: {
-                          ...prevConfig.filters,
-                          boostersFilter: option.value,
-                        },
-                      }));
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("booster")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}
