@@ -390,7 +390,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "group", label: "Suit Group" },
         ],
-        variableTypes: ["suit"]
       },
       {
         id: "specific_suit",
@@ -401,6 +400,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "suit_type",
           values: ["specific"],
         },
+        variableTypes: ["suit"]
       },
       {
         id: "suit_group",
@@ -453,7 +453,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Rank" },
           { value: "group", label: "Rank Group" },
         ],
-        variableTypes: ["rank"]
       },
       {
         id: "specific_rank",
@@ -464,6 +463,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "rank_type",
           values: ["specific"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "rank_group",
@@ -521,7 +521,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Rank" },
           { value: "group", label: "Rank Group" },
         ],
-        variableTypes: ["rank"]
       },
       {
         id: "specific_rank",
@@ -532,6 +531,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "rank_type",
           values: ["specific"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "rank_group",
@@ -566,7 +566,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "group", label: "Suit Group" },
         ],
-        variableTypes: ["suit"]
       },
       {
         id: "specific_suit",
@@ -577,6 +576,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "suit_type",
           values: ["specific"],
         },
+        variableTypes: ["suit"]
       },
       {
         id: "suit_group",
