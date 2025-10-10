@@ -13,6 +13,7 @@ import {
   BeakerIcon,
   BookOpenIcon,
   MusicalNoteIcon,
+  ClipboardIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -26,6 +27,7 @@ import {
   BOSS_BLINDS,
   TAGS,
   VOUCHERS,
+  DECKS,
   SOUNDS,
 } from "../data/BalatroUtils";
 
@@ -176,6 +178,12 @@ const SECTIONS = {
     icon: BookOpenIcon,
     items: VOUCHERS(),
     color: "text-balatro-green",
+  },
+  decks: {
+    title: "Decks",
+    icon: ClipboardIcon,
+    items: DECKS(),
+    color: "text-balatro-brown",
   },
   sounds: {
     title: "Sounds",

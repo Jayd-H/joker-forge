@@ -37,6 +37,7 @@ import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
+import { generateEditWinnerAnteReturn } from "./effects/EditWinnerAnteEffect";
 import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
 import { generateForceGameOverReturn } from "./effects/ForceGameOverEffect";
@@ -390,6 +391,9 @@ const generateSingleEffect = (
 
     case "edit_selected_joker":
       return generateEditSelectedJokerReturn(effect);
+
+      case "edit_win_ante":
+      return generateEditWinnerAnteReturn(effect);
 
     case "create_joker":
       return generateCreateJokerReturn(effect, modprefix);

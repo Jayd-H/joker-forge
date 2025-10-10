@@ -1,4 +1,5 @@
 import { unlockOptions } from "../codeGeneration/Jokers/unlockUtils";
+import { vouchersunlockOptions } from "../codeGeneration/Vouchers/unlockUtils";
 import { Rule } from "../ruleBuilder/types";
 
 export const slugify = (text: string): string => {
@@ -43,6 +44,7 @@ export interface UserConfig {
     sealsFilter?: string;
     editionsFilter?: string;
     vouchersFilter?: string;
+    decksFilter?: string;
   };
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
@@ -176,7 +178,7 @@ export interface ConsumableSetData {
   collection_name?: string;
 }
 
-export type BoosterType = "joker" | "consumable" | "playing_card";
+export type BoosterType = "joker" | "consumable" | "playing_card" | "voucher";
 
 export interface BoosterCardRule {
   set?: string;
@@ -188,7 +190,7 @@ export interface BoosterCardRule {
   seal?: string;
   weight?: number;
   specific_key?: string;
-  specific_type?: "consumable" | "joker" | null;
+  specific_type?: "consumable" | "joker" | "voucher" | null;
   pool?: string;
 }
 
@@ -268,6 +270,7 @@ export interface SoundData {
   pitch?: number;
   volume?: number;
   soundString: string;
+  replace?: string;
 }
 
 export interface VoucherData extends GameObjectData {
@@ -279,6 +282,24 @@ export interface VoucherData extends GameObjectData {
   no_collection?: boolean;
   requires?: string;
   requires_activetor?: boolean;
+  sound?: string;
+  unlockTrigger?: keyof typeof vouchersunlockOptions;
+  unlockProperties?: Array<{ category: string; property: string }>;
+  unlockOperator?: string;
+  unlockCount?: number;
+  unlockDescription: string;
+  rules?: Rule[];
+  placeholderCreditIndex?: number;
+  hasUserUploadedImage?: boolean;
+}
+
+export interface DeckData extends GameObjectData{
+  imagePreview: string;
+  unlocked?: boolean;
+  no_collection?: boolean;
+  no_interest?: boolean;
+  no_faces?: boolean;
+  erratic_deck?: boolean;
   sound?: string;
   rules?: Rule[];
   placeholderCreditIndex?: number;
@@ -298,6 +319,7 @@ interface RegistryState {
   seals: SealData[];
   editions: EditionData[];
   vouchers: VoucherData[];
+  decks: DeckData[];
   modPrefix: string;
 }
 
@@ -310,6 +332,7 @@ let registryState: RegistryState = {
   seals: [],
   editions: [],
   vouchers: [],
+  decks: [],
   modPrefix: "",
 };
 
@@ -361,6 +384,15 @@ const VANILLA_VOUCHERS = [
   {key: "v_palette", value: "v_palette", label: "Palette" },
 ];
 
+
+const VANILLA_DECKS = [
+  {key: "b_red", value: "b_red", label: "Red Deck" },
+  {key: "b_blue", value: "b_blue", label: "Blue Deck" },
+  {key: "b_yellow", value: "b_yellow", label: "Yellow Deck" },
+  {key: "b_green", value: "b_green", label: "Green Deck" },
+  {key: "b_black", value: "b_black", label: "Black Deck" },
+];
+
 const VANILLA_SEALS = [
   { key: "Gold", value: "Gold", label: "Gold" },
   { key: "Red", value: "Red", label: "Red" },
@@ -378,6 +410,7 @@ export const DataRegistry = {
     seals: SealData[],
     editions: EditionData[],
     vouchers: VoucherData[],
+    decks: DeckData[],
     modPrefix: string
   ) => {
     registryState = {
@@ -389,6 +422,7 @@ export const DataRegistry = {
       seals,
       editions,
       vouchers,
+      decks,
       modPrefix,
     };
   },
@@ -511,6 +545,23 @@ export const DataRegistry = {
     return [...vanilla, ...custom];
   },
   
+  getDecks: (): Array<{ key: string; value: string; label: string }> => {
+
+    const vanilla = VANILLA_DECKS.map((deck) => ({
+      key: deck.key,
+      value: deck.value,
+      label: deck.label,
+    }));
+
+    const custom = registryState.decks.map((deck) => ({
+      key: `b_${registryState.modPrefix}_${deck.objectKey}`,
+      value: `b_${registryState.modPrefix}_${deck.objectKey}`,
+      label: deck.name || "Unnamed Deck",
+    }));
+
+    return [...vanilla, ...custom];
+  },
+
   getState: () => ({ ...registryState }),
 };
 
@@ -527,6 +578,7 @@ export const updateDataRegistry = (
   seals: SealData[],
   editions: EditionData[],
   vouchers: VoucherData[],
+  decks: DeckData[],
   modPrefix: string
 ) => {
   DataRegistry.update(
@@ -538,6 +590,7 @@ export const updateDataRegistry = (
     seals,
     editions,
     vouchers,
+    decks,
     modPrefix
   );
 };
@@ -695,7 +748,7 @@ export const isCustomVoucher = (
 ): boolean => {
   return (
     value.includes("_") &&
-    customVouchers.some((s) => `${modPrefix}_${s.objectKey}` === value)
+    customVouchers.some((v) => `${modPrefix}_${v.objectKey}` === value)
   );
 };
 
@@ -709,6 +762,38 @@ export const getVoucherByKey = (
   key: string
 ): { key: string; value: string; label: string } | undefined => {
   return VOUCHERS().find((voucher) => voucher.key === key);
+};
+
+// =============================================================================
+// DECKS SECTION
+// =============================================================================
+
+export const DECKS = () => DataRegistry.getDecks();
+export const DECK_KEYS = () => DataRegistry.getDecks().map((b) => b.key);
+export const DECK_VALUES = () => DataRegistry.getDecks().map((b) => b.value);
+export const DECK_LABELS = () => DataRegistry.getDecks().map((b) => b.label);
+
+export const isCustomDeck = (
+  value: string,
+  customDecks: DeckData[] = registryState.decks,
+  modPrefix: string = registryState.modPrefix
+): boolean => {
+  return (
+    value.includes("_") &&
+    customDecks.some((b) => `${modPrefix}_${b.objectKey}` === value)
+  );
+};
+
+export const getDeckByValue = (
+  value: string
+): { key: string; value: string; label: string } | undefined => {
+  return DECKS().find((deck) => deck.value === value);
+};
+
+export const getDeckByKey = (
+  key: string
+): { key: string; value: string; label: string } | undefined => {
+  return DECKS().find((deck) => deck.key === key);
 };
 
 // =============================================================================
@@ -1651,11 +1736,11 @@ export const SOUNDS = [
   { key: "magic_crumple3", value: "magic_crumple3", label: "Magic Crumple 3" },
   { key: "multhit1", value: "multhit1", label: "Mult" },
   { key: "multhit2", value: "multhit2", label: "Mult 2" },
-  { key: "music1", value: "music1", label: "Music" },
-  { key: "music2", value: "music2", label: "Music 2" },
-  { key: "music3", value: "music3", label: "Music 3"},
-  { key: "music4", value: "music4", label: "Music 4" },
-  { key: "music5", value: "music5", label: "Music 5" },
+  { key: "music1", value: "music1", label: "Music (Menu Music)" },
+  { key: "music2", value: "music2", label: "Music 2 (Arcana Pack Music)" },
+  { key: "music3", value: "music3", label: "Music 3 (Celestial  Pack Music)"},
+  { key: "music4", value: "music4", label: "Music 4 (Shop Music)" },
+  { key: "music5", value: "music5", label: "Music 5 (Boss Blind Music)" },
   { key: "negative", value: "negative", label: "Negative" },
   { key: "other1", value: "other1", label: "Other" },
   { key: "paper1", value: "paper1", label: "Paper" },

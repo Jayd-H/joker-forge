@@ -1202,6 +1202,33 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Consumables",
   },
   {
+        id: "edit_win_ante",
+        label: "Set Winner Ante",
+        description: "Set the Final Ante where the Player Win's the Game",
+        applicableTriggers: ["consumable_used"],
+        params: [
+           {
+              id: "operation",
+              type: "select",
+              label: "Operation",
+              options: [
+              { value: "add", label: "Add" },
+              { value: "subtract", label: "Subtract" },
+              { value: "set", label: "Set to" },
+              ],
+              default: "set",
+            },
+            {
+              id: "value",
+              type: "number",
+              label: "Amount",
+              default: 1,
+              min: 1,
+            },
+          ],
+        category: "Game Rules",
+    },
+  {
     id: "edit_booster_packs",
     label: "Edit Boosters Packs",
     description: "Modify the values the of booster packs available in shop",

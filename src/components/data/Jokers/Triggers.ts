@@ -237,6 +237,12 @@ export const TRIGGERS: TriggerDefinition[] = [
     category: "Special",
   },
   {
+    id: "ante_start",
+    label: "At the Start of an Ante",
+    description: "Triggers At the start of an ante.",
+    category: "Round Events",
+  },
+  {
     id: "change_probability",
     label: "Change Probability",
     description:

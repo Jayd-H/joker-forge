@@ -21,7 +21,6 @@ html {
   --color-balatro-chips: #009dff;
   --color-balatro-money: #f3b958;
   --color-balatro-attention: #ff9a00;
-  --color-balatro-orange: #fda200;
   --color-balatro-gold: #eac058;
   --color-balatro-black: #374244;
   --color-balatro-light-black: #4f6367;
@@ -41,6 +40,10 @@ html {
   --color-balatro-greenshadow: #1b7954;
   --color-balatro-purple: #aa5bb5;
   --color-balatro-purpleshadow: #6d3574;
+  --color-balatro-orange: #fda200;
+  --color-balatro-shadoworange: #9c6300;
+  --color-balatro-brown: #d67a5a;
+  --color-balatro-shadowbrown: #bf5b48;
   --color-balatro-transparentblack: #00000060;
   --color-balatro-lightgrey: #b9c2d2;
   --color-balatro-lightgreyshadow: #777e89;

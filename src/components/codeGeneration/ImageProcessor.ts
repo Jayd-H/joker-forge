@@ -5,7 +5,8 @@ import {
   EnhancementData,
   ConsumableData,
   SealData,
-  VoucherData
+  VoucherData,
+  DeckData
 } from "../data/BalatroUtils";
 
 export const processImages = async (
@@ -16,6 +17,7 @@ export const processImages = async (
     | EnhancementData
     | SealData
     | VoucherData
+    | DeckData
   )[],
   scale: number = 1
 ): Promise<{
@@ -349,6 +351,7 @@ export const addAtlasToZip = async (
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
   vouchers: VoucherData[] = [],
+  decks: DeckData[] = [],
   modIconData?: string,
   gameIconData?: string
 ): Promise<Record<string, Record<number, { x: number; y: number }>>> => {
@@ -462,6 +465,16 @@ export const addAtlasToZip = async (
       const voucherAtlas2xResult = await processImages(vouchers, 2);
       const voucherAtlas2xBlob = dataURLToBlob(voucherAtlas2xResult.atlasDataUrl);
       assets2xFolder!.file("CustomVouchers.png", voucherAtlas2xBlob);
+    }
+
+    if (decks.length > 0) {
+      const deckAtlas1xResult = await processImages(decks, 1);
+      const deckAtlas1xBlob = dataURLToBlob(deckAtlas1xResult.atlasDataUrl);
+      assets1xFolder!.file("CustomDecks.png", deckAtlas1xBlob);
+
+      const deckAtlas2xResult = await processImages(decks, 2);
+      const deckAtlas2xBlob = dataURLToBlob(deckAtlas2xResult.atlasDataUrl);
+      assets2xFolder!.file("CustomDecks.png", deckAtlas2xBlob);
     }
 
     return soulPositions;

@@ -78,6 +78,12 @@ export const generateTriggerContext = (
         comment: "-- When booster pack is opened",
       };
 
+    case "ante_start":
+      return {
+        check: `context.ante_change ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
+        comment: "-- At the start of an ante",
+      };
+
     case "booster_skipped":
       return {
         check: `context.skipping_booster ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`,
