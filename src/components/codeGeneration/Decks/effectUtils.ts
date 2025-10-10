@@ -12,6 +12,11 @@ import { generateEditBoosterSlotsReturn } from "./effects/EditBoosterSlotsEffect
 import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect";
 import { generateEditInterestCapReturn } from "./effects/EditInterntCapEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
+import { generateEditStartingCardsReturn } from "./effects/EditStartingCardsEffect";
+import { generateEditStartingSuitsReturn } from "./effects/EditStartingSuitsEffect";
+import { generateEditStartingRanksReturn } from "./effects/EditStartingRanksEffect";
+import { generateAddStartingCardsReturn } from "./effects/AddStartingCardsEffect";
+import { generateRemoveStartingCardsReturn } from "./effects/RemoveStartingCardsEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateCreateJokerReturn } from "./effects/CreateJokerEffect";
 import { generateCreateConsumableReturn } from "./effects/CreateConsumableEffect";
@@ -362,6 +367,21 @@ const generateSingleEffect = (
 
     case "edit_win_ante":
       return generateEditWinnerAnteReturn(effect);
+
+    case "edit_all_starting_cards":
+      return generateEditStartingCardsReturn(effect);
+
+    case "edit_starting_suits":
+      return generateEditStartingSuitsReturn(effect);
+
+    case "edit_starting_ranks":
+      return generateEditStartingRanksReturn(effect);
+
+    case "add_starting_cards":
+       return generateAddStartingCardsReturn(effect);
+
+    case "remove_starting_cards":
+       return generateRemoveStartingCardsReturn(effect);
 
     case "edit_discard_size":
       return generateEditDiscardSizeReturn(effect);

@@ -54,10 +54,7 @@ export const generateCreateJokerReturn = (
   // Build the creation code
   const lines: string[] = [
     "G.E_MANAGER:add_event(Event({",
-    "    trigger = 'after',",
-    "    delay = 0.8,",
     "    func = function()",
-    "        play_sound('timpani')",
   ];
 
   // Handle slot limits
