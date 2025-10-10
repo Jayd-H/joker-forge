@@ -66,6 +66,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "game_over",
   "probability_result",
   "tag_added",
+  "ante_start",
 ];
 
 export const PROBABILITY_IDENTIFIERS: {
