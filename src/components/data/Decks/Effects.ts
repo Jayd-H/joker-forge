@@ -23,7 +23,6 @@ import {
   SEALS,
   SUITS,
   RANKS,
-  RANK_GROUPS,
   SPECTRAL_CARDS,
 } from "../BalatroUtils";
 
