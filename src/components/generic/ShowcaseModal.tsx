@@ -211,7 +211,7 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
                     joker.rarity,
                     customRarities
                   )}
-                  showCost={false}
+                  showCost={true}
                 />
               </div>
             </div>

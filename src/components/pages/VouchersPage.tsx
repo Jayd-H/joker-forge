@@ -283,6 +283,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
       objectKey: slugify("New Voucher"),
       unlocked: true,
       discovered: true,
+      cost: 10,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
       orderValue: vouchers.length+1,
