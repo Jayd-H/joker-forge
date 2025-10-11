@@ -304,6 +304,8 @@ export interface DeckData extends GameObjectData{
   rules?: Rule[];
   placeholderCreditIndex?: number;
   hasUserUploadedImage?: boolean;
+  Config_vouchers?: string[];
+  Config_consumables?: string[];
 }
 
 // =============================================================================
@@ -358,8 +360,8 @@ const VANILLA_VOUCHERS = [
   {key: "v_glow_up", value: "v_glow_up", label: "Glow Up" },
   {key: "v_reroll_surplus", value: "v_reroll_surplus", label: "Reroll Surplus" },
   {key: "v_reroll_glut", value: "v_reroll_glut", label: "Reroll Glut" },
-  {key: "v_overstock_norm", value: "v_crystal_ball", label: "Crystal Ball" },
-  {key: "v_crystal_ball", value: "v_omen_globe", label: "Omen Globe" },
+  {key: "v_crystal_ball", value: "v_crystal_ball", label: "Crystal Ball" },
+  {key: "v_omen_globe", value: "v_omen_globe", label: "Omen Globe" },
   {key: "v_telescope", value: "v_telescope", label: "Telescope" },
   {key: "v_observatory", value: "v_observatory", label: "Observatory" },
   {key: "v_grabber", value: "v_grabber", label: "Grabber" },

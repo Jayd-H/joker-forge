@@ -297,6 +297,8 @@ const DecksPage: React.FC<DecksPageProps> = ({
         imagePreview: placeholderResult.imageData,
         placeholderCreditIndex: placeholderResult.creditIndex,
         objectKey: slugify(`${dupeName}`),
+        Config_consumables: deck.Config_consumables,
+        Config_vouchers: deck.Config_vouchers,
         orderValue: deck.orderValue +1,
       };
       setDecks([...decks, duplicatedDeck]);

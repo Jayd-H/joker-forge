@@ -17,9 +17,9 @@ import { generateEditStartingSuitsReturn } from "./effects/EditStartingSuitsEffe
 import { generateEditStartingRanksReturn } from "./effects/EditStartingRanksEffect";
 import { generateAddStartingCardsReturn } from "./effects/AddStartingCardsEffect";
 import { generateRemoveStartingCardsReturn } from "./effects/RemoveStartingCardsEffect";
-import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateCreateJokerReturn } from "./effects/CreateJokerEffect";
 import { generateCreateConsumableReturn } from "./effects/CreateConsumableEffect";
+import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateEditItemWeightReturn } from "./effects/EditItemWeightEffect";
 import { generateEditWinnerAnteReturn } from "./effects/EditWinnerAnteEffect";
 import { generateEditApperanceReturn } from "./effects/EditCardApperance";
@@ -374,6 +374,9 @@ const generateSingleEffect = (
     case "edit_starting_suits":
       return generateEditStartingSuitsReturn(effect);
 
+      case "create_tag":
+            return generateCreateTagReturn(effect);
+
     case "edit_starting_ranks":
       return generateEditStartingRanksReturn(effect);
 
@@ -421,9 +424,6 @@ case "edit_shop_slots":
 
  case "edit_interest_cap":
       return generateEditInterestCapReturn(effect);  
-      
-case "redeem_voucher":
-      return generateRedeemVoucherReturn(effect);
 
     case "emit_flag":
       return generateEmitFlagReturn(effect, modprefix);

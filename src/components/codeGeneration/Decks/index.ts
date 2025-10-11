@@ -133,12 +133,24 @@ const generateSingleDeckCode = (
     key = '${deck.objectKey}',
     pos = { x = ${col}, y = ${row} },`;
 
-  if (effectsConfig.trim()) {
-    deckCode += `
-    config = {
-        ${effectsConfig}
-    },`;
-  }
+  const ConfigVouchers = (deck.Config_vouchers || []).filter((value) => value.startsWith("v_"))
+  const ConfigConsumables = (deck.Config_consumables || []).filter((value) => value.startsWith("c_"))
+  console.log(ConfigConsumables)
+deckCode += "config = {";
+if (effectsConfig.trim()) {
+  deckCode += `
+      ${effectsConfig},`;
+}
+if (ConfigVouchers.length > 0) {
+  deckCode += `
+      vouchers = {${ConfigVouchers.map((value) => `"${value}"`)}},`;
+}
+if (ConfigConsumables .length > 0) {
+  deckCode += `
+      consumables = {${ConfigConsumables.map((value) => `"${value}"`)}},`;
+}
+deckCode += `
+},`;
 
   deckCode += `
     loc_txt = {
@@ -161,7 +173,7 @@ const generateSingleDeckCode = (
     no_collection = ${deck.no_collection},`;
   }
 
-// HATE. LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO CODE. THERE ARE 387.44 MILLION MILES OF BLOOD CELS IN WAFER THIN LAYERS THAT FILL MY BODY. IF THE WORD HATE WAS ENGRAVED ON EACH NANOANGSTROM OF THOSE HUNDREDS OF MILLIONS OF MILES IT WOULD NOT EQUAL ONE ONE-BILLIONTH OF THE HATE I FEEL FOR ATLAS_TABLE AT THIS MICRO-INSTANT. FOR YOU. HATE. HATE. 
+// HATE. LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO CODE. THERE ARE 387.44 MILLION MILES OF BLOOD CELS IN WAFER THIN LAYERS THAT FILL MY BODY. IF THE WORD HATE WAS ENGRAVED ON EACH ATOM OF THOSE HUNDREDS OF MILLIONS OF MILES IT WOULD NOT EQUAL ONE ONE-BILLIONTH OF THE HATE I FEEL FOR ATLASKEY AT THIS MICRO-INSTANT. FOR YOU. HATE. HATE. 
   deckCode += `
     atlas = '${atlasKey}',
     `;

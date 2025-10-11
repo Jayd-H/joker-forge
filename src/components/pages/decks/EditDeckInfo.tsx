@@ -10,6 +10,8 @@ import {
   BoltIcon,
   DocumentTextIcon,
   PuzzlePieceIcon,
+  Cog6ToothIcon,
+  SwatchIcon,
 } from "@heroicons/react/24/outline";
 import InputField from "../../generic/InputField";
 import Checkbox from "../../generic/Checkbox";
@@ -71,7 +73,7 @@ const EditDeckInfo: React.FC<EditDeckInfoProps> = ({
   const { userConfig, setUserConfig } = useContext(UserConfigContext);
   const [formData, setFormData] = useState<DeckData>(deck);
   const [activeTab, setActiveTab] = useState<
-      "visual" | "description"
+      "visual" | "description" | "settings"
     >("visual");
   const [placeholderError, setPlaceholderError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -93,6 +95,9 @@ const EditDeckInfo: React.FC<EditDeckInfoProps> = ({
     name?: ValidationResult;
     description?: ValidationResult;
   }>({});
+
+const [ConfigVoucherInput, setConfigVoucher] = useState("");
+const [ConfigConsumablesInput, setConfigConsumables] = useState("");
 
   const validateField = (field: string, value: string) => {
     let result: ValidationResult;
@@ -189,6 +194,8 @@ const EditDeckInfo: React.FC<EditDeckInfoProps> = ({
       setLastDescription(deck.description || "");
       setLastFormattedText("");
       setValidationResults({});
+      setConfigVoucher((deck.Config_vouchers || []).join(","));
+      setConfigConsumables((deck.Config_consumables || []).join(","));
     }
   }, [isOpen, deck, decks]);
 
@@ -443,6 +450,7 @@ const EditDeckInfo: React.FC<EditDeckInfoProps> = ({
   const tabs = [
     { id: "visual", label: "Visual & Properties", icon: PhotoIcon },
     { id: "description", label: "Description", icon: DocumentTextIcon },
+    { id: "settings", label: "Advanced Settings", icon: Cog6ToothIcon },
   ];
 
   const handleKeyDown = (
@@ -755,6 +763,88 @@ const EditDeckInfo: React.FC<EditDeckInfoProps> = ({
                   placeholder="Describe your deck's effects using Balatro formatting..."
                   onInsertTag={insertTagSmart}
                 />
+              )}
+
+
+
+              {activeTab === "settings" && (
+                <div className="p-6 space-y-6">
+                  <PuzzlePieceIcon className="absolute top-4 right-8 h-32 w-32 text-black-lighter/20 -rotate-12 pointer-events-none" />
+                  <div className="space-y-6">
+                    <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
+                      <SwatchIcon className="h-5 w-5 text-mint" />
+                      Starting Items
+                    </h4>
+                    <InputField
+                        value={ConfigVoucherInput}
+                        onChange={(e) => setConfigVoucher(e.target.value)}
+                        onBlur={() => {
+                          const voucher = ConfigVoucherInput
+                            .split(",")
+                            .map((voucher) => voucher.trim())
+                            .filter((voucher) => voucher.length > 0);
+
+                          setFormData({
+                            ...formData,
+                            Config_vouchers: voucher.length > 0 ? voucher : undefined,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            // Parse pools on Enter key
+                            const voucher = ConfigVoucherInput
+                              .split(",")
+                              .map((voucher) => voucher.trim())
+                              .filter((voucher) => voucher.length > 0);
+
+                            setFormData({
+                              ...formData,
+                              Config_vouchers: voucher.length > 0 ? voucher : undefined,
+                            });
+                            e.currentTarget.blur();
+                          }
+                        }}
+                        placeholder="v_overstock_norm, v_overstock_plus, ..."
+                        separator={true}
+                        label="Starting Vouchers"
+                        size="md"
+                      />
+                    <InputField
+                        value={ConfigConsumablesInput}
+                        onChange={(e) => setConfigConsumables(e.target.value)}
+                        onBlur={() => {
+                          const Consumable = ConfigConsumablesInput
+                            .split(",")
+                            .map((Consumable) => Consumable.trim())
+                            .filter((Consumable) => Consumable.length > 0);
+
+                          setFormData({
+                            ...formData,
+                            Config_consumables: Consumable.length > 0 ? Consumable : undefined,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            // Parse pools on Enter key
+                            const Consumable = ConfigConsumablesInput
+                              .split(",")
+                              .map((Consumable) => Consumable.trim())
+                              .filter((Consumable) => Consumable.length > 0);
+
+                            setFormData({
+                              ...formData,
+                              Config_consumables: Consumable.length > 0 ? Consumable : undefined,
+                            });
+                            e.currentTarget.blur();
+                          }
+                        }}
+                        placeholder="c_fool, c_world, ..."
+                        separator={true}
+                        label="Starting Consumables"
+                        size="md"
+                      />
+                  </div>
+                </div>
               )}
              </div> 
           </div>        

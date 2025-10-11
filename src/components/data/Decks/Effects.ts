@@ -11,7 +11,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
 import {
-  VOUCHERS,
   RARITIES,
   EDITIONS,
   STICKERS,
@@ -24,6 +23,7 @@ import {
   SUITS,
   RANKS,
   SPECTRAL_CARDS,
+  TAGS,
 } from "../BalatroUtils";
 
 export const DECK_EFFECT_CATEGORIES: CategoryDefinition[] = [
@@ -637,22 +637,6 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Economy",
   },
-  {
-    id: "redeem_voucher",
-    label: "Starting Voucher",
-    description: "Start the run with a specific or random voucher",
-    applicableTriggers: ["deck_selected"],
-    params: [
-      {
-        id: "specific_voucher",
-        type: "select",
-        label: "Specific Voucher",
-        options: [...VOUCHERS()],
-        default: "v_overstock_norm",
-      },
-    ],
-    category: "Consumables",
-  },
     {
         id: "edit_raity_weight",
         label: "Edit Rarity Weight",
@@ -1101,6 +1085,35 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
       ],
       category: "Jokers",
     },
+    {
+        id: "create_tag",
+        label: "Starting Tag",
+        description: "Create a specific or random Starting tag",
+        applicableTriggers: ["deck_selected"],
+        params: [
+          {
+            id: "tag_type",
+            type: "select",
+            label: "Tag Type",
+            options: [
+              { value: "random", label: "Random Tag" },
+              { value: "specific", label: "Specific Tag" },
+            ],
+            default: "random",
+          },
+          {
+            id: "specific_tag",
+            type: "select",
+            label: "Specific Tag",
+            options: [...TAGS],
+            showWhen: {
+              parameter: "tag_type",
+              values: ["specific"],
+            },
+          },
+        ],
+        category: "Consumables",
+      },
   {
     id: "edit_dollars",
     label: "Edit Starting Dollars",

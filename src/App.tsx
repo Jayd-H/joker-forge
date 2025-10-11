@@ -1173,7 +1173,6 @@ function AppContent() {
 
         setModMetadata(normalizedData.metadata);
         setJokers(normalizedData.jokers);
-        setSounds(normalizedData.sounds);
         setConsumables((normalizedData.consumables));
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);

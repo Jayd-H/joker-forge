@@ -337,6 +337,8 @@ const normalizeDeckData = (deck: DeckData): DeckData => {
     rules: deck.rules || [],
     placeholderCreditIndex: deck.placeholderCreditIndex,
     hasUserUploadedImage: deck.hasUserUploadedImage || false,
+    Config_vouchers: deck.Config_vouchers || [],
+    Config_consumables: deck.Config_consumables || [],
     orderValue: deck.orderValue || 1,
   };
 };

@@ -45,6 +45,8 @@ interface DeckCardData extends BaseCardData {
   no_interest?: boolean;
   no_faces?: boolean;
   erratic_deck?: boolean;
+  Config_vouchers?: string[];
+  Config_consumables?: string[];
 }
 
 

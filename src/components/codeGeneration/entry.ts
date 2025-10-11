@@ -195,7 +195,7 @@ export const exportModCode = async (
     const validSeals = seals.filter((s) => s.id && s.name);
     const validEditions = editions.filter((e) => e.id && e.name);
     const validVouchers = vouchers.filter((v) => v.id && v.name);
-    const validDecks = decks.filter((b) => b.id && b.name);
+    const validDecks = decks.filter((d) => d.id && d.name);
 
     console.log(
       `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}, Editions: ${validEditions.length} vouchers: ${validVouchers.length}, Decks: ${validDecks.length}`
