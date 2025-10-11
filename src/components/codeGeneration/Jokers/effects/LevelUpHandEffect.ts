@@ -3,11 +3,14 @@ import type { Effect } from "../../../ruleBuilder/types";
 import {
   generateConfigVariables
 } from "../gameVariableUtils";
+import { parsePokerHandVariable } from "../variableUtils";
+import { JokerData } from "../../../data/BalatroUtils";
 
 export const generateLevelUpHandReturn = (
   triggerType: string = "hand_played",
   effect?: Effect,
-  sameTypeCount: number = 0
+  sameTypeCount: number = 0,
+  joker?: JokerData
 ): EffectReturn => {
   const customMessage = effect?.customMessage;
   let valueCode: string;
@@ -29,6 +32,8 @@ export const generateLevelUpHandReturn = (
     valueCode = "card.ability.extra.levels";
   }
 
+
+  const customVar = parsePokerHandVariable(effect?.params?.hand_selection || "", joker)
   const targetHandVar = sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`
 
   const handSelection = (effect?.params?.hand_selection as string) || "current";
@@ -97,6 +102,9 @@ export const generateLevelUpHandReturn = (
       } else {
         handDeterminationCode = `local ${targetHandVar} = (context.scoring_name or "High Card")`;
       }
+      break
+    case ("default"):
+      handDeterminationCode = `local ${targetHandVar} = "${customVar.code}"`;
       break
   }
   
