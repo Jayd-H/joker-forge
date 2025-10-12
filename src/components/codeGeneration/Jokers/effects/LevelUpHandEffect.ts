@@ -40,11 +40,10 @@ export const generateLevelUpHandReturn = (
   const specificHand = (effect?.params?.specific_hand as string) || "High Card";
   
   let handDeterminationCode = "";
-  switch (handSelection) {
-    case ("specific"):
+   if (handSelection === "specific") {
       handDeterminationCode = `local ${targetHandVar} = "${specificHand}"`;
-      break
-    case ("random"):
+      
+    } else if (handSelection === "random") {
       handDeterminationCode = `
         local available_hands = {}
         for hand, value in pairs(G.GAME.hands) do
@@ -54,8 +53,8 @@ export const generateLevelUpHandReturn = (
         end
         local ${targetHandVar} = #available_hands > 0 and pseudorandom_element(available_hands, pseudoseed('level_up_hand')) or "High Card"
         `;
-      break
-    case ("most"):
+      
+    } else if (handSelection === "most") {
       handDeterminationCode = `
         local temp_played = 0
         local temp_order = math.huge
@@ -73,8 +72,8 @@ export const generateLevelUpHandReturn = (
           end
         end
       `;
-      break
-    case ("least"):
+      
+     } else if (handSelection === "least") {
       handDeterminationCode = `
         local temp_played = math.huge
         local temp_order = math.huge
@@ -91,9 +90,8 @@ export const generateLevelUpHandReturn = (
             end
           end
         end
-      `;
-      break
-    case ("current"):
+      `; 
+    } else if (handSelection === "current") {
       if (triggerType === "hand_discarded") {
         handDeterminationCode = `
           local text, poker_hands, text_disp, loc_disp_text = G.FUNCS.get_poker_hand_info(G.hand.highlighted)
@@ -102,10 +100,8 @@ export const generateLevelUpHandReturn = (
       } else {
         handDeterminationCode = `local ${targetHandVar} = (context.scoring_name or "High Card")`;
       }
-      break
-    case ("default"):
+    } else {
       handDeterminationCode = `local ${targetHandVar} = "${customVar.code}"`;
-      break
   }
   
   return {

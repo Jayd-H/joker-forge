@@ -12,8 +12,8 @@ export const generatePassiveCombineSuits = (
   const suitVar1 = parseSuitVariable(effect.params?.suit_1 as string, joker)
   const suitVar2 = parseSuitVariable(effect.params?.suit_2 as string, joker)
 
-  const returnSuit1 =  suitVar1.isSuitVariable ? suitVar1.code : suit1
-  const returnSuit2 =  suitVar2.isSuitVariable ? suitVar2.code : suit2
+  const returnSuit1 =  suitVar1.isSuitVariable ? `G.GAME.current_round.${suitVar1.code}_card.suit` : suit1
+  const returnSuit2 =  suitVar2.isSuitVariable ? `G.GAME.current_round.${suitVar2.code}_card.suit` : suit2
 
   return {
     addToDeck: `-- Combine suits effect enabled`,

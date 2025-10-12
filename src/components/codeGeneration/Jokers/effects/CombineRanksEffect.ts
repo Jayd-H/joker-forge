@@ -16,7 +16,7 @@ export const generatePassiveCombineRanks = (
     sourceRankType === "specific"
       ? sourceRanksString.split(",").map((rank) => rank.trim())
       : [];
-
+  const targetRankFinal = targetRankVar.isRankVariable ? `G.GAME.current_round.${targetRankVar.code}_card.rank` : targetRank
   return {
     addToDeck: `-- Combine ranks effect enabled`,
     removeFromDeck: `-- Combine ranks effect disabled`,
@@ -29,7 +29,7 @@ export const generatePassiveCombineRanks = (
               .join(", ")}}`,
           ]
         : []),
-      `target_rank = "${targetRankVar.isRankVariable ? targetRankVar.code : targetRank}"`,
+      `target_rank = "${targetRankFinal}"`,
     ],
     locVars: [],
     needsHook: {
@@ -38,7 +38,7 @@ export const generatePassiveCombineRanks = (
       effectParams: {
         sourceRankType,
         sourceRanks,
-        targetRank,
+        targetRankFinal,
       },
     },
   };
