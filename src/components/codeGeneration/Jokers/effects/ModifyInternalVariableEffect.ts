@@ -129,6 +129,7 @@ export const generateModifyInternalVariableReturn = (
         end
         if my_pos > #G.jokers.cards then 
           my_pos = -1
+        end
         card.ability.extra.${variableName} = my_pos + 1
         `
           break

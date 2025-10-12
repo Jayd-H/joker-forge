@@ -1502,6 +1502,8 @@ const generateCalculateFunction = (
 
   calculateFunction += `
     end`;
+  
+  calculateFunction = applyIndents(calculateFunction)
 
   return {
     code: calculateFunction,
@@ -2107,3 +2109,38 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
 
   return allHooks;
 };
+
+const applyIndents = (
+  code : string
+) => {
+  let finalCode = ''
+  let indentCount = 0
+  const indents = (count:number)=>{
+    let str = ''
+    for (let i = 0; i < count; i++){
+      str += '    '
+    }
+  return str}
+  const stringLines = code.split(`
+`)
+  
+  for (let i = 0; i < stringLines.length; i++) {
+    
+    let line = stringLines[i]
+    while (line.startsWith(' ')){
+      line = line.slice(1)}
+
+    if (line.includes('end') || line.includes('}') && !line.includes('{') || line.includes('else')) {indentCount -= 1}
+    
+    const indent = indents(indentCount)
+
+    finalCode += `
+${indent}${line}`
+
+    if (line.includes('if') || line.includes('else') || (line.includes('function') && !line.includes('calculate')) || 
+        line.includes('return') && !line.includes('}') || line.includes('for ') || 
+        line.includes('while') || line.includes(' do') || line.includes(' then')) {
+          indentCount += 1}
+  }
+  return finalCode
+}
