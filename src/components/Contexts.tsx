@@ -16,7 +16,7 @@ interface UserConfigContextType {
 
 const gameObjectTypes = [
     "joker", "consumable", "enhancement",
-    "seal", "edition", "voucher", "booster",
+    "seal", "edition", "voucher", "deck", "booster",
     "vanilla_joker"
   ]
 

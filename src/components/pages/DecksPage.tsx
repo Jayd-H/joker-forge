@@ -43,6 +43,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: DeckData, b: DeckData) => number;
+  ascText: string,
+  descText: string,
 };
 
 let availablePlaceholders: string[] | null = null;
@@ -174,81 +176,87 @@ const DecksPage: React.FC<DecksPageProps> = ({
   const [currentDeckForRules, setCurrentDeckForRules] =
     useState<DeckData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState(userConfig.filters.decksFilter ?? "name-id-desc");
-  const [showSortMenu, setShowSortMenu] = useState(false);
-  const [sortMenuPosition, setSortMenuPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
+  
+    const itemTypes = userConfig.pageData.map(item => item.objectType)
+    const [sortBy, setSortBy] = useState(
+          userConfig.pageData[itemTypes.indexOf("deck")].filter ?? "id")
+    const [sortDirection, setSortDirection] = useState(
+        userConfig.pageData[itemTypes.indexOf("deck")].direction ?? "asc")
+    
+    const [showSortMenu, setShowSortMenu] = useState(false);
+    const [sortMenuPosition, setSortMenuPosition] = useState({
+      top: 0,
+      left: 0,
+      width: 0,
+    });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
-  const sortMenuRef = React.useRef<HTMLDivElement>(null);
-
-  const sortOptions: SortOption[] = useMemo(
-    () => [
-      {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
-        sortFn: (a, b) => a.orderValue - b.orderValue,
-      },
-      {
-        value: "name-asc",
-        label: "Name (A-Z)",
-        sortFn: (a, b) => a.name.localeCompare(b.name),
-      },
-      {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
-      },
-    ],
-    []
-  );
+    const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
+    const sortMenuRef = React.useRef<HTMLDivElement>(null);
+  
+    const editData = userConfig.pageData[itemTypes.indexOf("deck")].editList
+    const sortOptions: SortOption[] = useMemo(
+      () => [
+        {
+          value: "id",
+          label: "Id Value",
+          sortFn: (a, b) => a.orderValue - b.orderValue,
+          ascText: "Least to Most",
+          descText: "Most to Least",
+        },
+        {
+          value: "name",
+          label: "Name",
+          sortFn: (a, b) => a.name.localeCompare(b.name),
+          ascText: "A-Z",
+          descText: "Z-A",
+        },
+        {
+          value: "rules",
+          label: "Rules",
+          sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+          ascText: "Least to Most",
+          descText: "Most to Least",
+        },
+        {
+          value: "edit",
+          label: "Last Edited",
+          sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+          ascText: "Oldest to Newest",
+          descText: "Newest to Oldest",
+        },
+      ],
+      [editData]
+    );
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        sortButtonRef.current &&
-        !sortButtonRef.current.contains(event.target as Node) &&
-        sortMenuRef.current &&
-        !sortMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowSortMenu(false);
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          sortButtonRef.current &&
+          !sortButtonRef.current.contains(event.target as Node) &&
+          sortMenuRef.current &&
+          !sortMenuRef.current.contains(event.target as Node)
+        ) {
+          setShowSortMenu(false);
+        }
+      };
+  
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+  
+    useEffect(() => {
+      if (showSortMenu && sortButtonRef.current) {
+        const rect = sortButtonRef.current.getBoundingClientRect();
+        setSortMenuPosition({
+          top: rect.bottom + 8,
+          left: rect.right - 224,
+          width: 224,
+        });
       }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (showSortMenu && sortButtonRef.current) {
-      const rect = sortButtonRef.current.getBoundingClientRect();
-      setSortMenuPosition({
-        top: rect.bottom + 8,
-        left: rect.right - 224,
-        width: 224,
-      });
-    }
-  }, [showSortMenu]);
+    }, [showSortMenu]);
 
   const handleAddNewDeck = async () => {
     const placeholderResult = await getRandomPlaceholderDeck();
@@ -355,32 +363,55 @@ const DecksPage: React.FC<DecksPageProps> = ({
     }
   };
 
+const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("deck")].direction = direction
+      return ({...config})
+    })
+  }
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);
   };
 
-  const filteredAndSortedDecks = useMemo(() => {
-    const filtered = decks.filter((deck) => {
-      const matchesSearch =
-        deck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        deck.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      return matchesSearch;
-    });
-
-    const currentSort = sortOptions.find((option) => option.value === sortBy);
-    if (currentSort) {
-      filtered.sort(currentSort.sortFn);
-    }
-
-    return filtered;
-  }, [decks, searchTerm, sortBy, sortOptions]);
-
-  const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Id Value (Most to Least)";
-
+ const filteredAndSortedDecks = useMemo(() => {
+     const filtered = decks.filter((deck) => {
+       const matchesSearch =
+         deck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         deck.description.toLowerCase().includes(searchTerm.toLowerCase());
+ 
+       return matchesSearch;
+     });
+ 
+     const currentSort = sortOptions.find((option) => option.value === sortBy);
+     if (currentSort) {
+       filtered.sort(currentSort.sortFn);
+       if (sortDirection === "desc") {
+         filtered.reverse()
+       }
+     }
+ 
+     return filtered;
+   }, [decks, searchTerm, sortBy, sortOptions, sortDirection]);
+ 
+   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
+ 
+   const currentSortLabel =
+     sortOptions.find((option) => option.value === sortBy)?.label ||
+     "Id Value (Most to Least)";
+ 
+   const currentSortDirectionLabel =
+     currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+     "Least to Most";
+     
   return (
     <div className="min-h-screen">
       <div className="p-8 font-lexend max-w-7xl mx-auto">
@@ -427,19 +458,27 @@ const DecksPage: React.FC<DecksPageProps> = ({
             </div>
 
             <div className="flex gap-3">
-              <div className="relative">
-                <button
-                  ref={sortButtonRef}
-                  onClick={handleSortMenuToggle}
-                  className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                >
-                  <ArrowsUpDownIcon className="h-4 w-4" />
-                  <span className="whitespace-nowrap">{currentSortLabel}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                          <div className="relative">
+                            <button
+                              ref={sortButtonRef}
+                              onClick={handleSortMenuToggle}
+                              className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                            >
+                              <ArrowsUpDownIcon className="h-4 w-4" />
+                              <span className="whitespace-nowrap">{currentSortLabel}</span>
+                            </button>
+                          </div>
+                          <button
+                            ref={sortDirectionButtonRef}
+                            onClick={handleSortDirectionToggle}
+                            className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                          >
+                            <ArrowsUpDownIcon className="h-4 w-4" />
+                            <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
 
         {filteredAndSortedDecks.length === 0 && decks.length > 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-20">
@@ -554,13 +593,12 @@ const DecksPage: React.FC<DecksPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig(prevConfig => ({
-                        ...prevConfig,
-                        filters: {
-                          ...prevConfig.filters,
-                          decksFilter: option.value
-                        }
-                      }))
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("deck")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}
