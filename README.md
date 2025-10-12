@@ -40,10 +40,10 @@ The plan here is to implement enough triggers, conditions, and effects, so as th
 - [x] **When shop is Entered** - When the shop is entered
 - [x] **When this Joker is Bought** - When specifically this joker is bought (different from add to deck)
 - [x] **When a Playing Card is Added** - When a playing card is added to your deck (Hologram)
+- [x] **Ante Start** - At the start of an ante
 
 #### Not Implemented Yet
 
-- [ ] **Ante Start** - At the start of an ante
 - [ ] **Joker Added/Removed** - When a Joker is added/removed from your list (Joker Stencil)
 - [ ] **When a Card is Modified** - When any card is modified (enhanced, etc) (difficult)
 ---
