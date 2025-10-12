@@ -2130,14 +2130,16 @@ const applyIndents = (
     while (line.startsWith(' ')){
       line = line.slice(1)}
 
-    if (line.includes('end') || line.includes('}') && !line.includes('{') || line.includes('else')) {indentCount -= 1}
+    if (line.includes('end') || line.includes('}') && !line.includes('{') || line.includes('else')) 
+      {indentCount -= 1}
+    if (line.includes('calculate')) {indentCount += 1}
     
     const indent = indents(indentCount)
 
     finalCode += `
 ${indent}${line}`
 
-    if (line.includes('if') || line.includes('else') || (line.includes('function') && !line.includes('calculate')) || 
+    if (line.includes('if') || line.includes('else') || (line.includes('function')) || 
         line.includes('return') && !line.includes('}') || line.includes('for ') || 
         line.includes('while') || line.includes(' do') || line.includes(' then')) {
           indentCount += 1}

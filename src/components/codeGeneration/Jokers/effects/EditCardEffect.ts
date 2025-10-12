@@ -24,7 +24,7 @@ export const generateEditCardReturn = (
     let rankParam = "nil";
  
     if (suitVar.isSuitVariable) {
-      suitParam = `${suitVar.code}`;
+      suitParam = `G.GAME.current_round.${suitVar.code}_card.suit`;
     } else if (newSuit === "random") {
       suitParam = "pseudorandom_element(SMODS.Suits, 'edit_card_suit').key";
     } else if (newSuit !== "none") {
@@ -32,7 +32,7 @@ export const generateEditCardReturn = (
     }
 
     if (rankVar.isRankVariable) {
-      rankParam = `${rankVar.code}`;
+      rankParam = `G.GAME.current_round.${rankVar.code}_card.rank`;
     } else if (newRank === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank !== "none") {
