@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { UserConfig } from "./data/BalatroUtils";
+import { PageData, UserConfig } from "./data/BalatroUtils";
 
 const USER_CONFIG_KEY = "joker-forge-user-config";
 
@@ -14,9 +14,38 @@ interface UserConfigContextType {
   setUserConfig: React.Dispatch<React.SetStateAction<UserConfig>>;
 }
 
+const gameObjectTypes = [
+    "joker", "consumable", "enhancement",
+    "seal", "edition", "voucher", "booster",
+    "vanilla_joker"
+  ]
+
+const generatePageData = (stored: string | null ) => {
+  const dataList: PageData[] = []
+  let itemTypes: string[] = []
+  let userConfig: UserConfig
+
+  if (stored) {
+    userConfig = JSON.parse(stored)
+    itemTypes = userConfig.pageData.map(item => item.objectType)
+  }
+
+  let i = 0
+  gameObjectTypes.forEach(type => {
+    if (!itemTypes.includes(type)) {
+      dataList.push({objectType: type, filter: 'id', direction: 'asc', editList: []})
+    } else {
+      dataList.push(userConfig.pageData[i])
+    }
+    i += 1
+  })
+
+  return dataList
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const UserConfigContext = createContext<UserConfigContextType>({
-  userConfig: { filters: {}, defaultAutoFormat: true, defaultGridSnap: false },
+  userConfig: { pageData: generatePageData(null), defaultAutoFormat: true, defaultGridSnap: false },
   setUserConfig: () => {},
 });
 
@@ -28,17 +57,21 @@ export const UserConfigProvider = ({ children }: ContextProviderProps) => {
   const loadUserConfig = useCallback((): UserConfig => {
     try {
       const stored = localStorage.getItem(USER_CONFIG_KEY);
-      return stored
-        ? JSON.parse(stored)
+      return (stored)
+        ? { 
+          pageData: generatePageData(stored),
+          defaultAutoFormat: true,
+          defaultGridSnap: false,
+        }
         : {
-            filters: {},
+            pageData: generatePageData(null),
             defaultAutoFormat: true,
             defaultGridSnap: false,
-          };
+          }
     } catch (err) {
       console.error("Failed to parse userConfig from localStorage", err);
       return {
-        filters: {},
+        pageData: generatePageData(null),
         defaultAutoFormat: true,
         defaultGridSnap: false,
       };

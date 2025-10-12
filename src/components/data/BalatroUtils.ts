@@ -35,17 +35,15 @@ export interface ModMetadata {
   hasUserUploadedGameIcon?: boolean;
 }
 
+export interface PageData {
+  objectType: string,
+  filter: string,
+  direction: string,
+  editList: string[],
+}
+
 export interface UserConfig {
-  filters: {
-    jokersFilter?: string;
-    consumablesFilter?: string;
-    boostersFilter?: string;
-    enhancementsFilter?: string;
-    sealsFilter?: string;
-    editionsFilter?: string;
-    vouchersFilter?: string;
-    decksFilter?: string;
-  };
+  pageData: PageData[];
   defaultAutoFormat: boolean;
   defaultGridSnap: boolean;
 }

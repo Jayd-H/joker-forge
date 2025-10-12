@@ -567,6 +567,8 @@ type SortOption<T = ConsumableData | ConsumableSetData> = {
   value: string;
   label: string;
   sortFn: (a: T, b: T) => number;
+  ascText: string,
+  descText: string,
 };
 
 let availablePlaceholders: string[] | null = null;
@@ -717,9 +719,13 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [setFilter, setSetFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
   const [sortBy, setSortBy] = useState(
-    userConfig.filters.consumablesFilter ?? "name-asc"
-  );
+        userConfig.pageData[itemTypes.indexOf("consumable")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+    userConfig.pageData[itemTypes.indexOf("consumable")].direction ?? "asc")
+
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -737,87 +743,76 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     useState<ConsumableData | null>(null);
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
   const filtersMenuRef = React.useRef<HTMLDivElement>(null);
 
+
+  const editData = userConfig.pageData[itemTypes.indexOf("consumable")].editList
   const consumableSortOptions: SortOption<ConsumableData>[] = useMemo(
     () => [
       {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
+        value: "id",
+        label: "Id Value",
         sortFn: (a, b) => a.orderValue - b.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => a.name.localeCompare(b.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "set-asc",
-        label: "Set (A-Z)",
+        value: "set",
+        label: "Set",
         sortFn: (a, b) => a.set.localeCompare(b.set),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "set-desc",
-        label: "Set (Z-A)",
-        sortFn: (a, b) => b.set.localeCompare(a.set),
-      },
-      {
-        value: "cost-asc",
+        value: "cost",
         label: "Cost (Low to High)",
         sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "cost-desc",
-        label: "Cost (High to Low)",
-        sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
-      },
-      {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   const setSortOptions: SortOption<ConsumableSetData>[] = useMemo(
     () => [
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => a.name.localeCompare(b.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "key-asc",
-        label: "Key (A-Z)",
+        value: "key",
+        label: "Key",
         sortFn: (a, b) => a.key.localeCompare(b.key),
-      },
-      {
-        value: "key-desc",
-        label: "Key (Z-A)",
-        sortFn: (a, b) => b.key.localeCompare(a.key),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
     ],
     []
@@ -905,6 +900,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     newConsumable.objectKey = getObjectName(newConsumable,consumables,newConsumable.objectKey)
     setConsumables([...consumables, newConsumable]);
     setEditingConsumable(newConsumable);
+    handleUpdateConsumable(newConsumable)
   };
 
   const handleAddNewSet = () => {
@@ -990,6 +986,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       },
     });
   };
+  
   const handleDuplicateSet = (set: ConsumableSetData) => {
     const duplicated: ConsumableSetData = {
       ...set,
@@ -1010,7 +1007,35 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     );
   };
 
+  const handleUpdateConsumable = (updatedConsumable: ConsumableData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("consumable")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("consumable")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedConsumable.objectKey)) {
+        config.pageData[itemTypes.indexOf("consumable")].editList.splice(dataList.indexOf(updatedConsumable.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("consumable")].editList.push(updatedConsumable.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveConsumable = (updatedConsumable: ConsumableData) => {
+    consumables.forEach(consumable => {
+      if (consumable.id === updatedConsumable.id) {
+        handleUpdateConsumable(updatedConsumable, "change", consumable.objectKey ) 
+      }
+    })
+
     setConsumables((prev) =>
       prev.map((consumable) =>
         consumable.id === updatedConsumable.id ? updatedConsumable : consumable
@@ -1026,6 +1051,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
       const remainingConsumables = consumables.filter((consumable) => consumable.id !== consumableId);
       setSelectedConsumableId(remainingConsumables.length > 0 ? remainingConsumables[0].id : null)
       consumables = updateGameObjectIds(removedConsumable, consumables, 'remove', removedConsumable.orderValue)
+      handleUpdateConsumable(removedConsumable, "delete")
   }};
 
   const handleDuplicateConsumable = async (consumable: ConsumableData) => {
@@ -1042,6 +1068,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         orderValue: consumable.orderValue+1,
       };
       setConsumables([...consumables, duplicatedConsumable]);
+      handleUpdateConsumable(duplicatedConsumable)
       consumables = updateGameObjectIds(duplicatedConsumable, consumables, 'insert', duplicatedConsumable.orderValue)
     } else {
       const duplicatedConsumable: ConsumableData = {
@@ -1052,6 +1079,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
         orderValue: consumable.orderValue+1,
       };
       setConsumables([...consumables, duplicatedConsumable]);
+      handleUpdateConsumable(duplicatedConsumable)
       consumables = updateGameObjectIds(duplicatedConsumable, consumables, 'insert', duplicatedConsumable.orderValue)
   }};
 
@@ -1098,6 +1126,20 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     }
   };
 
+  const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("consumable")].direction = direction
+      return ({...config})
+    })
+  }
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (showFilters) setShowFilters(false);
@@ -1126,10 +1168,13 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     );
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions]);
+  }, [consumables, searchTerm, setFilter, sortBy, consumableSortOptions, sortDirection]);
 
   const filteredAndSortedSets = useMemo(() => {
     const filtered = consumableSets.filter(
@@ -1185,9 +1230,15 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     }
   };
 
+  const currentSortMethod = consumableSortOptions.find((option) => option.value === sortBy) 
+
   const currentSortLabel =
     currentSortOptions.find((option) => option.value === sortBy)?.label ||
     "Id Value (Most to Least)";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   return (
     <div className="min-h-screen pb-24">
@@ -1263,6 +1314,14 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
+              <button
+                ref={sortDirectionButtonRef}
+                onClick={handleSortDirectionToggle}
+                className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+              >
+                <ArrowsUpDownIcon className="h-4 w-4" />
+                <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+              </button>
               {activeTab === "consumables" && (
                 <div className="relative">
                   <button
@@ -1487,13 +1546,12 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig((prevConfig) => ({
-                        ...prevConfig,
-                        filters: {
-                          ...prevConfig.filters,
-                          consumablesFilter: option.value,
-                        },
-                      }));
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("consumable")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}
