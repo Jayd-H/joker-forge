@@ -1075,7 +1075,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        variableTypes: ["joker_context", "joker"],
+        // variableTypes: ["joker_context", "joker"], --- VARIABLES FOR COPY ABILITY ARE TEMP DISABLED
       },
       {
         id: "position",
@@ -1227,7 +1227,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         default: "key",
         options: [
           { value: "key", label: "Joker Key" },
-          { value: "variable", label: "Joker Variable" },
+          // { value: "variable", label: "Joker Variable" }, --- TEMP DISABLED
         ]
       },
       {
