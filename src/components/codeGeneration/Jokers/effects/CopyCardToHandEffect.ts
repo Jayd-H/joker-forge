@@ -1,11 +1,12 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
-import { getRankId } from "../../../data/BalatroUtils";
+import { getRankId, JokerData } from "../../../data/BalatroUtils";
 import { parseRankVariable, parseSuitVariable } from "../variableUtils";
 
 export const generateCopyCardToHandReturn = (
   effect: Effect,
-  triggerType: string
+  triggerType: string,
+  joker?: JokerData
 ): EffectReturn => {
   const customMessage = effect.customMessage;
   const scoringTriggers = ["hand_played", "card_scored"];
@@ -76,7 +77,8 @@ export const generateCopyCardToHandReturn = (
     const cardSelectionCode = generateCardSelectionLogic(
       cardIndex,
       cardRank,
-      cardSuit
+      cardSuit,
+      joker,
     );
 
     if (isScoring) {
@@ -152,11 +154,12 @@ export const generateCopyCardToHandReturn = (
 const generateCardSelectionLogic = (
   cardIndex: string,
   cardRank: string,
-  cardSuit: string
+  cardSuit: string,
+  joker?: JokerData
 ): string => {
   const conditions: string[] = [];
-  const rankVar = parseRankVariable(cardRank)
-  const suitVar = parseSuitVariable(cardSuit)
+  const rankVar = parseRankVariable(cardRank, joker)
+  const suitVar = parseSuitVariable(cardSuit, joker)
 
   if (cardRank !== "any" && !rankVar.isRankVariable) {
     conditions.push(`c:get_id() == ${getRankId(cardRank)}`);

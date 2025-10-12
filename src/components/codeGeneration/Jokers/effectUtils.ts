@@ -155,7 +155,7 @@ export function generateEffectReturnStatement(
   loopGroups: LoopGroup[] = [],
   triggerType: string = "hand_played",
   modprefix: string,
-  jokerKey?: string,
+  joker?: JokerData,
   ruleId?: string,
   globalEffectCounts?: Map<string, number>
 ): ReturnStatementResult {
@@ -192,7 +192,8 @@ export function generateEffectReturnStatement(
           effectWithContext,
           triggerType,
           currentCount,
-          modprefix
+          modprefix,
+          joker
         );
         return {
           ...result,
@@ -292,7 +293,8 @@ export function generateEffectReturnStatement(
             effectWithContext,
             triggerType,
             currentCount,
-            modprefix
+            modprefix,
+            joker,
           );
           return {
             ...result,
@@ -412,7 +414,7 @@ export function generateEffectReturnStatement(
         hasFixProbablityEffects || hasModProbablityEffects // prevents stack overflow
       ) || group.respect_probability_effects === false;
       
-      const probabilityStatement =  `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${jokerKey}`}', ${no_modParam})`;
+      const probabilityStatement =  `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${joker?.objectKey}`}', ${no_modParam})`;
       
       const groupStatement = `if ${probabilityStatement} then
               ${groupContent}
@@ -449,7 +451,8 @@ export function generateEffectReturnStatement(
           firstEffect,
           triggerType,
           0,
-          modprefix
+          modprefix,
+          joker
         );
         primaryColour = firstEffectResult.colour || "G.C.WHITE";
       }
@@ -520,7 +523,8 @@ export function generateEffectReturnStatement(
             effectWithContext,
             triggerType,
             currentCount,
-            modprefix
+            modprefix,
+            joker
           );
           return {
             ...result,
@@ -665,6 +669,7 @@ export function generateEffectReturnStatement(
           triggerType,
           0,
           modprefix,
+          joker, 
         );
         primaryColour = firstEffectResult.colour || "G.C.WHITE";
       }
@@ -684,6 +689,7 @@ const generateSingleEffect = (
   triggerType: string,
   sameTypeCount: number = 0,
   modprefix: string,
+  joker?: JokerData
 ): EffectReturn => {
 
   switch (effect.type) {
@@ -706,17 +712,17 @@ const generateSingleEffect = (
     case "draw_cards":
       return generateDrawCardsReturn(effect, sameTypeCount);
     case "level_up_hand":
-      return generateLevelUpHandReturn(triggerType, effect, sameTypeCount);
+      return generateLevelUpHandReturn(triggerType, effect, sameTypeCount, joker);
     case "add_card_to_deck":
-      return generateAddCardToDeckReturn(effect, triggerType);
+      return generateAddCardToDeckReturn(effect, triggerType, joker);
     case "copy_triggered_card":
-      return generateCopyCardToDeckReturn(effect, triggerType);
+      return generateCopyCardToDeckReturn(effect, triggerType, joker);
     case "copy_played_card":
-      return generateCopyCardToDeckReturn(effect, triggerType);
+      return generateCopyCardToDeckReturn(effect, triggerType, joker);
     case "delete_triggered_card":
       return generateDeleteCardReturn(effect, triggerType);
     case "edit_triggered_card":
-      return generateEditCardReturn(effect, triggerType);
+      return generateEditCardReturn(effect, triggerType, joker);
     case "modify_internal_variable":
       return generateModifyInternalVariableReturn(effect, triggerType);
     case "destroy_consumable":
@@ -770,11 +776,11 @@ const generateSingleEffect = (
     case "set_ante":
       return generateSetAnteReturn(effect, triggerType, sameTypeCount);
     case "add_card_to_hand":
-      return generateAddCardToHandReturn(effect, triggerType);
+      return generateAddCardToHandReturn(effect, triggerType, joker);
     case "copy_triggered_card_to_hand":
-      return generateCopyCardToHandReturn(effect, triggerType);
+      return generateCopyCardToHandReturn(effect, triggerType, joker);
     case "copy_played_card_to_hand":
-      return generateCopyCardToHandReturn(effect, triggerType);
+      return generateCopyCardToHandReturn(effect, triggerType, joker);
     case "edit_consumable_slots":
       return generateEditConsumableSlotsReturn(effect, sameTypeCount);
     case "edit_joker_slots":
@@ -791,9 +797,9 @@ const generateSingleEffect = (
       return generateBeatCurrentBlindReturn(effect);
     case "fix_probability":
       return generateFixProbabilityReturn(effect, sameTypeCount);
-      case "edit_booster_packs":
+    case "edit_booster_packs":
          return generateEditBoostersReturn(effect, sameTypeCount);
-      case "edit_shop_slots":
+    case "edit_shop_slots":
           return generateEditShopCardsSlotsReturn(effect,sameTypeCount);
     case "mod_probability":
       return generateModProbabilityReturn(effect, sameTypeCount);

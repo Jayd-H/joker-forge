@@ -1,10 +1,12 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import { parseRankVariable, parseSuitVariable } from "../variableUtils";
+import { JokerData } from "../../../data/BalatroUtils";
 
 export const generateEditCardReturn = (
   effect: Effect,
-  triggerType: string
+  triggerType: string,
+  joker?: JokerData
 ): EffectReturn => {
   const newRank = (effect.params?.new_rank as string) || "none";
   const newSuit = (effect.params?.new_suit as string) || "none";
@@ -13,8 +15,8 @@ export const generateEditCardReturn = (
   const newEdition = (effect.params?.new_edition as string) || "none";
   const customMessage = effect.customMessage;
 
-  const rankVar = parseRankVariable(newRank)
-  const suitVar = parseSuitVariable(newSuit)
+  const rankVar = parseRankVariable(newRank, joker)
+  const suitVar = parseSuitVariable(newSuit, joker)
 
   let modificationCode = "";
   const target = 'context.other_card'
