@@ -12,6 +12,7 @@ import { generateBlindTypeConditionCode } from "./conditions/BlindTypeCondition"
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
 import { generateDrawnHandConditionCode } from "./conditions/DrawnHandCondition";
 import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
+import { generateCheckDeckConditionCode } from "./conditions/CheckDeckCondition";
 import { generateCheckBlindRequirementsConditionCode } from "./conditions/BlindRequirementsCondition";
 import { generateBlindNameConditionCode } from "./conditions/BlindNameCondition";
 import { generateDeckCountConditionCode } from "./conditions/DeckCountCondition";
@@ -143,6 +144,9 @@ const generateSingleConditionCode = (
 
     case "deck_size":
       return generateDeckSizeConditionCode([singleConditionRule]);
+
+      case "deck_check":
+        return generateCheckDeckConditionCode([singleConditionRule]);
 
     case "check_blind_requirements":
       return generateCheckBlindRequirementsConditionCode([singleConditionRule]);
