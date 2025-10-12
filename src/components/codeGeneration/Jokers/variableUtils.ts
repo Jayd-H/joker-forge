@@ -176,7 +176,7 @@ const extractExplicitVariablesFromEffect = (effect: Effect): string[] => {
     "rank_type",
     "poker_hand_type",
     "set",
-    "specific_hand"
+    "specific_hand",
   ]);
 
   Object.entries(effect.params).forEach(([paramName, value]) => {
@@ -534,6 +534,7 @@ const isBuiltInValue = (str: string): boolean => {
     "Blue",
     "Purple",
     "T",
+    "pool",
   ]);
 
   return otherBuiltIns.has(str);
