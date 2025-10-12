@@ -1,5 +1,6 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
+import { parseRankVariable, parseSuitVariable } from "../variableUtils";
 
 export const generateEditCardReturn = (
   effect: Effect,
@@ -12,6 +13,8 @@ export const generateEditCardReturn = (
   const newEdition = (effect.params?.new_edition as string) || "none";
   const customMessage = effect.customMessage;
 
+  const rankVar = parseRankVariable(newRank)
+  const suitVar = parseSuitVariable(newSuit)
 
   let modificationCode = "";
   const target = 'context.other_card'
@@ -19,14 +22,18 @@ export const generateEditCardReturn = (
   if (newRank !== "none" || newSuit !== "none") {
     let suitParam = "nil";
     let rankParam = "nil";
-
-    if (newSuit === "random") {
+ 
+    if (suitVar.isSuitVariable) {
+      suitParam = `${suitVar.code}`;
+    } else if (newSuit === "random") {
       suitParam = "pseudorandom_element(SMODS.Suits, 'edit_card_suit').key";
     } else if (newSuit !== "none") {
       suitParam = `"${newSuit}"`;
     }
 
-    if (newRank === "random") {
+    if (rankVar.isRankVariable) {
+      rankParam = `${rankVar.code}`;
+    } else if (newRank === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank !== "none") {
       rankParam = `"${newRank}"`;

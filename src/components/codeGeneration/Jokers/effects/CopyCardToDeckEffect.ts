@@ -1,6 +1,7 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import { getRankId } from "../../../data/BalatroUtils";
+import { parseRankVariable, parseSuitVariable } from "../variableUtils";
 
 export const generateCopyCardToDeckReturn = (
   effect: Effect,
@@ -132,13 +133,19 @@ const generateCardSelectionLogic = (
   cardSuit: string
 ): string => {
   const conditions: string[] = [];
+  const rankVar = parseRankVariable(cardRank)
+  const suitVar = parseSuitVariable(cardSuit)
 
-  if (cardRank !== "any") {
+  if (cardRank !== "any" && !rankVar.isRankVariable) {
     conditions.push(`c:get_id() == ${getRankId(cardRank)}`);
+  } else if (rankVar.isRankVariable) {
+    conditions.push(`c:get_id() == ${rankVar.code}`)
   }
 
-  if (cardSuit !== "any") {
+  if (cardSuit !== "any" && !suitVar.isSuitVariable) {
     conditions.push(`c:is_suit("${cardSuit}")`);
+  } else if (suitVar.isSuitVariable) {
+    conditions.push(`c:is_suit(${suitVar.code})`)
   }
 
   if (cardIndex === "any") {
