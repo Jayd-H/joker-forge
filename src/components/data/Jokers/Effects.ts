@@ -2045,7 +2045,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
-        }
+        },
+        default: [false, false, false, false]
       },
       {
         id: "specific_suit",
@@ -2128,7 +2129,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
-        }
+        },
+        default: [false, false, false, false, false, false, false, false, false, false, false, false]
       },
       {
         id: "specific_rank",
@@ -2179,7 +2181,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
-        }
+        },
+        default: [false, false, false, false, false, false, false, false, false, false, false, false]
       },
       {
         id: "specific_pokerhand",
