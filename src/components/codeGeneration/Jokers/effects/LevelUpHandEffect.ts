@@ -101,7 +101,7 @@ export const generateLevelUpHandReturn = (
         handDeterminationCode = `local ${targetHandVar} = (context.scoring_name or "High Card")`;
       }
     } else {
-      handDeterminationCode = `local ${targetHandVar} = "${customVar.code}"`;
+      handDeterminationCode = `local ${targetHandVar} = ${customVar.code}`;
   }
   
   return {
