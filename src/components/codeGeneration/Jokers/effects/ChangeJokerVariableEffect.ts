@@ -35,11 +35,16 @@ export const generateChangeJokerVariableReturn = (
       end`
     } else if (randomType === "locked") {
       statement += `
-        for i = 1, #G.P_CENTERS do
-          if G.P_CENTERS[i].config.center.unlocked == false then
-            possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
-          end
-        end`
+        for i = 1, #G.P_LOCKED do
+                if string.sub(G.P_LOCKED[i].key, 1, 1) == 'j' then 
+                    if possible_jokers[1] == 'j_joker' then
+                        possible_jokers[1] = G.P_LOCKED[i].key
+                    else
+                        possible_jokers[#possible_jokers + 1] = G.P_LOCKED[i].key
+                    end
+                end
+            end
+            local random_joker_result = pseudorandom_element(possible_jokers, 'random joker')`
     } else if (randomType === "pool") {
       statement += `
         for i = 1, #G.P_CENTERS do
