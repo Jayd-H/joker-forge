@@ -136,32 +136,24 @@ export const generateModifyInternalVariableReturn = (
         case "key":
           const searchKey = (effect.params?.joker_key as string) || "j_joker"
           operationCode = `local search_key = '${searchKey}'
+          card.ability.extra.${variableName} = 0
           for i = 1, #G.jokers.cards do
-            if G.jokers.cards[i].key == search_key then
-                local located_index = i
+            if G.jokers.cards[i].config.center.key == search_key then
+                card.ability.extra.${variableName} = i
                 break
             end
-        end
-        if located_index then 
-          card.ability.extra.${variableName} = located_index
-        else 
-          card.ability.extra.${variableName} = 0
-        end`
+          end`
           break
         case "variable":
           const searchVar = (effect.params?.joker_variable) || "jokerVar"
           operationCode = `local search_key = card.ability.extra.${searchVar}
+          card.ability.extra.${variableName} = 0
           for i = 1, #G.jokers.cards do
-            if G.jokers.cards[i].key == search_key then
-                local located_index = i
+            if G.jokers.cards[i].config.center.key == search_key then
+                card.ability.extra.${variableName} = i
                 break
             end
-        end
-        if located_index then 
-          card.ability.extra.${variableName} = located_index
-        else 
-          card.ability.extra.${variableName} = 0
-        end`
+          end`
           break
         case "selected_joker":
           operationCode = `
