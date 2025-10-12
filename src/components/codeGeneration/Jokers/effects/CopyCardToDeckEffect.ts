@@ -142,13 +142,13 @@ const generateCardSelectionLogic = (
   if (cardRank !== "any" && !rankVar.isRankVariable) {
     conditions.push(`c:get_id() == ${getRankId(cardRank)}`);
   } else if (rankVar.isRankVariable) {
-    conditions.push(`c:get_id() == string.sub(G.GAME.current_round.${rankVar.code}_card.rank, 1, 1)`)
+    conditions.push(`c:get_id() == ${rankVar.code}`)
   }
 
   if (cardSuit !== "any" && !suitVar.isSuitVariable) {
     conditions.push(`c:is_suit("${cardSuit}")`);
   } else if (suitVar.isSuitVariable) {
-    conditions.push(`c:is_suit(string.sub(G.GAME.current_round.${suitVar.code}_card.suit), 1, 1)`)
+    conditions.push(`c:is_suit(${suitVar.code})`)
   }
 
   if (cardIndex === "any") {
