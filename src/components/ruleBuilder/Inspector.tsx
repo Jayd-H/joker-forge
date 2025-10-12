@@ -442,8 +442,6 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
     }
   }
 
-  console.log(param.type)
-
   switch (param.type) {
     case "select": {
       let options: Array<{ value: string; label: string }> = [];
@@ -468,7 +466,6 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         if (selectedRule.trigger === "joker_evaluated") {
             options.push({value: "evaled_joker", label: "Evaluated Joker"})
         }
-        console.log (selectedRule.conditionGroups)
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
           condition => condition.type === "joker_selected" && condition.negate === false
         ))) {
