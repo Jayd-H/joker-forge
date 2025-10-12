@@ -396,6 +396,10 @@ const VANILLA_DECKS = [
   {key: "Ghost Deck", value: "Ghost Deck", label: "Ghost Deck" },
   {key: "Abandoned Deck", value: "Abandoned Deck", label: "Abandoned Deck" },
   {key: "Checkered Deck", value: "Checkered Deck", label: "Checkered Deck" },
+  {key: "Zodiac Deck", value: "Zodiac Deck", label: "Zodiac Deck" },
+  {key: "Anaglyph Deck", value: "Anaglyph Deck", label: "Anaglyph Deck" },
+  {key: "Plasma Deck", value: "Plasma Deck", label: "Plasma Deck" },
+  {key: "Erratic Deck", value: "Erratic Deck", label: "Erratic Deck" },
 ];
 
 const VANILLA_SEALS = [

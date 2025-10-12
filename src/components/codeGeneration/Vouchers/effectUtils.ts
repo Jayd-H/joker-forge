@@ -2,6 +2,8 @@ import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateEditHandsReturn } from "./effects/EditHandsEffect";
 import { generateEditDiscardsReturn } from "./effects/EditDiscardsEffect";
+import { generateEditEndRoundDiscardMoneyReturn } from "./effects/EditEndRoundDiscardMoneyEffect";
+import { generateEditEndRoundHandMoneyReturn } from "./effects/EditEndRoundHandMoneyEffect";
 import { generateSetAnteReturn } from "./effects/SetAnteEffect";
 import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
@@ -331,6 +333,12 @@ const generateSingleEffect = (
 
     case "edit_discards":
       return generateEditDiscardsReturn(effect);
+
+      case "edit_hands_money":
+            return generateEditEndRoundHandMoneyReturn(effect);
+      
+          case "edit_discards_money":
+            return generateEditEndRoundDiscardMoneyReturn(effect);
 
     case "set_ante":
       return generateSetAnteReturn(effect);

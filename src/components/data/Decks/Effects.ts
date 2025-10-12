@@ -507,7 +507,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     {
     id: "edit_discards_money",
     label: "Edit Discard Money",
-    description: "Add, subtract, or set the player's end of the round discard money",
+    description: "set the player's end of the round discard money",
     applicableTriggers: ["deck_selected"],
     params: [
       {
@@ -721,8 +721,6 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
               { value: "add", label: "Add" },
               { value: "subtract", label: "Subtract" },
               { value: "set", label: "Set to" },
-              { value: "multiply", label: "Multiply" },
-              { value: "divide", label: "Divide" },
               ],
               default: "set",
             },
