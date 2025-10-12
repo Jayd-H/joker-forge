@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, startTransition } from "react";
+import React, { useState, useMemo, useEffect, startTransition, useContext } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -20,6 +20,7 @@ import {
 import { DeckData } from "../../data/BalatroUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import RuleBuilder from "../../ruleBuilder/RuleBuilder";
+import { UserConfigContext } from "../../Contexts";
 import Button from "../../generic/Button";
 import Tooltip from "../../generic/Tooltip";
 
@@ -32,6 +33,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: DeckData, b: DeckData) => number;
+  ascText: string;
+  descText: string;
 };
 
 const useAsyncDataLoader = () => {
@@ -85,14 +88,19 @@ const DecksVanillaReforgedPage: React.FC<DecksVanillaReforgedPageProps> = ({
   onDuplicateToProject,
   onNavigateToDecks,
 }) => {
+  const { userConfig, setUserConfig } = useContext(UserConfigContext)
   const { vanillaDecks, loading } = useAsyncDataLoader();
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState("name-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentItemForRules, setCurrentItemForRules] =
     useState<DeckData | null>(null);
+    const itemTypes = userConfig.pageData.map(item => item.objectType)
+              const [sortBy, setSortBy] = useState(
+                userConfig.pageData[itemTypes.indexOf("vanilla_deck")].filter ?? "id")
+              const [sortDirection, setSortDirection] = useState(
+                userConfig.pageData[itemTypes.indexOf("vanilla_deck")].direction ?? "asc")
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
     left: 0,
@@ -100,29 +108,31 @@ const DecksVanillaReforgedPage: React.FC<DecksVanillaReforgedPageProps> = ({
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
+        value: "id",
+        label: "Id Value",
+        sortFn: (a, b) => a.orderValue - b.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
+      },
+      {
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => a.name.localeCompare(b.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
     ],
     []
@@ -171,10 +181,13 @@ const DecksVanillaReforgedPage: React.FC<DecksVanillaReforgedPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "asc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [vanillaDecks, searchTerm, sortBy, sortOptions, loading]);
+  }, [vanillaDecks, searchTerm, sortBy, sortOptions, loading, sortDirection]);
 
   const handleDuplicateItem = (item: DeckData) => {
     if (onDuplicateToProject) {
@@ -202,15 +215,36 @@ const DecksVanillaReforgedPage: React.FC<DecksVanillaReforgedPageProps> = ({
     setCurrentItemForRules(null);
   };
 
+const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("vanilla_deck")].direction = direction
+      return ({...config})
+    })
+  }
+  
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (showFilters) setShowFilters(false);
     setShowSortMenu(!showSortMenu);
   };
 
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
+
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    currentSortMethod?.label ||
+    "Id Value";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -290,16 +324,24 @@ const DecksVanillaReforgedPage: React.FC<DecksVanillaReforgedPageProps> = ({
                     </div>
         
                     <div className="flex gap-3">
-                      <div className="relative">
-                        <button
-                          ref={sortButtonRef}
-                          onClick={handleSortMenuToggle}
-                          className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                        >
-                          <ArrowsUpDownIcon className="h-4 w-4" />
-                          <span className="whitespace-nowrap">{currentSortLabel}</span>
-                        </button>
-                      </div>
+                                            <div className="relative">
+                                              <button
+                                                ref={sortButtonRef}
+                                                onClick={handleSortMenuToggle}
+                                                className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                                              >
+                                                <ArrowsUpDownIcon className="h-4 w-4" />
+                                                <span className="whitespace-nowrap">{currentSortLabel}</span>
+                                              </button>
+                                            </div>
+                                            <button
+                                              ref={sortDirectionButtonRef}
+                                        onClick={handleSortDirectionToggle}
+                                      className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                                      >
+                                        <ArrowsUpDownIcon className="h-4 w-4" />
+                                      <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+                                      </button>
                     </div>
                   </div>
                 </div>
@@ -437,6 +479,12 @@ const DecksVanillaReforgedPage: React.FC<DecksVanillaReforgedPageProps> = ({
                           key={option.value}
                           onClick={(e) => {
                             e.stopPropagation();
+                            setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("vanilla_deck")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                             setSortBy(option.value);
                             setShowSortMenu(false);
                           }}

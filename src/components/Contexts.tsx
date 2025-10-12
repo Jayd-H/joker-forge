@@ -17,7 +17,9 @@ interface UserConfigContextType {
 const gameObjectTypes = [
     "joker", "consumable", "enhancement",
     "seal", "edition", "voucher", "deck", "booster",
-    "vanilla_joker"
+    "vanilla_joker", "vanilla_consumable", "vanilla_booster",
+    "vanilla_enhancement", "vanilla_seal", "vanilla_voucher",
+    "vanilla_deck" 
   ]
 
 const generatePageData = (stored: string | null ) => {
