@@ -2290,7 +2290,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "all", label: "All Ranks" },
         ],
         default: "specific",
-        variableTypes: ["rank"]
+        // variableTypes: ["rank"] --- TEMP DISABLED
       },
       {
         id: "source_ranks",
@@ -2328,7 +2328,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "First Suit",
         options: [...SUITS],
         default: "Spades",
-        variableTypes: ["suit"],
+        // variableTypes: ["suit"], --- TEMP DISABLED
       },
       {
         id: "suit_2",
@@ -2336,7 +2336,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Second Suit",
         options: [...SUITS],
         default: "Hearts",
-        variableTypes: ["suit"],
+        // variableTypes: ["suit"], --- TEMP DISABLED
       },
     ],
     category: "Card Effects",
