@@ -579,7 +579,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "key", label: "Joker Key" },
           { value: "variable", label: "Joker Variable" },
         ], 
-        variableTypes: ["trigger_context"]
+        variableTypes: ["joker_context", "joker"]
       },
       {
         id: "joker_key",
@@ -956,7 +956,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "target",
           values: ["specific"],},
         default: "self",
-        variableTypes: ["trigger_context"],
+        variableTypes: ["joker_context"],
       },{
         id: "operation",
         type: "select",
@@ -995,7 +995,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker" },
         ],
         default: "random",
-        variableTypes: ["joker", "trigger_context"]
+        variableTypes: ["joker", "joker_context"]
       },
       {
         id: "rarity",
@@ -1075,7 +1075,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        variableTypes: ["trigger_context", "joker"],
+        variableTypes: ["joker_context", "joker"],
       },
       {
         id: "position",
@@ -1149,7 +1149,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        variableTypes: ["joker", "trigger_context"],
+        variableTypes: ["joker", "joker_context"],
       },
       {
         id: "joker_key",
@@ -2056,7 +2056,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["suit", "trigger_context"]
+        variableTypes: ["suit", "joker_context"]
       },
     ],
     category: "Variables",
@@ -2139,7 +2139,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["rank", "trigger_context"]
+        variableTypes: ["rank", "joker_context"]
       },
     ],
     category: "Variables",
@@ -2190,7 +2190,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["pokerhand", "trigger_context"]
+        variableTypes: ["pokerhand", "joker_context"]
       },
     ],
     category: "Variables",
@@ -2218,7 +2218,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker Key" },
         ],
         default: "specific",
-        variableTypes: ["joker", "trigger_context"],
+        variableTypes: ["joker", "joker_context"],
       },
       {
         id: "random_type",

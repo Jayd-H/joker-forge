@@ -15,6 +15,7 @@ export const generateModifyInternalVariableReturn = (
   const effectValue = effect.params?.value;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
+  const indexMethod = effect.params?.index_method || "self"
 
   let valueCode: string;
 
@@ -87,6 +88,100 @@ export const generateModifyInternalVariableReturn = (
       operationCode = `card.ability.extra.${variableName} = math.floor(card.ability.extra.${variableName})`;
       messageColor = "G.C.BLUE";
       break;
+    case "index":
+      switch (indexMethod) {
+        case "self":
+          operationCode = `
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == card then
+                card.ability.extra.${variableName} = i
+                break
+            end
+        end`;
+          break
+        case "random":
+          operationCode = `card.ability.extra.${variableName} = math.random(1, #G.jokers.cards)`
+          break
+        case "first":
+          operationCode = `card.ability.extra.${variableName} = 1`
+          break
+        case "last":
+          operationCode = `card.ability.extra.${variableName} = #G.jokers.cards`
+          break
+        case "left":
+          operationCode = `local my_pos = nil
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == card then
+                my_pos = i
+                break
+            end
+        end
+        card.ability.extra.${variableName} = math.max(my_pos - 1, 0)
+        `
+          break
+        case "right":
+          operationCode = `local my_pos = nil
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == card then
+                my_pos = i
+                break
+            end
+        end
+        if my_pos > #G.jokers.cards then 
+          my_pos = -1
+        card.ability.extra.${variableName} = my_pos + 1
+        `
+          break
+        case "key":
+          const searchKey = (effect.params?.joker_key as string) || "j_joker"
+          operationCode = `local search_key = '${searchKey}'
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i].key == search_key then
+                local located_index = i
+                break
+            end
+        end
+        if located_index then 
+          card.ability.extra.${variableName} = located_index
+        else 
+          card.ability.extra.${variableName} = 0
+        end`
+          break
+        case "variable":
+          const searchVar = (effect.params?.joker_variable) || "jokerVar"
+          operationCode = `local search_key = card.ability.extra.${searchVar}
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i].key == search_key then
+                local located_index = i
+                break
+            end
+        end
+        if located_index then 
+          card.ability.extra.${variableName} = located_index
+        else 
+          card.ability.extra.${variableName} = 0
+        end`
+          break
+        case "selected_joker":
+          operationCode = `
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == G.jokers.highlighted[1] then
+                card.ability.extra.${variableName}= i
+                break
+            end
+        end`
+          break
+        case "evaled_joker":
+          operationCode = `
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == context.other_joker then
+                card.ability.extra.${variableName}= i
+                break
+            end
+        end`
+          break
+      }
+    break
     default:
       operationCode = `card.ability.extra.${variableName} = (card.ability.extra.${variableName}) + ${valueCode}`;
       messageColor = "G.C.GREEN";

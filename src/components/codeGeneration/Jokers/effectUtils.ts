@@ -948,11 +948,11 @@ export const processPassiveEffects = (
             passiveResult = generatePassiveDiscard(effect);
             break;
           case "combine_ranks": {
-            passiveResult = generatePassiveCombineRanks(effect, jokerKey);
+            passiveResult = generatePassiveCombineRanks(effect, joker);
             break;
           }
           case "combine_suits": {
-            passiveResult = generatePassiveCombineSuits(effect, jokerKey);
+            passiveResult = generatePassiveCombineSuits(effect, joker);
             break;
           }
           case "disable_boss_blind": {

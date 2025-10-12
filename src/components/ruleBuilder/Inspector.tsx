@@ -464,8 +464,8 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         }));
       }
 
-      if (param.variableTypes?.includes("trigger_context")) {
-        if (selectedRule.trigger === "joker_evaluated" && param.variableTypes?.includes("joker")) {
+      if (param.variableTypes?.includes("joker_context")) {
+        if (selectedRule.trigger === "joker_evaluated") {
             options.push({value: "evaled_joker", label: "Evaluated Joker"})
         }
 

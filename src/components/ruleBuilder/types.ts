@@ -84,7 +84,7 @@ export interface ConditionParameter {
   max?: number;
   default?: unknown;
   showWhen?: ShowWhenCondition;
-  variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "trigger_context")[];
+  variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context")[];
 }
 
 // Interface for condition type definitions
@@ -119,7 +119,7 @@ export interface EffectParameter {
   max?: number;
   default?: unknown;
   showWhen?: ShowWhenCondition;
-  variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "trigger_context")[];
+  variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context")[];
 }
 
 // Interface for effect type definitions
