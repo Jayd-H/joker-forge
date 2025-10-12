@@ -48,8 +48,8 @@ export const generateChangeJokerVariableReturn = (
     } else if (randomType === "pool") {
       statement += `
         for i = 1, #G.P_CENTERS do
-          for j = 1, #G.P_CENTERS[i].pools
-            if G.P_CENTERS[i].pools[j] == ${pool} then
+          for j = 1, #G.P_CENTERS[i].config.center.pools
+            if G.P_CENTERS[i].config.center.pools[j] == ${pool} then
               possible_jokers[#possible_jokers + 1] = G.P_CENTERS[i].config.center.key
             end
           end

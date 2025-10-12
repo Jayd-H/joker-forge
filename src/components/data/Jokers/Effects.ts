@@ -2228,12 +2228,12 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Random from Type",
         options: [
-          { value: "all", label: "Random From All Jokers" }, 
-          { value: "unlocked", label: "Random from Unlocked Jokers" },
+          // { value: "all", label: "Random From All Jokers" }, --- TEMP DISABLED
+          // { value: "unlocked", label: "Random from Unlocked Jokers" }, --- TEMP DISABLED
           { value: "locked", label: "Random from Locked Jokers" },
           { value: "pool", label: "Random from Pool" },
           { value: "owned", label: "Random from Owned Jokers" },
-          { value: "rarity", label: "Random from specific Rarity" },
+          // { value: "rarity", label: "Random from specific Rarity" }, --- TEMP DISABLED
         ],
         default: "all",
         showWhen: {
