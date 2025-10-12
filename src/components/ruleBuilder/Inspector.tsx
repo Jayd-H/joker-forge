@@ -468,9 +468,9 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         if (selectedRule.trigger === "joker_evaluated") {
             options.push({value: "evaled_joker", label: "Evaluated Joker"})
         }
-
+        console.log (selectedRule.conditionGroups)
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
-          condition => condition.id === "joker_selected"
+          condition => condition.type === "joker_selected"
         ))) {
           options.push({value: "selected_joker", label: "Selected Joker"})
         }

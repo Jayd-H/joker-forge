@@ -1546,7 +1546,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         options: [
           {value: "any", label: "Any Joker"},
           {value: "key", label: "Specific Key"},
-          {value: "variable", label: "Joker Variable"},
         ],
         default: "any"
       },
@@ -1569,16 +1568,6 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           ...RARITIES(),
         ],
         default: "any",
-      },
-      {
-        id: "joker_variable",
-        type: "select",
-        label: "Joker Variable",
-        variableTypes: ["joker"],
-        showWhen: {
-          parameter: "type",
-          values: ["variable"]
-        }
       },
     ],
     category: "Deck & Jokers",

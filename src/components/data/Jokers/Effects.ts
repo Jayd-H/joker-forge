@@ -579,7 +579,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "key", label: "Joker Key" },
           { value: "variable", label: "Joker Variable" },
         ], 
-        variableTypes: ["joker_context", "joker"]
+        variableTypes: ["joker_context"]
       },
       {
         id: "joker_key",
