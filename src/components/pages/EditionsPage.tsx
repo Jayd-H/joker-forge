@@ -43,6 +43,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: EditionData, b: EditionData) => number;
+  ascText: string,
+  descText: string,
 };
 
 const EditionsPage: React.FC<EditionsPageProps> = ({
@@ -62,9 +64,13 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
   const [currentEditionForRules, setCurrentEditionForRules] =
     useState<EditionData | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
   const [sortBy, setSortBy] = useState(
-    userConfig.filters.editionsFilter ?? "name-asc"
-  );
+        userConfig.pageData[itemTypes.indexOf("edition")].filter ?? "id")
+  const [sortDirection, setSortDirection] = useState(
+      userConfig.pageData[itemTypes.indexOf("edition")].direction ?? "asc")
+
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortMenuPosition, setSortMenuPosition] = useState({
     top: 0,
@@ -73,52 +79,49 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
 
+  const editData = userConfig.pageData[itemTypes.indexOf("edition")].editList
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
-        value: "id-desc",
-        label: "Id Value (Most to Least)",
-        sortFn: (a, b) => b.orderValue - a.orderValue,
-      },
-      {
-        value: "id-asc",
-        label: "Id Value (Least to Most)",
+        value: "id",
+        label: "Id Value",
         sortFn: (a, b) => a.orderValue - b.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => a.name.localeCompare(b.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
-        sortFn: (a, b) => b.name.localeCompare(a.name),
-      },
-      {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
-        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "weight-desc",
-        label: "Weight (High to Low)",
-        sortFn: (a, b) => (b.weight || 0) - (a.weight || 0),
-      },
-      {
-        value: "weight-asc",
-        label: "Weight (Low to High)",
+        value: "weight",
+        label: "Weight",
         sortFn: (a, b) => (a.weight || 0) - (b.weight || 0),
+        ascText: "Low to High",
+        descText: "High to Low",
+      },
+      {
+        value: "edit",
+        label: "Last Edited",
+        sortFn: (a, b) => (editData.indexOf(a.objectKey) || 0) - (editData.indexOf(b.objectKey) || 0),
+        ascText: "Oldest to Newest",
+        descText: "Newest to Oldest",
       },
     ],
-    []
+    [editData]
   );
 
   useEffect(() => {
@@ -168,9 +171,38 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     newEdition.objectKey = getObjectName(newEdition,editions,newEdition.objectKey)
     setEditions([...editions, newEdition]);
     setEditingEdition(newEdition);
+    handleUpdateEdition(newEdition)
   };
 
+  const handleUpdateEdition = (updatedEdition: EditionData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("edition")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("edition")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedEdition.objectKey)) {
+        config.pageData[itemTypes.indexOf("edition")].editList.splice(dataList.indexOf(updatedEdition.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("edition")].editList.push(updatedEdition.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveEdition = (updatedEdition: EditionData) => {
+    editions.forEach(edition => {
+      if (edition.id === updatedEdition.id) {
+        handleUpdateEdition(updatedEdition, "change", edition.objectKey ) 
+      }
+    })
+
     setEditions((prev) =>
       prev.map((edition) =>
         edition.id === updatedEdition.id ? updatedEdition : edition
@@ -185,7 +217,8 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     if (selectedEditionId === editionId) {
       const remainingEditions = editions.filter((edition) => edition.id !== editionId);
       setSelectedEditionId(remainingEditions.length > 0 ? remainingEditions[0].id : null);
-    editions = updateGameObjectIds(removedEdition, editions, 'remove', removedEdition.orderValue)
+      editions = updateGameObjectIds(removedEdition, editions, 'remove', removedEdition.orderValue)
+      handleUpdateEdition(removedEdition, "delete")
     }};
 
   const handleDuplicateEdition = async (edition: EditionData) => {
@@ -199,6 +232,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     };
     setEditions([...editions, duplicatedEdition]);
     editions = updateGameObjectIds(duplicatedEdition, editions, 'insert', duplicatedEdition.orderValue)
+    handleUpdateEdition(duplicatedEdition)
   };
 
   const handleExportEdition = (edition: EditionData) => {
@@ -245,6 +279,21 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     }
   };
 
+  const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("edition")].direction = direction
+      return ({...config})
+    })
+  }
+
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);
@@ -262,14 +311,23 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "desc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [editions, searchTerm, sortBy, sortOptions]);
+  }, [editions, searchTerm, sortBy, sortOptions, sortDirection]);
+
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
 
   const currentSortLabel =
     sortOptions.find((option) => option.value === sortBy)?.label ||
     "Id Value (Most to Least)";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   return (
     <div className="min-h-screen">
@@ -328,6 +386,14 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
+              <button
+                ref={sortDirectionButtonRef}
+                onClick={handleSortDirectionToggle}
+                className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+              >
+                <ArrowsUpDownIcon className="h-4 w-4" />
+                <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -446,13 +512,12 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
                     key={option.value}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setUserConfig((prevConfig) => ({
-                        ...prevConfig,
-                        filters: {
-                          ...prevConfig.filters,
-                          editionsFilter: option.value,
-                        },
-                      }));
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("edition")].filter = option.value
+                        return ({
+                        ...config,
+                      })});
                       setSortBy(option.value);
                       setShowSortMenu(false);
                     }}
