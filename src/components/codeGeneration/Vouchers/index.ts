@@ -98,8 +98,7 @@ if (filtered_rules.length === 0) return "";
 
   let calculateFunction = `calculate = function(self, card, context)`;
 
-  rules.forEach((rule) => {
-    if (rule.trigger === "voucher_used") return;
+  filtered_rules.forEach((rule) => {
 
     const triggerCondition = generateTriggerCondition(rule.trigger);
     const conditionCode = generateConditionChain(rule);
