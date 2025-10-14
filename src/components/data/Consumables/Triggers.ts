@@ -1,5 +1,5 @@
 import { TriggerDefinition } from "../../ruleBuilder/types";
-import { HandRaisedIcon } from "@heroicons/react/24/outline";
+import { HandRaisedIcon, PlayIcon } from "@heroicons/react/24/outline";
 
 export interface CategoryDefinition {
   label: string;
@@ -11,6 +11,10 @@ export const CONSUMABLE_TRIGGER_CATEGORIES: CategoryDefinition[] = [
     label: "Usage",
     icon: HandRaisedIcon,
   },
+  {
+    label: "In Blind Events",
+    icon: PlayIcon,
+  },
 ];
 
 export const CONSUMABLE_TRIGGERS: TriggerDefinition[] = [
@@ -20,6 +24,12 @@ export const CONSUMABLE_TRIGGERS: TriggerDefinition[] = [
     description: "Triggers when this consumable is activated by the player",
     category: "Usage",
   },
+  //{
+  //  id: "held_hand",
+  //  label: "While Consumable Held in Hand",
+  //  description: "Triggers when this consumable is held in hand in a blind",
+  //  category: "In Blind Events",
+  //},
 ];
 
 export function getConsumableTriggerById(

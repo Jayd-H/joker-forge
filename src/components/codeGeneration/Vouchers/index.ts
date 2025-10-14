@@ -92,10 +92,13 @@ const generateCalculateFunction = (
   objectKey: string,
 ): string => {
 
+const filtered_rules = rules.filter((rule) => rule.trigger !== "voucher_used")
+
+if (filtered_rules.length === 0) return "";
+
   let calculateFunction = `calculate = function(self, card, context)`;
 
-  rules.forEach((rule) => {
-    if (rule.trigger === "voucher_used") return;
+  filtered_rules.forEach((rule) => {
 
     const triggerCondition = generateTriggerCondition(rule.trigger);
     const conditionCode = generateConditionChain(rule);
@@ -371,16 +374,13 @@ const generateRedeemFunction = (
   modPrefix: string,
   voucherKey?: string,
 ): string => {
-  if (rules.length === 0) {
-    return ` redeem = function(self, card)
-        
-    end`;
-  }
+const filtered_rules = rules.filter((rule) => rule.trigger !== "voucher_used")
+
+if (filtered_rules.length === 0) return "";
 
   let redeemFunction = ` redeem = function(self, card)`;
 
-  rules.forEach((rule) => {
-    if (rule.trigger !== "voucher_used") return;
+  filtered_rules.forEach((rule) => {
 
     let ruleCode = "";
   
