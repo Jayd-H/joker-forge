@@ -380,7 +380,7 @@ if (filtered_rules.length === 0) return "";
 
   let redeemFunction = ` redeem = function(self, card)`;
 
-  filtered_rules.forEach((rule) => {
+   filtered_rules.forEach((rule) => {
 
     let ruleCode = "";
   
