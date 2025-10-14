@@ -382,8 +382,7 @@ const generateRedeemFunction = (
 
   let redeemFunction = ` redeem = function(self, card)`;
 
-  rules.forEach((rule) => {
-    if (rule.trigger !== "voucher_used") return;
+   filtered_rules.forEach((rule) => {
 
     let ruleCode = "";
   
