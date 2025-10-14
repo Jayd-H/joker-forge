@@ -92,6 +92,10 @@ const generateCalculateFunction = (
   objectKey: string,
 ): string => {
 
+const filtered_rules = rules.filter((rule) => rule.trigger !== "voucher_used")
+
+if (filtered_rules.length === 0) return "";
+
   let calculateFunction = `calculate = function(self, card, context)`;
 
   rules.forEach((rule) => {
