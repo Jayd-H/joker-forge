@@ -236,7 +236,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
 
         text.split("\n").forEach((line, lineIndex) => {
           const trimmed = line.trim();
-          // console.log(`Line ${lineIndex}: "${trimmed}"`);
+          console.log(`Line ${lineIndex}: "${trimmed}"`);
 
           if (trimmed && trimmed.includes(":")) {
             const [indexStr, nameStr] = trimmed.split(":");
