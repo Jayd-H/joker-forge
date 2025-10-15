@@ -84,6 +84,8 @@ const getRandomPlaceholderJoker = async (): Promise<{
   if (upscaledPlaceholders && upscaledPlaceholders.length > 0) {
     const randomIndex = Math.floor(Math.random() * upscaledPlaceholders.length);
     const imagePath = availablePlaceholders?.[randomIndex];
+    console.log(imagePath)
+    console.log(availablePlaceholders)
     const match = imagePath?.match(/placeholder-joker-(\d+)\.png/);
     const imageNumber = match ? parseInt(match[1], 10) : randomIndex + 1;
 
