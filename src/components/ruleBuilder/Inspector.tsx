@@ -55,6 +55,7 @@ import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 
 import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
+import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 
 import  Checkbox  from "../generic/Checkbox";
@@ -392,7 +393,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
     if (param.type === "number" && typeof value === "number") {
       setInputValue(value.toString());
     }
-  }, [param.type, value]);     
+  }, [param.type, value]);        
 
   React.useEffect(() => {
     const isVar =
@@ -601,27 +602,18 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       ) => {
         const newValue = e.target.value;
-        setInputValue(newValue)
-      };
+        setInputValue(newValue);
 
-      const handleNumberSave = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      ) => {
-        let newValue = e.target.value;
-        
-        while (newValue.startsWith('0') && newValue !== '0' && !newValue.startsWith('0.')) {
-          newValue = newValue.slice(1)
+        if (newValue === "" || newValue === "-") {
+          onChange(0);
+          return;
         }
 
         const parsed = parseFloat(newValue);
         if (!isNaN(parsed)) {
-          setInputValue(String(parsed));
-          return;
-        } else {
-          setInputValue('0')
-          return 
+          onChange(parsed);
         }
-      }
+      };
 
       const handleGameVariableChange = (
         field: "multiplier" | "startsFrom",
@@ -835,15 +827,14 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
               )}
             </div>
           ) : (
-              <InputField
-                type="number"
-                value={inputValue}
-                onChange={handleNumberChange}
-                onBlur={handleNumberSave}
-                size="sm"
-                labelPosition="center"
-              />
-            )}
+            <InputField
+              type="number"
+              value={inputValue}
+              onChange={handleNumberChange}
+              size="sm"
+              labelPosition="center"
+            />
+          )}
         </>
       );
     }
@@ -983,7 +974,9 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getConditionTypeById
       : itemType === "consumable"
       ? getConsumableConditionTypeById
-      : getCardConditionTypeById
+      : itemType === "card"
+      ? getCardConditionTypeById
+      : getVoucherConditionTypeById;
 
   const getEffectType =
     itemType === "joker"
