@@ -800,7 +800,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-17/2 ml-2 z-50"
+                      className="absolute left-full top-1/2 transform -translate-y-2/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -822,7 +822,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-66 ml-2 z-50"
+                      className="absolute left-full top-17 -translate-y-3/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
                         {dropdownResourceDecksanddChallanges.map((item) => {
@@ -854,7 +854,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-                              <motion.button
+                  <motion.button
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
@@ -870,21 +870,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <BuildingStorefrontIcon className="h-5 w-5" />
                 </motion.button>
 
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 }}
-                    onClick={() => { setShop(!shop);
-                      setCard(false);
-                      setMisc(false);
-                    }}
-                    onMouseEnter={() => setHoveredItem("shop")}                  
-                    onMouseLeave={() => setHoveredItem(null)}
-                    className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
-                  >
-                    <BuildingStorefrontIcon className="h-5 w-5" />
-                  </motion.button>
-
                   <AnimatePresence>
                   {hoveredItem === "shop" && (
                     <motion.div
@@ -896,7 +881,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-2/4 transform -translate-y-1/2 ml-2 z-50"
+                      className="absolute left-full top-3/4 transform -translate-y-1/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
