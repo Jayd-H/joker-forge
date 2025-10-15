@@ -62,7 +62,6 @@ const parse_string = function (joker: JokerData) {
       }
       
       currentLength += 1
-      console.log(varIndexesandValues)
 
     } else if (!inVar && char === '#') {
       parsed_line += varIndexesandValues[numberOfVariables].value
