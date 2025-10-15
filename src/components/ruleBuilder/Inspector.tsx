@@ -392,7 +392,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
     if (param.type === "number" && typeof value === "number") {
       setInputValue(value.toString());
     }
-  }, [param.type, value]);        
+  }, [param.type, value]);     
 
   React.useEffect(() => {
     const isVar =
@@ -601,18 +601,27 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       ) => {
         const newValue = e.target.value;
-        setInputValue(newValue);
+        setInputValue(newValue)
+      };
 
-        if (newValue === "" || newValue === "-") {
-          onChange(0);
-          return;
+      const handleNumberSave = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      ) => {
+        let newValue = e.target.value;
+        
+        while (newValue.startsWith('0') && newValue !== '0' && !newValue.startsWith('0.')) {
+          newValue = newValue.slice(1)
         }
 
         const parsed = parseFloat(newValue);
         if (!isNaN(parsed)) {
-          onChange(parsed);
+          setInputValue(String(parsed));
+          return;
+        } else {
+          setInputValue('0')
+          return 
         }
-      };
+      }
 
       const handleGameVariableChange = (
         field: "multiplier" | "startsFrom",
@@ -826,14 +835,15 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
               )}
             </div>
           ) : (
-            <InputField
-              type="number"
-              value={inputValue}
-              onChange={handleNumberChange}
-              size="sm"
-              labelPosition="center"
-            />
-          )}
+              <InputField
+                type="number"
+                value={inputValue}
+                onChange={handleNumberChange}
+                onBlur={handleNumberSave}
+                size="sm"
+                labelPosition="center"
+              />
+            )}
         </>
       );
     }
