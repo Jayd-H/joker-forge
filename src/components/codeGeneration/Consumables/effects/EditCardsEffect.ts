@@ -1,4 +1,4 @@
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -131,14 +131,8 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
                             { 'e_polychrome', 'e_holo', 'e_foil' })
                         G.hand.highlighted[i]:set_edition(edition, true)`
     } else {
-    const editions: {key: string, value: string}[] = []
-    EDITIONS().forEach(edition => {
-        editions.push({key: edition.key, value: edition.value})
-    })
-      const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
         editCardsCode += `
-                        G.hand.highlighted[i]:set_edition({ ${editionLua} = true }, true)`
+                        G.hand.highlighted[i]:set_edition('${edition}', true)`
     }
     
     editCardsCode += `
