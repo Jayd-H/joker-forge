@@ -341,11 +341,14 @@ const generateCalculateFunction = (
   objectKey: string,
 ): string => {
 
+const filtered_rules = rules.filter((rule) => rule.trigger !== "consumable_used")
+
+if (filtered_rules.length === 0) return "";
+
   let calculateFunction = `
   calculate = function(self, card, context)`;
 
-  rules.forEach((rule) => {
-    if (rule.trigger === "consumable_used") return;
+  filtered_rules.forEach((rule) => {
 
     const triggerCondition = generateTriggerCondition(rule.trigger);
     const conditionCode = generateConditionChain(rule);
@@ -442,8 +445,7 @@ ${indentLevel}return {${effectResult.statement}}`;
   });
 
   calculateFunction += `
-  end,
-  `;
+  end,`;
 
   return calculateFunction;
 };
@@ -453,17 +455,14 @@ const generateUseFunction = (
   modPrefix: string,
   objectKey?: string,
 ): string => {
-  if (rules.length === 0) {
-    return `use = function(self, card, area, copier)
-        
-    end`;
-  }
+const filtered_rules = rules.filter((rule) => rule.trigger === "consumable_used")
+
+if (filtered_rules.length === 0) return "";
 
   let useFunction = `use = function(self, card, area, copier)
         local used_card = copier or card`;
 
-  rules.forEach((rule) => {
-    if (rule.trigger !== "consumable_used") return;
+  filtered_rules.forEach((rule) => {
     const conditionCode = generateConditionChain(rule);
 
     let ruleCode = "";
