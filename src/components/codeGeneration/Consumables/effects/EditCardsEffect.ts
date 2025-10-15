@@ -1,12 +1,13 @@
+import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
-  const enhancement = effect.params?.enhancement || "none";
-  const seal = effect.params?.seal || "none";
-  const edition = effect.params?.edition || "none";
-  const suit = effect.params?.suit || "none";
-  const rank = effect.params?.rank || "none";
+  const enhancement = effect.params?.enhancement as string || "none";
+  const seal = effect.params?.seal as string || "none";
+  const edition = effect.params?.edition as string || "none";
+  const suit = effect.params?.suit as string || "none";
+  const rank = effect.params?.rank as string || "none";
   const customMessage = effect.customMessage;
   const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
   const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
@@ -97,8 +98,9 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
         editCardsCode += `
                         G.hand.highlighted[i]:set_seal(nil, nil, true)`
     } else if (seal === "random") {
+        const sealPool = SEALS().map(seal => `'${seal.value}'`)
         editCardsCode += `
-                        local seal_pool = {'Gold', 'Red', 'Blue', 'Purple'}
+                        local seal_pool = {${sealPool}}
                         local random_seal = pseudorandom_element(seal_pool, 'random_seal')
                         G.hand.highlighted[i]:set_seal(random_seal, nil, true)`
     } else {
@@ -113,13 +115,6 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
   }
 
   if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-
     editCardsCode += `
             for i = 1, #G.hand.highlighted do
                 G.E_MANAGER:add_event(Event({
@@ -136,8 +131,12 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
                             { 'e_polychrome', 'e_holo', 'e_foil' })
                         G.hand.highlighted[i]:set_edition(edition, true)`
     } else {
+    const editions: {key: string, value: string}[] = []
+    EDITIONS().forEach(edition => {
+        editions.push({key: edition.key, value: edition.value})
+    })
       const editionLua =
-        editionMap[edition as keyof typeof editionMap] || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
         editCardsCode += `
                         G.hand.highlighted[i]:set_edition({ ${editionLua} = true }, true)`
     }

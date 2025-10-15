@@ -226,7 +226,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Enhancement" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -239,7 +242,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -339,7 +345,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "Keep Original Enhancement" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -351,7 +360,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "Keep Original Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -929,7 +941,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "No Enhancement" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -941,7 +956,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -1458,7 +1476,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "No Change" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -1470,7 +1491,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Change" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -1590,7 +1614,13 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
+        options: [
+          { value: "none", label: "No Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+        ],
         default: "none",
       },
       {
@@ -1718,7 +1748,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "No Edition" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS(),
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
           { value: "random", label: "Random Edition" },
         ],
         default: "none",

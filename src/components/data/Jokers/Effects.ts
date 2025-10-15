@@ -601,7 +601,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
         ],
         default: "none",
       },
@@ -612,7 +615,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -623,7 +629,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...EDITIONS(),
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
         ],
         default: "none",
       },
@@ -734,7 +743,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Enhancement" },
           { value: "random", label: "Random" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
         ],
         default: "none",
       },
@@ -746,7 +758,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Seal" },
           { value: "random", label: "Random" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -758,7 +773,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Edition" },
           { value: "random", label: "Random" },
-          ...EDITIONS(),
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
         ],
         default: "none",
       },
@@ -792,7 +810,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
         ],
         default: "none",
       },
@@ -803,7 +824,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -814,7 +838,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...EDITIONS(),
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
         ],
         default: "none",
       },
@@ -979,7 +1006,13 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
+        options: [
+          { value: "none", label: "No Edition" }, 
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+        ],
         default: "none",
       },
       {
@@ -1062,7 +1095,13 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition for Copy",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
+        options: [
+          { value: "none", label: "No Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          ],
         default: "none",
       },
       {
