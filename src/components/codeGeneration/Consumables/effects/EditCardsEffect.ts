@@ -136,7 +136,7 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
         editions.push({key: edition.key, value: edition.value})
     })
       const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
         editCardsCode += `
                         G.hand.highlighted[i]:set_edition({ ${editionLua} = true }, true)`
     }

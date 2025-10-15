@@ -82,7 +82,7 @@ __PRE_RETURN_CODE__
         editions.push({key: edition.key, value: edition.value})
     })
       const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";    copyJokerCode += `
+        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";    copyJokerCode += `
               copied_joker:set_edition({ ${editionLua} = true }, true)`;
   }
 

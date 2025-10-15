@@ -69,7 +69,7 @@ export const generateEditionRandomJokerReturn = (
       editions.push({key: edition.key, value: edition.value})
     })
 
-    const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
+    const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
     editionJokerCode += `
                         joker:set_edition({ ${editionLua} = true }, true)`;
   }
