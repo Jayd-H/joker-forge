@@ -150,7 +150,7 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
         editions.push({key: edition.key, value: edition.value})
     })
       const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       addCardsCode += `
                         if cards[i] then
                             cards[i]:set_edition({ ${editionLua} = true }, true)

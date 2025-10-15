@@ -146,7 +146,7 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             editions.push({key: edition.key, value: edition.value})
         })
       const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({

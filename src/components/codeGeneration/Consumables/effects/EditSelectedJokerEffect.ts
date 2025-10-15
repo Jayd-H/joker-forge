@@ -77,7 +77,7 @@ if (edition !== "none") {
         editions.push({key: edition.value, value: edition.label})
         })
 
-        const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
+        const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
         editCardsCode += `
             for i = 1, #G.jokers.highlighted do
                 G.E_MANAGER:add_event(Event({

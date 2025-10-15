@@ -196,8 +196,7 @@ ${indentLevel}return {${effectResult.statement}}`;
   });
 
   calculateFunction += `
-  end,
-  `;
+  end,`;
 
   return calculateFunction;
 };
@@ -380,7 +379,7 @@ const generateRedeemFunction = (
   modPrefix: string,
   voucherKey?: string,
 ): string => {
-const filtered_rules = rules.filter((rule) => rule.trigger !== "voucher_used")
+const filtered_rules = rules.filter((rule) => rule.trigger === "voucher_used")
 
 if (filtered_rules.length === 0) return "";
 
