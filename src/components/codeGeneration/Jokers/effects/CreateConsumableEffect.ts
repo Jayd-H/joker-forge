@@ -22,11 +22,9 @@ export const generateCreateConsumableReturn = (
 
   if (!isNegative && !ignoreSlots) {
     createCode += `
-    func = function()
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   } else {
     createCode += `
-    func = function()
     for i = 1, ${countCode} do`
   }
   
@@ -106,7 +104,6 @@ export const generateCreateConsumableReturn = (
   if (isScoring) {
     return {
       statement: `__PRE_RETURN_CODE__${createCode}
-                end
                 __PRE_RETURN_CODE_END__`,
       message: customMessage
         ? `"${customMessage}"`
@@ -115,7 +112,8 @@ export const generateCreateConsumableReturn = (
     };
   } else {
     return {
-      statement: `${createCode}
+      statement: `func = function()
+      ${createCode}
                     if created_consumable then
                         card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
                           customMessage
