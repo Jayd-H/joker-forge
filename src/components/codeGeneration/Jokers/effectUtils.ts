@@ -16,6 +16,7 @@ import { generateEditCardReturn } from "./effects/EditCardEffect";
 import { generateModifyInternalVariableReturn } from "./effects/ModifyInternalVariableEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateCopyConsumableReturn } from "./effects/CopyConsumableEffect";
+import { generateEditApperanceReturn } from "./effects/EditCardApperance";
 import { generateCreateJokerReturn } from "./effects/CreateJokerEffect";
 import { generateCopyJokerReturn } from "./effects/CopyJokerEffect";
 import { generateDestroyJokerReturn } from "./effects/DestroyJokerEffect";
@@ -813,6 +814,8 @@ const generateSingleEffect = (
       return generateEditDiscardSizeReturn(effect, sameTypeCount);
     case "unlock_joker":
       return generateUnlockJokerReturn(effect);
+      case "edit_card_apperance":
+            return generateEditApperanceReturn(effect);
     case "redeem_voucher":
       return generateRedeemVoucherReturn(effect);
     case "flip_joker":

@@ -9,6 +9,7 @@ import {
   CursorArrowRaysIcon,
   HandRaisedIcon,
   ShoppingBagIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
 import {
@@ -33,6 +34,10 @@ export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Selected Cards",
     icon: CursorArrowRaysIcon,
+  },
+  {
+    label: "Scoring",
+    icon: ChartBarIcon,
   },
   {
     label: "Card Modification",
@@ -69,6 +74,143 @@ export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
 ];
 
 export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
+  // ===== SCORERING EFFECTS =====
+  {
+    id: "add_chips",
+    label: "Add Chips",
+    description: "Add a flat amount of chips to the hand score",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 10,
+        min: 0,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_x_chips",
+    label: "Apply xChips",
+    description: "Multiply the chips by this value",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Multiplier",
+        default: 1.5,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_exp_chips",
+    label: "Apply ^Chips (Exponential)",
+    description: "Apply exponential chips (echips) - REQUIRES TALISMAN MOD",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Exponential Chips Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_hyper_chips",
+    label: "Apply HyperChips",
+    description: "Apply (n)^ chips - REQUIRES TALISMAN MOD",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "arrows",
+        type: "number",
+        label: "Number of Arrows",
+        default: 1,
+        min: 1
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Hyper Chips Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "add_mult",
+    label: "Add Mult",
+    description: "Add a flat amount of mult to the hand score",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 5,
+        min: 0,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_x_mult",
+    label: "Apply xMult",
+    description: "Multiply the score by this value",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Multiplier",
+        default: 1.5,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_exp_mult",
+    label: "Apply ^Mult (Exponential)",
+    description: "Apply exponential mult (emult) - REQUIRES TALISMAN MOD",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Exponential Mult Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
+  {
+    id: "apply_hyper_mult",
+    label: "Apply HyperMult",
+    description: "Apply (n)^ mult - REQUIRES TALISMAN MOD",
+    applicableTriggers: ["held_hand"],
+    params: [
+      {
+        id: "arrows",
+        type: "number",
+        label: "Number of Arrows",
+        default: 1,
+        min: 1
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Hyper Mult Value",
+        default: 1.1,
+      },
+    ],
+    category: "Scoring",
+  },
   // ===== SELECTED CARDS EFFECTS =====
   {
     id: "edit_cards",
@@ -84,7 +226,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Enhancement" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -97,7 +242,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -197,7 +345,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "Keep Original Enhancement" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -209,7 +360,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "Keep Original Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -286,7 +440,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hand_size",
     label: "Edit Hand Size",
     description: "Add, subtract, or set the player's hand size",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -314,7 +468,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "draw_cards",
     label: "Draw Cards to Hand",
     description: "Draw cards from your deck to your hand",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "value",
@@ -329,7 +483,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_play_size",
     label: "Edit Play Size",
     description: "Add, subtract, or set the player's play size",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -357,7 +511,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discard_size",
     label: "Edit Discard Size",
     description: "Add, subtract, or set the player's discard size",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -385,7 +539,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_voucher_slots",
     label: "Edit Voucher Slots",
     description: "Modify the number of vouchers available in shop",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -412,7 +566,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_booster_slots",
     label: "Edit Booster Slots",
     description: "Modify the number of booster packs available in shop",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -439,7 +593,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "set_ante",
       label: "Set Ante Level",
       description: "Modify the current ante level",
-      applicableTriggers: ["consumable_used"],
+      applicableTriggers: ["consumable_used", "held_hand"],
       params: [
         {
           id: "operation",
@@ -466,7 +620,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hands",
     label: "Edit Hands",
     description: "Add, subtract, or set the player's hands for this round",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -504,7 +658,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discards",
     label: "Edit Discards",
     description: "Add, subtract, or set the player's discards for this round",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -544,7 +698,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "convert_all_cards_to_suit",
     label: "Convert All Cards to Suit",
     description: "Convert all cards in hand to a specific suit",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "suit",
@@ -574,7 +728,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "convert_all_cards_to_rank",
     label: "Convert All Cards to Rank",
     description: "Convert all cards in hand to a specific rank",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "rank",
@@ -604,7 +758,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "destroy_random_cards",
     label: "Destroy Random Cards",
     description: "Destroy a number of random cards from hand",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "count",
@@ -621,7 +775,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "flip_joker",
     label: "Flip Joker",
     description: "Flip a joker",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "selection_method",
@@ -641,7 +795,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "disable_boss_blind",
       label: "Disable Boss Blind",
       description: "Disable the current boss blind, removing its effect",
-      applicableTriggers: ["consumable_used"],
+      applicableTriggers: ["consumable_used", "held_hand"],
       params: [],
       category: "Game Rules",
     },
@@ -649,7 +803,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "shuffle_jokers",
         label: "Shuffle Jokers",
         description: "Shuffle all jokers",
-        applicableTriggers: ["consumable_used"],
+        applicableTriggers: ["consumable_used", "held_hand"],
         params: [],
         category: "Jokers",
       },
@@ -657,7 +811,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "modify_blind_requirement",
     label: "Modify Blind Requirement",
     description: "Changes the score requirement of a blind",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -685,7 +839,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "force_game_over",
       label: "Force Game Over",
       description: "Forces the run to end (ignores Mr. Bones)",
-      applicableTriggers: ["consumable_used"],
+      applicableTriggers: ["consumable_used", "held_hand"],
       params: [],
       category: "Special",
     },
@@ -693,7 +847,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "Win_blind",
       label: "Win Current Blind",
       description: "Forces to Win the current Blind",
-      applicableTriggers: ["consumable_used"],
+      applicableTriggers: ["consumable_used", "held_hand"],
       params: [],
       category: "Special",
     },
@@ -701,7 +855,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_joker_slots",
     label: "Edit Joker Slots",
     description: "Add or remove joker slots available in the game",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -728,7 +882,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "add_cards_to_hand",
     label: "Add Cards to Hand",
     description: "Create and add new cards to hand with specified properties",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "count",
@@ -787,7 +941,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "No Enhancement" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -799,7 +956,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -824,7 +984,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "level_up_hand",
     label: "Level Up Poker Hand",
     description: "Level up a specific poker hand, random hand, or all hands",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "hand_type",
@@ -866,7 +1026,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_dollars",
     label: "Edit Dollars",
     description: "Add, subtract, or set the player's money",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -893,7 +1053,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "double_dollars",
     label: "Double Dollars",
     description: "Double your current money up to a specified limit",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "limit",
@@ -929,7 +1089,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Create Consumable",
     description:
       "Create consumable cards and add them to your consumables area",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "set",
@@ -1059,7 +1219,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "destroy_consumable",
     label: "Destroy Consumable",
     description: "Destroy a consumable card from your collection",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "set",
@@ -1168,7 +1328,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Create Last Used Consumable",
     description:
       "Create a copy of the last Tarot or Planet card that was used (like The Fool)",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [],
     category: "Consumables",
   },
@@ -1176,7 +1336,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "create_tag",
     label: "Create Tag",
     description: "Create a specific or random tag",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "tag_type",
@@ -1232,7 +1392,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_booster_packs",
     label: "Edit Boosters Packs",
     description: "Modify the values the of booster packs available in shop",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "selected_type",
@@ -1269,7 +1429,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_shop_slots",
     label: "Edit Shop Cards Slots",
     description: "Modify the Card slots of the shop ",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "operation",
@@ -1296,7 +1456,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "redeem_voucher",
     label: "Redeem Voucher",
     description: "Redeem a specific or random voucher",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "voucher_type",
@@ -1327,7 +1487,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Edit Cards in Hand",
     description:
       "Apply multiple modifications to random cards in hand (enhancement, seal, edition, suit, rank)",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "amount",
@@ -1343,7 +1503,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "No Change" },
-          ...ENHANCEMENTS(),
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -1355,7 +1518,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Change" },
           { value: "random", label: "Random Seal" },
-          ...SEALS(),
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
         ],
         default: "none",
       },
@@ -1425,7 +1591,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Create Joker",
     description:
       "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "joker_type",
@@ -1475,7 +1641,13 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
+        options: [
+          { value: "none", label: "No Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+        ],
         default: "none",
       },
       {
@@ -1502,7 +1674,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "copy_joker",
     label: "Copy Joker",
     description: "Create copies of jokers in your joker area",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
        {
         id: "selection_method",
@@ -1548,7 +1720,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Destroy Joker",
     description:
       "Destroy jokers from your joker area (eternal jokers are safe)",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
         {
         id: "selection_method",
@@ -1603,7 +1775,10 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
         options: [
           { value: "none", label: "No Edition" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS(),
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
           { value: "random", label: "Random Edition" },
         ],
         default: "none",
@@ -1615,7 +1790,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edition_random_joker",
     label: "Apply Edition to Random Joker",
     description: "Apply an edition to random jokers in your joker area",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "amount",
@@ -1652,12 +1827,37 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Jokers",
   },
+    {
+        id: "edit_card_apperance",
+        label: "Edit Card Apperance",
+        description: "Modify if a Card can appear or not the current Run",
+        applicableTriggers: ["consumable_used", "held_hand"],
+        params: [
+          {
+              id: "key",
+              type: "text",
+              label: "Card Key (itemkey_key) or (itemkey_modprefix_key)",
+              default: "",
+            },
+           {
+              id: "card_apperance",
+              type: "select",
+              label: "Card Apperance",
+              options: [
+              { value: "appear", label: "Can Appear" },
+              { value: "disapper", label: "Can't Appear" },
+              ],
+              default: "appear",
+            },
+          ],
+        category: "Special",
+      },
   {
     id: "emit_flag",
     label: "Emit Flag",
     description:
       "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "flag_name",
@@ -1683,7 +1883,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "play_sound",
     label: "Play a sound",
     description: "Play a specific sound defined in the Sound Tab",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
         id: "sound_key",
@@ -1698,7 +1898,7 @@ export const CONSUMABLE_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "crash_game",
     label: "Crash the Game",
     description: "Crash the Game with a Custom message",
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["consumable_used", "held_hand"],
     params: [],
     category: "Special",
   },

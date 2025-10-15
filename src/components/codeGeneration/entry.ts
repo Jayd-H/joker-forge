@@ -538,7 +538,7 @@ const generateMainLuaCode = (
     output += `SMODS.Atlas({
     key = "CustomSeals", 
     path = "CustomSeals.png", 
-    px = 62,
+    px = 71,
     py = 95, 
     atlas_table = "ASSET_ATLAS"
 }):register()

@@ -23,11 +23,6 @@ interface ShowcaseModalProps {
   customRarities?: RarityData[];
 }
 
-const isStrInt = function (str: string) {
-  const num = Number(str);
-  return !isNaN(num) && Number.isInteger(num);
-};
-
 const VariableDisplay = (variable: UserVariable) => {
   if (variable.type === "suit") return variable.initialSuit || "Spades";
   if (variable.type === "rank") return variable.initialRank || "Ace";
@@ -44,28 +39,40 @@ const getVars = function (joker: JokerData): string[] {
 
 const parse_string = function (joker: JokerData) {
   const line = joker.description;
-  const listofVars = getVars(joker);
+  const listOfVars = getVars(joker);
+
   let parsed_line: string = "";
   let inVar = false;
+  const varIndexesandValues: {value: string, start: number, length: number}[] = []
+  let currentLength = 0
+  let numberOfVariables = 0
 
   for (let i = 0; i < line.length; i++) {
-    const char1: string = line.substring(i, i + 1) || "";
-    const char2: string = line.substring(i + 1, i + 2) || "";
-    const char3: string = line.substring(i + 2, i + 3) || "";
+    const char: string = line.substring(i, i + 1) || "";
+    if (char == '#') {
+      inVar = !inVar
+    }
 
-    if (inVar && isStrInt(char1)) {
-      // Skip numeric characters when inside variable
-    } else if (inVar && char1 == "#") {
-      inVar = false;
-    } else {
-      if (char1 == "#" && isStrInt(char2) && char3 == "#") {
-        parsed_line += listofVars[Number(char2) - 1];
-        inVar = true;
-      } else {
-        parsed_line += char1;
+    if (inVar && char !== '#') {
+
+      varIndexesandValues[numberOfVariables] = {
+        value: listOfVars[Number(line.substring(i - currentLength, i + 1)) - 1], 
+        start: i, 
+        length: currentLength
       }
+      
+      currentLength += 1
+
+    } else if (!inVar && char === '#') {
+      parsed_line += varIndexesandValues[numberOfVariables].value
+      numberOfVariables += 1
+      varIndexesandValues.push({value: '', start: 0, length: 0})
+      currentLength = 0
+    } else if (char !== '#') {
+      parsed_line += char
     }
   }
+
   return parsed_line;
 };
 

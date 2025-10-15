@@ -1,10 +1,11 @@
+import { EDITIONS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateCopyRandomJokerReturn = (effect: Effect): EffectReturn => {
-  const selection_method = effect.params?.selection_method || "random";
-  const amount = effect.params?.amount || 1;
-  const edition = effect.params?.edition || "none";
+  const selection_method = effect.params?.selection_method as string || "random";
+  const amount = effect.params?.amount as string || '1';
+  const edition = effect.params?.edition as string || "none";
   const customMessage = effect.customMessage;
 
   let copyJokerCode = `
@@ -76,14 +77,12 @@ __PRE_RETURN_CODE__
                   { 'e_polychrome', 'e_holo', 'e_foil' })
               copied_joker:set_edition(edition, true)`;
   } else if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-    const editionLua = editionMap[edition as keyof typeof editionMap] || "foil";
-    copyJokerCode += `
+    const editions: {key: string, value: string}[] = []
+    EDITIONS().forEach(edition => {
+        editions.push({key: edition.key, value: edition.value})
+    })
+      const editionLua =
+        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";    copyJokerCode += `
               copied_joker:set_edition({ ${editionLua} = true }, true)`;
   }
 

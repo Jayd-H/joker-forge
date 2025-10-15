@@ -11,7 +11,10 @@ import {
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "../Jokers/Triggers";
-
+import {
+  TAGS,
+} from "../BalatroUtils";
+import { VOUCHER_GENERIC_TRIGGERS } from "./Conditions";
 
 export const VOUCHER_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
@@ -59,7 +62,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hand_size",
     label: "Edit Hand Size",
     description: "Add, subtract, or set the player's hand size",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -87,7 +90,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_play_size",
     label: "Edit Play Size",
     description: "Add, subtract, or set the player's play size",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -115,7 +118,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discard_size",
     label: "Edit Discard Size",
     description: "Add, subtract, or set the player's discard size",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -143,7 +146,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_voucher_slots",
     label: "Edit Voucher Slots",
     description: "Modify the number of vouchers available in shop",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -170,7 +173,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_booster_slots",
     label: "Edit Booster Slots",
     description: "Modify the number of booster packs available in shop",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -197,7 +200,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_booster_packs",
     label: "Edit Boosters Packs",
     description: "Modify the values the of booster packs available in shop",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "selected_type",
@@ -231,10 +234,39 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Shop Effects",
   },
   {
+      id: "create_tag",
+      label: "Create Tag",
+      description: "Create a specific or random tag",
+      applicableTriggers: ["blind_selected", "round_end", "booster_opened", "shop_entered"],
+      params: [
+        {
+          id: "tag_type",
+          type: "select",
+          label: "Tag Type",
+          options: [
+            { value: "random", label: "Random Tag" },
+            { value: "specific", label: "Specific Tag" },
+          ],
+          default: "random",
+        },
+        {
+          id: "specific_tag",
+          type: "select",
+          label: "Specific Tag",
+          options: [...TAGS],
+          showWhen: {
+            parameter: "tag_type",
+            values: ["specific"],
+          },
+        },
+      ],
+      category: "Consumables",
+    },
+  {
     id: "edit_interest_cap",
     label: "Edit Interest Cap",
     description: "Modify the Cap on Interest Earned in each round",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -259,11 +291,40 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     ],
     category: "Economy",
   },
-    {
+  {
+    id: "edit_Shop_Prices",
+    label: "Edit Shop Prices",
+    description: "Modify the Prices of Items in Shop",
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Economy",
+  },
+  {
       id: "set_ante",
       label: "Set Ante Level",
       description: "Modify the current ante level",
-      applicableTriggers: ["voucher_used"],
+      applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
       params: [
         {
           id: "operation",
@@ -290,7 +351,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "free_rerolls",
     label: "Free Rerolls",
     description: "Provide free shop rerolls",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "value",
@@ -305,12 +366,12 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_raity_weight",
     label: "Edit Rarity Weight",
     description: "Modify the Rate Probability for Joker Raritys in the Shop",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
           id: "key_rarity",
           type: "text",
-          label: "Joker Rarity Key (modprefix_key)",
+          label: "Joker Rarity Key (key)",
           default: "",
         },
        {
@@ -340,12 +401,12 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_item_weight",
     label: "Edit Card Weight",
     description: "Modify the Rate Probability for Shop Cards",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
           id: "key",
           type: "text",
-          label: "Card Key (modprefix_key)",
+          label: "Card Key (key)",
           default: "",
         },
        {
@@ -375,7 +436,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_rerolls",
     label: "Edit Reroll Price",
     description: "Modify the price of the shop Reroll",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -401,7 +462,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "edit_consumable_slots",
       label: "Edit Consumable Slots",
       description: "Modify the number of consumable slots available",
-      applicableTriggers: ["voucher_used"],
+      applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
       params: [
         {
           id: "operation",
@@ -428,7 +489,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_shop_slots",
     label: "Edit Shop Cards Slots",
     description: "Modify the Card slots of the shop ",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -455,7 +516,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hands",
     label: "Edit Hands",
     description: "Add, subtract, or set the player's hands for this round",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -483,7 +544,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discards",
     label: "Edit Discards",
     description: "Add, subtract, or set the player's discards for this round",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -567,7 +628,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_joker_slots",
     label: "Edit Joker Slots",
     description: "Add or remove joker slots available in the game",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -621,7 +682,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_dollars",
     label: "Edit Dollars",
     description: "Add, subtract, or set the player's money",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "operation",
@@ -649,7 +710,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Emit Flag",
     description:
       "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
-    applicableTriggers: ["voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
     params: [
       {
         id: "flag_name",
@@ -672,10 +733,35 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Special",
   },
   {
+    id: "edit_card_apperance",
+    label: "Edit Card Apperance",
+    description: "Modify if a Card can appear or not the current Run",
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
+    params: [
+      {
+          id: "key",
+          type: "text",
+          label: "Card Key (itemkey_key) or (itemkey_modprefix_key)",
+          default: "",
+        },
+       {
+          id: "card_apperance",
+          type: "select",
+          label: "Card Apperance",
+          options: [
+          { value: "appear", label: "Can Appear" },
+          { value: "disapper", label: "Can't Appear" },
+          ],
+          default: "appear",
+        },
+      ],
+    category: "Special",
+  },
+  {
       id: "play_sound",
       label: "Play a sound",
       description: "Play a specific sound defined in the Sound Tab",
-      applicableTriggers: ["voucher_used"],
+      applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
       params: [
         {
           id: "sound_key",

@@ -8,18 +8,18 @@ export const generateEditPlaySizeReturn = (effect: Effect): EffectReturn => {
 
   const valueCode = generateGameVariableCode(value);
 
-  let playSizeCode = "";
+  let statement = "";
 
      if (operation === "add") {
-        playSizeCode += `
+        statement += `
         SMODS.change_play_limit(${valueCode})
         `;
   } else if (operation === "subtract") {
-        playSizeCode += `
+        statement += `
         SMODS.change_play_limit(-${valueCode})
         `;
   } else if (operation === "set") {
-        playSizeCode += `
+        statement += `
             local current_hand_size = G.hand.config.card_limit
                     local target_hand_size = ${valueCode}
                     local difference = target_hand_size - current_hand_size
@@ -30,10 +30,10 @@ export const generateEditPlaySizeReturn = (effect: Effect): EffectReturn => {
   const configVariables =
     typeof value === "string" && value.startsWith("GAMEVAR:")
       ? []
-      : [`hand_size_value = ${value}`];
+      : [`play_size_value = ${value}`];
 
   return {
-    statement: playSizeCode,
+    statement,
     colour: "G.C.BLUE",
     configVariables,
   };

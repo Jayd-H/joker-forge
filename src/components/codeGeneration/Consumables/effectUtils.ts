@@ -4,6 +4,14 @@ import { generateDestroySelectedCardsReturn } from "./effects/DestroySelectedCar
 import { generateDestroyRandomCardsReturn } from "./effects/DestroyRandomCardsEffect";
 import { generateDoubleDollarsReturn } from "./effects/DoubleDollarsEffect";
 import { generateAddDollarsFromJokersReturn } from "./effects/AddDollarsFromJokersEffect";
+import { generateAddChipsReturn } from "./effects/AddChipsEffect";
+import { generateAddMultReturn } from "./effects/AddMultEffect";
+import { generateApplyXMultReturn } from "./effects/ApplyXMultEffect";
+import { generateApplyXChipsReturn } from "./effects/ApplyXChipsEffect";
+import { generateApplyExpMultReturn } from "./effects/ApplyExpMultEffect";
+import { generateApplyExpChipsReturn } from "./effects/ApplyExpChipsEffect";
+import { generateApplyHyperChipsReturn } from "./effects/ApplyHyperChipsEffect";
+import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
 import { generateCreateConsumableReturn } from "./effects/CreateConsumableEffect";
 import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateEditHandsReturn } from "./effects/EditHandsEffect";
@@ -34,6 +42,7 @@ import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generatePermaBonusReturn } from "./effects/PermaBonusEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
+import { generateEditApperanceReturn } from "./effects/EditCardApperance";
 import { generateEditShopCardsSlotsReturn } from "./effects/EditShopCardsSlotsEffect";
 import { generateDestroyConsumableReturn } from "./effects/DestroyConsumableEffect";
 import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
@@ -341,6 +350,23 @@ const generateSingleEffect = (
     case "edit_cards":
       return generateEditCardsReturn(effect);
 
+    case "add_chips":
+      return generateAddChipsReturn(effect);
+    case "add_mult":
+      return generateAddMultReturn(effect);
+    case "apply_x_mult":
+      return generateApplyXMultReturn(effect);
+    case "apply_x_chips":
+      return generateApplyXChipsReturn(effect);
+    case "apply_exp_mult":
+      return generateApplyExpMultReturn(effect);
+    case "apply_exp_chips":
+      return generateApplyExpChipsReturn(effect);
+    case "apply_hyper_mult":
+      return generateApplyHyperMultReturn(effect);
+    case "apply_hyper_chips":
+      return generateApplyHyperChipsReturn(effect);
+
     case "double_dollars":
       return generateDoubleDollarsReturn(effect);
 
@@ -436,6 +462,9 @@ const generateSingleEffect = (
 
     case "convert_left_to_right":
       return generateConvertLeftToRightReturn(effect);
+
+      case "edit_card_apperance":
+            return generateEditApperanceReturn(effect);
 
     case "fool_effect":
       return generateFoolEffectReturn(effect);

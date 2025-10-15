@@ -54,6 +54,7 @@ export const generateCreateJokerReturn = (
     cardParams.push(`rarity = '${finalRarity}'`);
   }
   let slotLimitCode: string;
+  
   if (isNegative || ignoreSlots) {
     slotLimitCode = "local created_joker = true";
   } else {
