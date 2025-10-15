@@ -486,7 +486,7 @@ export const DataRegistry = {
 
     const custom = registryState.editions.map((edition) => ({
       key: `e_${registryState.modPrefix}_${edition.objectKey}`,
-      value: `e_${registryState.modPrefix}_${edition.objectKey}`,
+      value: `${edition.objectKey}`,
       label: edition.name || "Unnamed Edition",
     }));
 
@@ -1339,14 +1339,14 @@ export const POKER_HAND_LABELS = POKER_HANDS.map((hand) => hand.label);
 
 // Editions
 export const VANILLA_EDITIONS = [
-  { key: "e_foil", value: "e_foil", label: "Foil (+50 Chips)" },
-  { key: "e_holo", value: "e_holo", label: "Holographic (+10 Mult)" },
+  { key: "e_foil", value: "foil", label: "Foil (+50 Chips)" },
+  { key: "e_holo", value: "holo", label: "Holographic (+10 Mult)" },
   {
     key: "e_polychrome",
-    value: "e_polychrome",
+    value: "polychrome",
     label: "Polychrome (X1.5 Mult)",
   },
-  { key: "e_negative", value: "e_negative", label: "Negative (+1 Joker slot)" },
+  { key: "e_negative", value: "negative", label: "Negative (+1 Joker slot)" },
 ] as const;
 
 // Sticker
