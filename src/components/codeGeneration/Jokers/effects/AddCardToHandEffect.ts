@@ -1,5 +1,6 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
+import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
 
 export const generateAddCardToHandReturn = (
   effect: Effect,
@@ -23,41 +24,53 @@ export const generateAddCardToHandReturn = (
 
   if (suit === "random" && rank === "random") {
     cardSelectionCode =
-      "local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))";
+      `
+      local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))`;
   } else if (suit !== "random" && rank !== "random") {
     const cardRank = rank === "10" ? "T" : rank;
     const cardKey = `${suit.charAt(0)}_${cardRank}`;
-    cardSelectionCode = `local card_front = G.P_CARDS.${cardKey}`;
+    cardSelectionCode = `
+    local card_front = G.P_CARDS.${cardKey}`;
   } else if (suit === "random" && rank !== "random") {
     const cardRank = rank === "10" ? "T" : rank;
-    cardSelectionCode = `local card_front = pseudorandom_element({G.P_CARDS.S_${cardRank}, G.P_CARDS.H_${cardRank}, G.P_CARDS.D_${cardRank}, G.P_CARDS.C_${cardRank}}, pseudoseed('add_card_hand_suit'))`;
+    cardSelectionCode = `
+    local card_front = pseudorandom_element({G.P_CARDS.S_${cardRank}, G.P_CARDS.H_${cardRank}, G.P_CARDS.D_${cardRank}, G.P_CARDS.C_${cardRank}}, pseudoseed('add_card_hand_suit'))`;
   } else if (suit !== "random" && rank === "random") {
     const suitCode = suit.charAt(0);
-    cardSelectionCode = `local card_front = pseudorandom_element({G.P_CARDS.${suitCode}_2, G.P_CARDS.${suitCode}_3, G.P_CARDS.${suitCode}_4, G.P_CARDS.${suitCode}_5, G.P_CARDS.${suitCode}_6, G.P_CARDS.${suitCode}_7, G.P_CARDS.${suitCode}_8, G.P_CARDS.${suitCode}_9, G.P_CARDS.${suitCode}_T, G.P_CARDS.${suitCode}_J, G.P_CARDS.${suitCode}_Q, G.P_CARDS.${suitCode}_K, G.P_CARDS.${suitCode}_A}, pseudoseed('add_card_hand_rank'))`;
+    cardSelectionCode = `
+    local card_front = pseudorandom_element({G.P_CARDS.${suitCode}_2, G.P_CARDS.${suitCode}_3, G.P_CARDS.${suitCode}_4, G.P_CARDS.${suitCode}_5, G.P_CARDS.${suitCode}_6, G.P_CARDS.${suitCode}_7, G.P_CARDS.${suitCode}_8, G.P_CARDS.${suitCode}_9, G.P_CARDS.${suitCode}_T, G.P_CARDS.${suitCode}_J, G.P_CARDS.${suitCode}_Q, G.P_CARDS.${suitCode}_K, G.P_CARDS.${suitCode}_A}, pseudoseed('add_card_hand_rank'))`;
   }
 
   let centerParam = "";
   if (enhancement === "none") {
-    centerParam = "G.P_CENTERS.c_base";
+    centerParam = `
+    G.P_CENTERS.c_base`;
   } else if (enhancement === "random") {
-    centerParam =
-      "pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))";
+    centerParam =`
+      pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))`;
   } else {
-    centerParam = `G.P_CENTERS.${enhancement}`;
+    centerParam = `
+    G.P_CENTERS.${enhancement}`;
   }
 
   let sealCode = "";
   if (seal === "random") {
-    sealCode = `\n            new_card:set_seal(pseudorandom_element({"Gold", "Red", "Blue", "Purple"}, pseudoseed('add_card_hand_seal')), true)`;
+    const sealPool = SEALS().map(seal => `'${seal.value}'`)
+    sealCode = `
+      new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_hand_seal')), true)`;
   } else if (seal !== "none") {
-    sealCode = `\n            new_card:set_seal("${seal}", true)`;
+    sealCode = `
+      new_card:set_seal("${seal}", true)`;
   }
 
   let editionCode = "";
   if (edition === "random") {
-    editionCode = `\n            new_card:set_edition(pseudorandom_element({"e_foil", "e_holo", "e_polychrome", "e_negative"}, pseudoseed('add_card_hand_edition')), true)`;
+    const editionPool = EDITIONS().map(edition => `'${edition.value}'`)
+    editionCode = `
+      new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_hand_edition')), true)`;
   } else if (edition !== "none") {
-    editionCode = `\n            new_card:set_edition("${edition}", true)`;
+    editionCode = `
+      new_card:set_edition("${edition}", true)`;
   }
 
   if (isScoring || isHeldInHand) {
