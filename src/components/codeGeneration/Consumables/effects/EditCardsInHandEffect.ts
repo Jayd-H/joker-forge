@@ -1,13 +1,14 @@
+import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
-  const enhancement = effect.params?.enhancement || "none";
-  const seal = effect.params?.seal || "none";
-  const edition = effect.params?.edition || "none";
-  const suit = effect.params?.suit || "none";
-  const rank = effect.params?.rank || "none";
+  const enhancement = effect.params?.enhancement as string || "none";
+  const seal = effect.params?.seal as string || "none";
+  const edition = effect.params?.edition as string || "none";
+  const suit = effect.params?.suit as string || "none";
+  const rank = effect.params?.rank as string || "none";
   const amount = generateGameVariableCode(effect.params?.amount ?? 1);
   const customMessage = effect.customMessage;
   const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
@@ -72,7 +73,6 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             end
             delay(0.2)`;
 
-    // Apply enhancement if specified
     if (enhancement !== "none") {
         if (enhancement === "random") {
             editCardsCode += `
@@ -100,7 +100,6 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             end`
     }
 
-  // Apply seal if specified
     if (seal !== "none") {
         editCardsCode += `
             for i = 1, #affected_cards do
@@ -109,8 +108,9 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
                     delay = 0.1,
                     func = function()`
         if (seal === "random") {
+            const sealPool = SEALS().map(seal => `'${seal.value}'`)
             editCardsCode += `
-                        local seal_pool = {'Gold', 'Red', 'Blue', 'Purple'}
+                        local seal_pool = {${sealPool}}
                         local random_seal = pseudorandom_element(seal_pool, 'random_seal')
                         affected_cards[i]:set_seal(random_seal, nil, true)`
         } else {
@@ -125,15 +125,7 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             end`
   }
 
-  // Apply edition if specified
   if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-
     if (edition === "random") {
       editCardsCode += `
             for i = 1, #affected_cards do
@@ -149,8 +141,12 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
                 }))
             end`;
     } else {
+        const editions: {key: string, value: string}[] = []
+        EDITIONS().forEach(edition => {
+            editions.push({key: edition.key, value: edition.value})
+        })
       const editionLua =
-        editionMap[edition as keyof typeof editionMap] || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)].value || "foil";
       editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({
@@ -165,7 +161,6 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
     }
   }
 
-  // Apply suit change if specified
     if (suit !== "none") {
         editCardsCode += `
             for i = 1, #affected_cards do
@@ -200,7 +195,6 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             end`;
     }
 
-    // Apply rank change if specified
     if (rank !== "none") {
         editCardsCode += `
             for i = 1, #affected_cards do
@@ -234,7 +228,6 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
             end`;
     }
 
-  // Finish the animation sequence
   editCardsCode += `
             for i = 1, #affected_cards do
                 local percent = 0.85 + (i - 0.999) / (#affected_cards - 0.998) * 0.3
