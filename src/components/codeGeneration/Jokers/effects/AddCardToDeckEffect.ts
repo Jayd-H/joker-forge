@@ -2,6 +2,7 @@ import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import { parseRankVariable, parseSuitVariable } from "../variableUtils";
 import { JokerData } from "../../../data/BalatroUtils";
+import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
 
 export const generateAddCardToDeckReturn = (
   effect: Effect,
@@ -90,26 +91,34 @@ export const generateAddCardToDeckReturn = (
 
   let centerParam = "";
   if (enhancement === "none") {
-    centerParam = "G.P_CENTERS.c_base";
+    centerParam = `
+      G.P_CENTERS.c_base`;
   } else if (enhancement === "random") {
-    centerParam =
-      "pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_enhancement'))";
+    centerParam =`
+      pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_enhancement'))`
   } else {
-    centerParam = `G.P_CENTERS.${enhancement}`;
+    centerParam = `
+      G.P_CENTERS.${enhancement}`;
   }
 
   let sealCode = "";
   if (seal === "random") {
-    sealCode = `\n            new_card:set_seal(pseudorandom_element({"Gold", "Red", "Blue", "Purple"}, pseudoseed('add_card_seal')), true)`;
+    const sealPool = SEALS().map(seal => `'${seal.value}'`)
+    sealCode = `
+      new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_seal')), true)`;
   } else if (seal !== "none") {
-    sealCode = `\n            new_card:set_seal("${seal}", true)`;
+    sealCode = `
+      new_card:set_seal("${seal}", true)`;
   }
 
   let editionCode = "";
   if (edition === "random") {
-    editionCode = `\n            new_card:set_edition(pseudorandom_element({"e_foil", "e_holo", "e_polychrome", "e_negative"}, pseudoseed('add_card_edition')), true)`;
+    const editionPool = EDITIONS().map(edition => `'${edition.value}'`)
+    editionCode = `
+      new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_edition')), true)`;
   } else if (edition !== "none") {
-    editionCode = `\n            new_card:set_edition("${edition}", true)`;
+    editionCode = `
+      new_card:set_edition("${edition}", true)`;
   }
 
   if (isScoring || isHeldInHand) {

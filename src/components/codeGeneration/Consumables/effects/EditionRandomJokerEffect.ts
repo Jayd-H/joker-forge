@@ -1,13 +1,14 @@
+import { EDITIONS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateEditionRandomJokerReturn = (
   effect: Effect
 ): EffectReturn => {
-  const amount = effect.params?.amount;
-  const edition = effect.params?.edition || "e_foil";
-  const targetType = effect.params?.target_type || "editionless";
-  const customMessage = effect.customMessage;
+  const amount = effect.params?.amount
+  const edition = effect.params?.edition as string || "e_foil";
+  const targetType = effect.params?.target_type as string || "editionless";
+  const customMessage = effect.customMessage as string
 
   let editionJokerCode = `
             __PRE_RETURN_CODE__
@@ -63,13 +64,12 @@ export const generateEditionRandomJokerReturn = (
     editionJokerCode += `
                         joker:set_edition(nil, true)`;
   } else {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-    const editionLua = editionMap[edition as keyof typeof editionMap] || "foil";
+    const editions: {key: string, value: string}[] = []
+    EDITIONS().forEach(edition => {
+      editions.push({key: edition.key, value: edition.value})
+    })
+
+    const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
     editionJokerCode += `
                         joker:set_edition({ ${editionLua} = true }, true)`;
   }

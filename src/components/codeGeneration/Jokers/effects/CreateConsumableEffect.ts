@@ -7,11 +7,11 @@ export const generateCreateConsumableReturn = (
 ): EffectReturn => {
   const set = (effect.params?.set as string) || "random";
   const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) == 'y';
-  const customMessage = effect.customMessage;
-  const isSoulable = effect.params?.soulable;
+  const isNegative = (effect.params?.is_negative as string) === 'y';
+  const customMessage = effect.customMessage as string;
+  const isSoulable = (effect.params?.soulable as string) === 'y';
   const countCode = String(effect.params?.count) || '1'
-  const ignoreSlots = effect.params?.ignore_slots || false;
+  const ignoreSlots = (effect.params?.ignore_slots as string) === 'y';
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -22,11 +22,9 @@ export const generateCreateConsumableReturn = (
 
   if (!isNegative && !ignoreSlots) {
     createCode += `
-    func = function()
     for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
   } else {
     createCode += `
-    func = function()
     for i = 1, ${countCode} do`
   }
   
@@ -106,7 +104,6 @@ export const generateCreateConsumableReturn = (
   if (isScoring) {
     return {
       statement: `__PRE_RETURN_CODE__${createCode}
-                end
                 __PRE_RETURN_CODE_END__`,
       message: customMessage
         ? `"${customMessage}"`
@@ -115,7 +112,8 @@ export const generateCreateConsumableReturn = (
     };
   } else {
     return {
-      statement: `${createCode}
+      statement: `func = function()
+      ${createCode}
                     if created_consumable then
                         card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
                           customMessage

@@ -61,6 +61,7 @@ import {
 } from "../data/BalatroUtils";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
+import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 import { UserConfigContext } from "../Contexts";
 
@@ -113,7 +114,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConditionTypeById
       : itemType === "consumable"
       ? getConsumableConditionTypeById
-      : getCardConditionTypeById
+      : itemType === "card"
+      ? getCardConditionTypeById
+      : getVoucherConditionTypeById
   const getEffectType =
     itemType === "joker"
       ? getEffectTypeById

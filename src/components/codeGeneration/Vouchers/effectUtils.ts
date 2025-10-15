@@ -11,6 +11,8 @@ import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect
 import { generateEditInterestCapReturn } from "./effects/EditInterntCapEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
 import { generateEditItemWeightReturn } from "./effects/EditItemWeightEffect";
+import { generateCreateTagReturn } from "./effects/CreateTagEffect";
+import { generateEditApperanceReturn } from "./effects/EditCardApperance";
 import { generateEditRarityWeightReturn } from "./effects/EditRarityWeightEffect";
 import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateEditRellorPriceReturn } from "./effects/EditRellorPriceEffect";
@@ -361,6 +363,9 @@ case "edit_shop_slots":
     case "edit_voucher_slots":
       return generateEditVoucherSlotsReturn(effect);
 
+      case "create_tag":
+            return generateCreateTagReturn(effect);
+
       case "edit_booster_packs":
       return generateEditBoostersReturn(effect);
 
@@ -368,7 +373,10 @@ case "edit_shop_slots":
       return generateEditJokerSlotsReturn(effect);
     
  case "edit_item_weight":
-      return generateEditItemWeightReturn(effect);     
+      return generateEditItemWeightReturn(effect);
+      
+      case "edit_card_apperance":
+      return generateEditApperanceReturn(effect);
 
   case "edit_raity_weight":
       return generateEditRarityWeightReturn(effect); 

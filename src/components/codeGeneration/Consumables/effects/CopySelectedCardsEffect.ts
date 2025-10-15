@@ -1,13 +1,14 @@
+import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateCopySelectedCardsReturn = (
   effect: Effect
 ): EffectReturn => {
-  const copies = effect.params?.copies || 1;
-  const enhancement = effect.params?.enhancement || "none";
-  const seal = effect.params?.seal || "none";
-  const edition = effect.params?.edition || "none";
+  const copies = effect.params?.copies as string || '1';
+  const enhancement = effect.params?.enhancement as string || "none";
+  const seal = effect.params?.seal as string || "none";
+  const edition = effect.params?.edition as string || "none";
   const customMessage = effect.customMessage;
 
   let copyCardsCode = `
@@ -52,9 +53,9 @@ export const generateCopySelectedCardsReturn = (
   // Apply seal if specified
   if (seal !== "none") {
     if (seal === "random") {
+      const sealPool = SEALS().map(seal => `'${seal.value}'`)
       copyCardsCode += `
-                            
-                            local seal_pool = {'Gold', 'Red', 'Blue', 'Purple'}
+                            local seal_pool = {${sealPool}}
                             local random_seal = pseudorandom_element(seal_pool, 'copy_cards_seal')
                             copied_card:set_seal(random_seal, nil, true)`;
     } else {
@@ -66,12 +67,6 @@ export const generateCopySelectedCardsReturn = (
 
   // Apply edition if specified
   if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
 
     if (edition === "random") {
       copyCardsCode += `
@@ -84,8 +79,12 @@ export const generateCopySelectedCardsReturn = (
                             
                             copied_card:set_edition(nil, true)`;
     } else {
+      const editions: {key: string, value: string}[] = []
+      EDITIONS().forEach(edition => {
+          editions.push({key: edition.key, value: edition.value})
+      })
       const editionLua =
-        editionMap[edition as keyof typeof editionMap] || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       copyCardsCode += `
                             
                             copied_card:set_edition({ ${editionLua} = true }, true)`;

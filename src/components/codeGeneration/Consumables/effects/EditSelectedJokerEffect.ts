@@ -1,9 +1,10 @@
+import { EDITIONS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
 export const generateEditSelectedJokerReturn = (effect: Effect): EffectReturn => {
-  const sticker = effect.params?.sticker || "none";
-  const edition = effect.params?.edition || "none";
+  const sticker = effect.params?.sticker as string || "none";
+  const edition = effect.params?.edition as string || "none";
   const customMessage = effect.customMessage;
 
   const hasModifications = [edition, sticker].some(
@@ -44,13 +45,6 @@ export const generateEditSelectedJokerReturn = (effect: Effect): EffectReturn =>
             delay(0.2)`;
 
 if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-
     if (edition === "remove") {
       editCardsCode += `
             for i = 1, #G.jokers.highlighted do
@@ -78,9 +72,13 @@ if (edition !== "none") {
                 }))
             end`;
     } else {
-      const editionLua =
-        editionMap[edition as keyof typeof editionMap] || "foil";
-      editCardsCode += `
+        const editions: {key: string, value: string}[] = []
+        EDITIONS().forEach(edition => {
+        editions.push({key: edition.value, value: edition.label})
+        })
+
+        const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
+        editCardsCode += `
             for i = 1, #G.jokers.highlighted do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',

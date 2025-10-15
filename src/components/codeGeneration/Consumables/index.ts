@@ -4,6 +4,7 @@ import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
+import { generateTriggerCondition } from "./triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
@@ -279,15 +280,19 @@ const generateSingleConsumableCode = (
     ${locVarsCode},`;
   }
 
+const calculateCode = generateCalculateFunction(activeRules, modPrefix, consumable.objectKey);
+ if (calculateCode) {
+  consumableCode += calculateCode;
+}
+
   const useCode = generateUseFunction(activeRules, modPrefix, consumable.objectKey);
   if (useCode) {
-    consumableCode += `
-    ${useCode},`;
+    consumableCode += useCode;
   }
 
   const canUseCode = generateCanUseFunction(activeRules, modPrefix);
   if (canUseCode) {
-    consumableCode += `
+     consumableCode += `
     ${canUseCode},`;
   }
 
@@ -330,21 +335,134 @@ export const exportSingleConsumable = (consumable: ConsumableData): void => {
   }
 };
 
+const generateCalculateFunction = (
+  rules: Rule[],
+  modPrefix: string,
+  objectKey: string,
+): string => {
+
+const filtered_rules = rules.filter((rule) => rule.trigger !== "consumable_used")
+
+if (filtered_rules.length === 0) return "";
+
+  let calculateFunction = `
+  calculate = function(self, card, context)`;
+
+  filtered_rules.forEach((rule) => {
+
+    const triggerCondition = generateTriggerCondition(rule.trigger);
+    const conditionCode = generateConditionChain(rule);
+
+    let ruleCode = "";
+
+    if (triggerCondition) {
+      if (
+        triggerCondition
+      ) {
+        ruleCode += `
+        if ${triggerCondition} then`;
+
+        if (conditionCode) {
+          ruleCode += `
+            if ${conditionCode} then`;
+        }
+      } else {
+        ruleCode += `
+        if ${triggerCondition}`;
+
+        if (conditionCode) {
+          ruleCode += ` and ${conditionCode}`;
+        }
+
+        ruleCode += ` then`;
+      }
+    }
+
+    const regularEffects = rule.effects || [];
+    const randomGroups = (rule.randomGroups || []).map((group) => ({
+      ...group,
+      chance_numerator:
+        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
+      chance_denominator:
+        typeof group.chance_denominator === "string"
+          ? 1
+          : group.chance_denominator,
+    }));
+    const loopGroups = (rule.loops || []).map((group) => ({
+      ...group,
+      repetitions:
+        typeof group.repetitions === "string"
+          ? (() => {
+              const parsed = parseGameVariable(group.repetitions);
+              const rangeParsed = parseRangeVariable(group.repetitions);
+              if (parsed.isGameVariable) {
+                return generateGameVariableCode(group.repetitions);
+              } else if (rangeParsed.isRangeVariable) {
+                const seedName = `repetitions_${group.id.substring(0, 8)}`;
+                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+              } else {
+                return `card.ability.extra.${group.repetitions}`
+              }
+            })()
+          : group.repetitions,
+    }));
+
+    const effectResult = generateEffectReturnStatement(
+      regularEffects,
+      randomGroups,
+      loopGroups,
+      modPrefix,
+      objectKey,
+    );
+
+    const indentLevel =
+      conditionCode
+        ? "                "
+        : "            ";
+
+    if (effectResult.preReturnCode) {
+      ruleCode += `
+${indentLevel}${effectResult.preReturnCode}`;
+    }
+
+    if (effectResult.statement) {
+      ruleCode += `
+${indentLevel}return {${effectResult.statement}}`;
+    }
+
+    if (triggerCondition) {
+      if (
+        conditionCode
+      ) {
+        ruleCode += `
+            end`;
+      }
+      ruleCode += `
+        end`;
+    }
+
+    calculateFunction += ruleCode;
+  });
+
+  calculateFunction += `
+  end,`;
+
+  return calculateFunction;
+};
+
 const generateUseFunction = (
   rules: Rule[],
   modPrefix: string,
   objectKey?: string,
 ): string => {
-  if (rules.length === 0) {
-    return `use = function(self, card, area, copier)
-        
-    end`;
-  }
+const filtered_rules = rules.filter((rule) => rule.trigger === "consumable_used")
+
+if (filtered_rules.length === 0) return "";
 
   let useFunction = `use = function(self, card, area, copier)
         local used_card = copier or card`;
 
-  rules.forEach((rule) => {
+  filtered_rules.forEach((rule) => {
     const conditionCode = generateConditionChain(rule);
 
     let ruleCode = "";
@@ -384,7 +502,7 @@ const generateUseFunction = (
   });
 
   useFunction += `
-    end`;
+    end,`;
 
   return useFunction;
 };
@@ -400,6 +518,7 @@ const generateCanUseFunction = (rules: Rule[], modPrefix: string): string => {
   const customCanUseConditions: string[] = [];
 
   rules.forEach((rule) => {
+    if (rule.trigger !== "consumable_used") return;
     const conditionCode = generateConditionChain(rule);
     if (conditionCode) {
       ruleConditions.push(`(${conditionCode})`);

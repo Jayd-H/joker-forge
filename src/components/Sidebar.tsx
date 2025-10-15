@@ -246,7 +246,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       transition={{ duration: 0.2 }}
                       className="ml-auto"
                     >
-                      <ChevronDownIcon className="h-5 w-5" />
+                      <ChevronDownIcon/>
                     </motion.div>
                   </button>
 
@@ -623,11 +623,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                       </motion.div>
                     )}
-                  </AnimatePresence>
-                  
+                  </AnimatePresence>     
                 </div>
               );
             })}
+            <div className = "relative">
               <motion.button
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -654,7 +654,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-49/5 ml-2 z-50"
+                      className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -664,7 +664,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-
+                </div>
+                <div className = "relative">
                 <AnimatePresence>
                   {card && (
                     <motion.div
@@ -676,7 +677,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-53 ml-2 z-50"
+                      className="absolute left-full top-37 -translate-y-3/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
                         {dropdownResourceCardModification.map((item) => {
@@ -708,22 +709,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-                              <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 }}
-                  onClick={() => { setShop(!shop);
-                    setCard(false);
-                    setMisc(false);
-                  }}
-                  onMouseEnter={() => setHoveredItem("shop")}                  
-                  onMouseLeave={() => setHoveredItem(null)}
-                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
-                >
-                  <BuildingStorefrontIcon className="h-5 w-5" />
-                </motion.button>
 
-                <AnimatePresence>
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 }}
+                    onClick={() => { setShop(!shop);
+                      setCard(false);
+                      setMisc(false);
+                    }}
+                    onMouseEnter={() => setHoveredItem("shop")}                  
+                    onMouseLeave={() => setHoveredItem(null)}
+                    className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                  >
+                    <BuildingStorefrontIcon className="h-5 w-5" />
+                  </motion.button>
+
+                  <AnimatePresence>
                   {hoveredItem === "shop" && (
                     <motion.div
                       initial={{ opacity: 0, x: -10, scale: 0.9 }}
@@ -734,7 +736,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-43/5 ml-2 z-50"
+                      className="absolute left-full top-2/4 transform -translate-y-1/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -744,7 +746,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-
+                </div>
+                <div className = "relative">
                 <AnimatePresence>
                   {shop && (
                     <motion.div
@@ -756,7 +759,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-65 ml-2 z-50"
+                      className="absolute left-full top-37 -translate-y-3/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
                         {dropdownResourceShopandConsumables.map((item) => {
@@ -788,7 +791,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-                              <motion.button
+
+                <motion.button
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 }}
@@ -816,7 +820,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-1/2 transform -translate-y-22/3 ml-2 z-50"
+                      className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -826,7 +830,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-
                 <AnimatePresence>
                   {misc && (
                     <motion.div
@@ -838,7 +841,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-79 ml-2 z-50"
+                      className="absolute left-full top-17 -translate-y-3/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
                         {dropdownResourceMisc.map((item) => {
@@ -870,10 +873,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-          </div>
-
-
-
+              </div>
+            </div>
           <div className="mt-6">
             <div className="space-y-1">
               {visibleResourceItems.map((item, index) => {

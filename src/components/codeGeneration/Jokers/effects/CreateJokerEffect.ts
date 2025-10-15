@@ -63,6 +63,7 @@ export const generateCreateJokerReturn = (
   }
   
   let slotLimitCode: string;
+  
   if (isNegative || ignoreSlots) {
     slotLimitCode = "local created_joker = true";
   } else {

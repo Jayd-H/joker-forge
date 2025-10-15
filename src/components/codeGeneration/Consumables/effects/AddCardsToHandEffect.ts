@@ -1,14 +1,15 @@
+import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
-  const enhancement = effect.params?.enhancement || "none";
-  const seal = effect.params?.seal || "none";
-  const edition = effect.params?.edition || "none";
-  const suit = effect.params?.suit || "none";
-  const rank = effect.params?.rank || "random";
-  const count = effect.params?.count || 1;
+  const enhancement = effect.params?.enhancement as string || "none";
+  const seal = effect.params?.seal as string || "none";
+  const edition = effect.params?.edition as string || "none";
+  const suit = effect.params?.suit as string || "none";
+  const rank = effect.params?.rank as string|| "random";
+  const count = effect.params?.count as string || '1';
   const customMessage = effect.customMessage;
   const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
   const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
@@ -119,9 +120,10 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
   // Apply seal if specified
   if (seal !== "none") {
     if (seal === "random") {
+      const sealPool = SEALS().map(seal => `'${seal.value}'`)
       addCardsCode += `
                         if cards[i] then
-                            local seal_pool = {'Gold', 'Red', 'Blue', 'Purple'}
+                            local seal_pool = {${sealPool}}
                             local random_seal = pseudorandom_element(seal_pool, 'add_cards_seal')
                             cards[i]:set_seal(random_seal, nil, true)
                         end`;
@@ -135,13 +137,6 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
 
   // Apply edition if specified
   if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-
     if (edition === "random") {
       addCardsCode += `
                         if cards[i] then
@@ -150,8 +145,12 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
                             cards[i]:set_edition(edition, true)
                         end`;
     } else {
+      const editions: {key: string, value: string}[] = []
+      EDITIONS().forEach(edition => {
+        editions.push({key: edition.key, value: edition.value})
+    })
       const editionLua =
-        editionMap[edition as keyof typeof editionMap] || "foil";
+        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       addCardsCode += `
                         if cards[i] then
                             cards[i]:set_edition({ ${editionLua} = true }, true)
