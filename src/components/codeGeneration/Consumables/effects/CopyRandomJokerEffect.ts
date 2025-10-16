@@ -1,4 +1,3 @@
-import { EDITIONS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -77,13 +76,8 @@ __PRE_RETURN_CODE__
                   { 'e_polychrome', 'e_holo', 'e_foil' })
               copied_joker:set_edition(edition, true)`;
   } else if (edition !== "none") {
-    const editions: {key: string, value: string}[] = []
-    EDITIONS().forEach(edition => {
-        editions.push({key: edition.key, value: edition.value})
-    })
-      const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";    copyJokerCode += `
-              copied_joker:set_edition({ ${editionLua} = true }, true)`;
+        copyJokerCode += `
+              copied_joker:set_edition('${edition}', true)`;
   }
 
 if (selection_method === "selected") {

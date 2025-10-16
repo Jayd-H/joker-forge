@@ -1,4 +1,3 @@
-import { EDITIONS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -64,14 +63,8 @@ export const generateEditionRandomJokerReturn = (
     editionJokerCode += `
                         joker:set_edition(nil, true)`;
   } else {
-    const editions: {key: string, value: string}[] = []
-    EDITIONS().forEach(edition => {
-      editions.push({key: edition.key, value: edition.value})
-    })
-
-    const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
     editionJokerCode += `
-                        joker:set_edition({ ${editionLua} = true }, true)`;
+                        joker:set_edition('${edition}', true)`;
   }
 
   editionJokerCode += `

@@ -1,4 +1,4 @@
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
@@ -145,15 +145,9 @@ export const generateAddCardsToHandReturn = (effect: Effect): EffectReturn => {
                             cards[i]:set_edition(edition, true)
                         end`;
     } else {
-      const editions: {key: string, value: string}[] = []
-      EDITIONS().forEach(edition => {
-        editions.push({key: edition.key, value: edition.value})
-    })
-      const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       addCardsCode += `
                         if cards[i] then
-                            cards[i]:set_edition({ ${editionLua} = true }, true)
+                            cards[i]:set_edition('${edition}', true)
                         end`;
     }
   }
