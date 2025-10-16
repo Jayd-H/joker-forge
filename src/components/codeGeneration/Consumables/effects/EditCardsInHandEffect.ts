@@ -1,4 +1,4 @@
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
@@ -141,19 +141,13 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
                 }))
             end`;
     } else {
-        const editions: {key: string, value: string}[] = []
-        EDITIONS().forEach(edition => {
-            editions.push({key: edition.key, value: edition.value})
-        })
-      const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()
-                        affected_cards[i]:set_edition({ ${editionLua} = true }, true)
+                        affected_cards[i]:set_edition('${edition}', true)
                         return true
                     end
                 }))
