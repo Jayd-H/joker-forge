@@ -6,11 +6,11 @@ export const generateCreateConsumableReturn = (
 ): EffectReturn => {
   const set = (effect.params?.set as string) || "random";
   const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) == 'y';
+  const isNegative = (effect.params?.is_negative as string) === 'y';
   const customMessage = effect.customMessage;
-  const isSoulable = effect.params?.soulable;
+  const isSoulable = effect.params?.soulable as string === 'y';
   const countCode = String(effect.params?.count) || '1'
-  const ignoreSlots = effect.params?.ignore_slots || false;
+  const ignoreSlots = effect.params?.ignore_slots as string === 'y';
 
 
   let createCode = ``;
