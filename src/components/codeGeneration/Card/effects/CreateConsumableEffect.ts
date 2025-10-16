@@ -71,7 +71,7 @@ export const generateCreateConsumableReturn = (
   }
 
   createCode += `})                            
-            used_card:juice_up(0.3, 0.5)`
+            card:juice_up(0.3, 0.5)`
 
     createCode +=`
             return true
