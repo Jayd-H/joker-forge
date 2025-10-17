@@ -302,7 +302,12 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     label: "Blind Requirements",
     description:
       "Check what percentage of the blind requirement the current base hand score represents (e.g., 110% means you've exceeded the blind by 10%, values over 100% check if you've exceeded the blind)",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: [
+      "hand_played",
+      "blind_selected",
+      "boss_defeated",
+      "round_end",
+    ],
     params: [
       {
         id: "operator",

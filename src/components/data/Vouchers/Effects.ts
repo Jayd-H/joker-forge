@@ -6,7 +6,6 @@ import {
   Cog6ToothIcon,
   CakeIcon,
   UserGroupIcon,
-  CursorArrowRaysIcon,
   HandRaisedIcon,
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
@@ -17,10 +16,6 @@ import {
 import { VOUCHER_GENERIC_TRIGGERS } from "./Conditions";
 
 export const VOUCHER_EFFECT_CATEGORIES: CategoryDefinition[] = [
-  {
-    label: "Selected Cards",
-    icon: CursorArrowRaysIcon,
-  },
   {
     label: "Card Modification",
     icon: PencilSquareIcon,
@@ -237,7 +232,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "create_tag",
       label: "Create Tag",
       description: "Create a specific or random tag",
-      applicableTriggers: ["blind_selected", "round_end", "booster_opened", "shop_entered"],
+      applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
       params: [
         {
           id: "tag_type",
