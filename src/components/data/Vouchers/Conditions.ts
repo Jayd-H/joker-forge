@@ -462,6 +462,14 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Player State",
   },
   {
+    id: "in_blind",
+    label: "In Blind",
+    description: "Check if the player is currently in a blind (gameplay)",
+    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    params: [],
+    category: "Game Context",
+  },
+  {
     id: "system_condition",
     label: "Player OS",
     description: "Check on what Operating System the player is on",
