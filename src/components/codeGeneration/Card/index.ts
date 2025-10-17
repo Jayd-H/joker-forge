@@ -1034,6 +1034,11 @@ const generateSingleSealCode = (
     no_collection = ${seal.no_collection},`;
   }
 
+  if (seal.sound && seal.sound !== "gold_seal") {
+    sealCode += `
+    sound = { sound = "${seal.sound}", per = 1.2, vol = 0.4 },`;
+  }
+
   const locVarsCode = generateLocVarsFunction(
     seal,
     gameVariables,

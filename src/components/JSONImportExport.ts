@@ -257,6 +257,7 @@ const normalizeSealData = (seal: SealData): SealData => {
     unlocked: seal.unlocked,
     discovered: seal.discovered,
     no_collection: seal.no_collection,
+    sound: seal.sound || "default",
     rules: seal.rules || [],
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
