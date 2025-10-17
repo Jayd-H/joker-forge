@@ -1,49 +1,19 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ClockIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Button from "./Button";
 
-interface RestoreProgressModalProps {
+interface ResetProgressComfirmationModalProps {
   isVisible: boolean;
-  onRestore: () => void;
+  onCancel: () => void;
   onDiscard: () => void;
-  getAutoSaveMetadata: () => { timestamp: number; daysOld: number } | null;
 }
 
-const RestoreProgressModal: React.FC<RestoreProgressModalProps> = ({
+const ResetProgressComfirmationModal: React.FC<ResetProgressComfirmationModalProps> = ({
   isVisible,
-  onRestore,
+  onCancel,
   onDiscard,
-  getAutoSaveMetadata,
 }) => {
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onDiscard();
-    }
-  };
-
-  const getTimeDescription = () => {
-    const metadata = getAutoSaveMetadata();
-    if (!metadata) return "recently";
-    if (metadata.daysOld < 1) return "today";
-    if (metadata.daysOld < 2) return "yesterday";
-    return `${Math.floor(metadata.daysOld)} days ago`;
-  };
-
-  const formatTimestamp = () => {
-    const metadata = getAutoSaveMetadata();
-    if (!metadata) return "";
-
-    const date = new Date(metadata.timestamp);
-    return (
-      date.toLocaleDateString() +
-      " at " +
-      date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
-  };
 
   return (
     <AnimatePresence>
@@ -54,7 +24,6 @@ const RestoreProgressModal: React.FC<RestoreProgressModalProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed inset-0 bg-black-darker/60 backdrop-blur-sm flex items-center justify-center z-[9999] font-lexend p-4"
-          onClick={handleBackdropClick}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -68,23 +37,20 @@ const RestoreProgressModal: React.FC<RestoreProgressModalProps> = ({
             className="bg-black-dark border-2 border-black-lighter rounded-xl shadow-2xl min-w-96 max-w-md w-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="px-6 py-5 border-b bg-black-darker border-black-lighter/50">
+           <div className="px-6 py-5 border-b bg-black-darker border-black-lighter/50">
               <div className="flex items-center gap-3">
                 <div className="flex-shrink-0 p-2 bg-mint/20 rounded-lg">
-                  <ClockIcon className="h-6 w-6 text-mint" />
+                  <ExclamationTriangleIcon className="h-6 w-6 text-red-500" />
                 </div>
                 <div>
                   <h2 className="text-xl text-white-light font-medium tracking-wide">
-                    Restore Auto-Saved Project?
+                    Attention
                   </h2>
                   <div className="flex items-center gap-2 mt-1">
                     <p className="text-sm text-white-darker">
-                      Saved {formatTimestamp()}
+                      You sure you want to create a new mod?
+                      you cannot get back to the old save if you do that
                     </p>
-                    <span className="px-2 py-0.5 bg-mint/20 border border-mint/30 rounded text-xs text-mint font-medium">
-                      {getTimeDescription()}
-                    </span>
                   </div>
                 </div>
               </div>
@@ -94,20 +60,20 @@ const RestoreProgressModal: React.FC<RestoreProgressModalProps> = ({
             <div className="px-6 py-5">
               <div className="space-y-3">
                 <Button
-                  variant="primary"
-                  onClick={onRestore}
-                  size="md"
-                  className="w-full"
-                >
-                  Restore Project
-                </Button>
-                <Button
-                  variant="secondary"
+                  variant="danger"
                   onClick={onDiscard}
                   size="md"
                   className="w-full"
                 >
                   Start Fresh
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={onCancel}
+                  size="md"
+                  className="w-full"
+                >
+                  Cancel
                 </Button>
               </div>
             </div>
@@ -118,4 +84,4 @@ const RestoreProgressModal: React.FC<RestoreProgressModalProps> = ({
   );
 };
 
-export default RestoreProgressModal;
+export default ResetProgressComfirmationModal;
