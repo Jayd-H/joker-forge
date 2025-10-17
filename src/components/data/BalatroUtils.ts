@@ -240,6 +240,7 @@ export interface SealData extends GameObjectData{
   badge_colour?: string;
   unlocked?: boolean;
   no_collection?: boolean;
+  sound?: string;
   rules?: Rule[];
   userVariables?: UserVariable[];
   placeholderCreditIndex?: number;
