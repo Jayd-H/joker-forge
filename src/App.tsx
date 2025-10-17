@@ -96,7 +96,7 @@ import Alert from "./components/generic/Alert";
 import ConfirmationPopup from "./components/generic/ConfirmationPopup";
 import ExportModal from "./components/generic/ExportModal";
 // import DonationNotification from "./components/generic/DonationNotification";
-import ResetProgressComfirmetionModal from "./components/generic/ResetProgressComfirmetionModal";
+import ResetProgressComfirmationModal from "./components/generic/ResetProgressConfirmationModal";
 import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
@@ -1715,7 +1715,7 @@ const handleDiscardAndStartFresh = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <ResetProgressComfirmetionModal
+      <ResetProgressComfirmationModal
         isVisible={showRestoreModal}
         onDiscard={handleDiscardAndStartFresh}
         onCancel={() => setShowRestoreModal(false)}

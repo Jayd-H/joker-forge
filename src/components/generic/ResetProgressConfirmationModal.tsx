@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Button from "./Button";
 
-interface ResetProgressComfirmetionModalProps {
+interface ResetProgressComfirmationModalProps {
   isVisible: boolean;
   onCancel: () => void;
   onDiscard: () => void;
 }
 
-const ResetProgressComfirmetionModal: React.FC<ResetProgressComfirmetionModalProps> = ({
+const ResetProgressComfirmationModal: React.FC<ResetProgressComfirmationModalProps> = ({
   isVisible,
   onCancel,
   onDiscard,
@@ -84,4 +84,4 @@ const ResetProgressComfirmetionModal: React.FC<ResetProgressComfirmetionModalPro
   );
 };
 
-export default ResetProgressComfirmetionModal;
+export default ResetProgressComfirmationModal;
