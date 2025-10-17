@@ -281,7 +281,6 @@ export interface VoucherData extends GameObjectData {
   no_collection?: boolean;
   requires?: string;
   requires_activetor?: boolean;
-  sound?: string;
   unlockTrigger?: keyof typeof vouchersunlockOptions;
   unlockProperties?: Array<{ category: string; property: string }>;
   unlockOperator?: string;
@@ -299,7 +298,6 @@ export interface DeckData extends GameObjectData{
   no_interest?: boolean;
   no_faces?: boolean;
   erratic_deck?: boolean;
-  sound?: string;
   rules?: Rule[];
   placeholderCreditIndex?: number;
   hasUserUploadedImage?: boolean;
