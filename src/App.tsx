@@ -317,7 +317,7 @@ function AppContent() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<
     "idle" | "saving" | "saved"
   >("idle");
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [showConfirmationModal, setshowConfirmationModal] = useState(false);
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [jokersRaritiesTab, setJokersRaritiesTab] = useState<
@@ -1094,13 +1094,13 @@ const startNewProject = () => {
 
 
 const handleCreateNewmod = async () => {
-    setShowRestoreModal(true);
+    setshowConfirmationModal(true);
   };
 
 const handleDiscardAndStartFresh = () => {
     clearAutoSave();
     startNewProject();
-    setShowRestoreModal(false);
+    setshowConfirmationModal(false);
     navigate("/overview");
   };
 
@@ -1716,9 +1716,9 @@ const handleDiscardAndStartFresh = () => {
         )}
       </AnimatePresence>
       <ResetProgressComfirmationModal
-        isVisible={showRestoreModal}
+        isVisible={showConfirmationModal}
         onDiscard={handleDiscardAndStartFresh}
-        onCancel={() => setShowRestoreModal(false)}
+        onCancel={() => setshowConfirmationModal(false)}
       />
       <ExportModal
         isOpen={showExportModal}
