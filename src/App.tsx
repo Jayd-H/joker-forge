@@ -1113,6 +1113,7 @@ const startNewProject = () => {
     setSeals([]);
     setEditions([]);
     setVouchers([]);
+    setDecks([]);
 
     setSelectedJokerId(null);
     setSelectedConsumableId(null);
@@ -1121,6 +1122,7 @@ const startNewProject = () => {
     setSelectedSealId(null);
     setSelectedEditionId(null);
     setSelectedVoucherId(null);
+    setSelectedDeckId(null);
 
     prevDataRef.current = {
       modMetadata: DEFAULT_MOD_METADATA,
@@ -1134,6 +1136,7 @@ const startNewProject = () => {
       seals: [],
       editions: [],
       vouchers: [],
+      decks: [],
     };
   };
 
