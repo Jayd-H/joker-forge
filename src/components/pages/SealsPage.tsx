@@ -271,6 +271,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
       badge_colour: "#000000",
       unlocked: true,
       discovered: true,
+      sound: "gold_seal",
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
       orderValue: seals.length+1,

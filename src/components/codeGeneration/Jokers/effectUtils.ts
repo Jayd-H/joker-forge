@@ -30,6 +30,7 @@ import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateApplyExpMultReturn } from "./effects/ApplyExpMultEffect";
 import { generateApplyExpChipsReturn } from "./effects/ApplyExpChipsEffect";
 import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
+import { generateEditWinnerAnteReturn } from "./effects/EditWinnerAnteEffect";
 import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateShowMessageReturn } from "./effects/ShowMessageEffect";
 import { generateSetDollarsReturn } from "./effects/SetDollarsEffect";
@@ -751,6 +752,8 @@ const generateSingleEffect = (
       return generateApplyXChipsReturn(effect, sameTypeCount);
     case "create_tag":
       return generateCreateTagReturn(effect, triggerType);
+    case "edit_win_ante":
+      return generateEditWinnerAnteReturn(effect, triggerType, sameTypeCount);
     case "apply_exp_mult":
       return generateApplyExpMultReturn(effect, sameTypeCount);
     case "apply_exp_chips":

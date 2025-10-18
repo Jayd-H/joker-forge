@@ -41,6 +41,14 @@ interface VoucherCardData extends BaseCardData {
   requires_activetor: boolean;
 }
 
+interface DeckCardData extends BaseCardData {
+  no_interest?: boolean;
+  no_faces?: boolean;
+  erratic_deck?: boolean;
+  Config_vouchers?: string[];
+  Config_consumables?: string[];
+}
+
 
 type CardData =
   | JokerCardData
@@ -49,9 +57,10 @@ type CardData =
   | BaseCardData
   | EditionCardData
   | VoucherCardData
+  | DeckCardData
 
 interface BalatroCardProps {
-  type: "joker" | "consumable" | "booster" | "card" | "edition" | "voucher";
+  type: "joker" | "consumable" | "booster" | "card" | "edition" | "voucher" | "deck";
   data: CardData;
   onClick?: () => void;
   className?: string;
@@ -241,6 +250,12 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
         shadow: "bg-balatro-gold",
       };
     }
+    if (type === "voucher") {
+      return {
+        bg: "bg-balatro-shadoworange",
+        shadow: "bg-balatro-orange",
+      };
+    }
     return {
       bg: "bg-balatro-greenshadow",
       shadow: "bg-balatro-green",
@@ -284,6 +299,8 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
         return "/images/placeholder-edition.png";
       case "voucher":
         return "/images/placeholder-voucher.png";
+      case "deck":
+        return "/images/placeholder-deck.png";
       default:
         return "/images/placeholder-joker.png";
     }
@@ -321,6 +338,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     }
     if (type === "voucher") {
       return data.name || "New Voucher";
+    }
+    if (type === "deck") {
+      return data.name || "New Deck";
     }
     return "";
   };

@@ -17,7 +17,7 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { SealData, slugify } from "../../data/BalatroUtils";
+import { SealData, slugify, VANILLA_SOUNDS, } from "../../data/BalatroUtils";
 import {
   validateJokerName,
   validateDescription,
@@ -49,6 +49,9 @@ interface EditSealInfoProps {
     onCancel?: () => void;
   }) => void;
 }
+
+const vanillaSounds = VANILLA_SOUNDS.map(({ value, label }) => ({ value, label }))
+;
 
 const predefinedColors = [
   "#FF6B6B",
@@ -190,6 +193,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
         unlocked: seal.unlocked !== false,
         discovered: seal.discovered !== false,
         no_collection: seal.no_collection === true,
+        sound: seal.sound || "gold_seal",
         badge_colour: seal.badge_colour || "#000000",
         objectKey: getObjectName(
           seal,
@@ -829,6 +833,32 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                       </div>
                     </div>
                   </div>
+                  <div className="rounded-lg border border-black-lighter p-4 bg-black-darker/30">
+                          <h5 className="text-white-light font-medium text-sm mb-3">
+                            Sound Settings
+                          </h5>
+                          <div>
+                            <label className="block text-xs font-medium text-white-darker mb-2">
+                              Sound
+                            </label>
+                            <select
+                              value={formData.sound || "gold_seal"}
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  sound: e.target.value,
+                                }))
+                              }
+                              className="w-full bg-black-darker border border-black-lighter rounded-lg px-3 py-2 text-white-light focus:outline-none focus:border-mint transition-colors text-sm"
+                            >
+                              {vanillaSounds.map((sound) => (
+                                <option value={sound.value}>
+                                  {sound.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                    </div>
                 </div>
               )}
             </div>

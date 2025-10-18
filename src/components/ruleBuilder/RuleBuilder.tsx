@@ -58,11 +58,14 @@ import {
   SealData,
   EditionData,
   VoucherData,
+  DeckData
 } from "../data/BalatroUtils";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
+import { getDeckConditionTypeById } from "../data/Decks/Conditions";
+import { getDeckEffectTypeById } from "../data/Decks/Effects";
 import { UserConfigContext } from "../Contexts";
 
 export type ItemData =
@@ -72,7 +75,8 @@ export type ItemData =
   | SealData
   | EditionData
   | VoucherData
-type ItemType = "joker" | "consumable" | "card" | "voucher";
+  | DeckData
+type ItemType = "joker" | "consumable" | "card" | "voucher" | "deck";
 
 interface RuleBuilderProps {
   isOpen: boolean;
@@ -116,7 +120,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConsumableConditionTypeById
       : itemType === "card"
       ? getCardConditionTypeById
-      : getVoucherConditionTypeById
+      : itemType === "voucher"
+      ? getVoucherConditionTypeById
+      : getDeckConditionTypeById;
   const getEffectType =
     itemType === "joker"
       ? getEffectTypeById
@@ -124,7 +130,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConsumableEffectTypeById
       : itemType === "card"
       ? getCardEffectTypeById
-      : getVoucherEffectTypeById;
+      : itemType === "voucher"
+      ? getVoucherEffectTypeById
+      : getDeckEffectTypeById;
 
   const [rules, setRules] = useState<Rule[]>([]);
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);

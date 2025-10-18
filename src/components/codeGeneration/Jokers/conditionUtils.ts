@@ -29,6 +29,7 @@ import { generateAnteLevelConditionCode } from "./conditions/AnteLevelCondition"
 import { generateHandSizeConditionCode } from "./conditions/HandSizeCondition";
 import { generateDeckSizeConditionCode } from "./conditions/DeckSizeCondition";
 import { generateDeckCountConditionCode } from "./conditions/DeckCountCondition";
+import { generateCheckDeckConditionCode } from "./conditions/CheckDeckCondition";
 import { generateCardEditionConditionCode } from "./conditions/CardEditionCondition";
 import { generateEditionCountConditionCode } from "./conditions/EditionCountCondition";
 import { generateSpecificJokerConditionCode } from "./conditions/SpecificJokerCondition";
@@ -234,6 +235,9 @@ const generateSingleConditionCode = (
 
     case "deck_count":
       return generateDeckCountConditionCode([singleConditionRule]);
+      
+    case "deck_check":
+      return generateCheckDeckConditionCode([singleConditionRule]);
 
     case "card_edition":
       return generateCardEditionConditionCode([singleConditionRule]);
