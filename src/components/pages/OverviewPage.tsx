@@ -695,8 +695,8 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
                 Visual Balatro Modding Tool
               </h3>
               <p className="text-white-light leading-relaxed mb-4">
-                Joker Forge is a visual tool for creating custom Balatro Mods with custom items
-                using the SMODS framework. Create various Balatro Features
+                JokerForge is a visual and intuitively-designed tool for creating Balatro mods 
+                using the Steamodded (SMODS) framework. The website enables users to add content to their Balatro game, such as:
                 like:
                 Jokers,
                 Consumables,
@@ -706,8 +706,8 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
                 Editions,
                 Vouchers,
                 Decks,
-                +Sounds
-                without writing Lua code directly.
+                and various other miscellaneous features; all without having to write any Lua code.
+                Updates to add new features to the site are frequent, and a community with a variety of different content creators is available on the Discord server.
               </p>
               <p className="text-white-darker leading-relaxed mb-4">
                 This is a multi-developer project, and whilst
