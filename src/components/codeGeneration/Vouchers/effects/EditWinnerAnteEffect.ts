@@ -3,7 +3,7 @@ import type { EffectReturn } from "../effectUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateEditWinnerAnteReturn = (effect: Effect): EffectReturn => {
-  const operation = effect.params?.operation || "set";
+  const operation = effect.params?.operation as string || "set";
   const value = effect.params?.value
 
   const valueCode = generateGameVariableCode(value);

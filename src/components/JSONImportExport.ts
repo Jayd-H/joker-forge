@@ -322,8 +322,7 @@ const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
 
 const normalizeDeckData = (deck: DeckData): DeckData => {
   return {
-    //@ts-expect-error: backwards compatibility
-    objectKey: deck.deckKey || deck.objectKey || "",
+    objectKey: deck.objectKey || "",
     objectType: "deck",
     id: deck.id || "",
     name: deck.name || "",
