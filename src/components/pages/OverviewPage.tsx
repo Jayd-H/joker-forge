@@ -720,7 +720,7 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
                 If you have found any issues, rather with the generated code or
                 the user interface, or just have any suggestions, please feel
                 free to open an issue on the GitHub Repository or
-                create a post in Joker Forge Discord server under the channels "bug-reports" or "suggestions".
+                create a post in the Joker Forge Discord server under the channels "bug-reports" or "suggestions".
               </p>
               <p className="text-white-darker leading-relaxed">
                 <a
