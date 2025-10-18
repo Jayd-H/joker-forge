@@ -1,5 +1,6 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
+import { EDITIONS, getModPrefix } from "../../../data/BalatroUtils";
 
 export const generateEditCardReturn = (
   effect: Effect,
@@ -72,8 +73,10 @@ export const generateEditCardReturn = (
     modificationCode += `
                 ${target}:set_edition(nil)`;
   } else if (newEdition === "random") {
+    const editionPool = EDITIONS().map(edition => `'${
+                edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)    
     modificationCode += `
-                local random_edition = poll_edition('edit_card_edition', nil, true, true)
+                local edition = pseudorandom_element({${editionPool}}, 'random edition')
                 if random_edition then
                     ${target}:set_edition(random_edition, true)
                 end`;
