@@ -96,7 +96,7 @@ import Alert from "./components/generic/Alert";
 import ConfirmationPopup from "./components/generic/ConfirmationPopup";
 import ExportModal from "./components/generic/ExportModal";
 // import DonationNotification from "./components/generic/DonationNotification";
-import RestoreProgressModal from "./components/generic/RestoreProgressModal";
+import ResetProgressComfirmationModal from "./components/generic/ResetProgressConfirmationModal";
 import { DEFAULT_MOD_METADATA } from "./components/pages/ModMetadataPage";
 import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
@@ -317,7 +317,7 @@ function AppContent() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<
     "idle" | "saving" | "saved"
   >("idle");
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [showConfirmationModal, setshowConfirmationModal] = useState(false);
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [jokersRaritiesTab, setJokersRaritiesTab] = useState<
@@ -608,26 +608,6 @@ function AppContent() {
     }
   }, []);
 
-  const getAutoSaveMetadata = useCallback((): {
-    timestamp: number;
-    daysOld: number;
-  } | null => {
-    try {
-      const savedData = localStorage.getItem(AUTO_SAVE_KEY);
-      if (!savedData) return null;
-
-      const data: AutoSaveData = JSON.parse(savedData);
-      const daysOld = (Date.now() - data.timestamp) / (24 * 60 * 60 * 1000);
-
-      return {
-        timestamp: data.timestamp,
-        daysOld: Math.floor(daysOld * 10) / 10,
-      };
-    } catch {
-      return null;
-    }
-  }, []);
-
   const hasDataChanged = useCallback(
     (
       metadata: ModMetadata,
@@ -755,10 +735,10 @@ function AppContent() {
   );
 
   useEffect(() => {
-    const loadAutoSave = () => {
+    const loadAutoSave = async () => {
       const savedData = loadFromLocalStorage();
       if (savedData) {
-        setShowRestoreModal(true);
+        await handleRestoreAutoSave();
       }
       setHasLoadedInitialData(true);
     };
@@ -951,8 +931,8 @@ function AppContent() {
 
         showAlert(
           "success",
-          "Project Restored",
-          "Your auto-saved project has been restored successfully!"
+          "Project Loaded",
+          "Your auto-saved project has been loaded successfully!"
         );
       } catch (error) {
         console.error("Failed to restore autosave due to invalid data:", error);
@@ -964,12 +944,6 @@ function AppContent() {
         clearAutoSave();
       }
     }
-    setShowRestoreModal(false);
-  };
-
-  const handleDiscardAutoSave = () => {
-    clearAutoSave();
-    setShowRestoreModal(false);
   };
 
   const showAlert = (
@@ -1082,6 +1056,54 @@ function AppContent() {
     }
   };
 
+const startNewProject = () => {
+    setModMetadata(DEFAULT_MOD_METADATA);
+    setJokers([]);
+    setSounds([]);
+    setConsumables([]);
+    setCustomRarities([]);
+    setConsumableSets([]);
+    setBoosters([]);
+    setEnhancements([]);
+    setSeals([]);
+    setEditions([]);
+    setVouchers([]);
+
+    setSelectedJokerId(null);
+    setSelectedConsumableId(null);
+    setSelectedBoosterId(null);
+    setSelectedEnhancementId(null);
+    setSelectedSealId(null);
+    setSelectedEditionId(null);
+    setSelectedVoucherId(null);
+
+    prevDataRef.current = {
+      modMetadata: DEFAULT_MOD_METADATA,
+      jokers: [],
+      sounds: [],
+      consumables: [],
+      customRarities: [],
+      consumableSets: [],
+      boosters: [],
+      enhancements: [],
+      seals: [],
+      editions: [],
+      vouchers: [],
+    };
+  };
+
+
+const handleCreateNewmod = async () => {
+    setshowConfirmationModal(true);
+  };
+
+const handleDiscardAndStartFresh = () => {
+    clearAutoSave();
+    startNewProject();
+    setshowConfirmationModal(false);
+    navigate("/overview");
+  };
+
   const handleExportJSON = async () => {
     try {
       const { exportModAsJSON } = await import("./components/JSONImportExport");
@@ -1180,6 +1202,7 @@ function AppContent() {
         onSectionChange={handleNavigate}
         projectName={modMetadata.id || "mycustommod"}
         onExport={handleExport}
+        onNewmod={handleCreateNewmod}
         onExportJSON={handleExportJSON}
         onImportJSON={handleImportJSON}
         exportLoading={exportLoading}
@@ -1692,11 +1715,10 @@ function AppContent() {
           </motion.div>
         )}
       </AnimatePresence>
-      <RestoreProgressModal
-        isVisible={showRestoreModal}
-        onRestore={handleRestoreAutoSave}
-        onDiscard={handleDiscardAutoSave}
-        getAutoSaveMetadata={getAutoSaveMetadata}
+      <ResetProgressComfirmationModal
+        isVisible={showConfirmationModal}
+        onDiscard={handleDiscardAndStartFresh}
+        onCancel={() => setshowConfirmationModal(false)}
       />
       <ExportModal
         isOpen={showExportModal}
