@@ -1,4 +1,4 @@
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -79,15 +79,9 @@ export const generateCopySelectedCardsReturn = (
                             
                             copied_card:set_edition(nil, true)`;
     } else {
-      const editions: {key: string, value: string}[] = []
-      EDITIONS().forEach(edition => {
-          editions.push({key: edition.key, value: edition.value})
-      })
-      const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
       copyCardsCode += `
                             
-                            copied_card:set_edition({ ${editionLua} = true }, true)`;
+                            copied_card:set_edition('${edition}', true)`;
     }
   }
 

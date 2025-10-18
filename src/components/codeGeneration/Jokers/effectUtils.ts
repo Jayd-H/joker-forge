@@ -380,15 +380,30 @@ export function generateEffectReturnStatement(
         (effect) => effect.effectType === "mod_probability"
       );
 
+      const nonRetriggerEffectCalls: string[] = [];
       if (retriggerEffects.length > 0) {
         const retriggerStatements = retriggerEffects
           .filter((effect) => effect.statement && effect.statement.trim())
           .map((effect) => effect.statement);
 
+        nonRetriggerEffects.forEach((effect) => {
+          if (effect.message) {
+            nonRetriggerEffectCalls.push(
+              `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+                effect.message
+              }, colour = ${effect.colour || "G.C.WHITE"}})`  
+            );        
+          }
+        })
+
+        if (nonRetriggerEffectCalls.length > 0) {
+          groupContent += nonRetriggerEffectCalls.join("\n                        ");
+        }
+
         if (retriggerStatements.length > 0) {
           const returnObj = `{${retriggerStatements.join(", ")}}`;
-          groupContent += `return ${returnObj}
-                        `;
+          groupContent += `
+          return ${returnObj}`;
         }
       }
 
@@ -406,9 +421,10 @@ export function generateEffectReturnStatement(
           );
         }
       });
-
-      if (effectCalls.length > 0) {
-        groupContent += effectCalls.join("\n                        ");
+      
+      
+      if (effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).length > 0) {
+        groupContent += effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).join("\n                        ");
       }
 
       const no_modParam = (

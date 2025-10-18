@@ -2,7 +2,7 @@ import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import { parseRankVariable, parseSuitVariable } from "../variableUtils";
 import { JokerData } from "../../../data/BalatroUtils";
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { EDITIONS, getModPrefix, SEALS } from "../../../data/BalatroUtils";
 
 export const generateAddCardToHandReturn = (
   effect: Effect,
@@ -111,8 +111,9 @@ export const generateAddCardToHandReturn = (
 
   let editionCode = "";
   if (edition === "random") {
-    const editionPool = EDITIONS().map(edition => `'${edition.value}'`)
-    editionCode = `
+    const editionPool = EDITIONS().map(edition => `'${
+      edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)    
+       editionCode = `
       new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_hand_edition')), true)`;
   } else if (edition !== "none") {
     editionCode = `

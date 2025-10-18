@@ -25,6 +25,7 @@ import {
   BuildingStorefrontIcon,
   NumberedListIcon,
   BookOpenIcon,
+  ArrowUturnLeftIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
 
@@ -33,6 +34,7 @@ interface SidebarProps {
   onSectionChange?: (section: string) => void;
   projectName?: string;
   onExport?: () => Promise<void>;
+  onNewmod?: () => Promise<void>;
   onExportJSON?: () => void;
   onImportJSON?: () => Promise<void>;
   exportLoading?: boolean;
@@ -46,6 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSectionChange,
   projectName = "mycustommod",
   onExport,
+  onNewmod,
   onExportJSON,
   onImportJSON,
   exportLoading = false,
@@ -83,6 +86,12 @@ const Sidebar: React.FC<SidebarProps> = ({
     //}
 
     onSectionChange?.(section);
+  };
+
+const handleCreateNewmod = async () => {
+    if (onNewmod) {
+      await onNewmod();
+    }
   };
 
   const handleExport = async () => {
@@ -139,6 +148,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   const actionItems = [
+    {
+      id: "new_mod",
+      label: "Create New Mod",
+      icon: ArrowUturnLeftIcon,
+      onClick: handleCreateNewmod,
+      disabled: false,
+    },
     {
       id: "import",
       label: "Import Mod",
@@ -246,7 +262,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       transition={{ duration: 0.2 }}
                       className="ml-auto"
                     >
-                      <ChevronDownIcon/>
+                      <ChevronDownIcon className="h-5 w-5"/>
                     </motion.div>
                   </button>
 
@@ -512,6 +528,16 @@ const Sidebar: React.FC<SidebarProps> = ({
             transition={{ delay: 0.3 }}
             className="p-4 border-t border-black-light space-y-3"
           >
+            <button
+              onClick={handleCreateNewmod}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-black-darker border-2 border-red-400 rounded-lg text-red-400 hover:text-black-dark font-medium hover:bg-red-400 hover:border-red-350 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ArrowUturnLeftIcon className="h-4 w-4" />
+              <span className="text-sm font-medium tracking-wide">
+                Create New Mod
+              </span>
+            </button>
+
             <button
               onClick={handleImportJSON}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-black-darker border-2 border-black-lighter rounded-lg text-white-light hover:border-mint hover:text-mint transition-colors cursor-pointer"
@@ -1039,6 +1065,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                         ? "text-white-darker opacity-50 cursor-not-allowed"
                         : item.id === "export"
                         ? "text-mint-light hover:bg-mint-dark hover:text-black-darker"
+                        : item.id === "new_mod"
+                        ? "text-red-400 hover:bg-red-400 hover:text-black-darker"
                         : "text-white-light hover:bg-black-light hover:text-white-lighter"
                     }`}
                   >

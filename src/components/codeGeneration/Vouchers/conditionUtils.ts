@@ -5,9 +5,9 @@ import { generateAnteLevelConditionCode } from "./conditions/AnteLevelCondition"
 import { generateHandSizeConditionCode } from "./conditions/HandSizeCondition";
 import { generateRemainingHandsConditionCode } from "./conditions/RemainingHandsCondition";
 import { generateVoucherRedeemedConditionCode } from "./conditions/VoucherRedeemedCondition";
-import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateConsumableCountConditionCode } from "./conditions/ConsumableCountCondition";
 import { generateCheckFlagConditionCode } from "./conditions/CheckFlagCondition";
+import { generateInBlindConditionCode } from "./conditions/InBlindCondition";
 import { generateBlindTypeConditionCode } from "./conditions/BlindTypeCondition";
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
 import { generateDrawnHandConditionCode } from "./conditions/DrawnHandCondition";
@@ -134,9 +134,6 @@ const generateSingleConditionCode = (
 
     case "joker_count":
       return generateJokerCountConditionCode([singleConditionRule]);
-      
-    case "in_blind":
-      return generateInBlindConditionCode([singleConditionRule]);
 
     case "drawn_hand":
       return generateDrawnHandConditionCode([singleConditionRule]);
@@ -146,6 +143,9 @@ const generateSingleConditionCode = (
 
     case "check_blind_requirements":
       return generateCheckBlindRequirementsConditionCode([singleConditionRule]);
+
+    case "in_blind":
+      return generateInBlindConditionCode([singleConditionRule]);
 
     case "consumable_count":
       return generateConsumableCountConditionCode([singleConditionRule]);

@@ -52,6 +52,8 @@ export const generateJokersCode = (
   const jokersCode: Record<string, string> = {};
   let currentPosition = 0;
 
+  jokersWithKeys.sort((a, b) => a.orderValue - b.orderValue)
+
   jokersWithKeys.forEach((joker) => {
     const result = generateSingleJokerCode(
       joker,

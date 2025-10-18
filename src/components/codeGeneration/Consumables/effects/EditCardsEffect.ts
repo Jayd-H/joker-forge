@@ -1,4 +1,4 @@
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { EDITIONS, getModPrefix, SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -126,19 +126,14 @@ export const generateEditCardsReturn = (effect: Effect): EffectReturn => {
         editCardsCode += `
                         G.hand.highlighted[i]:set_edition(nil, true)`
     } else if (edition === "random") {
+        const editionPool = EDITIONS().map(edition => `'${
+                    edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)
         editCardsCode += `
-                        local edition = poll_edition('random_edition', nil, true, true, 
-                            { 'e_polychrome', 'e_holo', 'e_foil' })
+                        local edition = pseudorandom_element({${editionPool}}, 'random edition')
                         G.hand.highlighted[i]:set_edition(edition, true)`
     } else {
-    const editions: {key: string, value: string}[] = []
-    EDITIONS().forEach(edition => {
-        editions.push({key: edition.key, value: edition.value})
-    })
-      const editionLua =
-        editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
         editCardsCode += `
-                        G.hand.highlighted[i]:set_edition({ ${editionLua} = true }, true)`
+                        G.hand.highlighted[i]:set_edition('${edition}', true)`
     }
     
     editCardsCode += `
