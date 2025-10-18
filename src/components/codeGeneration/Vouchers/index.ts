@@ -72,6 +72,7 @@ export const generateVouchersCode = (
   const vouchersCode: Record<string, string> = {};
   let currentPosition = 0;
 
+  vouchersWithKeys.sort((a, b) => a.orderValue - b.orderValue)
   vouchersWithKeys.forEach((voucher) => {
     const result = generateSingleVoucherCode(
       voucher,

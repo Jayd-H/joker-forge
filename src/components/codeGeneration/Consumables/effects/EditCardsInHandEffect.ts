@@ -1,4 +1,4 @@
-import { SEALS } from "../../../data/BalatroUtils";
+import { EDITIONS, getModPrefix, SEALS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
@@ -127,14 +127,15 @@ export const generateEditCardsInHandReturn = (effect: Effect): EffectReturn => {
 
   if (edition !== "none") {
     if (edition === "random") {
+        const editionPool = EDITIONS().map(edition => `'${
+            edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)
       editCardsCode += `
             for i = 1, #affected_cards do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()
-                        local edition = poll_edition('random_edition', nil, true, true, 
-                            { 'e_polychrome', 'e_holo', 'e_foil' })
+                            local edition = pseudorandom_element({${editionPool}}, 'random edition')
                         affected_cards[i]:set_edition(edition, true)
                         return true
                     end

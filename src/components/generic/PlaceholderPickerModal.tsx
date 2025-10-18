@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { XMarkIcon, PhotoIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { GameObjectData } from "../data/BalatroUtils";
 
 interface PlaceholderPickerModalProps {
   type: "joker" | "consumable" | "booster" | "enhancement" | "seal" | "voucher";
@@ -64,7 +65,7 @@ const PlaceholderPickerModal: React.FC<PlaceholderPickerModalProps> = ({ type, i
         });
         setCredits(map);
       } catch (e) {
-        if ((e as any)?.name !== "AbortError") {
+        if ((e as GameObjectData)?.name !== "AbortError") {
           console.error("Failed to load placeholder credits", e);
           setCredits({});
         }

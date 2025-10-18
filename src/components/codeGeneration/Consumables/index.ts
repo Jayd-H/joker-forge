@@ -74,6 +74,8 @@ export const generateConsumablesCode = (
   const consumablesCode: Record<string, string> = {};
   let currentPosition = 0;
 
+  consumablesWithKeys.sort((a, b) => a.orderValue - b.orderValue)
+
   if (consumableSets.length > 0) {
     const setsCode = generateConsumableSetsCode(
       consumableSets,

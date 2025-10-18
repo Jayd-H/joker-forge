@@ -67,9 +67,13 @@ export const generateSetSellValueReturn = (
 
   if (target === "all_jokers" || target === "all") {
     if (target === "all") {
-      sellValueCode += `for _, area in ipairs({ G.jokers, G.consumeables }) do
-       `}
-    sellValueCode += `for i, target_card in ipairs(`
+      sellValueCode += `
+        for _, area in ipairs({ G.jokers, G.consumeables }) do`
+      }
+
+    sellValueCode += `
+      for i, target_card in ipairs(`
+
     if (target === "all_jokers") {
       sellValueCode += `G.jokers.cards`
     } else {
@@ -77,34 +81,38 @@ export const generateSetSellValueReturn = (
     }
 
     sellValueCode += `) do
-                if target_card.set_cost then`
+            if target_card.set_cost then`
+  }
+
+
                 
-    switch (operation) {
-      case "add":
-        sellValueCode += `
-            target_card.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
-            target_card:set_cost()`;
-        break;
-      case "subtract":
-        sellValueCode += `
-            target_card.ability.extra_value = math.max(0, (card.ability.extra_value or 0) - ${valueCode})
-            target_card:set_cost()`;
-        break;
-      case "set":
-        sellValueCode += `
-            target_card.ability.extra_value = ${valueCode}
-            target_card:set_cost()`;
-    }
+  switch (operation) {
+    case "add":
+      sellValueCode += `
+          target_card.ability.extra_value = (card.ability.extra_value or 0) + ${valueCode}
+          target_card:set_cost()`;
+      break;
+    case "subtract":
+      sellValueCode += `
+          target_card.ability.extra_value = math.max(0, (card.ability.extra_value or 0) - ${valueCode})
+          target_card:set_cost()`;
+      break;
+    case "set":
+      sellValueCode += `
+          target_card.ability.extra_value = ${valueCode}
+          target_card:set_cost()`;
+  }
+
     if (target === "all_jokers" || target === "all") {
       sellValueCode += `
             end
         end`
-      if (target === "all") {
+
+    if (target === "all") {
         sellValueCode += `
     end`
       }
     }
-  }
 
   let messageType, messageOperation
   const typeKey: Array<Array<string>> = [["specific", ''], ["all_jokers", 'All Jokers '], ["all", 'All cards ']];
