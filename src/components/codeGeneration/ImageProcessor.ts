@@ -53,6 +53,8 @@ export const processImages = async (
     const soulPositions: Record<number, { x: number; y: number }> = {};
     let currentPosition = 0;
 
+    items.sort((a, b) => a.orderValue - b.orderValue)
+    
     const imagePromises = items.map((item, index) => {
       const promises: Promise<void>[] = [];
 

@@ -1,6 +1,6 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
-import { EDITIONS, SEALS } from "../../../data/BalatroUtils";
+import { EDITIONS, getModPrefix, SEALS } from "../../../data/BalatroUtils";
 
 export const generateAddCardToDeckReturn = (
   effect: Effect,
@@ -61,7 +61,8 @@ export const generateAddCardToDeckReturn = (
 
   let editionCode = "";
   if (edition === "random") {
-    const editionPool = EDITIONS().map(edition => `'${edition.value}'`)
+    const editionPool = EDITIONS().map(edition => `'${
+      edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)
     editionCode = `
       new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_edition')), true)`;
   } else if (edition !== "none") {

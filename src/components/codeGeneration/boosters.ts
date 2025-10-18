@@ -9,8 +9,9 @@ export const generateBoostersCode = (
   }
 
   let code = "";
+  const sortedBoosters = boosters.sort((a, b) => a.orderValue - b.orderValue)
 
-  boosters.forEach((booster, index) => {
+  sortedBoosters.forEach((booster, index) => {
     if (index > 0) code += "\n\n";
     code += generateSingleBooster(booster, modPrefix, index);
   });

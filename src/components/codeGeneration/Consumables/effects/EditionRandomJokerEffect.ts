@@ -1,3 +1,4 @@
+import { EDITIONS, getModPrefix } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -55,9 +56,10 @@ export const generateEditionRandomJokerReturn = (
 
   // Handle different edition types
   if (edition === "random") {
+    const editionPool = EDITIONS().map(edition => `'${
+        edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)
     editionJokerCode += `
-                        local edition = poll_edition('edition_random_joker', nil, true, true, 
-                            { 'e_polychrome', 'e_holo', 'e_foil' })
+                        local edition = pseudorandom_element({${editionPool}}, 'random edition')
                         joker:set_edition(edition, true)`;
   } else if (edition === "remove") {
     editionJokerCode += `

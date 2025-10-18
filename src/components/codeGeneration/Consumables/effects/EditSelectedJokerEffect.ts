@@ -1,4 +1,4 @@
-import { EDITIONS } from "../../../data/BalatroUtils";
+import { EDITIONS, getModPrefix } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -58,33 +58,29 @@ if (edition !== "none") {
                 }))
             end`;
     } else if (edition === "random") {
+        const editionPool = EDITIONS().map(edition => `'${
+            edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)
       editCardsCode += `
             for i = 1, #G.jokers.highlighted do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()
-                        local edition = poll_edition('random_edition', nil, true, true, 
-                            { 'e_polychrome', 'e_holo', 'e_foil' })
+                        local edition = pseudorandom_element({${editionPool}}, 'random edition')
                         G.jokers.highlighted[i]:set_edition(edition, true)
                         return true
                     end
                 }))
             end`;
     } else {
-        const editions: {key: string, value: string}[] = []
-        EDITIONS().forEach(edition => {
-        editions.push({key: edition.value, value: edition.label})
-        })
 
-        const editionLua = editions[editions.map(edition => edition.key).indexOf(edition)]?.value || "foil";
         editCardsCode += `
             for i = 1, #G.jokers.highlighted do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()
-                        G.jokers.highlighted[i]:set_edition({ ${editionLua} = true }, true)
+                        G.jokers.highlighted[i]:set_edition("${edition}", true)
                         return true
                     end
                 }))

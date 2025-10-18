@@ -444,6 +444,8 @@ export const generateEnhancementsCode = (
   const enhancementsCode: Record<string, string> = {};
   let currentPosition = 0;
 
+  enhancementsWithKeys.sort((a, b) => a.orderValue - b.orderValue)
+
   enhancementsWithKeys.forEach((enhancement) => {
     const result = generateSingleEnhancementCode(
       enhancement,
@@ -468,6 +470,8 @@ export const generateSealsCode = (
     ...seal,
     objectKey: seal.objectKey || slugify(seal.name),
   }));
+
+  sealsWithKeys.sort((a, b) => a.orderValue - b.orderValue)
 
   const sealsCode: Record<string, string> = {};
   let currentPosition = 0;
@@ -498,6 +502,8 @@ export const generateEditionsCode = (
   }));
 
   const editionsCode: Record<string, string> = {};
+
+  editionsWithKeys.sort((a, b) => a.orderValue - b.orderValue)
 
   editionsWithKeys.forEach((edition) => {
     const result = generateSingleEditionCode(edition, modPrefix);

@@ -18,6 +18,7 @@ import { RarityData, JokerData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
 import ShowcaseModal from "../generic/ShowcaseModal";
 import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
+import { FunnelIcon } from "@heroicons/react/24/solid";
 
 interface JokersPageProps {
   modName: string;
@@ -492,6 +493,12 @@ const JokersPage: React.FC<JokersPageProps> = ({
     setShowSortMenu(!showSortMenu);
   };
 
+  const handleFiltersToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (showSortMenu) setShowSortMenu(false);
+    setShowFilters(!showFilters);
+  };
+
   const filteredAndSortedJokers = useMemo(() => {
     const filtered = jokers.filter((joker) => {
       const matchesSearch =
@@ -626,14 +633,26 @@ const JokersPage: React.FC<JokersPageProps> = ({
                   <span className="whitespace-nowrap">{currentSortLabel}</span>
                 </button>
               </div>
-                <button
-                  ref={sortDirectionButtonRef}
-                  onClick={handleSortDirectionToggle}
-                  className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                >
-                  <ArrowsUpDownIcon className="h-4 w-4" />
-                  <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
-                </button>
+              <button
+                ref={sortDirectionButtonRef}
+                onClick={handleSortDirectionToggle}
+                className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+              >
+                <ArrowsUpDownIcon className="h-4 w-4" />
+                <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+              </button>
+              <button
+                ref={filtersButtonRef}
+                onClick={handleFiltersToggle}
+                className={`flex items-center gap-2 px-4 py-4 border-2 rounded-lg transition-colors cursor-pointer ${
+                  showFilters
+                    ? "bg-mint-dark text-black-darker border-mint"
+                    : "bg-black-dark text-white-light border-black-lighter hover:border-mint"
+                }`}
+              >
+                <FunnelIcon className="h-4 w-4" />
+                <span>Filters</span>
+              </button>
             </div>
           </div>
         </div>
@@ -786,11 +805,13 @@ const JokersPage: React.FC<JokersPageProps> = ({
                     {option.label}
                   </button>
                 ))}
-              </div>
+              </div>    
             </div>
           </div>,
           document.body
         )}
+
+
 
       {showFilters &&
         ReactDOM.createPortal(
