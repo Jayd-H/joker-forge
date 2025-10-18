@@ -744,7 +744,7 @@ function AppContent() {
     };
 
     loadAutoSave();
-  }, [loadFromLocalStorage]);
+  });
 
   useEffect(() => {
     if (!hasLoadedInitialData) return;
