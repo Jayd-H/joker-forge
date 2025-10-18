@@ -49,7 +49,8 @@ const AcknowledgementsPage: React.FC = () => {
         <ul className="list-disc list-inside text-white-dark mt-4">
           <li>
             <a
-              className="text-condition"
+              href="https://github.com/Jayd-H"
+              className="text-condition hover:underline"
             >
               Jayden Holdsworth
             </a>
@@ -67,21 +68,24 @@ const AcknowledgementsPage: React.FC = () => {
         <ul className="list-disc list-inside text-white-dark mt-4">
           <li>
             <a
-              className="text-condition"
+              href="https://github.com/EasternFarmer"
+              className="text-condition hover:underline"
             >
               Eastern Farmer
             </a>
           </li>
           <li>
             <a
-              className="text-condition"
+              href="https://github.com/Butterstutter"
+              className="text-condition hover:underline"
             >
               ButterStutter
             </a>
           </li>
           <li>
             <a
-              className="text-condition"
+              href="https://github.com/cavoshoki"
+              className="text-condition hover:underline"
             >
               CavoShoku
             </a>
