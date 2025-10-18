@@ -12,8 +12,8 @@ import { generateBlindTypeConditionCode } from "./conditions/BlindTypeCondition"
 import { generateSystemConditionCode } from "./conditions/SystemCondition";
 import { generateDrawnHandConditionCode } from "./conditions/DrawnHandCondition";
 import { generateGenericCompareConditionCode } from "./conditions/GenericCompareCondition";
-import { generateCheckBlindRequirementsConditionCode } from "./conditions/BlindRequirementsCondition";
 import { generateCheckDeckConditionCode } from "./conditions/CheckDeckCondition";
+import { generateCheckBlindRequirementsConditionCode } from "./conditions/BlindRequirementsCondition";
 import { generateBlindNameConditionCode } from "./conditions/BlindNameCondition";
 import { generateDeckCountConditionCode } from "./conditions/DeckCountCondition";
 import { generateSpecificJokerConditionCode } from "./conditions/SpecificJokerCondition";

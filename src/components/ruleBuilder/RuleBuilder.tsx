@@ -64,6 +64,7 @@ import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
+import { getDeckConditionTypeById } from "../data/Decks/Conditions";
 import { getDeckEffectTypeById } from "../data/Decks/Effects";
 import { UserConfigContext } from "../Contexts";
 
@@ -119,7 +120,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConsumableConditionTypeById
       : itemType === "card"
       ? getCardConditionTypeById
-      : getVoucherConditionTypeById
+      : itemType === "voucher"
+      ? getVoucherConditionTypeById
+      : getDeckConditionTypeById;
   const getEffectType =
     itemType === "joker"
       ? getEffectTypeById

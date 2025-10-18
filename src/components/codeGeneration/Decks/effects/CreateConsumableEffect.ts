@@ -77,7 +77,9 @@ export const generateCreateConsumableReturn = (
 `
 
   return {
-      statement: `${createCode}`,
+      statement: `__PRE_RETURN_CODE__
+              ${createCode}
+              __PRE_RETURN_CODE_END__`,
       colour: colour,
 
   }

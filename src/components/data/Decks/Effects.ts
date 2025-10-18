@@ -25,6 +25,7 @@ import {
   SPECTRAL_CARDS,
   TAGS,
 } from "../BalatroUtils";
+import { DECK_GENERIC_TRIGGERS } from "./Conditions";
 
 export const DECK_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
@@ -396,7 +397,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hand_size",
     label: "Edit Hand Size",
     description: "Add, subtract, or set the player's hand size",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -424,7 +425,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_play_size",
     label: "Edit Play Size",
     description: "Add, subtract, or set the player's play size",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -452,7 +453,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discard_size",
     label: "Edit Discard Size",
     description: "Add, subtract, or set the player's discard size",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -480,7 +481,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hands_money",
     label: "Edit Hand Money",
     description: "Add, subtract, or set the player's end of the round hand money",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -508,7 +509,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discards_money",
     label: "Edit Discard Money",
     description: "set the player's end of the round discard money",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -534,7 +535,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_voucher_slots",
     label: "Edit Voucher Slots",
     description: "Modify the number of vouchers available in shop",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -561,7 +562,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_booster_slots",
     label: "Edit Booster Slots",
     description: "Modify the number of booster packs available in shop",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -588,7 +589,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "set_ante",
       label: "Set Ante Level",
       description: "Modify the run start ante level",
-      applicableTriggers: ["deck_selected"],
+      applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
       params: [
         {
           id: "operation",
@@ -615,7 +616,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_rerolls",
     label: "Edit Reroll Price",
     description: "Modify the price of the shop Reroll",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -641,7 +642,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edit_raity_weight",
         label: "Edit Rarity Weight",
         description: "Modify the Rate Probability for Joker Raritys in the Shop",
-        applicableTriggers: ["deck_selected"],
+        applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
         params: [
           {
               id: "key_rarity",
@@ -676,7 +677,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edit_item_weight",
         label: "Edit Card Weight",
         description: "Modify the Rate Probability for Shop Cards",
-        applicableTriggers: ["deck_selected"],
+        applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
         params: [
           {
               id: "key",
@@ -711,7 +712,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edit_win_ante",
         label: "Set Winner Ante",
         description: "Set the Final Ante where the Player Win's the Game",
-        applicableTriggers: ["deck_selected"],
+        applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
         params: [
            {
               id: "operation",
@@ -738,7 +739,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "edit_consumable_slots",
       label: "Edit Consumable Slots",
       description: "Modify the number of consumable slots available",
-      applicableTriggers: ["deck_selected"],
+      applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
       params: [
         {
           id: "operation",
@@ -765,7 +766,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_hands",
     label: "Edit Hands",
     description: "Add, subtract, or set the player's hands for this run",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -793,7 +794,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_discards",
     label: "Edit Discards",
     description: "Add, subtract, or set the player's discards for this run",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -823,7 +824,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_joker_slots",
     label: "Edit Joker Slots",
     description: "Add or remove joker slots available in the run",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -850,7 +851,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "modify_blind_requirement",
     label: "Modify Base Blind Requirement",
     description: "Changes the score requirement of Base blind",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -879,7 +880,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
       label: "Starting Consumable",
       description:
         "Start the run with consumable cards and add them to your consumables area",
-      applicableTriggers: ["deck_selected"],
+      applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
       params: [
         {
           id: "set",
@@ -1010,7 +1011,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
       label: "Starting Joker",
       description:
         "Start the run with a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-      applicableTriggers: ["deck_selected"],
+      applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
       params: [
         {
           id: "joker_type",
@@ -1087,7 +1088,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "create_tag",
         label: "Starting Tag",
         description: "Create a specific or random Starting tag",
-        applicableTriggers: ["deck_selected"],
+        applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
         params: [
           {
             id: "tag_type",
@@ -1116,7 +1117,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_dollars",
     label: "Edit Starting Dollars",
     description: "Add, subtract, or set the player's Starting money",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "operation",
@@ -1144,7 +1145,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Emit Flag",
     description:
       "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
         id: "flag_name",
@@ -1170,7 +1171,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_card_apperance",
     label: "Edit Card Apperance",
     description: "Modify if a Card can appear or not the current Run",
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {
           id: "key",
@@ -1195,7 +1196,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
       id: "play_sound",
       label: "Play a sound",
       description: "Play a specific sound defined in the Sound Tab",
-      applicableTriggers: ["deck_selected"],
+      applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
       params: [
         {
           id: "sound_key",

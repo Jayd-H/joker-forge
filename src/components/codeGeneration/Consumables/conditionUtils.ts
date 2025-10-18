@@ -145,8 +145,8 @@ const generateSingleConditionCode = (
     case "deck_size":
       return generateDeckSizeConditionCode([singleConditionRule]);
 
-      case "deck_check":
-        return generateCheckDeckConditionCode([singleConditionRule]);
+    case "deck_check":
+      return generateCheckDeckConditionCode([singleConditionRule]);
 
     case "check_blind_requirements":
       return generateCheckBlindRequirementsConditionCode([singleConditionRule]);

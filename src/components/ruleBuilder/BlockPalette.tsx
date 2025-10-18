@@ -61,12 +61,17 @@ import {
   getCardEffectsForTrigger,
 } from "../data/Card/Effects";
 import {
+  VOUCHER_CONDITION_CATEGORIES,
   getVoucherConditionsForTrigger,
 } from "../data/Vouchers/Conditions";
 import {
   VOUCHER_EFFECT_CATEGORIES,
   getVoucherEffectsForTrigger,
 } from "../data/Vouchers/Effects";
+import {
+  DECK_CONDITION_CATEGORIES,
+  getDeckConditionsForTrigger,
+} from "../data/Decks/Conditions";
 import {
   DECK_EFFECT_CATEGORIES,
   getDeckEffectsForTrigger,
@@ -136,7 +141,11 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONDITION_CATEGORIES
       : itemType === "consumable"
       ? CONSUMABLE_CONDITION_CATEGORIES
-      : CARD_CONDITION_CATEGORIES
+      : itemType === "card"
+      ? CARD_CONDITION_CATEGORIES
+      : itemType === "voucher"
+      ? VOUCHER_CONDITION_CATEGORIES
+      : DECK_CONDITION_CATEGORIES
 
   const effectCategories =
     itemType === "joker"
@@ -156,7 +165,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getConsumableConditionsForTrigger
       : itemType === "card"
       ? getCardConditionsForTrigger
-      : getVoucherConditionsForTrigger
+      : itemType === "voucher"
+      ? getVoucherConditionsForTrigger
+      : getDeckConditionsForTrigger
 
   const getEffectsForTriggerFn =
     itemType === "joker"

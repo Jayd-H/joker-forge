@@ -51,6 +51,7 @@ import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 
 import { getDeckTriggerById } from "../data/Decks/Triggers";
+import { getDeckConditionTypeById } from "../data/Decks/Conditions";
 import { getDeckEffectTypeById } from "../data/Decks/Effects";
 
 interface RuleCardProps {
@@ -123,7 +124,9 @@ const SortableCondition: React.FC<{
       ? getConsumableConditionTypeById
       : itemType === "card"
       ? getCardConditionTypeById
-      : getVoucherConditionTypeById
+      : itemType === "voucher"
+      ? getVoucherConditionTypeById
+      : getDeckConditionTypeById
   const conditionType = getConditionType(condition.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =

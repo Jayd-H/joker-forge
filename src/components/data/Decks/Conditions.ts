@@ -24,7 +24,7 @@ import {
   DECKS,
 } from "../BalatroUtils";
 
-export const VOUCHER_GENERIC_TRIGGERS: string[] = [
+export const DECK_GENERIC_TRIGGERS: string[] = [
   "blind_selected",
   "blind_skipped",
   "round_end",
@@ -35,7 +35,7 @@ export const VOUCHER_GENERIC_TRIGGERS: string[] = [
   "shop_exited",
 ];
 
-export const VOUCHER_CONDITION_CATEGORIES: CategoryDefinition[] = [
+export const DECK_CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Player State",
     icon: UserIcon,
@@ -58,12 +58,12 @@ export const VOUCHER_CONDITION_CATEGORIES: CategoryDefinition[] = [
   },
 ];
 
-export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
+export const DECK_CONDITION_TYPES: ConditionTypeDefinition[] = [
   {
     id: "hand_drawn",
     label: "Hand Drawn",
     description: "Check if a hand is currently drawn",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [],
     category: "Game Context",
   },
@@ -71,7 +71,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "deck_size",
     label: "Deck Size",
     description: "Check the size of the deck",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "size_type",
@@ -102,7 +102,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "specific_joker",
     label: "Specific Joker",
     description: "Check if a specific joker is in your collection",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operator",
@@ -127,7 +127,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "joker_count",
     label: "Joker Count",
     description: "Check how many jokers the player has",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operator",
@@ -156,7 +156,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "deck_count",
     label: "Deck Count",
     description: "Count cards in your entire deck by property",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "property_type",
@@ -256,7 +256,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "player_money",
     label: "Player Money",
     description: "Check the player's current money",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operator",
@@ -282,28 +282,28 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Player State",
   },
   {
-      id: "deck_check",
-      label: "Deck Check",
-      description: "Check on what Deck the player is on",
-      applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
-      params: [
-        {
-          id: "decks",
-          type: "select",
-          label: "Deck",
-          options: [
-          ...DECKS(),
-          ],
-          default: "Red Deck",
-        },
+   id: "deck_check",
+    label: "Deck Check",
+    description: "Check on what Deck the player is on",
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
+    params: [
+    {
+     id: "decks",
+     type: "select",
+     label: "Deck",
+     options: [
+     ...DECKS(),
       ],
-      category: "Deck & Jokers",
-    },
+      default: "Red Deck",
+          },
+        ],
+        category: "Deck & Jokers",
+      },
   {
     id: "voucher_redeemed",
     label: "Voucher Redeemed",
     description: "Check if a specific Voucher was redeemed during the run",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "voucher",
@@ -347,7 +347,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "blind_name",
     label: "Blind Name",
     description: "Check the current blind",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operation",
@@ -404,7 +404,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "hand_size",
     label: "Hand Size",
     description: "Check the current hand size",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operator",
@@ -434,7 +434,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "blind_type",
     label: "Blind Type",
     description: "Check the type of the current blind",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "blind_type",
@@ -453,7 +453,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "remaining_hands",
     label: "Remaining Hands",
     description: "Check how many hands the player has left",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operator",
@@ -478,12 +478,12 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
       },
     ],
     category: "Player State",
-  },/*
-  {
+  },
+  /*{
     id: "in_blind",
     label: "In Blind",
     description: "Check if the player is currently in a blind (gameplay)",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [],
     category: "Game Context",
   },*/
@@ -491,7 +491,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "system_condition",
     label: "Player OS",
     description: "Check on what Operating System the player is on",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "system",
@@ -513,7 +513,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "consumable_count",
     label: "Consumable Count",
     description: "Check how many of a consumable a player has",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "consumable_type",
@@ -634,7 +634,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     id: "check_flag",
     label: "Check Flag",
     description: "Check if a specific flag from your mod is true",
-    applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "flag_name",
@@ -649,7 +649,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
       id: "generic_compare",
       label: "Generic Compare",
       description: "Compare two custom values with an operator",
-      applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+      applicableTriggers: DECK_GENERIC_TRIGGERS,
       params: [
         {
           id: "value1",
@@ -674,16 +674,16 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     },
 ];
 
-export function getVoucherConditionsForTrigger(
+export function getDeckConditionsForTrigger(
   triggerId: string
 ): ConditionTypeDefinition[] {
-  return VOUCHER_CONDITION_TYPES.filter((condition) =>
+  return DECK_CONDITION_TYPES.filter((condition) =>
     condition.applicableTriggers?.includes(triggerId)
   );
 }
 
-export function getVoucherConditionTypeById(
+export function getDeckConditionTypeById(
   id: string
 ): ConditionTypeDefinition | undefined {
-  return VOUCHER_CONDITION_TYPES.find((condition) => condition.id === id);
+  return DECK_CONDITION_TYPES.find((condition) => condition.id === id);
 }
