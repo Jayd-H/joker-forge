@@ -419,6 +419,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
     const filtered = seals.filter((seal) => {
       const matchesSearch =
         seal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        seal.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         seal.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;

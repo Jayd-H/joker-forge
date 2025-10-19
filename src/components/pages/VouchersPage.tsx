@@ -426,6 +426,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     const filtered = vouchers.filter((voucher) => {
       const matchesSearch =
         voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        voucher.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         voucher.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;

@@ -923,6 +923,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     const filtered = boosters.filter((booster) => {
       const matchesSearch =
         booster.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        booster.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         booster.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;
