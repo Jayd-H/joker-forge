@@ -503,6 +503,7 @@ const JokersPage: React.FC<JokersPageProps> = ({
     const filtered = jokers.filter((joker) => {
       const matchesSearch =
         joker.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        joker.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         joker.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       let matchesRarity = true;
