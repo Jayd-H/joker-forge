@@ -382,11 +382,12 @@ const handleSortDirectionToggle = () => {
     setShowSortMenu(!showSortMenu);
   };
 
- const filteredAndSortedDecks = useMemo(() => {
-     const filtered = decks.filter((deck) => {
-       const matchesSearch =
-         deck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         deck.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAndSortedDecks = useMemo(() => {
+    const filtered = decks.filter((deck) => {
+      const matchesSearch =
+        deck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        deck.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        deck.description.toLowerCase().includes(searchTerm.toLowerCase());
  
        return matchesSearch;
      });
