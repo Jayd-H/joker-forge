@@ -15941,7 +15941,7 @@
       "discovered": true,
       "rules": [],
       "placeholderCreditIndex": 5,
-      "orderValue": 24,
+      "orderValue": 23,
       "no_collection": false,
       "requires_activetor": false,
       "can_repeat_soul": false,
@@ -15981,7 +15981,7 @@
         }
       ],
       "placeholderCreditIndex": 6,
-      "orderValue": 25,
+      "orderValue": 24,
       "no_collection": false,
       "requires": "v_blank",
       "requires_activetor": true,
@@ -16143,7 +16143,7 @@
         }
       ],
       "placeholderCreditIndex": 3,
-      "orderValue": 26,
+      "orderValue": 25,
       "no_collection": false,
       "requires_activetor": false,
       "can_repeat_soul": false,
@@ -16183,7 +16183,7 @@
         }
       ],
       "placeholderCreditIndex": 1,
-      "orderValue": 32,
+      "orderValue": 31,
       "no_collection": false,
       "requires_activetor": false,
       "can_repeat_soul": false,
@@ -16271,7 +16271,7 @@
         }
       ],
       "placeholderCreditIndex": 3,
-      "orderValue": 28,
+      "orderValue": 27,
       "no_collection": false,
       "requires_activetor": false,
       "can_repeat_soul": false,
@@ -16562,7 +16562,7 @@
       ],
       "placeholderCreditIndex": 2,
       "hasUserUploadedImage": true,
-      "orderValue": 22
+      "orderValue": 21
     },
      {
       "objectType": "voucher",
@@ -16640,7 +16640,7 @@
         }
       ],
       "placeholderCreditIndex": 2,
-      "orderValue": 23,
+      "orderValue": 22,
       "no_collection": false,
       "requires": "v_seed_money",
       "requires_activetor": true,
@@ -16722,7 +16722,7 @@
         }
       ],
       "placeholderCreditIndex": 7,
-      "orderValue": 33,
+      "orderValue": 32,
       "no_collection": false,
       "requires": "v_paint_brush",
       "requires_activetor": true,
@@ -16771,7 +16771,7 @@
         }
       ],
       "placeholderCreditIndex": 3,
-      "orderValue": 29,
+      "orderValue": 28,
       "no_collection": false,
       "requires": "v_hieroglyph",
       "requires_activetor": true,
@@ -16894,7 +16894,7 @@
       "cost": 10,
       "rules": [],
       "placeholderCreditIndex": 2,
-      "orderValue": 30,
+      "orderValue": 29,
       "no_collection": false,
       "requires_activetor": false,
       "can_repeat_soul": false,
@@ -16937,7 +16937,7 @@
         }
       ],
       "placeholderCreditIndex": 2,
-      "orderValue": 27,
+      "orderValue": 26,
       "no_collection": false,
       "requires": "v_magic_trick",
       "requires_activetor": true,
@@ -17017,7 +17017,7 @@
       "cost": 10,
       "rules": [],
       "placeholderCreditIndex": 2,
-      "orderValue": 31,
+      "orderValue": 30,
       "no_collection": false,
       "requires": "v_directors_cut",
       "requires_activetor": true,

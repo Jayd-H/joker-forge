@@ -133,7 +133,8 @@ const generateSingleDeckCode = (
 
   let deckCode = `SMODS.Back {
     key = '${deck.objectKey}',
-    pos = { x = ${col}, y = ${row} },`;
+    pos = { x = ${col}, y = ${row} },
+    `;
 
   const ConfigVouchers = (deck.Config_vouchers || []).filter((value) => value.startsWith("v_"))
   const ConfigConsumables = (deck.Config_consumables || []).filter((value) => value.startsWith("c_"))
@@ -145,7 +146,7 @@ if (effectsConfig.trim()) {
 }
 if (ConfigVouchers.length > 0) {
   deckCode += `
-      vouchers = {${ConfigVouchers.map((value) => `"${value}"`)}},`;
+      vouchers = {${ConfigVouchers.map((value) => ` "${value}" `)}},`;
 }
 if (ConfigConsumables .length > 0) {
   deckCode += `
