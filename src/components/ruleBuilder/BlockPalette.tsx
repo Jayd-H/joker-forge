@@ -50,7 +50,10 @@ import {
   CONSUMABLE_EFFECT_CATEGORIES,
 } from "../data/Consumables/Effects";
 import { CARD_TRIGGERS, CARD_TRIGGER_CATEGORIES } from "../data/Card/Triggers";
-import { VOUCHER_TRIGGERS, VOUCHER_TRIGGER_CATEGORIES } from "../data/Vouchers/Triggers";
+import {
+  VOUCHER_TRIGGERS,
+  VOUCHER_TRIGGER_CATEGORIES,
+} from "../data/Vouchers/Triggers";
 import { DECK_TRIGGERS, DECK_TRIGGER_CATEGORIES } from "../data/Decks/Triggers";
 import {
   CARD_CONDITION_CATEGORIES,
@@ -123,7 +126,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CARD_TRIGGERS
       : itemType === "voucher"
       ? VOUCHER_TRIGGERS
-      : DECK_TRIGGERS
+      : DECK_TRIGGERS;
 
   const triggerCategories =
     itemType === "joker"
@@ -134,7 +137,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CARD_TRIGGER_CATEGORIES
       : itemType === "voucher"
       ? VOUCHER_TRIGGER_CATEGORIES
-      : DECK_TRIGGER_CATEGORIES
+      : DECK_TRIGGER_CATEGORIES;
 
   const conditionCategories =
     itemType === "joker"
@@ -145,7 +148,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CARD_CONDITION_CATEGORIES
       : itemType === "voucher"
       ? VOUCHER_CONDITION_CATEGORIES
-      : DECK_CONDITION_CATEGORIES
+      : DECK_CONDITION_CATEGORIES;
 
   const effectCategories =
     itemType === "joker"
@@ -156,7 +159,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CARD_EFFECT_CATEGORIES
       : itemType === "voucher"
       ? VOUCHER_EFFECT_CATEGORIES
-      : DECK_EFFECT_CATEGORIES
+      : DECK_EFFECT_CATEGORIES;
 
   const getConditionsForTriggerFn =
     itemType === "joker"
@@ -167,7 +170,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getCardConditionsForTrigger
       : itemType === "voucher"
       ? getVoucherConditionsForTrigger
-      : getDeckConditionsForTrigger
+      : getDeckConditionsForTrigger;
 
   const getEffectsForTriggerFn =
     itemType === "joker"
@@ -178,7 +181,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getCardEffectsForTrigger
       : itemType === "voucher"
       ? getVoucherEffectsForTrigger
-      : getDeckEffectsForTrigger
+      : getDeckEffectsForTrigger;
 
   const style = transform
     ? {
@@ -417,12 +420,14 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
           onClick={() => toggleCategory(category.label)}
           className="w-full flex items-center justify-between p-2 hover:bg-black-light rounded-md transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <IconComponent className="h-4 w-4 text-mint-light" />
-            <span className="text-white-light text-xs font-medium tracking-wider uppercase">
+          <div className="flex items-center gap-2 text-left">
+            <IconComponent className="h-4 w-4 text-mint-light flex-shrink-0" />
+            <span className="text-left text-white-light text-xs font-medium tracking-wider uppercase whitespace-nowrap flex items-center gap-1">
               {category.label}
             </span>
-            <span className="text-white-darker text-xs">({items.length})</span>
+            <span className="text-white-darker text-xs font-normal">
+              ({items.length})
+            </span>
           </div>
           {isExpanded ? (
             <ChevronDownIcon className="h-3 w-3 text-white-darker" />
