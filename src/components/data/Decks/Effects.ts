@@ -195,7 +195,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         default: "none",
       },
     ],
-    category: "Starting Cards Modifications",
+    category: "Deck Card Modifications",
   },
   {
     id: "edit_starting_ranks",
@@ -262,7 +262,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         default: "none",
       },
     ],
-    category: "Starting Cards Modifications",
+    category: "Deck Card Modifications",
   },
   {
     id: "add_starting_cards",
@@ -360,7 +360,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         default: "none",
       },
     ],
-    category: "Starting Cards Modifications",
+    category: "Deck Card Modifications",
   },
   {
     id: "remove_starting_cards",
@@ -391,7 +391,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         max: 8,
       },
     ],
-    category: "Starting Cards Modifications",
+    category: "Deck Card Modifications",
   },
   // ===== HAND EFFECTS =====
   {
