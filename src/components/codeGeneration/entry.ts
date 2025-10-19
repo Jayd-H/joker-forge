@@ -543,7 +543,7 @@ lenient_bignum = lenient_bignum or function(a) return a end
 `;
 
 const createIndexList = (objects : GameObjectData[]) => {
-  const alphabetOrder = objects.sort((a,b)=>a.name.localeCompare(b.name))
+  const alphabetOrder = objects.sort((a,b)=>a.objectKey.localeCompare(b.objectKey))
   const order : Array < Array <number> > = []
 
 

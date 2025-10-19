@@ -433,6 +433,7 @@ const EnhancementsPage: React.FC<EnhancementsPageProps> = ({
     const filtered = enhancements.filter((enhancement) => {
       const matchesSearch =
         enhancement.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        enhancement.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         enhancement.description
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
