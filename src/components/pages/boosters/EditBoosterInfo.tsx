@@ -103,6 +103,7 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     { value: "joker", label: "Joker Pack (Add to Jokers)" },
     { value: "consumable", label: "Consumable Pack (Add to Consumables)" },
     { value: "playing_card", label: "Playing Card Pack (Add to Hand)" },
+    { value: "voucher", label: "Voucher Pack (Add to Run)" },
   ];
 
   const handleColorChange =

@@ -6,7 +6,8 @@ import type {
   UserVariable,
   SealData,
   EditionData,
-  VoucherData
+  VoucherData,
+  DeckData
 } from "../../data/BalatroUtils";
 import { parseGameVariable } from "../Consumables/gameVariableUtils";
 import { getGameVariableById } from "../../data/Jokers/GameVars";
@@ -589,7 +590,7 @@ export const generateVariableConfig = (variables: VariableInfo[]): string => {
 };
 
 export const getVariableNamesFromItem = (
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData | DeckData
 ): string[] => {
   if (!item.rules) return [];
 
@@ -636,7 +637,7 @@ export const getVariableNamesFromItem = (
 };
 
 export const getVariableUsageDetails = (
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData | DeckData
 ): VariableUsage[] => {
   if (!item.rules) return [];
 
@@ -734,7 +735,7 @@ export const getVariableUsageDetails = (
 };
 
 export const getAllVariables = (
-  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData
+  item: JokerData | ConsumableData | EnhancementData | SealData | EditionData | VoucherData | DeckData
 ): UserVariable[] => {
   // For jokers and enhancements, get user variables if they exist
   const userVars = (item as JokerData | EnhancementData).userVariables || [];

@@ -42,6 +42,64 @@ const AcknowledgementsPage: React.FC = () => {
             </a>
           </li>
         </ul>
+
+        <p className="text-white-dark text-lg mt-6">
+          Main Developers:
+        </p>
+        <ul className="list-disc list-inside text-white-dark mt-4">
+          <li>
+            <a
+              href="https://github.com/Jayd-H"
+              className="text-condition hover:underline"
+            >
+              Jayden Holdsworth
+            </a>
+          </li>
+          <li>
+            <a
+              className="text-condition"
+            >
+              Taylor
+            </a>
+          </li>
+        <p className="text-white-dark text-lg mt-6">
+        Main Contributors:
+        </p>
+        <ul className="list-disc list-inside text-white-dark mt-4">
+          <li>
+            <a
+              href="https://github.com/EasternFarmer"
+              className="text-condition hover:underline"
+            >
+              Eastern Farmer
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/Butterstutter"
+              className="text-condition hover:underline"
+            >
+              ButterStutter
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/cavoshoki"
+              className="text-condition hover:underline"
+            >
+              CavoShoku
+            </a>
+          </li>
+          <li>
+            <a
+              className="text-condition"
+            >
+              PATO FOFO
+            </a>
+          </li>
+        </ul>
+        </ul>
+
         <p className="text-white text-lg text-center  mt-10">
           Huge thanks to the guys over at the{" "}
           <a

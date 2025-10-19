@@ -9,6 +9,7 @@ import {
   ModMetadata,
   SoundData,
   VoucherData,
+  DeckData
 } from "./data/BalatroUtils";
 import { RarityData } from "./data/BalatroUtils";
 
@@ -25,6 +26,7 @@ export interface ExportedMod {
   seals: SealData[];
   editions: EditionData[];
   vouchers: VoucherData[];
+  decks: DeckData[];
   version: string;
   exportedAt: string;
 }
@@ -40,6 +42,7 @@ interface ImportableModData {
   seals?: SealData[];
   editions?: EditionData[];
   vouchers?: VoucherData[];
+  decks?: DeckData[];
 }
 
 export const normalizeImportedModData = (data: ImportableModData) => {
@@ -68,9 +71,10 @@ export const normalizeImportedModData = (data: ImportableModData) => {
   const normalizedSeals = (data.seals || []).map(normalizeSealData);
   const normalizedEditions = (data.editions || []).map(normalizeEditionData);
   const normalizedVouchers = (data.vouchers || []).map(normalizeVoucherData);
+  const normalizedDecks = (data.decks || []).map(normalizeDeckData);
 
   console.log(
-    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers`
+    `Successfully processed mod data with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers, ${normalizedDecks.length} decks`
   );
 
   return {
@@ -85,6 +89,7 @@ export const normalizeImportedModData = (data: ImportableModData) => {
     seals: normalizedSeals,
     editions: normalizedEditions,
     vouchers: normalizedVouchers,
+    decks: normalizedDecks,
   };
 };
 
@@ -148,6 +153,7 @@ const normalizeSoundData = (sound: Partial<SoundData>): SoundData => {
     soundString: sound.soundString || "",
     volume: sound.volume || 0.6,
     pitch: sound.pitch || 0.7,
+    replace: sound.replace || "",
   };
 };
 
@@ -251,6 +257,7 @@ const normalizeSealData = (seal: SealData): SealData => {
     unlocked: seal.unlocked,
     discovered: seal.discovered,
     no_collection: seal.no_collection,
+    sound: seal.sound || "gold_seal",
     rules: seal.rules || [],
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
@@ -287,7 +294,7 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
 const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
   return {
     //@ts-expect-error: backwards compatibility
-    objectKey: voucher.editionKey || voucher.objectKey || "",
+    objectKey: voucher.voucherKey || voucher.objectKey || "",
     objectType: "voucher",
     id: voucher.id || "",
     name: voucher.name || "",
@@ -301,10 +308,38 @@ const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
     requires: voucher.requires || "",
     requires_activetor: voucher.requires_activetor !== false,
     no_collection: voucher.no_collection,
+    unlockTrigger: voucher.unlockTrigger || undefined,
+    unlockProperties: voucher.unlockProperties || [],
+    unlockOperator: voucher.unlockOperator || "",
+    unlockCount: voucher.unlockCount ?? 1,
+    unlockDescription: voucher.unlockDescription || "",
     rules: voucher.rules || [],
     placeholderCreditIndex: voucher.placeholderCreditIndex,
     hasUserUploadedImage: voucher.hasUserUploadedImage || false,
     orderValue: voucher.orderValue || 1,
+  };
+};
+
+const normalizeDeckData = (deck: DeckData): DeckData => {
+  return {
+    objectKey: deck.objectKey || "",
+    objectType: "deck",
+    id: deck.id || "",
+    name: deck.name || "",
+    description: deck.description || "",
+    imagePreview: deck.imagePreview || "",
+    unlocked: deck.unlocked,
+    discovered: deck.discovered,
+    no_collection: deck.no_collection,
+    no_interest: deck.no_interest,
+    no_faces: deck.no_faces,
+    erratic_deck: deck.erratic_deck,
+    rules: deck.rules || [],
+    placeholderCreditIndex: deck.placeholderCreditIndex,
+    hasUserUploadedImage: deck.hasUserUploadedImage || false,
+    Config_vouchers: deck.Config_vouchers || [],
+    Config_consumables: deck.Config_consumables || [],
+    orderValue: deck.orderValue || 1,
   };
 };
 
@@ -345,7 +380,8 @@ export const modToJson = (
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
   editions: EditionData[] = [],
-  vouchers: VoucherData[] = []
+  vouchers: VoucherData[] = [],
+  decks: DeckData[] = []
 ): { filename: string; jsonString: string } => {
   const exportData: ExportedMod = {
     metadata,
@@ -359,6 +395,7 @@ export const modToJson = (
     seals,
     editions,
     vouchers,
+    decks,
     version: "1.0.0",
     exportedAt: new Date().toISOString(),
   };
@@ -382,7 +419,8 @@ export const exportModAsJSON = (
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
   editions: EditionData[] = [],
-  vouchers: VoucherData[] = []
+  vouchers: VoucherData[] = [],
+  decks: DeckData[] = []
 ): void => {
   const ret = modToJson(
     metadata,
@@ -396,6 +434,7 @@ export const exportModAsJSON = (
     seals,
     editions,
     vouchers,
+    decks,
   );
   const blob = new Blob([ret.jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -421,6 +460,7 @@ export const importModFromJSON = (): Promise<{
   seals: SealData[];
   editions: EditionData[];
   vouchers: VoucherData[];
+  decks: DeckData[];
 } | null> => {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input");
@@ -479,8 +519,12 @@ export const importModFromJSON = (): Promise<{
             normalizeVoucherData
           );
 
+          const normalizedDecks = (importData.decks || []).map(
+            normalizeDeckData
+          );
+          
           console.log(
-            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers`
+            `Successfully imported mod with ${normalizedJokers.length} jokers, ${normalizedConsumables.length} consumables, ${normalizedBoosters.length} boosters, ${normalizedEnhancements.length} enhancements, ${normalizedSeals.length} seals, ${normalizedEditions.length} editions, ${normalizedVouchers.length} vouchers, ${normalizedDecks.length} decks`
           );
 
           resolve({
@@ -495,6 +539,7 @@ export const importModFromJSON = (): Promise<{
             seals: normalizedSeals,
             editions: normalizedEditions,
             vouchers: normalizedVouchers,
+            decks: normalizedDecks,
           });
         } catch (error) {
           console.error("Error parsing mod file:", error);

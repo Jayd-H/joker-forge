@@ -58,6 +58,10 @@ import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
 import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
 
+import { getDeckTriggerById } from "../data/Decks/Triggers";
+import { getDeckConditionTypeById } from "../data/Decks/Conditions";
+import { getDeckEffectTypeById } from "../data/Decks/Effects";
+
 import  Checkbox  from "../generic/Checkbox";
 
 
@@ -99,7 +103,7 @@ interface InspectorProps {
   selectedGameVariable: GameVariable | null;
   onGameVariableApplied: () => void;
   selectedItem: SelectedItem;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }
 
 interface ParameterFieldProps {
@@ -115,7 +119,7 @@ interface ParameterFieldProps {
   onGameVariableApplied?: () => void;
   isEffect?: boolean;
   joker?: JokerData;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }
 
 interface ChanceInputProps {
@@ -128,7 +132,7 @@ interface ChanceInputProps {
   onOpenGameVariablesPanel: () => void;
   selectedGameVariable?: GameVariable | null;
   onGameVariableApplied?: () => void;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }
 
 const ChanceInput: React.FC<ChanceInputProps> = React.memo(
@@ -967,7 +971,9 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getConsumableTriggerById
       : itemType === "card"
       ? getCardTriggerById
-      : getVoucherTriggerById;
+      : itemType === "voucher"
+      ? getVoucherTriggerById
+      : getDeckTriggerById;
 
   const getConditionType =
     itemType === "joker"
@@ -976,7 +982,9 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getConsumableConditionTypeById
       : itemType === "card"
       ? getCardConditionTypeById
-      : getVoucherConditionTypeById;
+      : itemType === "voucher"
+      ? getVoucherConditionTypeById
+      : getDeckConditionTypeById;
 
   const getEffectType =
     itemType === "joker"
@@ -985,7 +993,9 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getConsumableEffectTypeById
       : itemType === "card"
       ? getCardEffectTypeById
-      : getVoucherEffectTypeById;
+      : itemType === "voucher"
+      ? getVoucherEffectTypeById
+      : getDeckEffectTypeById;
 
   const availableVariables = getAllVariables(joker).map(
     (variable: { name: string }) => ({

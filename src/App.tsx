@@ -23,7 +23,8 @@ import {
   DocumentTextIcon,
   GiftIcon,
   SparklesIcon,
-  BookOpenIcon
+  BookOpenIcon,
+  ClipboardIcon
 } from "@heroicons/react/24/outline";
 
 // Pages
@@ -63,7 +64,11 @@ const SealsVanillaReforgedPage = lazy(
 );
 
 const VouchersVanillaReforgedPage = lazy(
-  () => import("./components/pages/vanillareforged/VouchersVanillaReforgePage")
+  () => import("./components/pages/vanillareforged/VouchersVanillaReforgedPage")
+);
+
+const DecksVanillaReforgedPage = lazy(
+  () => import("./components/pages/vanillareforged/DecksVanillaReforgedPage")
 );
 
 
@@ -90,7 +95,8 @@ import {
   ModMetadata,
   EditionData,
   SoundData,
-  VoucherData
+  VoucherData,
+  DeckData
 } from "./components/data/BalatroUtils";
 import Alert from "./components/generic/Alert";
 import ConfirmationPopup from "./components/generic/ConfirmationPopup";
@@ -135,6 +141,7 @@ interface AutoSaveData {
   seals: SealData[];
   editions: EditionData[];
   vouchers: VoucherData[];
+  decks: DeckData[];
   timestamp: number;
 }
 
@@ -151,7 +158,8 @@ const FloatingTabDock: React.FC<{
     | "enhancements"
     | "seals"
     | "editions"
-    | "vouchers";
+    | "vouchers"
+    | "decks";
   onTabChange: (
     tab:
       | "jokers"
@@ -162,6 +170,7 @@ const FloatingTabDock: React.FC<{
       | "seals"
       | "editions"
       | "vouchers"
+      | "decks"
   ) => void;
   isVanillaMode: boolean;
 }> = ({ activeTab, onTabChange, isVanillaMode }) => {
@@ -209,11 +218,16 @@ const FloatingTabDock: React.FC<{
       icon: SparklesIcon,
       label: "Editions",
     },
-        {
+    {
       id: "vouchers" as const,
       icon: BookOpenIcon,
       label: "Vouchers",
     },
+    {
+      id: "decks" as const,
+      icon: ClipboardIcon,
+      label: "Decks",
+    }
   ];
 
   const tabs = isVanillaMode ? vanillaTabs : regularTabs;
@@ -294,6 +308,9 @@ function AppContent() {
   const [vouchers, setVouchers] = useState<VoucherData[]>([]);
   const [selectedVoucherId, setSelectedVoucherId] = useState<string | null>(null);
 
+  const [decks, setDecks] = useState<DeckData[]>([]);
+  const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
+
   const [selectedJokerId, setSelectedJokerId] = useState<string | null>(null);
   const [selectedConsumableId, setSelectedConsumableId] = useState<
     string | null
@@ -342,6 +359,7 @@ function AppContent() {
     seals: SealData[];
     editions: EditionData[];
     vouchers: VoucherData[];
+    decks: DeckData[];
   } | null>(null);
 
   const showConfirmation = useCallback(
@@ -379,7 +397,8 @@ function AppContent() {
     | "enhancements"
     | "seals"
     | "editions"
-    | "vouchers" => {
+    | "vouchers"
+    | "decks" => {
     const path = location.pathname;
     if (path.includes("/vanilla/consumables")) return "consumables";
     if (path.includes("/vanilla/boosters")) return "boosters";
@@ -387,6 +406,7 @@ function AppContent() {
     if (path.includes("/vanilla/seals")) return "seals";
     if (path.includes("/vanilla/editions")) return "editions";
     if (path.includes("/vanilla/vouchers")) return "vouchers";
+    if (path.includes("/vanilla/decks")) return "decks";
     return "jokers";
   };
 
@@ -402,6 +422,7 @@ function AppContent() {
       | "seals"
       | "editions"
       | "vouchers"
+      | "decks"
   ) => {
     if (isVanillaMode) {
       navigate(`/vanilla/${tab}`);
@@ -448,6 +469,7 @@ function AppContent() {
       sealsData: SealData[],
       editionsData: EditionData[],
       vouchersData: VoucherData[],
+      decksData: DeckData[],
     ) => {
       try {
         const data: AutoSaveData = {
@@ -462,6 +484,7 @@ function AppContent() {
           seals: scanGameObjectKeys(scanGameObjectIds(sealsData)),
           editions: scanGameObjectKeys(scanGameObjectIds(editionsData)),
           vouchers: scanGameObjectKeys(scanGameObjectIds(vouchersData)),
+          decks: scanGameObjectKeys(scanGameObjectIds(decksData)),
           timestamp: Date.now(),
         };
         localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(data));
@@ -483,6 +506,7 @@ function AppContent() {
       seals,
       editions,
       vouchers,
+      decks,
       modMetadata.prefix || ""
     );
   }, [
@@ -494,6 +518,7 @@ function AppContent() {
     seals,
     editions,
     vouchers,
+    decks,
     modMetadata.prefix,
   ]);
 
@@ -565,6 +590,7 @@ function AppContent() {
     seals: SealData[];
     editions: EditionData[];
     vouchers: VoucherData[];
+    decks: DeckData[];
   } | null => {
     try {
       const savedData = localStorage.getItem(AUTO_SAVE_KEY);
@@ -591,6 +617,7 @@ function AppContent() {
         editions: scanGameObjectKeys(scanGameObjectIds(data.editions || [])),
         seals: scanGameObjectKeys(scanGameObjectIds(data.seals || [])),
         vouchers: scanGameObjectKeys(scanGameObjectIds(data.vouchers || [])),
+        decks: scanGameObjectKeys(scanGameObjectIds(data.decks || [])),
       };
     } catch (error) {
       console.warn("Failed to load auto-save:", error);
@@ -620,7 +647,8 @@ function AppContent() {
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
       editionsData: EditionData[],
-      vouchersData: VoucherData[]
+      vouchersData: VoucherData[],
+      decksData: DeckData[]
     ) => {
       if (!prevDataRef.current) return true;
 
@@ -639,7 +667,8 @@ function AppContent() {
           JSON.stringify(enhancementsData) ||
         JSON.stringify(prevData.seals) !== JSON.stringify(sealsData) ||
         JSON.stringify(prevData.editions) !== JSON.stringify(editionsData) ||
-        JSON.stringify(prevData.vouchers) !== JSON.stringify(vouchersData)
+        JSON.stringify(prevData.vouchers) !== JSON.stringify(vouchersData) ||
+        JSON.stringify(prevData.decks) !== JSON.stringify(decksData)
       );
     },
     []
@@ -657,7 +686,8 @@ function AppContent() {
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
       editionsData: EditionData[],
-      vouchersData: VoucherData[]
+      vouchersData: VoucherData[],
+      decksData: DeckData[],
     ) => {
       if (
         jokerData.length > 0 ||
@@ -668,8 +698,9 @@ function AppContent() {
         boosterData.length > 0 ||
         enhancementsData.length > 0 ||
         sealsData.length > 0 ||
-        editionsData.length > 0 ||
-        vouchersData.length > 0
+        editionsData.length > 0 || 
+        vouchersData.length > 0 ||
+        decksData.length > 0
       )
         return true;
 
@@ -709,7 +740,8 @@ function AppContent() {
       enhancementsData: EnhancementData[],
       sealsData: SealData[],
       editionsData: EditionData[],
-      vouchersData: VoucherData[]
+      vouchersData: VoucherData[],
+      decksData: DeckData[]
     ) => {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
@@ -727,7 +759,8 @@ function AppContent() {
           enhancementsData,
           sealsData,
           editionsData,
-          vouchersData
+          vouchersData,
+          decksData
         );
       }, 500);
     },
@@ -761,7 +794,8 @@ function AppContent() {
         enhancements,
         seals,
         editions,
-        vouchers
+        vouchers,
+        decks
       )
     )
       return;
@@ -778,7 +812,8 @@ function AppContent() {
         enhancements,
         seals,
         editions,
-        vouchers
+        vouchers,
+        decks
       )
     )
       return;
@@ -795,6 +830,7 @@ function AppContent() {
       seals,
       editions,
       vouchers,
+      decks
     };
 
     setAutoSaveStatus("saving");
@@ -810,7 +846,8 @@ function AppContent() {
       enhancements,
       seals,
       editions,
-      vouchers
+      vouchers,
+      decks
     );
 
     if (statusTimeoutRef.current) {
@@ -848,6 +885,7 @@ function AppContent() {
     seals,
     editions,
     vouchers,
+    decks,
     hasLoadedInitialData,
     debouncedSave,
     hasDataChanged,
@@ -893,6 +931,7 @@ function AppContent() {
           seals: scanGameObjectKeys(scanGameObjectIds(savedData.seals)),
           editions: scanGameObjectKeys(scanGameObjectIds(savedData.editions)),
           vouchers: scanGameObjectKeys(scanGameObjectIds(savedData.vouchers)),
+          decks: scanGameObjectKeys(scanGameObjectIds(savedData.decks)),
         });
 
         setModMetadata(normalizedData.metadata);
@@ -906,6 +945,7 @@ function AppContent() {
         setSeals(normalizedData.seals);
         setEditions(normalizedData.editions);
         setVouchers(normalizedData.vouchers);
+        setDecks(normalizedData.decks);
 
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
@@ -914,6 +954,7 @@ function AppContent() {
         setSelectedSealId(null);
         setSelectedEditionId(null);
         setSelectedVoucherId(null);
+        setSelectedDeckId(null);
 
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
@@ -927,6 +968,7 @@ function AppContent() {
           seals: normalizedData.seals,
           editions: normalizedData.editions,
           vouchers: normalizedData.vouchers,
+          decks: normalizedData.decks,
         };
 
         showAlert(
@@ -997,6 +1039,7 @@ function AppContent() {
     const invalidSeals = seals.filter((s) => !s.name || !s.id);
     const invalidEditions = editions.filter((e) => !e.name || !e.id);
     const invalidVouchers = vouchers.filter((v) => !v.name || !v.id);
+    const invalidDecks = decks.filter((b) => !b.name || !b.id);
 
     if (
       invalidJokers.length > 0 ||
@@ -1005,7 +1048,8 @@ function AppContent() {
       invalidEnhancements.length > 0 ||
       invalidSeals.length > 0 ||
       invalidEditions.length > 0 ||
-      invalidVouchers.length > 0
+      invalidVouchers.length > 0 ||
+      invalidDecks.length > 0
     ) {
       showAlert(
         "error",
@@ -1033,7 +1077,8 @@ function AppContent() {
         enhancements,
         seals,
         editions,
-        vouchers
+        vouchers,
+        decks
       );
       setShowExportModal(true);
     } catch (error) {
@@ -1068,6 +1113,7 @@ const startNewProject = () => {
     setSeals([]);
     setEditions([]);
     setVouchers([]);
+    setDecks([]);
 
     setSelectedJokerId(null);
     setSelectedConsumableId(null);
@@ -1076,6 +1122,7 @@ const startNewProject = () => {
     setSelectedSealId(null);
     setSelectedEditionId(null);
     setSelectedVoucherId(null);
+    setSelectedDeckId(null);
 
     prevDataRef.current = {
       modMetadata: DEFAULT_MOD_METADATA,
@@ -1089,6 +1136,7 @@ const startNewProject = () => {
       seals: [],
       editions: [],
       vouchers: [],
+      decks: [],
     };
   };
 
@@ -1119,7 +1167,8 @@ const handleDiscardAndStartFresh = () => {
         enhancements,
         seals,
         editions,
-        vouchers
+        vouchers,
+        decks
       );
       showAlert(
         "success",
@@ -1149,7 +1198,6 @@ const handleDiscardAndStartFresh = () => {
 
         setModMetadata(normalizedData.metadata);
         setJokers(normalizedData.jokers);
-        setSounds(normalizedData.sounds);
         setConsumables((normalizedData.consumables));
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
@@ -1158,6 +1206,7 @@ const handleDiscardAndStartFresh = () => {
         setSeals(normalizedData.seals || []);
         setEditions(normalizedData.editions || []);
         setVouchers(normalizedData.vouchers || []);
+        setDecks(normalizedData.decks || []);
         setSounds(normalizedData.sounds);
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
@@ -1165,6 +1214,8 @@ const handleDiscardAndStartFresh = () => {
         setSelectedEnhancementId(null);
         setSelectedSealId(null);
         setSelectedEditionId(null);
+        setSelectedVoucherId(null);
+        setSelectedDeckId(null);
 
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
@@ -1178,6 +1229,7 @@ const handleDiscardAndStartFresh = () => {
           seals: scanGameObjectKeys(scanGameObjectIds(normalizedData.seals || [])),
           editions: scanGameObjectKeys(scanGameObjectIds(normalizedData.editions || [])),
           vouchers: scanGameObjectKeys(scanGameObjectIds(normalizedData.vouchers || [])),
+          decks: scanGameObjectKeys(scanGameObjectIds(normalizedData.decks || [])),
         };
         showAlert(
           "success",
@@ -1369,6 +1421,30 @@ const handleDiscardAndStartFresh = () => {
             }
           />
           <Route
+            path="/decks"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <DecksPage
+                  modName={modMetadata.name}
+                  decks={decks}
+                  setDecks={setDecks}
+                  selectedDeckId={selectedDeckId}
+                  setSelectedDeckId={setSelectedDeckId}
+                  modPrefix={modMetadata.prefix || ""}
+                  showConfirmation={showConfirmation}
+                />
+              </Suspense>
+            }
+          />
+          <Route
             path="/boosters"
             element={
               <Suspense
@@ -1441,7 +1517,6 @@ const handleDiscardAndStartFresh = () => {
               </Suspense>
             }
           />
-          <Route path="/decks" element={<DecksPage />} />
           <Route
             path="/editions"
             element={
@@ -1605,7 +1680,7 @@ const handleDiscardAndStartFresh = () => {
               </Suspense>
             }
           />
-                    <Route
+          <Route
             path="/vanilla/vouchers"
             element={
               <Suspense
@@ -1623,6 +1698,29 @@ const handleDiscardAndStartFresh = () => {
                   }}
                   onNavigateToVouchers={() => {
                     navigate("/vouchers");
+                  }}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/vanilla/decks"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <DecksVanillaReforgedPage
+                  onDuplicateToProject={(item) => {
+                    setDecks([...decks, item as DeckData]);
+                  }}
+                  onNavigateToDecks={() => {
+                    navigate("/decks");
                   }}
                 />
               </Suspense>
