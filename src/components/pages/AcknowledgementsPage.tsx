@@ -57,7 +57,8 @@ const AcknowledgementsPage: React.FC = () => {
           </li>
           <li>
             <a
-              className="text-condition"
+              href="https://github.com/fr0derick"
+              className="text-condition hover:underline"
             >
               Taylor
             </a>

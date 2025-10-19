@@ -371,7 +371,7 @@ const handleCreateNewmod = async () => {
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
                   >
                     <InboxStackIcon className="h-5 w-5 flex-shrink-0" />
-                    <span className="text-sm tracking-wide">Decks and Challanges</span>
+                    <span className="text-sm tracking-wide">Decks and Challenges</span>
                     <motion.div
                       animate={{ rotate: deck ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
@@ -830,7 +830,7 @@ const handleCreateNewmod = async () => {
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
-                          Decks and Challanges
+                          Decks and Challenges
                         </span>
                       </div>
                     </motion.div>
