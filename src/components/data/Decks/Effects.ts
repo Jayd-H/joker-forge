@@ -103,7 +103,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
             value: edition.key,
             label: edition.label,
           })),
-          { value: "random", label: "Random Edition" },
+          { value: "random", label: "Random" },
         ],
         default: "none",
       },
@@ -178,7 +178,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
             value: edition.key,
             label: edition.label,
           })),
-          { value: "random", label: "Random Edition" },
+          { value: "random", label: "Random" },
         ],
         default: "none",
       },
@@ -245,7 +245,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
             value: edition.key,
             label: edition.label,
           })),
-          { value: "random", label: "Random Edition" },
+          { value: "random", label: "Random" },
         ],
         default: "none",
       },
@@ -355,7 +355,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
             value: edition.key,
             label: edition.label,
           })),
-          { value: "random", label: "Random Edition" },
+          { value: "random", label: "Random" },
         ],
         default: "none",
       },
@@ -880,7 +880,146 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     label: "Starting Consumable",
     description:
       "Start the run with consumable cards and add them to your consumables area",
-    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: ["deck_selected"],
+    params: [
+      {
+        id: "set",
+        type: "select",
+        label: "Consumable Set",
+        options: () => [
+          { value: "random", label: "Random Consumable" },
+          ...CONSUMABLE_SETS(),
+        ],
+        default: "random",
+      },
+      {
+        id: "specific_card",
+        type: "select",
+        label: "Specific Card",
+        options: (parentValues: Record<string, unknown>) => {
+          const selectedSet = parentValues?.set as string;
+          if (!selectedSet || selectedSet === "random") {
+            return [{ value: "random", label: "Random from Set" }];
+          }
+          // Handle vanilla sets
+          if (selectedSet === "Tarot") {
+            const vanillaCards = TAROT_CARDS.map((card) => ({
+              value: card.key,
+              label: card.label,
+            }));
+            const customCards = CUSTOM_CONSUMABLES()
+              .filter((consumable) => consumable.set === "Tarot")
+              .map((consumable) => ({
+                value: consumable.value,
+                label: consumable.label,
+              }));
+            return [
+              { value: "random", label: "Random from Set" },
+              ...vanillaCards,
+              ...customCards,
+            ];
+          }
+          if (selectedSet === "Planet") {
+            const vanillaCards = PLANET_CARDS.map((card) => ({
+              value: card.key,
+              label: card.label,
+            }));
+            const customCards = CUSTOM_CONSUMABLES()
+              .filter((consumable) => consumable.set === "Planet")
+              .map((consumable) => ({
+                value: consumable.value,
+                label: consumable.label,
+              }));
+            return [
+              { value: "random", label: "Random from Set" },
+              ...vanillaCards,
+              ...customCards,
+            ];
+          }
+          if (selectedSet === "Spectral") {
+            const vanillaCards = SPECTRAL_CARDS.map((card) => ({
+              value: card.key,
+              label: card.label,
+            }));
+            const customCards = CUSTOM_CONSUMABLES()
+              .filter((consumable) => consumable.set === "Spectral")
+              .map((consumable) => ({
+                value: consumable.value,
+                label: consumable.label,
+              }));
+            return [
+              { value: "random", label: "Random from Set" },
+              ...vanillaCards,
+              ...customCards,
+            ];
+          }
+          // Handle custom sets
+          // Remove mod prefix to get the actual set key
+          const setKey = selectedSet.includes("_")
+            ? selectedSet.split("_").slice(1).join("_")
+            : selectedSet;
+          const customConsumablesInSet = CUSTOM_CONSUMABLES().filter(
+            (consumable) =>
+              consumable.set === setKey || consumable.set === selectedSet
+          );
+          return [
+            { value: "random", label: "Random from Set" },
+            ...customConsumablesInSet,
+          ];
+        },
+        default: "random",
+      },
+      {
+        id: "soulable",
+        type: "select",
+        label: "Soulable",
+        options: [
+          { value: "y", label: "Yes" },
+          { value: "n", label: "No" },
+        ],
+        showWhen: {
+          parameter: "specific_card",
+          values: ["random"],
+        },
+        default: "n",
+      },
+      {
+        id: "is_negative",
+        type: "select",
+        label: "Edition",
+        options: [
+          { value: "n", label: "No Edition" },
+          { value: "y", label: "Negative Edition" },
+        ],
+        default: "n",
+      },
+      {
+        id: "count",
+        type: "number",
+        label: "Number of Cards",
+        default: 1,
+        min: 1,
+        max: 5,
+      },
+      {
+        id: "ignore_slots",
+        type: "select",
+        label: "Ignore Slots",
+        options: [
+          { value: "y", label: "True" },
+          { value: "n", label: "False" },
+        ],
+        default: "n",
+      },
+    ],
+    category: "Consumables",
+  },
+  {
+    id: "create_consumable",
+    label: "Create Consumable",
+    description:
+      "Start the run with consumable cards and add them to your consumables area",
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "set",
@@ -1018,8 +1157,8 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "create_joker",
     label: "Starting Joker",
     description:
-      "Start the run with a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
+      "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
+    applicableTriggers: ["deck_selected"],
     params: [
       {
         id: "joker_type",
@@ -1069,7 +1208,97 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [{ value: "none", label: "No Edition" }, ...EDITIONS()],
+        options: [
+          { value: "none", label: "No Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+        ],
+        default: "none",
+      },
+      {
+        id: "sticker",
+        type: "select",
+        label: "Sticker for Copy",
+        options: [{ value: "none", label: "No Sticker" }, ...STICKERS],
+        default: "none",
+      },
+      {
+        id: "ignore_slots",
+        type: "select",
+        label: "___ Joker Slots",
+        options: [
+          { value: "respect", label: "Respect" },
+          { value: "ignore", label: "Ignore" },
+        ],
+        default: "respect",
+      },
+    ],
+    category: "Jokers",
+  },
+  {
+    id: "create_joker",
+    label: "Create Joker",
+    description:
+      "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
+    params: [
+      {
+        id: "joker_type",
+        type: "select",
+        label: "Joker Type",
+        options: [
+          { value: "random", label: "Random Joker" },
+          { value: "specific", label: "Specific Joker" },
+        ],
+        default: "random",
+      },
+      {
+        id: "rarity",
+        type: "select",
+        label: "Rarity",
+        options: () => [
+          { value: "random", label: "Any Rarity" },
+          ...RARITIES(),
+        ],
+        default: "random",
+        showWhen: {
+          parameter: "joker_type",
+          values: ["random"],
+        },
+      },
+      {
+        id: "joker_key",
+        type: "text",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "joker",
+        showWhen: {
+          parameter: "joker_type",
+          values: ["specific"],
+        },
+      },
+      {
+        id: "pool",
+        type: "text",
+        label: "Pool Name (optional)",
+        default: "",
+        showWhen: {
+          parameter: "joker_type",
+          values: ["random"],
+        },
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition",
+        options: [
+          { value: "none", label: "No Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+        ],
         default: "none",
       },
       {
@@ -1096,7 +1325,36 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "create_tag",
     label: "Starting Tag",
     description: "Create a specific or random Starting tag",
-    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: ["deck_selected"],
+    params: [
+      {
+        id: "tag_type",
+        type: "select",
+        label: "Tag Type",
+        options: [
+          { value: "random", label: "Random Tag" },
+          { value: "specific", label: "Specific Tag" },
+        ],
+        default: "random",
+      },
+      {
+        id: "specific_tag",
+        type: "select",
+        label: "Specific Tag",
+        options: [...TAGS],
+        showWhen: {
+          parameter: "tag_type",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Consumables",
+  },
+  {
+    id: "create_tag",
+    label: "Create Tag",
+    description: "Create a specific or random tag",
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "tag_type",

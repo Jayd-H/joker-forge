@@ -1,6 +1,6 @@
+import { getRankId, EDITIONS, getModPrefix } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import { getRankId } from "../../../data/BalatroUtils";
 
 export const generateEditStartingRanksReturn = (effect: Effect): EffectReturn => {
   const enhancement = effect.params?.enhancement || "none";
@@ -85,28 +85,19 @@ export const generateEditStartingRanksReturn = (effect: Effect): EffectReturn =>
                         end`
     }
   }
-
-  if (edition !== "none") {
-    const editionMap: Record<string, string> = {
-      e_foil: "foil",
-      e_holo: "holo",
-      e_polychrome: "polychrome",
-      e_negative: "negative",
-    };
-
+if (edition !== "none") {
  if (edition === "random") {
-        editCardsCode += `
-                        local edition = poll_edition('random_edition', nil, true, true, 
-                            { 'e_polychrome', 'e_holo', 'e_foil' })
+        const editionPool = EDITIONS().map(edition => `'${
+                edition.key.startsWith('e_') ? edition.key : `e_${getModPrefix}_${edition.key}`}'`)
+            editCardsCode += `
+                        local edition = pseudorandom_element({${editionPool}}, 'random edition')
                         if v:get_id() == ${rankId} then
                         v:set_edition(edition, true, true)
                         end`
     } else {
-      const editionLua =
-        editionMap[edition as keyof typeof editionMap] || "foil";
         editCardsCode += `
                         if v:get_id() == ${rankId} then
-                        v:set_edition({ ${editionLua} = true }, true, true)
+                        v:set_edition( "${edition}", true, true, true)
                         end`
     }
   }

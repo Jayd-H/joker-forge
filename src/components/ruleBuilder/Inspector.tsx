@@ -39,6 +39,7 @@ import {
   XMarkIcon,
   Bars3Icon,
   PlusIcon,
+  NoSymbolIcon,
   ExclamationTriangleIcon,
   ArrowsRightLeftIcon,
   PlayCircleIcon,
@@ -1242,7 +1243,7 @@ const Inspector: React.FC<InspectorProps> = ({
               selectedCondition.negate ? "Remove negation" : "Negate condition"
             }
           >
-            <ExclamationTriangleIcon className="h-4 w-4 text-balatro-red" />
+            <NoSymbolIcon className="h-4 w-4 text-balatro-red" />
           </button>
 
           <div className="flex items-center gap-3 mb-3">
