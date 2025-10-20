@@ -13,7 +13,7 @@ export const generateCreateJokerReturn = (
   const edition = (effect.params?.edition as string) || "none";
   const customMessage = effect.customMessage;
   const sticker = (effect.params?.sticker as string) || "none";
-  const ignoreSlots = (effect.params?.ignore_slots as string) === "respect";
+  const ignoreSlots = (effect.params?.ignore_slots as string) === "y";
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
