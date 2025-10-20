@@ -39,18 +39,19 @@ export const generateAddCardToDeckReturn = (
     cardSelectionCode += `
       local allowedSuit = ${suitCode}
       local allowedRank = ${rankCode}
-      local possibleValues = {}
       local card_front = G.P_CARDS.H_2
 
       if suit_prefix == 'r' then 
         suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")
       else 
         suit_prefix = allowedSuit
+      end
 
       if allowedRank == 'r' then
         rank_suffix = pseudorandom_element('2','3','4','5','6','7','8','9','T','J','Q','K','A', "random_rank")
       else 
         rank_suffix = allowedRank
+      end
       card_front = G.P_CARDS[suit_prefix..rank_suffix]
     `
   }
