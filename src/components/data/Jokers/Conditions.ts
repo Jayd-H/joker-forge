@@ -1557,7 +1557,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         label: "Joker Key ( [modprefix]_joker )",
         default: "joker",
         showWhen: {
-          parameter: "type",
+          parameter: "check_key",
           values: ["key"]
         }
       },
@@ -1569,6 +1569,10 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           {value: "any", label: "Any"},
           ...RARITIES(),
         ],
+        showWhen: {
+          parameter: "check_key",
+          values: ["any"]
+        },
         default: "any",
       },
     ],
