@@ -27,18 +27,26 @@ export const generateRemoveStartingCardsReturn = (
     destroyCode =`
     local destroyed_cards = {}
             local temp_hand = {}
-
+G.E_MANAGER:add_event(Event({
+     func = function()
             for _, playing_card in ipairs(G.deck.cards) do temp_hand[#temp_hand + 1] = playing_card end
             table.sort(temp_hand,
                 function(a, b)
                     return not a.playing_card or not b.playing_card or a.playing_card < b.playing_card
                 end
             )
-
-            pseudoshuffle(temp_hand, 12345)
-
-            for i = 1, ${countCode} do destroyed_cards[#destroyed_cards + 1] = temp_hand[i] end             
-        SMODS.destroy_cards(destroyed_cards)
+            pseudoshuffle(temp_hand, 12345)    
+          return true
+    end,
+})) 
+    
+G.E_MANAGER:add_event(Event({
+     func = function()
+            for i = 1, ${countCode} do destroyed_cards[#destroyed_cards + 1] = temp_hand[i]:remove()
+         end
+        return true
+    end
+}))
        `; 
   }
 
