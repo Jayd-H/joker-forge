@@ -34,25 +34,24 @@ export const generateAddCardToHandReturn = (
     const suitCode = suitVar.isSuitVariable ? suitVar.code : `'${suit.charAt(0)}'`
     const rankCode = rankVar.isRankVariable ? rankVar.code : `'${rank.charAt(0)}'`
 
+    if (suitCode === 'r') { 
+      cardSelectionCode += `
+        suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")`
+    } else {
+      cardSelectionCode += `
+        suit_prefix = ${suitCode}`
+    }
+
+    if (rankCode === 'r') { 
+      cardSelectionCode += `
+        rank_suffix = pseudorandom_element({'2','3','4','5','6','7','8','9','T','J','Q','K','A'}, "random_rank")`
+    } else {
+      cardSelectionCode += `
+        rank_suffix = ${rankCode}`
+    }
+
     cardSelectionCode += `
-      local allowedSuit = ${suitCode}
-      local allowedRank = ${rankCode}
-      local card_front = G.P_CARDS.H_2
-
-      if suit_prefix == 'r' then 
-        suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")
-      else 
-        suit_prefix = allowedSuit
-      end
-
-      if allowedRank == 'r' then
-        rank_suffix = pseudorandom_element('2','3','4','5','6','7','8','9','T','J','Q','K','A', "random_rank")
-      else 
-        rank_suffix = allowedRank
-      end
-
-      card_front = G.P_CARDS[suit_prefix..rank_suffix]
-    `
+      local card_front = G.P_CARDS[suit_prefix..rank_suffix]`
   }
 
   let centerParam = "";
