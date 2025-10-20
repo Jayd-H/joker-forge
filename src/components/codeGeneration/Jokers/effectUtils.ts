@@ -173,8 +173,12 @@ export function generateEffectReturnStatement(
   const allLoopGroups: LoopGroup[] = []
 
   rules.forEach(rule => {
-    allRandomGroups.push(...rule.randomGroups)
-    allLoopGroups.push(...rule.loops)
+    rule.randomGroups.forEach(group => {
+      allRandomGroups.push(group)
+    })
+    rule.loops.forEach(group => {
+      allLoopGroups.push(group)
+    })
   })
 
   let combinedPreReturnCode = "";
