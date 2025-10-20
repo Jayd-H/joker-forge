@@ -1,4 +1,4 @@
-import type { Effect, LoopGroup, RandomGroup, Rule } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
@@ -172,7 +172,7 @@ export function generateEffectReturnStatement(
   const allRandomGroups: RandomGroup[] = []
   const allLoopGroups: LoopGroup[] = []
 
-  joker.rules.forEach(rule => {
+  joker?.rules?.forEach(rule => {
     allRandomGroups.push(...rule.randomGroups)
     allLoopGroups.push(...rule.loops)
   })
