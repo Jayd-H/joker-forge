@@ -175,6 +175,7 @@ export function generateEffectReturnStatement(
   joker?.rules?.forEach(rule => {
     allRandomGroups.push(...rule.randomGroups)
     allLoopGroups.push(...rule.loops);
+  });
 
   let combinedPreReturnCode = "";
   let mainReturnStatement = "";
