@@ -416,7 +416,6 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     })
   }
 
-
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);

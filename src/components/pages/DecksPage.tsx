@@ -276,10 +276,39 @@ const DecksPage: React.FC<DecksPageProps> = ({
     };
     newDeck.objectKey = getObjectName(newDeck,decks,newDeck.objectKey)
     setDecks([...decks, newDeck]);
-    setEditingDeck(newDeck);
+    setEditingDeck(newDeck);    
+    handleUpdateDeck(newDeck)
   };
 
+  const handleUpdateDeck = (updatedDeck: DeckData, type?: string, oldKey?: string) => {
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      const dataList = config.pageData[itemTypes.indexOf("deck")].editList
+
+      if (oldKey && dataList.includes(oldKey)) {
+        config.pageData[itemTypes.indexOf("deck")].editList.splice(dataList.indexOf(oldKey))
+      }
+      if (dataList.includes(updatedDeck.objectKey)) {
+        config.pageData[itemTypes.indexOf("deck")].editList.splice(dataList.indexOf(updatedDeck.objectKey ))
+      }
+
+      if (type !== "delete"){
+        config.pageData[itemTypes.indexOf("deck")].editList.push(updatedDeck.objectKey)
+      }
+
+      return ({
+      ...config,
+      })
+    })
+  }
+
   const handleSaveDeck = (updatedDeck: DeckData) => {
+    decks.forEach(deck => {
+      if (deck.id === updatedDeck.id) {
+        handleUpdateDeck(updatedDeck, "change", deck.objectKey ) 
+      }
+    })
+
     setDecks((prev) =>
       prev.map((deck) => (deck.id === updatedDeck.id ? updatedDeck : deck))
     );
@@ -291,8 +320,10 @@ const DecksPage: React.FC<DecksPageProps> = ({
 
     if (selectedDeckId === deckId) {const remainingDecks = decks.filter((deck) => deck.id !== deckId);
       setSelectedDeckId(remainingDecks.length > 0 ? remainingDecks[0].id : null);
-    decks = updateGameObjectIds(removedDeck, decks, 'remove', removedDeck.orderValue)
-  }};
+      decks = updateGameObjectIds(removedDeck, decks, 'remove', removedDeck.orderValue)
+      handleUpdateDeck(removedDeck, "delete")
+    }
+  }
 
   const handleDuplicateDeck = async (deck: DeckData) => {
     const dupeName = getObjectName(deck,decks)
@@ -311,6 +342,7 @@ const DecksPage: React.FC<DecksPageProps> = ({
       };
       setDecks([...decks, duplicatedDeck]);
       decks = updateGameObjectIds(duplicatedDeck, decks, 'insert', duplicatedDeck.orderValue)
+      handleUpdateDeck(duplicatedDeck)
     } else {
       const duplicatedDeck: DeckData = {
         ...deck,
@@ -321,6 +353,7 @@ const DecksPage: React.FC<DecksPageProps> = ({
       };
       setDecks([...decks, duplicatedDeck]);
       decks = updateGameObjectIds(duplicatedDeck, decks, 'insert', duplicatedDeck.orderValue)
+      handleUpdateDeck(duplicatedDeck)
     }
   };
 
@@ -382,11 +415,12 @@ const handleSortDirectionToggle = () => {
     setShowSortMenu(!showSortMenu);
   };
 
- const filteredAndSortedDecks = useMemo(() => {
-     const filtered = decks.filter((deck) => {
-       const matchesSearch =
-         deck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         deck.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAndSortedDecks = useMemo(() => {
+    const filtered = decks.filter((deck) => {
+      const matchesSearch =
+        deck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        deck.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        deck.description.toLowerCase().includes(searchTerm.toLowerCase());
  
        return matchesSearch;
      });

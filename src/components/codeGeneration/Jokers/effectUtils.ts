@@ -1,4 +1,4 @@
-import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup, Rule } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
@@ -156,6 +156,7 @@ export function generateEffectReturnStatement(
   loopGroups: LoopGroup[] = [],
   triggerType: string = "hand_played",
   modprefix: string,
+  rules: Rule[], 
   jokerKey?: string,
   ruleId?: string,
   globalEffectCounts?: Map<string, number>
@@ -167,6 +168,14 @@ export function generateEffectReturnStatement(
       configVariables: [],
     };
   }
+
+  const allRandomGroups: RandomGroup[] = []
+  const allLoopGroups: LoopGroup[] = []
+
+  rules.forEach(rule => {
+    allRandomGroups.push(...rule.randomGroups)
+    allLoopGroups.push(...rule.loops)
+  })
 
   let combinedPreReturnCode = "";
   let mainReturnStatement = "";
@@ -237,30 +246,38 @@ export function generateEffectReturnStatement(
 
   if (randomGroups.length > 0) {
     const randomGroupStatements: string[] = [];
-
-    const denominators = [
+  
+    const currentDenominators = [
       ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
+    ];
+    const allDenominators = [
+      ...new Set(allRandomGroups.map((group) => group.chance_denominator as number)),
     ];
     const denominatorToOddsVar: Record<number, string> = {};
 
-    if (denominators.length === 1) {
-      denominatorToOddsVar[denominators[0]] = "card.ability.extra.odds";
+    allDenominators.forEach((denom, index) => {
+      if (index === 0) {
+        denominatorToOddsVar[denom] = "card.ability.extra.odds";
+      } else {
+        denominatorToOddsVar[denom] = `card.ability.extra.odds${index + 1}`;
+      }
+    })
+
+    if (currentDenominators.length === 1) {
       allConfigVariables.push({
         name: "odds",
-        value: denominators[0],
+        value: currentDenominators[0],
         description: "Probability denominator",
       });
     } else {
-      denominators.forEach((denom, index) => {
+      currentDenominators.forEach((denom, index) => {
         if (index === 0) {
-          denominatorToOddsVar[denom] = "card.ability.extra.odds";
           allConfigVariables.push({
             name: "odds",
             value: denom,
             description: "First probability denominator",
           });
         } else {
-          denominatorToOddsVar[denom] = `card.ability.extra.odds${index + 1}`;
           allConfigVariables.push({
             name: `odds${index + 1}`,
             value: denom,
@@ -420,9 +437,9 @@ export function generateEffectReturnStatement(
         }
       });
       
-      
       if (effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).length > 0) {
-        groupContent += effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).join("\n                        ");
+        groupContent += effectCalls.filter(effect => 
+          !nonRetriggerEffectCalls.includes(effect)).join("\n                        ");
       }
 
       const no_modParam = (
@@ -476,37 +493,46 @@ export function generateEffectReturnStatement(
   if (loopGroups.length > 0) {
     const loopGroupStatements: string[] = [];
 
-    const repetitions = [
+    const allRepetitions = [
+      ...new Set(allLoopGroups.map((group) => group.repetitions as number)),
+    ];
+    const currentRepetitions = [
       ...new Set(loopGroups.map((group) => group.repetitions as number)),
     ];
+
     const repetitionsToVar: Record<number, string> = {};
 
-    if (repetitions.length === 1) {
-      repetitionsToVar[repetitions[0]] = "card.ability.extra.repetitions";
-      if (!(typeof repetitions[0] === "string")) {
+    allRepetitions.forEach((value, index) => {
+      if (index === 0) {
+        repetitionsToVar[value] = "card.ability.extra.repetitions";
+      } else {
+        repetitionsToVar[value] = `card.ability.extra.repetitions${index + 1}`;
+      }
+    })
+
+    if (currentRepetitions.length === 1) {
+      if (!(typeof currentRepetitions[0] === "string")) {
         allConfigVariables.push({
           name: "repetitions",
-          value: repetitions[0],
+          value: currentRepetitions[0],
           description: "Loop repetitions",
         });
       }
     } else {
-      repetitions.forEach((denom, index) => {
+      currentRepetitions.forEach((value, index) => {
         if (index === 0) {
-          repetitionsToVar[denom] = "card.ability.extra.repetitions";
-          if (!(typeof denom === "string")) {
+          if (!(typeof value === "string")) {
             allConfigVariables.push({
               name: "repetitions",
-              value: denom,
+              value: value,
               description: "First loop repetitions",
             });
           }
         } else {
-          repetitionsToVar[denom] = `card.ability.extra.repetitions${index + 1}`;
-          if (!(typeof denom === "string")) {
+          if (!(typeof value === "string")) {
             allConfigVariables.push({
               name: `repetitions${index + 1}`,
-              value: denom,
+              value: value,
               description: `${index + 1}${getOrdinalSuffix(
                 index + 1
               )} loop repetitions`,

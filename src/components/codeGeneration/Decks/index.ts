@@ -72,6 +72,8 @@ export const generateDecksCode = (
   const decksCode: Record<string, string> = {};
   let currentPosition = 0;
 
+  decksWithKeys.sort((a, b) => a.orderValue - b.orderValue)
+
   decksWithKeys.forEach((deck) => {
     const result = generateSingleDeckCode(
       deck,
