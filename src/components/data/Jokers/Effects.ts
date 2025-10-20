@@ -327,6 +327,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "random", label: "Random Hand" },
         ],
         default: "current",
+        variableTypes: ["pokerhand"],
       },
       {
         id: "specific_hand",
@@ -535,9 +536,10 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     params: [
       {
         id: "variable_name",
-        type: "text",
+        type: "select",
         label: "Variable Name",
         default: "var1",
+        variableTypes: ["number"],
       },
       {
         id: "operation",
@@ -550,13 +552,54 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "multiply", label: "Multiply by value" },
           { value: "divide", label: "Divide by value" },
           { value: "power", label: "Power by value" },
-          { value: "absolute", label: "Make the value Absolute"},
-          { value: "natural_log", label: "Natural logarithm the value"},
-          { value: "log10", label: "Standard logarithm the value"},
-          { value: "square_root", label: "Square root the value"},
-          { value: "ceil", label: "Round value up"},
-          { value: "floor", label: "Round value down"},
+          { value: "absolute", label: "Make the value Absolute" },
+          { value: "natural_log", label: "Natural logarithm the value" },
+          { value: "log10", label: "Standard logarithm the value" },
+          { value: "square_root", label: "Square root the value" },
+          { value: "ceil", label: "Round value up" },
+          { value: "floor", label: "Round value down" },
+          { value: "index", label: "Set to the index of an owned Joker" },
         ],
+      },
+      {
+        id: "index_method",
+        type: "select",
+        label: "Index Method",
+        showWhen: {
+          parameter: "operation",
+          values: ["index"]
+        },
+        options: [
+          { value: "self", label: "This Joker" },
+          { value: "random", label: "A Random Joker" },
+          { value: "first", label: "Leftmost Joker" },
+          { value: "last", label: "Rightmost Joker" },
+          { value: "left", label: "Joker on my Left" },
+          { value: "right", label: "Joker on my Right" },
+          { value: "key", label: "Joker Key" },
+          { value: "variable", label: "Joker Variable" },
+        ], 
+        variableTypes: ["joker_context"]
+      },
+      {
+        id: "joker_key",
+        type: "text",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "j_joker",
+        showWhen: {
+          parameter: "index_method",
+          values: ["key"],
+        },
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        showWhen: {
+          parameter: "index_method",
+          values: ["variable"],
+        },
+        variableTypes: ["joker"]
       },
       {
         id: "value",
@@ -569,7 +612,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
             "set", "increment", "decrement",
             "multiply", "divide", "power"
           ]
-        }
+        },
       },
     ],
     category: "Variables",
@@ -586,6 +629,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "random", label: "Random" }, ...SUITS],
         default: "random",
+        variableTypes: ["suit"],
       },
       {
         id: "rank",
@@ -593,6 +637,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "random", label: "Random" }, ...RANKS],
         default: "random",
+        variableTypes: ["rank"],
       },
       {
         id: "enhancement",
@@ -678,6 +723,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "any", label: "Any Rank" }, ...RANKS],
         default: "any",
+        variableTypes: ["rank"],
       },
       {
         id: "card_suit",
@@ -685,6 +731,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "any", label: "Any Suit" }, ...SUITS],
         default: "any",
+        variableTypes: ["suit"],
       },
     ],
     category: "Card Effects",
@@ -723,6 +770,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
         ],
         default: "none",
+        variableTypes: ["rank"],
       },
       {
         id: "new_suit",
@@ -734,6 +782,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           ...SUITS,
         ],
         default: "none",
+        variableTypes: ["suit"],
       },
       {
         id: "new_enhancement",
@@ -795,6 +844,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "random", label: "Random" }, ...SUITS],
         default: "random",
+        variableTypes: ["suit"],
       },
       {
         id: "rank",
@@ -802,6 +852,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "random", label: "Random" }, ...RANKS],
         default: "random",
+        variableTypes: ["rank"],
       },
       {
         id: "enhancement",
@@ -887,6 +938,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Rank",
         options: [{ value: "any", label: "Any Rank" }, ...RANKS],
         default: "any",
+        variableTypes: ["rank"],
       },
       {
         id: "card_suit",
@@ -894,6 +946,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Suit",
         options: [{ value: "any", label: "Any Suit" }, ...SUITS],
         default: "any",
+        variableTypes: ["suit"],
       },
     ],
     category: "Card Effects",
@@ -957,6 +1010,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "target",
           values: ["specific"],},
         default: "self",
+        variableTypes: ["joker_context"],
       },{
         id: "operation",
         type: "select",
@@ -991,9 +1045,11 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Joker Type",
         options: [
           { value: "random", label: "Random Joker" },
+          { value: "pool", label: "Random from Pool" },
           { value: "specific", label: "Specific Joker" },
         ],
         default: "random",
+        variableTypes: ["joker", "joker_context"]
       },
       {
         id: "rarity",
@@ -1026,7 +1082,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         default: "",
         showWhen: {
           parameter: "joker_type",
-          values: ["random"],
+          values: ["pool"],
         },
       },
       {
@@ -1045,7 +1101,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
       {
         id: "sticker",
         type: "select",
-        label: "Sticker for Copy",
+        label: "Sticker",
         options: [{ value: "none", label: "No Sticker" }, ...STICKERS],
         default: "none",
       },
@@ -1075,21 +1131,11 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Selection Method",
         options: [
           { value: "random", label: "Random Joker" },
-          { value: "specific", label: "Specific Joker" },
           { value: "position", label: "By Position" },
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-      },
-      {
-        id: "joker_key",
-        type: "text",
-        label: "Joker Key (e.g., j_joker, j_greedy_joker)",
-        default: "j_joker",
-        showWhen: {
-          parameter: "selection_method",
-          values: ["specific"],
-        },
+        // variableTypes: ["joker_context", "joker"], --- VARIABLES FOR COPY ABILITY ARE TEMP DISABLED
       },
       {
         id: "position",
@@ -1169,6 +1215,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
+        variableTypes: ["joker", "joker_context"],
       },
       {
         id: "joker_key",
@@ -1240,10 +1287,34 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
     applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
+        id: "selection_method",
+        type: "select",
+        label: "Selection Method",
+        default: "key",
+        options: [
+          { value: "key", label: "Joker Key" },
+          // { value: "variable", label: "Joker Variable" }, --- TEMP DISABLED
+        ]
+      },
+      {
         id: "joker_key",
         type: "text",
         label: "Joker Key ( [modprefix]_joker )",
         default: "joker",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["key"],
+        },
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["variable"],
+        },
+        variableTypes: ["joker"]
       },
       {
         id: "discover",
@@ -1449,7 +1520,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
             ...customConsumablesInSet,
           ];},
         default: "random",
-      },{
+      },
+      {
         id: "soulable",
         type: "select",
         label: "Soulable",
@@ -1462,7 +1534,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           values: ["random"],
         },
         default:"n",
-      },{
+      },
+      {
         id: "is_negative",
         type: "select",
         label: "Edition",
@@ -1471,14 +1544,16 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "y", label: "Negative Edition" },
         ],
         default: "n",
-      },{
+      },
+      {
         id: "count",
         type: "number",
         label: "Number of Cards",
         default: 1,
         min: 1,
         max: 5,
-      },{
+      },
+      {
         id: "ignore_slots",
         type: "select",
         label: "Ignore Slots",
@@ -2040,6 +2115,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Suit Variable",
         options: [], // Will be populated dynamically with suit variables
+        variableTypes: ["suit"]
       },
       {
         id: "change_type",
@@ -2060,7 +2136,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
-        }
+        },
+        default: [false, false, false, false]
       },
       {
         id: "specific_suit",
@@ -2071,6 +2148,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
+        variableTypes: ["suit", "joker_context"]
       },
     ],
     category: "Variables",
@@ -2121,6 +2199,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Rank Variable",
         options: [], // Will be populated dynamically with rank variables
+        variableTypes: ["rank"]
       },
       {
         id: "change_type",
@@ -2141,7 +2220,8 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
-        }
+        },
+        default: [false, false, false, false, false, false, false, false, false, false, false, false]
       },
       {
         id: "specific_rank",
@@ -2152,6 +2232,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
+        variableTypes: ["rank", "joker_context"]
       },
     ],
     category: "Variables",
@@ -2168,6 +2249,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Poker Hand Variable",
         options: [], // Will be populated dynamically with poker hand variables
+        variableTypes: ["pokerhand"]
       },
       {
         id: "change_type",
@@ -2190,13 +2272,91 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
-        }
+        },
+        default: [false, false, false, false, false, false, false, false, false, false, false, false]
       },
       {
         id: "specific_pokerhand",
         type: "select",
         label: "Poker Hand",
         options: [...POKER_HANDS],
+        showWhen: {
+          parameter: "change_type",
+          values: ["specific"],
+        },
+        variableTypes: ["pokerhand", "joker_context"]
+      },
+    ],
+    category: "Variables",
+  },
+  {
+    id: "change_joker_variable",
+    label: "Change Joker Variable",
+    description:
+      "Change the value of a joker variable to a specific Joker key",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Joker Variable",
+        options: [], // Will be populated dynamically with joker variables
+        variableTypes: ["joker"]
+      },
+      {
+        id: "change_type",
+        type: "select",
+        label: "Change Type",
+        options: [
+          { value: "random", label: "Random Joker" }, 
+          { value: "specific", label: "Specific Joker Key" },
+        ],
+        default: "specific",
+        variableTypes: ["joker", "joker_context"],
+      },
+      {
+        id: "random_type",
+        type: "select",
+        label: "Random from Type",
+        options: [
+          // { value: "all", label: "Random From All Jokers" }, --- TEMP DISABLED
+          // { value: "unlocked", label: "Random from Unlocked Jokers" }, --- TEMP DISABLED
+          { value: "locked", label: "Random from Locked Jokers" },
+          { value: "pool", label: "Random from Pool" },
+          { value: "owned", label: "Random from Owned Jokers" },
+          // { value: "rarity", label: "Random from specific Rarity" }, --- TEMP DISABLED
+        ],
+        default: "all",
+        showWhen: {
+          parameter: "change_type",
+          values: ["random"],
+        },
+      },
+      {
+        id: "rarity",
+        type: "select",
+        label: "Rarity",
+        options: [...RARITIES()],
+        showWhen: {
+          parameter: "random_type",
+          values: ["rarity"],
+        },
+      },
+      {
+        id: "joker_pool",
+        type: "text",
+        label: "Pool",
+        options: [],
+        showWhen: {
+          parameter: "random_type",
+          values: ["pool"],
+        },
+      },
+      {
+        id: "specific_joker",
+        type: "text",
+        label: "Joker Key",
+        options: [],
         showWhen: {
           parameter: "change_type",
           values: ["specific"],
@@ -2221,6 +2381,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "all", label: "All Ranks" },
         ],
         default: "specific",
+        // variableTypes: ["rank"] --- TEMP DISABLED
       },
       {
         id: "source_ranks",
@@ -2241,6 +2402,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "face_cards", label: "Face Cards (J, Q, K)" },
         ],
         default: "J",
+        variableTypes: ["rank"],
       },
     ],
     category: "Card Effects",
@@ -2257,6 +2419,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "First Suit",
         options: [...SUITS],
         default: "Spades",
+        // variableTypes: ["suit"], --- TEMP DISABLED
       },
       {
         id: "suit_2",
@@ -2264,6 +2427,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         label: "Second Suit",
         options: [...SUITS],
         default: "Hearts",
+        // variableTypes: ["suit"], --- TEMP DISABLED
       },
     ],
     category: "Card Effects",
@@ -2293,6 +2457,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Position" },
         ],
         default: "right",
+        variableTypes: ["joker"]
       },
       {
         id: "specific_index",

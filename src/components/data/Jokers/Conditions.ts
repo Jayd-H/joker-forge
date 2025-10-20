@@ -234,6 +234,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "group", label: "Suit Group" },
         ],
+        variableTypes: ["suit"]
       },
       {
         id: "specific_suit",
@@ -307,6 +308,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           { value: "specific", label: "Specific Rank" },
           { value: "group", label: "Rank Group" },
         ],
+        variableTypes: ["rank"]
       },
       {
         id: "specific_rank",
@@ -400,6 +402,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "suit_type",
           values: ["specific"],
         },
+        variableTypes: ["suit"]
       },
       {
         id: "suit_group",
@@ -462,6 +465,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "rank_type",
           values: ["specific"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "rank_group",
@@ -529,6 +533,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "rank_type",
           values: ["specific"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "rank_group",
@@ -573,6 +578,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "suit_type",
           values: ["specific"],
         },
+        variableTypes: ["suit"]
       },
       {
         id: "suit_group",
@@ -994,6 +1000,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "check_type",
           values: ["rank"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "specific_suit",
@@ -1004,6 +1011,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "check_type",
           values: ["suit"],
         },
+        variableTypes: ["suit"]
       },
     ],
     category: "Card",
@@ -1015,20 +1023,33 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
-        id: "operator",
+        id: "type",
         type: "select",
-        label: "Condition",
+        label: "Joker",
         options: [
-          { value: "has", label: "Has this joker" },
-          { value: "does_not_have", label: "Does not have this joker" },
+          { value: "key", label: "Joker Key" },
+          { value: "variable", label: "Joker Variable" },
         ],
-        default: "has",
+        default: "key",
       },
       {
         id: "joker_key",
         type: "text",
         label: "Joker Key (e.g., joker, greedy_joker)",
         default: "joker",
+        showWhen: {
+          parameter: "type",
+          values: ["key"]
+        }
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        showWhen: {
+          parameter: "type",
+          values: ["variable"]
+        }
       },
     ],
     category: "Deck & Jokers",
@@ -1041,9 +1062,10 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     params: [
       {
         id: "variable_name",
-        type: "text",
+        type: "select",
         label: "Variable Name",
         default: "var1",
+        variableTypes: ["number"]
       },
       {
         id: "operator",
@@ -1518,7 +1540,38 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     label: "Joker Selected",
     description: "Check if a joker is selected/highlighted",
     applicableTriggers:  [...GENERIC_TRIGGERS],
-    params: [],
+    params: [
+      {
+        id: "check_key",
+        type: "select",
+        label: "Specific Joker",
+        options: [
+          {value: "any", label: "Any Joker"},
+          {value: "key", label: "Specific Key"},
+        ],
+        default: "any"
+      },
+      {
+        id: "joker_key",
+        type: "text",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "joker",
+        showWhen: {
+          parameter: "type",
+          values: ["key"]
+        }
+      },
+      {
+        id: "rarity",
+        type: "select",
+        label: "Rarity",
+        options: () => [
+          {value: "any", label: "Any"},
+          ...RARITIES(),
+        ],
+        default: "any",
+      },
+    ],
     category: "Deck & Jokers",
   },
   {
@@ -1719,6 +1772,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "property_type",
           values: ["rank"],
         },
+        variableTypes: ["rank"]
       },
       {
         id: "suit",
@@ -1733,6 +1787,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           parameter: "property_type",
           values: ["suit"],
         },
+        variableTypes: ["suit"]
       },
       {
         id: "enhancement",
@@ -1916,10 +1971,33 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
     applicableTriggers: ["joker_evaluated"],
     params: [
       {
+        id: "type",
+        type: "select",
+        label: "Joker",
+        options: [
+          {value: "key", label: "Specific Key"},
+          {value: "variable", label: "Joker Variable"},
+        ]
+      },
+      {
         id: "joker_key",
         type: "text",
         label: "Joker Key ( [modprefix]_joker )",
         default: "joker",
+        showWhen: {
+          parameter: "type",
+          values: ["key"]
+        }
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        variableTypes: ["joker"],
+        showWhen: {
+          parameter: "type",
+          values: ["variable"]
+        }
       },
     ],
     category: "Joker",

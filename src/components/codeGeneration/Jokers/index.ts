@@ -259,6 +259,9 @@ const generateSingleJokerCode = (
 
   if (joker.userVariables && joker.userVariables.length > 0) {
     joker.userVariables.forEach((variable) => {
+      if (variable.type === "joker") {
+        configItems.push(`${variable.name} = '${variable.initialJoker || "j_joker"}'`);
+      }
       if (variable.type === "number" || !variable.type) {
         configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
       }
@@ -294,6 +297,7 @@ const generateSingleJokerCode = (
     const userVariableNames = new Set(
       joker.userVariables?.map((v) => v.name) || []
     );
+
     const autoVariables = variables.filter(
       (v) => !userVariableNames.has(v.name)
     );
@@ -625,8 +629,7 @@ const generateCalculateFunction = (
           convertLoopGroupsForCodegen(loopRetriggerEffects),
           triggerType,
           modprefix,
-          rules,
-          jokerKey,
+          joker,
           rule.id,
           globalEffectCounts
         );
@@ -762,8 +765,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopNonRetriggerGroups),
             triggerType,
             modprefix,
-            rules,
-            jokerKey,
+            joker,
             rule.id,
             globalEffectCounts
           );
@@ -842,8 +844,7 @@ const generateCalculateFunction = (
               convertLoopGroupsForCodegen(loopNonRetriggerGroups),
               triggerType,
               modprefix,
-              rules,
-              jokerKey,
+              joker,
               rule.id,
               globalEffectCounts
             );
@@ -891,8 +892,7 @@ const generateCalculateFunction = (
                 [],
                 triggerType,
                 modprefix,
-                rules,
-                jokerKey,
+                joker,
                 rule.id,
                 globalEffectCounts
               );
@@ -1017,8 +1017,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(allLoopGroups),
             triggerType,
             modprefix,
-            rules,
-            jokerKey,
+            joker,
             rule.id,
             globalEffectCounts
           );
@@ -1115,8 +1114,7 @@ const generateCalculateFunction = (
               convertLoopGroupsForCodegen(allLoopGroups),
               triggerType,
               modprefix,
-              rules,
-              jokerKey,
+              joker,
               rule.id,
               globalEffectCounts
             );
@@ -1174,8 +1172,7 @@ const generateCalculateFunction = (
                 [],
                 triggerType,
                 modprefix,
-                rules,
-                jokerKey,
+                joker,
                 rule.id,
                 globalEffectCounts
               );
@@ -1253,8 +1250,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopFixProbablityEffects),
             triggerType,
             modprefix,
-            rules,
-            jokerKey,
+            joker,
             rule.id,
             globalEffectCounts
           );
@@ -1333,8 +1329,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(loopModProbablityEffects),
             triggerType,
             modprefix,
-            rules,
-            jokerKey,
+            joker,
             rule.id,
             globalEffectCounts
           );
@@ -1394,8 +1389,7 @@ const generateCalculateFunction = (
           convertLoopGroupsForCodegen(rule.loops || []),
           triggerType,
           modprefix,
-          rules,
-          jokerKey,
+          joker,
           rule.id,
           globalEffectCounts
         );
@@ -1437,8 +1431,7 @@ const generateCalculateFunction = (
             convertLoopGroupsForCodegen(rule.loops || []),
             triggerType,
             modprefix,
-            rules,
-            jokerKey,
+            joker,
             rule.id,
             globalEffectCounts
           );
@@ -1471,8 +1464,7 @@ const generateCalculateFunction = (
               [],
               triggerType,
               modprefix,
-              rules,
-              jokerKey,
+              joker,
               rule.id,
               globalEffectCounts
             );
@@ -1512,6 +1504,8 @@ const generateCalculateFunction = (
 
   calculateFunction += `
     end`;
+  
+  calculateFunction = applyIndents(calculateFunction)
 
   return {
     code: calculateFunction,
@@ -2117,3 +2111,40 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
 
   return allHooks;
 };
+
+const applyIndents = (
+  code : string
+) => {
+  let finalCode = ''
+  let indentCount = 0
+  const indents = (count:number)=>{
+    let str = ''
+    for (let i = 0; i < count; i++){
+      str += '    '
+    }
+  return str}
+  const stringLines = code.split(`
+`)
+  
+  for (let i = 0; i < stringLines.length; i++) {
+    
+    let line = stringLines[i]
+    while (line.startsWith(' ')){
+      line = line.slice(1)}
+
+    if (line.includes('end') || line.includes('}') && !line.includes('{') || line.includes('else')) 
+      {indentCount -= 1}
+    if (line.includes('calculate')) {indentCount += 1}
+    
+    const indent = indents(indentCount)
+
+    finalCode += `
+${indent}${line}`
+
+    if (line.includes('if') || line.includes('else') || (line.includes('function')) || 
+        line.includes('return') && !line.includes('}') || line.includes('for ') || 
+        line.includes('while') || line.includes(' do') || line.includes(' then')) {
+          indentCount += 1}
+  }
+  return finalCode
+}

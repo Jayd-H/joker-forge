@@ -1,10 +1,13 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
+import { parseRankVariable, parseSuitVariable } from "../variableUtils";
+import { JokerData } from "../../../data/BalatroUtils";
 import { EDITIONS, getModPrefix } from "../../../data/BalatroUtils";
 
 export const generateEditCardReturn = (
   effect: Effect,
-  triggerType: string
+  triggerType: string,
+  joker?: JokerData
 ): EffectReturn => {
   const newRank = (effect.params?.new_rank as string) || "none";
   const newSuit = (effect.params?.new_suit as string) || "none";
@@ -13,6 +16,8 @@ export const generateEditCardReturn = (
   const newEdition = (effect.params?.new_edition as string) || "none";
   const customMessage = effect.customMessage;
 
+  const rankVar = parseRankVariable(newRank, joker)
+  const suitVar = parseSuitVariable(newSuit, joker)
 
   let modificationCode = "";
   const target = 'context.other_card'
@@ -20,14 +25,24 @@ export const generateEditCardReturn = (
   if (newRank !== "none" || newSuit !== "none") {
     let suitParam = "nil";
     let rankParam = "nil";
-
-    if (newSuit === "random") {
+ 
+    if (suitVar.isSuitVariable) {
+      suitParam = `ranks[${suitVar.code}]`;
+      modificationCode += `
+      local ranks = {
+          [2] = '2', [3] = '3', [4] = '4', [5] = '5', [6] = '6', 
+          [7] = '7', [8] = '8', [9] = '9', [10] = 'T', 
+          [11] = 'Jack', [12] = 'Queen', [13] = 'King', [14] = 'Ace'
+      }`
+    } else if (newSuit === "random") {
       suitParam = "pseudorandom_element(SMODS.Suits, 'edit_card_suit').key";
     } else if (newSuit !== "none") {
       suitParam = `"${newSuit}"`;
     }
 
-    if (newRank === "random") {
+    if (rankVar.isRankVariable) {
+      rankParam = `${rankVar.code}`;
+    } else if (newRank === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank !== "none") {
       rankParam = `"${newRank}"`;

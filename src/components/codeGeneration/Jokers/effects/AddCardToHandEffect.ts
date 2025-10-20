@@ -1,10 +1,13 @@
 import type { EffectReturn } from "../effectUtils";
 import type { Effect } from "../../../ruleBuilder/types";
+import { parseRankVariable, parseSuitVariable } from "../variableUtils";
+import { JokerData } from "../../../data/BalatroUtils";
 import { EDITIONS, getModPrefix, SEALS } from "../../../data/BalatroUtils";
 
 export const generateAddCardToHandReturn = (
   effect: Effect,
-  triggerType: string
+  triggerType: string,
+  joker?: JokerData,
 ): EffectReturn => {
   const suit = (effect.params?.suit as string) || "random";
   const rank = (effect.params?.rank as string) || "random";
@@ -20,25 +23,35 @@ export const generateAddCardToHandReturn = (
   const isScoring = scoringTriggers.includes(triggerType);
   const isHeldInHand = heldInHandTriggers.includes(triggerType);
 
+  const rankVar = parseRankVariable((effect.params?.rank as string) || "", joker);
+  const suitVar = parseSuitVariable((effect.params?.suit as string) || "", joker);
+
   let cardSelectionCode = "";
 
   if (suit === "random" && rank === "random") {
-    cardSelectionCode =
-      `
-      local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))`;
-  } else if (suit !== "random" && rank !== "random") {
-    const cardRank = rank === "10" ? "T" : rank;
-    const cardKey = `${suit.charAt(0)}_${cardRank}`;
-    cardSelectionCode = `
-    local card_front = G.P_CARDS.${cardKey}`;
-  } else if (suit === "random" && rank !== "random") {
-    const cardRank = rank === "10" ? "T" : rank;
-    cardSelectionCode = `
-    local card_front = pseudorandom_element({G.P_CARDS.S_${cardRank}, G.P_CARDS.H_${cardRank}, G.P_CARDS.D_${cardRank}, G.P_CARDS.C_${cardRank}}, pseudoseed('add_card_hand_suit'))`;
-  } else if (suit !== "random" && rank === "random") {
-    const suitCode = suit.charAt(0);
-    cardSelectionCode = `
-    local card_front = pseudorandom_element({G.P_CARDS.${suitCode}_2, G.P_CARDS.${suitCode}_3, G.P_CARDS.${suitCode}_4, G.P_CARDS.${suitCode}_5, G.P_CARDS.${suitCode}_6, G.P_CARDS.${suitCode}_7, G.P_CARDS.${suitCode}_8, G.P_CARDS.${suitCode}_9, G.P_CARDS.${suitCode}_T, G.P_CARDS.${suitCode}_J, G.P_CARDS.${suitCode}_Q, G.P_CARDS.${suitCode}_K, G.P_CARDS.${suitCode}_A}, pseudoseed('add_card_hand_rank'))`;
+    cardSelectionCode += "local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))";
+  } else {
+    const suitCode = suitVar.isSuitVariable ? suitVar.code : `'${suit.charAt(0)}'`
+    const rankCode = rankVar.isRankVariable ? rankVar.code : `'${rank.charAt(0)}'`
+
+    if (suitCode === 'r') { 
+      cardSelectionCode += `
+        suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")`
+    } else {
+      cardSelectionCode += `
+        suit_prefix = ${suitCode}`
+    }
+
+    if (rankCode === 'r') { 
+      cardSelectionCode += `
+        rank_suffix = pseudorandom_element({'2','3','4','5','6','7','8','9','T','J','Q','K','A'}, "random_rank")`
+    } else {
+      cardSelectionCode += `
+        rank_suffix = ${rankCode}`
+    }
+
+    cardSelectionCode += `
+      local card_front = G.P_CARDS[suit_prefix..rank_suffix]`
   }
 
   let centerParam = "";
