@@ -303,6 +303,7 @@ const EditionsPage: React.FC<EditionsPageProps> = ({
     const filtered = editions.filter((edition) => {
       const matchesSearch =
         edition.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        edition.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         edition.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;

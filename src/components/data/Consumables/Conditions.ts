@@ -23,6 +23,7 @@ import {
   SUITS,
   TAROT_CARDS,
   VOUCHERS,
+  DECKS,
 } from "../BalatroUtils";
 
 export const CONSUMABLE_GENERIC_TRIGGERS: string[] = [
@@ -291,6 +292,24 @@ export const CONSUMABLE_CONDITION_TYPES: ConditionTypeDefinition[] = [
     ],
     category: "Deck & Jokers",
   },
+    {
+      id: "deck_check",
+      label: "Deck Check",
+      description: "Check on what Deck the player is on",
+      applicableTriggers: ["consumable_used"],
+      params: [
+        {
+          id: "decks",
+          type: "select",
+          label: "Deck",
+          options: [
+          ...DECKS(),
+          ],
+          default: "Red Deck",
+        },
+      ],
+      category: "Deck & Jokers",
+    },
   {
     id: "player_money",
     label: "Player Money",

@@ -2,6 +2,8 @@ import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateEditHandsReturn } from "./effects/EditHandsEffect";
 import { generateEditDiscardsReturn } from "./effects/EditDiscardsEffect";
+import { generateEditEndRoundDiscardMoneyReturn } from "./effects/EditEndRoundDiscardMoneyEffect";
+import { generateEditEndRoundHandMoneyReturn } from "./effects/EditEndRoundHandMoneyEffect";
 import { generateSetAnteReturn } from "./effects/SetAnteEffect";
 import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
@@ -10,6 +12,7 @@ import { generateEditBoosterSlotsReturn } from "./effects/EditBoosterSlotsEffect
 import { generateEditVoucherSlotsReturn } from "./effects/EditVoucherSlotsEffect";
 import { generateEditInterestCapReturn } from "./effects/EditInterntCapEffect";
 import { generateEditJokerSlotsReturn } from "./effects/EditJokerSlotsEffect";
+import { generateEditWinnerAnteReturn } from "./effects/EditWinnerAnteEffect";
 import { generateEditItemWeightReturn } from "./effects/EditItemWeightEffect";
 import { generateCreateTagReturn } from "./effects/CreateTagEffect";
 import { generateEditApperanceReturn } from "./effects/EditCardApperance";
@@ -333,6 +336,12 @@ const generateSingleEffect = (
     case "edit_discards":
       return generateEditDiscardsReturn(effect);
 
+      case "edit_hands_money":
+            return generateEditEndRoundHandMoneyReturn(effect);
+      
+          case "edit_discards_money":
+            return generateEditEndRoundDiscardMoneyReturn(effect);
+
     case "set_ante":
       return generateSetAnteReturn(effect);
 
@@ -371,6 +380,9 @@ case "edit_shop_slots":
 
     case "edit_joker_slots":
       return generateEditJokerSlotsReturn(effect);
+      
+      case "edit_win_ante":
+            return generateEditWinnerAnteReturn(effect);
     
  case "edit_item_weight":
       return generateEditItemWeightReturn(effect);

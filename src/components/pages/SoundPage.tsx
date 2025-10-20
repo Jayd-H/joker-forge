@@ -1,4 +1,8 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, {
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -216,7 +220,8 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
       key: formData.key,
       soundString: formData.soundString || "",
       volume: formData.volume,
-      pitch: formData.pitch
+      pitch: formData.pitch,
+      replace: formData.replace || "",
     };
 
     if (isEditing) {
@@ -447,6 +452,20 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
                             type="number"
                             size="sm"
                           />
+                          <InputField
+                          label="Replace Sound Key"
+                          value={formData.replace || ""}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              replace: e.target.value,
+                            }))
+                          }
+                          placeholder="e.g. win"
+                        />
+                        <p className="text-xs text-white-darker ml-0 w-50">
+                          If you want to replace or add music, add "music" somewhere in the sound key                          
+                        </p>
                         </div>
                       </div>
                     </div>

@@ -21,10 +21,10 @@ import {
   SUITS,
   TAROT_CARDS,
   VOUCHERS,
+  DECKS,
 } from "../BalatroUtils";
 
 export const VOUCHER_GENERIC_TRIGGERS: string[] = [
-  "hand_played",
   "blind_selected",
   "blind_skipped",
   "round_end",
@@ -282,6 +282,24 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     category: "Player State",
   },
   {
+      id: "deck_check",
+      label: "Deck Check",
+      description: "Check on what Deck the player is on",
+      applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
+      params: [
+        {
+          id: "decks",
+          type: "select",
+          label: "Deck",
+          options: [
+          ...DECKS(),
+          ],
+          default: "Red Deck",
+        },
+      ],
+      category: "Deck & Jokers",
+    },
+  {
     id: "voucher_redeemed",
     label: "Voucher Redeemed",
     description: "Check if a specific Voucher was redeemed during the run",
@@ -460,7 +478,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
       },
     ],
     category: "Player State",
-  },
+  },/*
   {
     id: "in_blind",
     label: "In Blind",
@@ -468,7 +486,7 @@ export const VOUCHER_CONDITION_TYPES: ConditionTypeDefinition[] = [
     applicableTriggers: VOUCHER_GENERIC_TRIGGERS,
     params: [],
     category: "Game Context",
-  },
+  },*/
   {
     id: "system_condition",
     label: "Player OS",

@@ -24,7 +24,9 @@ import {
   ClipboardDocumentListIcon,
   BuildingStorefrontIcon,
   NumberedListIcon,
+  InboxStackIcon,
   BookOpenIcon,
+  ClipboardIcon,
   ArrowUturnLeftIcon,
 } from "@heroicons/react/24/solid";
 import { JokerData } from "./data/BalatroUtils";
@@ -61,8 +63,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [card, setCard] = useState(false);
   const [shop, setShop] = useState(false);
+  const [deck, setDeck] = useState(false);
   const [misc, setMisc] = useState(false);
-  const version: string = "v0.7.1";
+  const version: string = "v0.8.0";
 
   const handleSectionClick = (section: string) => {
     if (section === "github") {
@@ -128,6 +131,10 @@ const handleCreateNewmod = async () => {
     { id: "consumables", label: "Consumables", icon: CakeIcon },
     { id: "boosters", label: "Booster Packs", icon: GiftIcon },
     { id: "vouchers", label: "Vouchers", icon: BookOpenIcon },
+  ];
+
+  const dropdownResourceDecksanddChallanges = [
+    { id: "decks", label: "Decks", icon: ClipboardIcon },
   ];
 
   const dropdownResourceMisc = [
@@ -358,7 +365,61 @@ const handleCreateNewmod = async () => {
                         </div>
                       </motion.div>
                     )}
-                </AnimatePresence>  
+                </AnimatePresence>
+                <button
+                    onClick={() => setDeck(!deck)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                  >
+                    <InboxStackIcon className="h-5 w-5 flex-shrink-0" />
+                    <span className="text-sm tracking-wide">Decks and Challenges</span>
+                    <motion.div
+                      animate={{ rotate: deck ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="ml-auto"
+                    >
+                      <ChevronDownIcon className="h-5 w-5" />
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence>
+                    {deck && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        
+                        <div className="pl-4 pt-1 space-y-1">
+                          {dropdownResourceDecksanddChallanges.map((item, index) => {
+                            const Icon = item.icon;
+                            const isActive = selectedSection === item.id;
+
+                            return (
+                              <motion.button
+                                key={item.id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.05 * index }}
+                                onClick={() => handleSectionClick(item.id)}
+                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
+                                  isActive
+                                    ? "bg-mint-light text-black-dark font-medium"
+                                    : "text-white-darker hover:text-white-light hover:bg-black-light"
+                                }`}
+                              >
+                                <Icon className="h-4 w-4 flex-shrink-0" />
+                                <span className="text-sm tracking-wide">
+                                  {item.label}
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                </AnimatePresence>    
                               <button
                     onClick={() => setMisc(!misc)}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
@@ -660,6 +721,7 @@ const handleCreateNewmod = async () => {
                   transition={{ delay: 0.3 }}
                   onClick={() => { setCard(!card);
                     setShop(false);
+                    setDeck(false);
                     setMisc(false);
                   }}
                   onMouseEnter={() => setHoveredItem("card2")}
@@ -735,21 +797,104 @@ const handleCreateNewmod = async () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={() => { setDeck(!deck);
+                    setCard(false);
+                    setMisc(false);
+                    setShop(false);
+                  }}
+                  onMouseEnter={() => 
+                  setHoveredItem("decks")
+                }
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                >
+                  <InboxStackIcon className="h-5 w-5" />
+                </motion.button>
 
+                <AnimatePresence>
+                  {hoveredItem === "decks" && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-1/2 transform -translate-y-2/2 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
+                        <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
+                          Decks and Challenges
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {deck && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, x: -10 }}
+                      animate={{ opacity: 1, scale: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, x: -10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                      className="absolute left-full top-17 -translate-y-3/2 ml-2 z-50"
+                    >
+                      <div className="bg-black-dark border border-black-lighter rounded-lg shadow-lg overflow-hidden">
+                        {dropdownResourceDecksanddChallanges.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = selectedSection === item.id;
+
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                handleSectionClick(item.id);
+                                setDeck(false);
+                              }}
+                              
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer whitespace-nowrap ${
+                                isActive
+                                  ? "bg-mint-light text-black-dark font-medium"
+                                  : "text-white-light hover:bg-black-light hover:text-white-lighter"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4 flex-shrink-0" />
+                              <span className="text-sm tracking-wide">
+                                {item.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                   <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 }}
-                    onClick={() => { setShop(!shop);
-                      setCard(false);
-                      setMisc(false);
-                    }}
-                    onMouseEnter={() => setHoveredItem("shop")}                  
-                    onMouseLeave={() => setHoveredItem(null)}
-                    className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
-                  >
-                    <BuildingStorefrontIcon className="h-5 w-5" />
-                  </motion.button>
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  onClick={() => { setShop(!shop);
+                    setCard(false);
+                    setDeck(false);
+                    setMisc(false);
+                  }}
+                  onMouseEnter={() => setHoveredItem("shop")}                  
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg transition-colors cursor-pointer text-white-dark hover:text-white-light hover:bg-black-light"
+                >
+                  <BuildingStorefrontIcon className="h-5 w-5" />
+                </motion.button>
 
                   <AnimatePresence>
                   {hoveredItem === "shop" && (
@@ -762,7 +907,7 @@ const handleCreateNewmod = async () => {
                         stiffness: 500,
                         damping: 30,
                       }}
-                      className="absolute left-full top-2/4 transform -translate-y-1/2 ml-2 z-50"
+                      className="absolute left-full top-3/4 transform -translate-y-1/2 ml-2 z-50"
                     >
                       <div className="bg-black-dark border border-black-lighter rounded-lg px-3 py-2 shadow-lg">
                         <span className="text-sm text-white-light tracking-wide whitespace-nowrap">
@@ -824,6 +969,7 @@ const handleCreateNewmod = async () => {
                   transition={{ delay: 0.3 }}
                   onClick={() => { setMisc(!misc);
                     setCard(false);
+                    setDeck(false);
                     setShop(false);
                   }}
                   onMouseEnter={() => 

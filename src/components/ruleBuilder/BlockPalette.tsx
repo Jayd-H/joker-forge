@@ -50,7 +50,11 @@ import {
   CONSUMABLE_EFFECT_CATEGORIES,
 } from "../data/Consumables/Effects";
 import { CARD_TRIGGERS, CARD_TRIGGER_CATEGORIES } from "../data/Card/Triggers";
-import { VOUCHER_TRIGGERS, VOUCHER_TRIGGER_CATEGORIES } from "../data/Vouchers/Triggers";
+import {
+  VOUCHER_TRIGGERS,
+  VOUCHER_TRIGGER_CATEGORIES,
+} from "../data/Vouchers/Triggers";
+import { DECK_TRIGGERS, DECK_TRIGGER_CATEGORIES } from "../data/Decks/Triggers";
 import {
   CARD_CONDITION_CATEGORIES,
   getCardConditionsForTrigger,
@@ -60,13 +64,21 @@ import {
   getCardEffectsForTrigger,
 } from "../data/Card/Effects";
 import {
+  VOUCHER_CONDITION_CATEGORIES,
   getVoucherConditionsForTrigger,
 } from "../data/Vouchers/Conditions";
 import {
   VOUCHER_EFFECT_CATEGORIES,
   getVoucherEffectsForTrigger,
 } from "../data/Vouchers/Effects";
-
+import {
+  DECK_CONDITION_CATEGORIES,
+  getDeckConditionsForTrigger,
+} from "../data/Decks/Conditions";
+import {
+  DECK_EFFECT_CATEGORIES,
+  getDeckEffectsForTrigger,
+} from "../data/Decks/Effects";
 
 interface BlockPaletteProps {
   position: { x: number; y: number };
@@ -76,7 +88,7 @@ interface BlockPaletteProps {
   onAddEffect: (effectType: string) => void;
   onClose: () => void;
   onPositionChange: (position: { x: number; y: number }) => void;
-  itemType: "joker" | "consumable" | "card" | "voucher";
+  itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
 }
 
 type FilterType = "triggers" | "conditions" | "effects";
@@ -112,7 +124,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONSUMABLE_TRIGGERS
       : itemType === "card"
       ? CARD_TRIGGERS
-      : VOUCHER_TRIGGERS
+      : itemType === "voucher"
+      ? VOUCHER_TRIGGERS
+      : DECK_TRIGGERS;
 
   const triggerCategories =
     itemType === "joker"
@@ -121,14 +135,20 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONSUMABLE_TRIGGER_CATEGORIES
       : itemType === "card"
       ? CARD_TRIGGER_CATEGORIES
-      : VOUCHER_TRIGGER_CATEGORIES
+      : itemType === "voucher"
+      ? VOUCHER_TRIGGER_CATEGORIES
+      : DECK_TRIGGER_CATEGORIES;
 
   const conditionCategories =
     itemType === "joker"
       ? CONDITION_CATEGORIES
       : itemType === "consumable"
       ? CONSUMABLE_CONDITION_CATEGORIES
-      : CARD_CONDITION_CATEGORIES
+      : itemType === "card"
+      ? CARD_CONDITION_CATEGORIES
+      : itemType === "voucher"
+      ? VOUCHER_CONDITION_CATEGORIES
+      : DECK_CONDITION_CATEGORIES;
 
   const effectCategories =
     itemType === "joker"
@@ -137,7 +157,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? CONSUMABLE_EFFECT_CATEGORIES
       : itemType === "card"
       ? CARD_EFFECT_CATEGORIES
-      : VOUCHER_EFFECT_CATEGORIES
+      : itemType === "voucher"
+      ? VOUCHER_EFFECT_CATEGORIES
+      : DECK_EFFECT_CATEGORIES;
 
   const getConditionsForTriggerFn =
     itemType === "joker"
@@ -146,7 +168,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getConsumableConditionsForTrigger
       : itemType === "card"
       ? getCardConditionsForTrigger
-      : getVoucherConditionsForTrigger
+      : itemType === "voucher"
+      ? getVoucherConditionsForTrigger
+      : getDeckConditionsForTrigger;
 
   const getEffectsForTriggerFn =
     itemType === "joker"
@@ -155,7 +179,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? getConsumableEffectsForTrigger
       : itemType === "card"
       ? getCardEffectsForTrigger
-      : getVoucherEffectsForTrigger;
+      : itemType === "voucher"
+      ? getVoucherEffectsForTrigger
+      : getDeckEffectsForTrigger;
 
   const style = transform
     ? {
@@ -394,12 +420,14 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
           onClick={() => toggleCategory(category.label)}
           className="w-full flex items-center justify-between p-2 hover:bg-black-light rounded-md transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <IconComponent className="h-4 w-4 text-mint-light" />
-            <span className="text-white-light text-xs font-medium tracking-wider uppercase">
+          <div className="flex items-center gap-2 text-left">
+            <IconComponent className="h-4 w-4 text-mint-light flex-shrink-0" />
+            <span className="text-left text-white-light text-xs font-medium tracking-wider uppercase whitespace-nowrap flex items-center gap-1">
               {category.label}
             </span>
-            <span className="text-white-darker text-xs">({items.length})</span>
+            <span className="text-white-darker text-xs font-normal">
+              ({items.length})
+            </span>
           </div>
           {isExpanded ? (
             <ChevronDownIcon className="h-3 w-3 text-white-darker" />

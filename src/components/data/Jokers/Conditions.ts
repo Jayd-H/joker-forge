@@ -33,6 +33,7 @@ import {
   STICKERS,
   BOSS_BLINDS,
   TAGS,
+  DECKS,
 } from "../BalatroUtils";
 
 export const GENERIC_TRIGGERS: string[] = [
@@ -66,6 +67,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "game_over",
   "probability_result",
   "tag_added",
+  "ante_start",
 ];
 
 export const PROBABILITY_IDENTIFIERS: {
@@ -1668,6 +1670,24 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
           {value: "iOS",label: "iOS"},
         ],
         default: "Windows",
+      },
+    ],
+    category: "Game State",
+  },
+  {
+    id: "deck_check",
+    label: "Deck Check",
+    description: "Check on what Deck the player is on",
+    applicableTriggers: GENERIC_TRIGGERS,
+    params: [
+      {
+        id: "decks",
+        type: "select",
+        label: "Deck",
+        options: [
+        ...DECKS(),
+        ],
+        default: "Red Deck",
       },
     ],
     category: "Game State",

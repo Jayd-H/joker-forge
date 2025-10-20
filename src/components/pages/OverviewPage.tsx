@@ -692,22 +692,35 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
           <div className="lg:col-span-2 space-y-6">
             <div>
               <h3 className="text-xl text-white-light font-medium mb-4">
-                Visual Joker Design Tool
+                Visual Balatro Modding Tool
               </h3>
               <p className="text-white-light leading-relaxed mb-4">
-                Joker Forge is a visual tool for creating custom Balatro jokers
-                using the SMODS framework. Design unique joker behaviors without
-                writing Lua code directly.
+                JokerForge is a visual and intuitively-designed tool for creating Balatro mods 
+                using the Steamodded (SMODS) framework. The website enables users to add content to their Balatro game, such as:
+                like:
+                Jokers,
+                Consumables,
+                Booster packs,
+                Enhancements,
+                Seals,
+                Editions,
+                Vouchers,
+                Decks,
+                and various other miscellaneous features; all without having to write any Lua code.
+                Updates to add new features to the site are frequent, and a community with a variety of different content creators is available on the Discord server.
               </p>
               <p className="text-white-darker leading-relaxed mb-4">
-                This is a solo-developer project, in its current state expect
-                rough edges and bugs. The goal isn't the most polished generated
-                code, but rather a functional and flexible tool for modders.
+                This is a multi-developer project, and whilst
+                the site has still some rough edges, bugs and some missing Features,
+                it's been more and more polished ever since new developers have come.
+                The goal isn't the most polished generated
+                code, but rather a functional, flexible, and easy to use tool for all mod creators.
               </p>
               <p className="text-white-darker leading-relaxed mb-4">
                 If you have found any issues, rather with the generated code or
                 the user interface, or just have any suggestions, please feel
-                free to open an issue on the GitHub Repository.
+                free to open an issue on the GitHub Repository or
+                create a post in the Joker Forge Discord server under the channels "bug-reports" or "suggestions".
               </p>
               <p className="text-white-darker leading-relaxed">
                 <a
@@ -717,6 +730,16 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
                   className="text-mint hover:underline text-lg"
                 >
                   Open an issue
+                </a>
+              </p>
+              <p className="text-white-darker leading-relaxed">
+                <a
+                  href="https://discord.gg/eRBByq9AZX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-condition hover:underline text-lg"
+                >
+                  Join the Discord Server
                 </a>
               </p>
             </div>

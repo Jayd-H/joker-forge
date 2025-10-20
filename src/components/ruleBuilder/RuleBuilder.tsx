@@ -58,11 +58,14 @@ import {
   SealData,
   EditionData,
   VoucherData,
+  DeckData,
 } from "../data/BalatroUtils";
 import { getCardConditionTypeById } from "../data/Card/Conditions";
 import { getCardEffectTypeById } from "../data/Card/Effects";
 import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
 import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
+import { getDeckConditionTypeById } from "../data/Decks/Conditions";
+import { getDeckEffectTypeById } from "../data/Decks/Effects";
 import { UserConfigContext } from "../Contexts";
 
 export type ItemData =
@@ -72,7 +75,8 @@ export type ItemData =
   | SealData
   | EditionData
   | VoucherData
-type ItemType = "joker" | "consumable" | "card" | "voucher";
+  | DeckData;
+type ItemType = "joker" | "consumable" | "card" | "voucher" | "deck";
 
 interface RuleBuilderProps {
   isOpen: boolean;
@@ -116,7 +120,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConsumableConditionTypeById
       : itemType === "card"
       ? getCardConditionTypeById
-      : getVoucherConditionTypeById
+      : itemType === "voucher"
+      ? getVoucherConditionTypeById
+      : getDeckConditionTypeById;
   const getEffectType =
     itemType === "joker"
       ? getEffectTypeById
@@ -124,7 +130,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       ? getConsumableEffectTypeById
       : itemType === "card"
       ? getCardEffectTypeById
-      : getVoucherEffectTypeById;
+      : itemType === "voucher"
+      ? getVoucherEffectTypeById
+      : getDeckEffectTypeById;
 
   const [rules, setRules] = useState<Rule[]>([]);
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);
@@ -761,7 +769,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         loops: ruleToDuplicate.loops.map((group) => ({
           ...group,
           id: crypto.randomUUID(),
-        }))
+        })),
       };
       setSelectedItem({ type: "trigger", ruleId: newRuleId });
       return [...prevRules, newRule];
@@ -1022,14 +1030,10 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     setRules((prev) =>
       prev.map((rule) => {
         if (rule.id === ruleId) {
-          const groupToDelete = rule.loops.find(
-            (g) => g.id === loopGroupId
-          );
+          const groupToDelete = rule.loops.find((g) => g.id === loopGroupId);
           return {
             ...rule,
-            loops: rule.loops.filter(
-              (group) => group.id !== loopGroupId
-            ),
+            loops: rule.loops.filter((group) => group.id !== loopGroupId),
             effects: groupToDelete
               ? [...rule.effects, ...groupToDelete.effects]
               : rule.effects,
@@ -1273,17 +1277,20 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
           updatedRule.effects = rule.effects.map((effect) =>
             effect.id === effectId ? { ...effect, ...updates } : effect
           );
-          updatedRule.randomGroups = rule.randomGroups.map((group) => ({
-            ...group,
-            effects: group.effects.map((effect) =>
-              effect.id === effectId ? { ...effect, ...updates } : effect
-            )
-          }),
-          updatedRule.loops = rule.loops.map((group) => ({
-            ...group,
-            effects: group.effects.map((effect) =>
-              effect.id === effectId ? { ...effect, ...updates } : effect
-          )})));
+          updatedRule.randomGroups = rule.randomGroups.map(
+            (group) => ({
+              ...group,
+              effects: group.effects.map((effect) =>
+                effect.id === effectId ? { ...effect, ...updates } : effect
+              ),
+            }),
+            (updatedRule.loops = rule.loops.map((group) => ({
+              ...group,
+              effects: group.effects.map((effect) =>
+                effect.id === effectId ? { ...effect, ...updates } : effect
+              ),
+            })))
+          );
           return updatedRule;
         }
         return rule;
@@ -1385,7 +1392,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       );
       if (effectInGroup) return effectInGroup;
     }
-    
+
     for (const group of rule.loops) {
       const effectInGroup = group.effects.find(
         (e) => e.id === selectedItem.itemId
@@ -1418,9 +1425,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       return null;
     const rule = getSelectedRule();
     if (!rule) return null;
-    return (
-      rule.loops.find((g) => g.id === selectedItem.loopGroupId) || null
-    );
+    return rule.loops.find((g) => g.id === selectedItem.loopGroupId) || null;
   };
 
   const updateConditionOperator = (

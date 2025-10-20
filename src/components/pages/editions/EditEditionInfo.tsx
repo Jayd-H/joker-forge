@@ -22,6 +22,7 @@ import {
   EditionData,
   slugify,
   VANILLA_SHADERS,
+  VANILLA_SOUNDS,
 } from "../../data/BalatroUtils";
 import {
   validateJokerName,
@@ -54,15 +55,8 @@ interface EditEditionInfoProps {
   }) => void;
 }
 
-const vanillaSounds = [
-  { value: "foil1", label: "Foil 1" },
-  { value: "holo1", label: "Holo 1" },
-  { value: "polychrome1", label: "Polychrome 1" },
-  { value: "negative1", label: "Negative 1" },
-  { value: "card1", label: "Card 1" },
-  { value: "chips1", label: "Chips 1" },
-  { value: "generic1", label: "Generic 1" },
-];
+const vanillaSounds = VANILLA_SOUNDS.map((sound) => ({ value: sound.value, label: sound.label }))
+;
 
 const shaderOptions = [
   { value: "", label: "None" },
@@ -758,7 +752,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                               className="w-full bg-black-darker border border-black-lighter rounded-lg px-3 py-2 text-white-light focus:outline-none focus:border-mint transition-colors text-sm"
                             >
                               {vanillaSounds.map((sound) => (
-                                <option key={sound.value} value={sound.value}>
+                                <option value={sound.value}>
                                   {sound.label}
                                 </option>
                               ))}

@@ -273,10 +273,12 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
       id: crypto.randomUUID(),
       name: "New Voucher",
       description: "A {C:blue}custom{} voucher with {C:red}unique{} effects.",
+      unlockDescription: "Unlocked by default.",
       imagePreview: placeholderResult.imageData,
       objectKey: slugify("New Voucher"),
       unlocked: true,
       discovered: true,
+      cost: 10,
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
       orderValue: vouchers.length+1,
@@ -414,7 +416,6 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     })
   }
 
-
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowSortMenu(!showSortMenu);
@@ -424,6 +425,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
     const filtered = vouchers.filter((voucher) => {
       const matchesSearch =
         voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        voucher.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         voucher.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;
@@ -602,7 +604,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
               onSave={handleSaveRules}
               existingRules={currentVoucherForRules.rules || []}
               item={currentVoucherForRules}
-              onUpdateItem={handleUpdateVoucherFromRuleBuilder}
+              onUpdateItem={handleUpdateVoucherFromRuleBuilder as (updates: Partial<any>) => void}
               itemType="voucher"
             />
           </Suspense>

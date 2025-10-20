@@ -1153,6 +1153,7 @@ const ConsumablesPage: React.FC<ConsumablesPageProps> = ({
     const filtered = consumables.filter((consumable) => {
       const matchesSearch =
         consumable.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        consumable.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         consumable.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       let matchesSet = true;

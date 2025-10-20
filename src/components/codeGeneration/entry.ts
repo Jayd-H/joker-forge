@@ -10,6 +10,7 @@ import {
   ModMetadata,
   EditionData,
   VoucherData,
+  DeckData,
   isCustomShader,
   getCustomShaderFilepath,
   SoundData,
@@ -18,6 +19,7 @@ import { addAtlasToZip } from "./ImageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
 import { generateConsumablesCode } from "./Consumables/index";
 import { generateVouchersCode } from "./Vouchers/index";
+import { generateDecksCode } from "./Decks/index";
 import { generateBoostersCode } from "./boosters";
 import { ConsumableSetData, slugify, getModPrefix } from "../data/BalatroUtils";
 import { modToJson } from "../JSONImportExport";
@@ -169,7 +171,8 @@ export const exportModCode = async (
   enhancements: EnhancementData[] = [],
   seals: SealData[] = [],
   editions: EditionData[] = [],
-  vouchers: VoucherData[] = []
+  vouchers: VoucherData[] = [],
+  decks: DeckData[] = [],
 ): Promise<boolean> => {
   try {
     console.log("Generating mod code...");
@@ -192,9 +195,10 @@ export const exportModCode = async (
     const validSeals = seals.filter((s) => s.id && s.name);
     const validEditions = editions.filter((e) => e.id && e.name);
     const validVouchers = vouchers.filter((v) => v.id && v.name);
+    const validDecks = decks.filter((d) => d.id && d.name);
 
     console.log(
-      `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}, Editions: ${validEditions.length} vouchers: ${validVouchers.length}`
+      `Filtered items - Jokers: ${validJokers.length}, Consumables: ${validConsumables.length}, Boosters: ${validBoosters.length}, Enhancements: ${validEnhancements.length}, Seals: ${validSeals.length}, Editions: ${validEditions.length} vouchers: ${validVouchers.length}, Decks: ${validDecks.length}`
     );
 
     const zip = new JSZip();
@@ -206,6 +210,7 @@ export const exportModCode = async (
     const sortedSeals = sortGameObjectForExport(validSeals);
     const sortedEditions = sortGameObjectForExport(validEditions);
     const sortedVouchers = sortGameObjectForExport(validVouchers);
+    const sortedDecks = sortGameObjectForExport(validDecks);
     const customShaders = collectCustomShaders(sortedEditions);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
@@ -221,6 +226,7 @@ export const exportModCode = async (
       sortedSeals,
       sortedEditions,
       sortedVouchers,
+      sortedDecks,
       hasModIcon,
       hasGameIcon,
       metadata
@@ -238,7 +244,8 @@ export const exportModCode = async (
       sortedEnhancements,
       sortedSeals,
       sortedEditions,
-      sortedVouchers
+      sortedVouchers,
+      sortedDecks
     );
     zip.file(ret.filename, ret.jsonString);
 
@@ -269,10 +276,10 @@ export const exportModCode = async (
     key="${sound.key}",
     path="${sound.key}.ogg",
     pitch=${sound.pitch ?? 0.7},
-    volume=${sound.volume ?? 0.6}
+    volume=${sound.volume ?? 0.6},
+    replace="${sound.replace || ""}"
 }\n\n`
       })
-
       zip.file("sounds.lua", soundsCode.trim());
     }
 
@@ -347,6 +354,18 @@ export const exportModCode = async (
       });
     }
 
+if (sortedDecks.length > 0) {
+      const { decksCode } = generateDecksCode(sortedDecks, {
+        modPrefix: metadata.prefix,
+        atlasKey: "CustomDecks",
+      });
+
+      const decksFolder = zip.folder("decks");
+      Object.entries(decksCode).forEach(([filename, code]) => {
+        decksFolder!.file(filename, code);
+      });
+    }
+    
     zip.file(`${metadata.id}.json`, generateModJson(metadata));
 
     let modIconData: string | undefined;
@@ -395,6 +414,7 @@ export const exportModCode = async (
       sortedEnhancements,
       sortedSeals,
       sortedVouchers,
+      sortedDecks,
       modIconData,
       gameIconData
     );
@@ -435,6 +455,7 @@ const generateMainLuaCode = (
   seals: SealData[],
   editions: EditionData[],
   vouchers: VoucherData[],
+  decks: DeckData[],
   hasModIcon: boolean,
   hasGameIcon: boolean,
   metadata: ModMetadata): string => {
@@ -537,13 +558,25 @@ const generateMainLuaCode = (
 `;
   }
 
+  if (decks.length > 0) {
+    output += `SMODS.Atlas({
+    key = "CustomDecks", 
+    path = "CustomDecks.png", 
+    px = 71,
+    py = 95, 
+    atlas_table = "ASSET_ATLAS"
+})
+
+`;
+  }
+
   output += `local NFS = require("nativefs")
 to_big = to_big or function(a) return a end
 lenient_bignum = lenient_bignum or function(a) return a end
 `;
 
 const createIndexList = (objects : GameObjectData[]) => {
-  const alphabetOrder = objects.sort((a,b)=>a.name.localeCompare(b.name))
+  const alphabetOrder = objects.sort((a,b)=>a.objectKey.localeCompare(b.objectKey))
   const order : Array < Array <number> > = []
 
 
@@ -692,6 +725,26 @@ end
 `;
   }
 
+  if (decks.length > 0) {
+    const indexArray= createIndexList(decks)
+    output += `
+local deckIndexList = {${indexArray}}
+
+local function load_decks_folder()
+    local mod_path = SMODS.current_mod.path
+    local decks_path = mod_path .. "/decks"
+    local files = NFS.getDirectoryItemsInfo(decks_path)
+    for i = 1, #deckIndexList do
+        local file_name = files[deckIndexList[i]].name
+        if file_name:sub(-4) == ".lua" then
+            assert(SMODS.load_file("decks/" .. file_name))()
+        end
+    end
+end
+
+`;
+  }
+
 
   if (metadata.disable_vanilla) {
     output += `function SMODS.current_mod.reset_game_globals(run_start)
@@ -760,6 +813,11 @@ load_boosters_file()
   
    if (vouchers.length > 0) {
     output += `load_vouchers_folder()
+`;
+  }
+
+  if (decks.length > 0) {
+    output += `load_decks_folder()
 `;
   }
 

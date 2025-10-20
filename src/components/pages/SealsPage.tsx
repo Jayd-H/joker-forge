@@ -271,6 +271,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
       badge_colour: "#000000",
       unlocked: true,
       discovered: true,
+      sound: "gold_seal",
       rules: [],
       placeholderCreditIndex: placeholderResult.creditIndex,
       orderValue: seals.length+1,
@@ -418,6 +419,7 @@ const SealsPage: React.FC<SealsPageProps> = ({
     const filtered = seals.filter((seal) => {
       const matchesSearch =
         seal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        seal.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         seal.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;

@@ -55,14 +55,14 @@ interface EditBoosterRulesModalProps {
   onClose: () => void;
   onSave: (rules: BoosterCardRule[]) => void;
   cardRules: BoosterCardRule[];
-  boosterType: "joker" | "consumable" | "playing_card";
+  boosterType: "joker" | "consumable" | "playing_card" | "voucher";
   consumableSets: ConsumableSetData[];
 }
 
 interface CardRuleEditorProps {
   cardRules: BoosterCardRule[];
   onCardRulesChange: (rules: BoosterCardRule[]) => void;
-  boosterType: "joker" | "consumable" | "playing_card";
+  boosterType: "joker" | "consumable" | "playing_card" | "voucher";
   consumableSets: ConsumableSetData[];
 }
 
@@ -109,6 +109,8 @@ const EditBoosterRulesModal: React.FC<EditBoosterRulesModalProps> = ({
         return "text-mint";
       case "playing_card":
         return "text-balatro-blue";
+      case "voucher":
+        return "text-balatro-orange";
       default:
         return "text-balatro-gold-new";
     }
@@ -122,6 +124,8 @@ const EditBoosterRulesModal: React.FC<EditBoosterRulesModalProps> = ({
         return "Consumable";
       case "playing_card":
         return "Playing Card";
+      case "voucher":
+        return "Voucher";
       default:
         return "Unknown";
     }
@@ -273,6 +277,9 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
     ...(boosterType === "joker"
       ? [{ value: "joker", label: "Specific Joker" }]
       : []),
+      ...(boosterType === "voucher"
+      ? [{ value: "voucher", label: "Specific Voucher" }]
+      : []),
   ];
 
   const getBoosterTypeColor = () => {
@@ -283,6 +290,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
         return "text-mint";
       case "playing_card":
         return "text-balatro-blue";
+      case "voucher":
+        return "text-balatro-orange";
       default:
         return "text-balatro-gold-new";
     }
@@ -381,7 +390,7 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     value={rule.specific_type || ""}
                     onChange={(value) =>
                       handleUpdateRule(index, {
-                        specific_type: value as "consumable" | "joker" | null,
+                        specific_type: value as "consumable" | "joker" | "voucher" | null,
                         specific_key: "",
                       })
                     }
@@ -396,7 +405,11 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
               <div className="mb-3">
                 <InputField
                   label={`Specific ${
-                    rule.specific_type === "consumable" ? "Consumable" : "Joker"
+                    rule.specific_type === "consumable"
+                      ? "Consumable"
+                      : rule.specific_type === "joker"
+                      ? "Joker"
+                      : "Voucher"
                   } Key`}
                   type="text"
                   value={rule.specific_key || ""}
@@ -408,7 +421,9 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                   placeholder={
                     rule.specific_type === "consumable"
                       ? "e.g. c_fool"
-                      : "e.g. j_joker"
+                      : rule.specific_type === "joker"
+                      ? "e.g. j_joker"
+                      : "e.g. v_grabber"
                   }
                   size="sm"
                   darkmode
@@ -908,6 +923,7 @@ const BoostersPage: React.FC<BoostersPageProps> = ({
     const filtered = boosters.filter((booster) => {
       const matchesSearch =
         booster.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        booster.objectKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
         booster.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;
