@@ -12,26 +12,25 @@ export const generateEditDollarsReturn = (effect: Effect): EffectReturn => {
 
     if (operation === "add") {
         dollarsCode += `
-        G.GAME.starting_params.dollars = G.GAME.starting_params.dollars + ${valueCode}
+        ease_dollars(${valueCode})
         `;
   } else if (operation === "subtract") {
         dollarsCode += `
-        G.GAME.starting_params.dollars = G.GAME.starting_params.dollars - ${valueCode}
+        ease_dollars(-${valueCode})
         `;
   } else if (operation === "set") {
         dollarsCode += `
-          G.GAME.starting_params.dollars = ${valueCode}
+          local current_dollars = G.GAME.dollars
+                    local target_dollars = ${valueCode}
+                    local difference = target_dollars - current_dollars
+                    ease_dollars(difference)
         `;
   }
 
-  const configVariables =
-    typeof value === "string" && value.startsWith("GAMEVAR:")
-      ? []
-      : [`dollars_value = ${value}`];
-
   return {
-    statement: dollarsCode,
-    colour: "G.C.MONEY",
-    configVariables,
+    statement: `__PRE_RETURN_CODE__
+                   ${dollarsCode}
+                    __PRE_RETURN_CODE_END__`,
+    colour: "G.C.MONEY"
   };
 };

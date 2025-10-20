@@ -3,7 +3,7 @@ import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateEditHandsReturn } from "./effects/EditHandsEffect";
 import { generateEditDiscardsReturn } from "./effects/EditDiscardsEffect";
 import { generateSetAnteReturn } from "./effects/SetAnteEffect";
-import { generateEditDollarsReturn } from "./effects/EditDollarsEffect";
+import { generateEditDollarsReturn } from "./effects/AddDollarsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
 import { generateEditDiscardSizeReturn } from "./effects/EditDiscardSizeEffect";
 import { generateEditEndRoundDiscardMoneyReturn } from "./effects/EditEndRoundDiscardMoneyEffect";
@@ -356,8 +356,8 @@ const generateSingleEffect = (
     case "edit_play_size":
       return generateEditPlaySizeReturn(effect);
 
-      case "modify_blind_requirement":
-          return generateModifyBlindRequirementReturn(effect);
+    case "modify_base_blind_requirement":
+      return generateModifyBlindRequirementReturn(effect);
 
     case "free_rerolls":
       return generateFreeRerollsReturn(effect);
@@ -374,8 +374,8 @@ const generateSingleEffect = (
     case "edit_starting_suits":
       return generateEditStartingSuitsReturn(effect);
 
-      case "create_tag":
-            return generateCreateTagReturn(effect);
+    case "create_tag":
+      return generateCreateTagReturn(effect);
 
     case "edit_starting_ranks":
       return generateEditStartingRanksReturn(effect);
