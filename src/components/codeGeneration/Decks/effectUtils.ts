@@ -389,16 +389,16 @@ const generateSingleEffect = (
     case "edit_discard_size":
       return generateEditDiscardSizeReturn(effect);
 
-      case "create_joker":
-          return generateCreateJokerReturn(effect, modprefix);
+    case "create_joker":
+      return generateCreateJokerReturn(effect, modprefix);
         
-      case "create_consumable":
-            return generateCreateConsumableReturn(effect);
+    case "create_consumable":
+      return generateCreateConsumableReturn(effect);
 
     case "edit_booster_slots":
       return generateEditBoosterSlotsReturn(effect);
 
-case "edit_shop_slots":
+    case "edit_shop_slots":
       return generateEditShopCardsSlotsReturn(effect);
       
     case "edit_consumable_slots":
@@ -413,16 +413,16 @@ case "edit_shop_slots":
     case "edit_joker_slots":
       return generateEditJokerSlotsReturn(effect);
     
- case "edit_item_weight":
+    case "edit_item_weight":
       return generateEditItemWeightReturn(effect);
       
-      case "edit_card_apperance":
+    case "edit_card_apperance":
       return generateEditApperanceReturn(effect);
 
-  case "edit_raity_weight":
+    case "edit_raity_weight":
       return generateEditRarityWeightReturn(effect); 
 
- case "edit_interest_cap":
+    case "edit_interest_cap":
       return generateEditInterestCapReturn(effect);  
 
     case "emit_flag":
