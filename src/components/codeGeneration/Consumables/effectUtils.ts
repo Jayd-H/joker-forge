@@ -49,6 +49,7 @@ import { generateRedeemVoucherReturn } from "./effects/RedeemVoucherEffect";
 import { generateEditWinnerAnteReturn } from "./effects/EditWinnerAnteEffect";
 import { generateEditBoostersReturn } from "./effects/EditBoostersPacksEffect";
 import { generateEmitFlagReturn } from "./effects/EmitFlagEffect";
+import { generateShowMessageReturn } from "./effects/ShowSpecialMessageEffect";
 import { generateForceGameOverReturn } from "./effects/ForceGameOverEffect";
 import { generatePlaySoundReturn } from "./effects/PlaySoundEffect";
 import { generateCrashGameReturn } from "./effects/CrashGameEffect";
@@ -391,11 +392,11 @@ const generateSingleEffect = (
     case "edit_hand_size":
       return generateEditHandSizeReturn(effect);
 
-      case "force_game_over":
-            return generateForceGameOverReturn(effect);
+    case "force_game_over":
+      return generateForceGameOverReturn(effect);
 
-                case "Win_blind":
-                  return generateWinBlindReturn(effect);
+    case "Win_blind":
+      return generateWinBlindReturn(effect);
 
     case "draw_cards":
       return generateDrawCardsReturn(effect);
@@ -418,7 +419,7 @@ const generateSingleEffect = (
     case "edit_selected_joker":
       return generateEditSelectedJokerReturn(effect);
 
-      case "edit_win_ante":
+    case "edit_win_ante":
       return generateEditWinnerAnteReturn(effect);
 
     case "create_joker":
@@ -430,8 +431,8 @@ const generateSingleEffect = (
     case "set_ante":
       return generateSetAnteReturn(effect);
 
-          case "modify_blind_requirement":
-            return generateModifyBlindRequirementReturn(effect);
+    case "modify_blind_requirement":
+      return generateModifyBlindRequirementReturn(effect);
 
     case "disable_boss_blind":
       return generateDisableBossBlindReturn(effect);
@@ -445,8 +446,8 @@ const generateSingleEffect = (
     case "copy_joker":
       return generateCopyRandomJokerReturn(effect);
 
-      case "edit_booster_packs":
-            return generateEditBoostersReturn(effect);
+    case "edit_booster_packs":
+      return generateEditBoostersReturn(effect);
 
     case "edit_shop_slots":
         return generateEditShopCardsSlotsReturn(effect);
@@ -463,8 +464,8 @@ const generateSingleEffect = (
     case "convert_left_to_right":
       return generateConvertLeftToRightReturn(effect);
 
-      case "edit_card_apperance":
-            return generateEditApperanceReturn(effect);
+    case "edit_card_apperance":
+      return generateEditApperanceReturn(effect);
 
     case "fool_effect":
       return generateFoolEffectReturn(effect);
@@ -503,10 +504,13 @@ const generateSingleEffect = (
       return generatePlaySoundReturn(effect);
       
     case "flip_joker":
-            return generateFlipJokerReturn(effect);
+      return generateFlipJokerReturn(effect);
 
     case "crash_game":
       return generateCrashGameReturn(effect);
+
+    case "special_message":
+      return generateShowMessageReturn(effect);
 
     default:
       return {

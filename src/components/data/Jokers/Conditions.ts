@@ -1690,7 +1690,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         default: "Red Deck",
       },
     ],
-    category: "Game State",
+    category: "Deck & Jokers",
   },
   {
     id: "hand_size",
