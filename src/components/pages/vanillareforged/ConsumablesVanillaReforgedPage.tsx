@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, startTransition } from "react";
+import React, { useState, useMemo, useEffect, startTransition, useContext } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -19,6 +19,7 @@ import { formatBalatroText } from "../../generic/balatroTextFormatter";
 import RuleBuilder from "../../ruleBuilder/RuleBuilder";
 import Button from "../../generic/Button";
 import Tooltip from "../../generic/Tooltip";
+import { UserConfigContext } from "../../Contexts";
 
 interface ConsumablesVanillaReforgedPageProps {
   onDuplicateToProject?: (item: ConsumableData) => void;
@@ -29,6 +30,8 @@ type SortOption = {
   value: string;
   label: string;
   sortFn: (a: ConsumableData, b: ConsumableData) => number;
+  ascText: string;
+  descText: string;
 };
 
 const useAsyncDataLoader = () => {
@@ -83,11 +86,16 @@ const useAsyncDataLoader = () => {
 const ConsumablesVanillaReforgedPage: React.FC<
   ConsumablesVanillaReforgedPageProps
 > = ({ onDuplicateToProject, onNavigateToConsumables }) => {
+  const { userConfig, setUserConfig } = useContext(UserConfigContext)
   const { vanillaConsumables, loading } = useAsyncDataLoader();
   const [searchTerm, setSearchTerm] = useState("");
   const [setFilter, setSetFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState("name-asc");
+  const itemTypes = userConfig.pageData.map(item => item.objectType)
+    const [sortBy, setSortBy] = useState(
+      userConfig.pageData[itemTypes.indexOf("vanilla_consumable")].filter ?? "id")
+    const [sortDirection, setSortDirection] = useState(
+      userConfig.pageData[itemTypes.indexOf("vanilla_consumable")].direction ?? "asc")
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentItemForRules, setCurrentItemForRules] =
@@ -104,6 +112,7 @@ const ConsumablesVanillaReforgedPage: React.FC<
   });
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
   const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
   const filtersMenuRef = React.useRef<HTMLDivElement>(null);
@@ -111,44 +120,39 @@ const ConsumablesVanillaReforgedPage: React.FC<
   const sortOptions: SortOption[] = useMemo(
     () => [
       {
-        value: "name-asc",
-        label: "Name (A-Z)",
-        sortFn: (a, b) => a.name.localeCompare(b.name),
+        value: "id",
+        label: "Id Value",
+        sortFn: (a, b) => b.orderValue - a.orderValue,
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
       {
-        value: "name-desc",
-        label: "Name (Z-A)",
+        value: "name",
+        label: "Name",
         sortFn: (a, b) => b.name.localeCompare(a.name),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "set-asc",
-        label: "Set (A-Z)",
-        sortFn: (a, b) => a.set.localeCompare(b.set),
-      },
-      {
-        value: "set-desc",
-        label: "Set (Z-A)",
+        value: "set",
+        label: "Set",
         sortFn: (a, b) => b.set.localeCompare(a.set),
+        ascText: "A-Z",
+        descText: "Z-A",
       },
       {
-        value: "cost-asc",
-        label: "Cost (Low to High)",
-        sortFn: (a, b) => (a.cost || 0) - (b.cost || 0),
-      },
-      {
-        value: "cost-desc",
-        label: "Cost (High to Low)",
+        value: "cost",
+        label: "Cost",
         sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
+        ascText: "Low to High",
+        descText: "High to Low",
       },
       {
-        value: "rules-desc",
-        label: "Rules (Most to Least)",
+        value: "rules",
+        label: "Rules",
         sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
-      },
-      {
-        value: "rules-asc",
-        label: "Rules (Least to Most)",
-        sortFn: (a, b) => (a.rules?.length || 0) - (b.rules?.length || 0),
+        ascText: "Least to Most",
+        descText: "Most to Least",
       },
     ],
     []
@@ -218,10 +222,13 @@ const ConsumablesVanillaReforgedPage: React.FC<
     const currentSort = sortOptions.find((option) => option.value === sortBy);
     if (currentSort) {
       filtered.sort(currentSort.sortFn);
+      if (sortDirection === "asc") {
+        filtered.reverse()
+      }
     }
 
     return filtered;
-  }, [vanillaConsumables, searchTerm, setFilter, sortBy, sortOptions, loading]);
+  }, [vanillaConsumables, searchTerm, setFilter, sortBy, sortOptions, loading, sortDirection]);
 
   const setOptions = useMemo(
     () => [
@@ -271,6 +278,20 @@ const ConsumablesVanillaReforgedPage: React.FC<
     setCurrentItemForRules(null);
   };
 
+const handleSortDirectionToggle = () => {
+    let direction = "asc"
+    if (sortDirection === "asc") {
+      setSortDirection("desc")
+      direction = "desc"
+    } else setSortDirection("asc")
+    
+    setUserConfig((prevConfig) => {
+      const config = prevConfig
+      config.pageData[itemTypes.indexOf("vanilla_consumable")].direction = direction
+      return ({...config})
+    })
+  }
+
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (showFilters) setShowFilters(false);
@@ -296,9 +317,15 @@ const ConsumablesVanillaReforgedPage: React.FC<
     }
   };
 
+  const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
+
   const currentSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ||
-    "Name (A-Z)";
+    currentSortMethod?.label ||
+    "Id Value";
+
+  const currentSortDirectionLabel =
+    currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
+    "Least to Most";
 
   const filterKey = `${searchTerm}-${setFilter}-${sortBy}`;
 
@@ -380,34 +407,42 @@ const ConsumablesVanillaReforgedPage: React.FC<
             </div>
 
             <div className="flex gap-3">
-              <div className="relative">
-                <button
-                  ref={sortButtonRef}
-                  onClick={handleSortMenuToggle}
-                  className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                >
-                  <ArrowsUpDownIcon className="h-4 w-4" />
-                  <span className="whitespace-nowrap">{currentSortLabel}</span>
-                </button>
-              </div>
-
-              <div className="relative">
-                <button
-                  ref={filtersButtonRef}
-                  onClick={handleFiltersToggle}
-                  className={`flex items-center gap-2 px-4 py-4 border-2 rounded-lg transition-colors cursor-pointer ${
-                    showFilters
-                      ? "bg-mint-dark text-black-darker border-mint"
-                      : "bg-black-dark text-white-light border-black-lighter hover:border-mint"
-                  }`}
-                >
-                  <FunnelIcon className="h-4 w-4" />
-                  <span>Filters</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                          <div className="relative">
+                            <button
+                              ref={sortButtonRef}
+                              onClick={handleSortMenuToggle}
+                              className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                            >
+                              <ArrowsUpDownIcon className="h-4 w-4" />
+                              <span className="whitespace-nowrap">{currentSortLabel}</span>
+                            </button>
+                          </div>
+                          <button
+                            ref={sortDirectionButtonRef}
+                            onClick={handleSortDirectionToggle}
+                            className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                          >
+                            <ArrowsUpDownIcon className="h-4 w-4" />
+                            <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+                          </button>
+            
+                          <div className="relative">
+                            <button
+                              ref={filtersButtonRef}
+                              onClick={handleFiltersToggle}
+                              className={`flex items-center gap-2 px-4 py-4 border-2 rounded-lg transition-colors cursor-pointer ${
+                                showFilters
+                                  ? "bg-mint-dark text-black-darker border-mint"
+                                  : "bg-black-dark text-white-light border-black-lighter hover:border-mint"
+                              }`}
+                            >
+                              <FunnelIcon className="h-4 w-4" />
+                              <span>Filters</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
         <AnimatePresence mode="wait">
           {loading ? (
@@ -549,6 +584,12 @@ const ConsumablesVanillaReforgedPage: React.FC<
                       e.stopPropagation();
                       setSortBy(option.value);
                       setShowSortMenu(false);
+                      setSortDirection(sortDirection)
+                      setUserConfig((prevConfig) => {
+                        const config = prevConfig
+                        config.pageData[itemTypes.indexOf("vanilla_consumable")].filter = option.value
+                        return ({...config})
+                      })
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                       sortBy === option.value

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  ExclamationTriangleIcon,
+  NoSymbolIcon,
 } from "@heroicons/react/24/outline";
 import {
   BoltIcon,
@@ -176,7 +176,7 @@ const BlockComponent: React.FC<BlockComponentProps> = ({
             <div className="flex-shrink-0">{config.icon}</div>
             {isNegated && (
               <div className="flex-shrink-0 -mr-2">
-                <ExclamationTriangleIcon className="h-4 w-4 text-balatro-red" />
+                <NoSymbolIcon className="h-4 w-4 text-balatro-red" />
               </div>
             )}
             {hasRandomChance && (
