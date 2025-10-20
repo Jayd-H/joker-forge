@@ -1,4 +1,4 @@
-import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
+import type { Effect, LoopGroup, RandomGroup, Rule } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
 import { generateAddMultReturn } from "./effects/AddMultEffect";
@@ -156,6 +156,7 @@ export function generateEffectReturnStatement(
   loopGroups: LoopGroup[] = [],
   triggerType: string = "hand_played",
   modprefix: string,
+  rules: Rule[], 
   jokerKey?: string,
   ruleId?: string,
   globalEffectCounts?: Map<string, number>
@@ -167,6 +168,14 @@ export function generateEffectReturnStatement(
       configVariables: [],
     };
   }
+
+  const allRandomGroups: RandomGroup[] = []
+  const allLoopGroups: LoopGroup[] = []
+
+  rules.forEach(rule => {
+    allRandomGroups.push(...rule.randomGroups)
+    allLoopGroups.push(...rule.loops)
+  })
 
   let combinedPreReturnCode = "";
   let mainReturnStatement = "";
@@ -237,12 +246,11 @@ export function generateEffectReturnStatement(
 
   if (randomGroups.length > 0) {
     const randomGroupStatements: string[] = [];
-
+  
     const denominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
+      ...new Set(allRandomGroups.map((group) => group.chance_denominator as number)),
     ];
     const denominatorToOddsVar: Record<number, string> = {};
-
     if (denominators.length === 1) {
       denominatorToOddsVar[denominators[0]] = "card.ability.extra.odds";
       allConfigVariables.push({
@@ -420,9 +428,9 @@ export function generateEffectReturnStatement(
         }
       });
       
-      
       if (effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).length > 0) {
-        groupContent += effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).join("\n                        ");
+        groupContent += effectCalls.filter(effect => 
+          !nonRetriggerEffectCalls.includes(effect)).join("\n                        ");
       }
 
       const no_modParam = (
@@ -477,7 +485,7 @@ export function generateEffectReturnStatement(
     const loopGroupStatements: string[] = [];
 
     const repetitions = [
-      ...new Set(loopGroups.map((group) => group.repetitions as number)),
+      ...new Set(allLoopGroups.map((group) => group.repetitions as number)),
     ];
     const repetitionsToVar: Record<number, string> = {};
 
