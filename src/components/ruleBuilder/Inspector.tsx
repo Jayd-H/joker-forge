@@ -16,6 +16,9 @@ import {
   addRankVariablesToOptions,
   getAllVariables,
   addPokerHandVariablesToOptions,
+  addNumberVariablesToOptions,
+  addJokerVariablesToOptions,
+  getNumberVariables,
 } from "../codeGeneration/Jokers/variableUtils";
 
 import { getTriggerById } from "../data/Jokers/Triggers";
@@ -109,6 +112,7 @@ interface InspectorProps {
 interface ParameterFieldProps {
   param: ConditionParameter | EffectParameter;
   value: unknown;
+  selectedRule: Rule;
   onChange: (value: unknown) => void;
   parentValues?: Record<string, unknown>;
   availableVariables?: Array<{ value: string; label: string }>;
@@ -366,6 +370,7 @@ function hasShowWhen(param: ConditionParameter | EffectParameter): param is (
 const ParameterField: React.FC<ParameterFieldProps> = ({
   param,
   value,
+  selectedRule,
   onChange,
   parentValues = {},
   availableVariables = [],
@@ -442,40 +447,6 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
     }
   }
 
-  if (param.id === "variable_name") {
-    if (availableVariables.length > 0) {
-      return (
-        <InputDropdown
-          label={String(param.label)}
-          labelPosition="center"
-          value={(value as string) || ""}
-          onChange={(newValue) => onChange(newValue)}
-          options={availableVariables}
-          className="bg-black-dark"
-          size="sm"
-        />
-      );
-    } else {
-      return (
-        <div>
-          <span className="text-white-light text-sm mb-2 block">
-            {String(param.label)}
-          </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            fullWidth
-            onClick={onOpenVariablesPanel}
-            icon={<PlusIcon className="h-4 w-4" />}
-            className="cursor-pointer"
-          >
-            Create Variable
-          </Button>
-        </div>
-      );
-    }
-  }
-
   switch (param.type) {
     case "select": {
       let options: Array<{ value: string; label: string }> = [];
@@ -496,40 +467,73 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         }));
       }
 
-      if (param.id === "specific_suit" && joker) {
-        options = addSuitVariablesToOptions(options, joker);
-      }
-
-      if (param.id === "specific_rank" && joker) {
-        options = addRankVariablesToOptions(options, joker);
-      }
-
-      if (param.id === "value" && param.label === "Hand Type" && joker) {
-        options = addPokerHandVariablesToOptions(options, joker);
+      if (param.variableTypes?.includes("joker_context")) {
+        if (selectedRule.trigger === "joker_evaluated") {
+            options.push({value: "evaled_joker", label: "Evaluated Joker"})
+        }
+        if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
+          condition => condition.type === "joker_selected" && condition.negate === false
+        ))) {
+          options.push({value: "selected_joker", label: "Selected Joker"})
+        }
       }
 
       if (param.id === "variable_name" && joker && param.label) {
-        if (param.label.includes("Suit")) {
+        if (param.variableTypes?.includes("number")) {
+          const numberVariables =
+            joker.userVariables?.filter((v) => v.type === "number") || [];
+          options.push(...numberVariables.map((variable) => ({
+            value: variable.name,
+            label: variable.name,
+          })))}
+        if (param.variableTypes?.includes("suit")) {
           const suitVariables =
             joker.userVariables?.filter((v) => v.type === "suit") || [];
-          options = suitVariables.map((variable) => ({
+          options.push(...suitVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
-          }));
-        } else if (param.label.includes("Rank")) {
+          })))}
+        if (param.variableTypes?.includes("rank")) {
           const rankVariables =
             joker.userVariables?.filter((v) => v.type === "rank") || [];
-          options = rankVariables.map((variable) => ({
+          options.push(...rankVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
-          }));
-        } else if (param.label.includes("Poker Hand")) {
+          })))}
+        if (param.variableTypes?.includes("pokerhand")) {
           const pokerHandVariables =
             joker.userVariables?.filter((v) => v.type === "pokerhand") || [];
-          options = pokerHandVariables.map((variable) => ({
+          options.push(...pokerHandVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
-          }));
+          })))}
+        if (param.variableTypes?.includes("joker")) {
+          const jokerVariables =
+            joker.userVariables?.filter((v) => v.type === "joker") || [];
+          options.push(...jokerVariables.map((variable) => ({
+            value: variable.name,
+            label: variable.name,
+          })))}
+      } else {
+
+        if (param.variableTypes?.includes("number") && joker) {
+          options = addNumberVariablesToOptions(options, joker)
+        }
+
+        if (param.variableTypes?.includes("suit") && joker) {
+          options = addSuitVariablesToOptions(options, joker)
+        }
+
+        if (param.variableTypes?.includes("rank") && joker) {
+          options = addRankVariablesToOptions(options, joker)
+        }
+
+        if (param.variableTypes?.includes("pokerhand") && joker) {
+          options = addPokerHandVariablesToOptions(options, joker)
+        }
+
+        if (param.variableTypes?.includes("joker") && joker) {
+          options = addJokerVariablesToOptions(options, joker)
         }
       }
 
@@ -997,7 +1001,7 @@ const Inspector: React.FC<InspectorProps> = ({
       ? getVoucherEffectTypeById
       : getDeckEffectTypeById;
 
-  const availableVariables = getAllVariables(joker).map(
+  const availableVariables = getNumberVariables(joker).map(
     (variable: { name: string }) => ({
       value: variable.name,
       label: variable.name,
@@ -1273,6 +1277,7 @@ const Inspector: React.FC<InspectorProps> = ({
                 <ParameterField
                   param={param}
                   value={selectedCondition.params[param.id]}
+                  selectedRule={selectedRule}
                   onChange={(value) => {
                     const newParams = {
                       ...selectedCondition.params,
@@ -1653,6 +1658,7 @@ const Inspector: React.FC<InspectorProps> = ({
                 <ParameterField
                   param={param}
                   value={selectedEffect.params[param.id]}
+                  selectedRule={selectedRule}
                   onChange={(value) => { 
                     if (param.type == "checkbox"){
                       value = param.checkboxOptions?.map(box => box.checked ? true : false) 
