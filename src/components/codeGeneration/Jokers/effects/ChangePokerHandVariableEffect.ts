@@ -60,7 +60,7 @@ export const generateChangePokerHandVariableReturn = (
     const pokerhand_pool = []
     for (let i = 0; i < pokerHandPoolActive.length; i++){
       if (pokerHandPoolActive[i] == true){
-      pokerhand_pool.push(pokerHandPoolPokerHands[i])
+      pokerhand_pool.push(`'${pokerHandPoolPokerHands[i]}'`)
     }}
     statement = `__PRE_RETURN_CODE__
                 local pokerhand_pool = {${pokerhand_pool}}
