@@ -1,19 +1,22 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { PassiveEffectResult } from "../effectUtils";
-import { getRankId } from "../../../data/BalatroUtils";
+import { getRankId, JokerData } from "../../../data/BalatroUtils";
+import { parseRankVariable } from "../variableUtils";
 
 export const generatePassiveCombineRanks = (
   effect: Effect,
-  jokerKey?: string
+  joker?: JokerData,
 ): PassiveEffectResult => {
   const sourceRankType =
     (effect.params?.source_rank_type as string) || "specific";
   const sourceRanksString = (effect.params?.source_ranks as string) || "J,Q,K";
   const targetRank = (effect.params?.target_rank as string) || "J";
+  const targetRankVar = parseRankVariable(effect.params?.target_rank as string, joker)
   const sourceRanks =
     sourceRankType === "specific"
       ? sourceRanksString.split(",").map((rank) => rank.trim())
       : [];
+  const targetRankFinal = targetRankVar.isRankVariable ? `G.GAME.current_round.${targetRankVar.code}_card.rank` : targetRank
   return {
     addToDeck: `-- Combine ranks effect enabled`,
     removeFromDeck: `-- Combine ranks effect disabled`,
@@ -26,16 +29,16 @@ export const generatePassiveCombineRanks = (
               .join(", ")}}`,
           ]
         : []),
-      `target_rank = "${targetRank}"`,
+      `target_rank = "${targetRankFinal}"`,
     ],
     locVars: [],
     needsHook: {
       hookType: "combine_ranks",
-      jokerKey: jokerKey || "PLACEHOLDER",
+      jokerKey: joker?.objectKey || "PLACEHOLDER",
       effectParams: {
         sourceRankType,
         sourceRanks,
-        targetRank,
+        targetRankFinal,
       },
     },
   };

@@ -195,7 +195,6 @@ const [ConfigConsumablesInput, setConfigConsumables] = useState("");
       setLastFormattedText("");
       setValidationResults({});
       setConfigVoucher((deck.Config_vouchers || []).join(","));
-      setConfigConsumables((deck.Config_consumables || []).join(","));
     }
   }, [isOpen, deck, decks]);
 

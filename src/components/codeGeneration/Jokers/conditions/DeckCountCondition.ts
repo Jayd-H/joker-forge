@@ -1,9 +1,11 @@
 import type { Rule } from "../../../ruleBuilder/types";
 import { generateGameVariableCode } from "../gameVariableUtils";
-import { getRankId } from "../../../data/BalatroUtils";
+import { getRankId, JokerData } from "../../../data/BalatroUtils";
+import { parseRankVariable, parseSuitVariable } from "../variableUtils";
 
 export const generateDeckCountConditionCode = (
-  rules: Rule[]
+  rules: Rule[],
+  joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const propertyType =
@@ -16,8 +18,11 @@ export const generateDeckCountConditionCode = (
   switch (propertyType) {
     case "rank": {
       const rank = condition.params.rank as string;
+      const rankVarInfo = parseRankVariable(rank, joker);
       if (rank === "any") {
         propertyCheck = "true";
+      } else if (rankVarInfo.isRankVariable) {
+        propertyCheck = `playing_card:get_id() == ${rankVarInfo.code}`;
       } else {
         const rankId = getRankId(rank);
         propertyCheck = `playing_card:get_id() == ${rankId}`;
@@ -27,14 +32,17 @@ export const generateDeckCountConditionCode = (
 
     case "suit": {
       const suit = condition.params.suit as string;
+      const suitVarInfo = parseSuitVariable(suit, joker)
       if (suit === "any") {
         propertyCheck = "true";
       } else if (suit === "red") {
         propertyCheck = `(playing_card:is_suit("Hearts") or playing_card:is_suit("Diamonds"))`;
       } else if (suit === "black") {
         propertyCheck = `(playing_card:is_suit("Spades") or playing_card:is_suit("Clubs"))`;
+      } else if (suitVarInfo.isSuitVariable) {
+        propertyCheck = `playing_card:is_suit(${suitVarInfo.code})`;
       } else {
-        propertyCheck = `playing_card:is_suit("${suit}")`;
+        propertyCheck = `(playing_card:is_suit("${suit}")`;
       }
       break;
     }
