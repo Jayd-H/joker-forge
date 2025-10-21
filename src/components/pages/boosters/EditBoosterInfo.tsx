@@ -235,6 +235,28 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
     { tag: "{C:white}", color: "bg-balatro-white", name: "White" },
     { tag: "{C:inactive}", color: "bg-balatro-grey", name: "Inactive" },
     { tag: "{C:default}", color: "bg-balatro-default", name: "Default" },
+    { tag: "{C:hearts}", color: "bg-balatro-hearts", name: "Hearts" },
+    { tag: "{C:clubs}", color: "bg-balatro-clubs", name: "Clubs" },
+    { tag: "{C:diamonds}", color: "bg-balatro-diamonds", name: "Diamonds" },
+    { tag: "{C:spades}", color: "bg-balatro-spades", name: "Spades" },
+    { tag: "{C:tarot}", color: "bg-balatro-purple", name: "Tarot" },
+    { tag: "{C:planet}", color: "bg-balatro-planet", name: "Planet" },
+    { tag: "{C:spectral}", color: "bg-balatro-spectral", name: "Spectral" },
+    { tag: "{C:enhanced}", color: "bg-balatro-enhanced-new", name: "Enhanced" },
+    { tag: "{C:common}", color: "bg-balatro-common", name: "Common" },
+    { tag: "{C:uncommon}", color: "bg-balatro-uncommon", name: "Uncommon" },
+    { tag: "{C:rare}", color: "bg-balatro-rare", name: "Rare" },
+    { tag: "{C:legendary}", color: "bg-balatro-legendary", name: "Legendary" },
+    {
+      tag: "{C:edition}",
+      color: "bg-gradient-to-r from-purple-400 to-pink-400",
+      name: "Edition",
+    },
+    {
+      tag: "{C:dark_edition}",
+      color: "bg-gray-900 border-2 border-purple-400",
+      name: "Dark Edition",
+    },
   ];
 
   const backgroundButtons = [
@@ -247,6 +269,36 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
       tag: "{X:attention,C:white}",
       color: "bg-balatro-orange",
       name: "Attention BG",
+    },
+    {
+      tag: "{X:tarot,C:white}",
+      color: "bg-balatro-purple",
+      name: "Tarot BG",
+    },
+    {
+      tag: "{X:planet,C:white}",
+      color: "bg-balatro-planet",
+      name: "Planet BG",
+    },
+    {
+      tag: "{X:spectral,C:white}",
+      color: "bg-balatro-spectral",
+      name: "Spectral BG",
+    },
+    {
+      tag: "{X:enhanced,C:white}",
+      color: "bg-balatro-enhanced-new",
+      name: "Enhanced BG",
+    },
+    {
+      tag: "{X:legendary,C:white}",
+      color: "bg-balatro-legendary",
+      name: "Legendary BG",
+    },
+    {
+      tag: "{X:edition,C:white}",
+      color: "bg-gradient-to-r from-purple-400 to-pink-400",
+      name: "Edition BG",
     },
   ];
 
