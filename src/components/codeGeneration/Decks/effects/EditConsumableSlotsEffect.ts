@@ -16,7 +16,7 @@ export const generateConsumableSlots = (effect: Effect): EffectReturn => {
         `;
   } else if (operation === "subtract") {
         addToDeck += `
-        G.GAME.starting_params.consumable_slots = G.GAME.starting_params.consumable_slots - ${valueCode})
+        G.GAME.starting_params.consumable_slots = G.GAME.starting_params.consumable_slots - ${valueCode}
         `;
   } else if (operation === "set") {
         addToDeck += `

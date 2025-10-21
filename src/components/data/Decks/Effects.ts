@@ -848,7 +848,7 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
-    id: "modify_blind_requirement",
+    id: "modify_base_blind_requirement",
     label: "Modify Base Blind Requirement",
     description: "Changes the score requirement of Base blind",
     applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
@@ -1381,8 +1381,8 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
   },
   {
     id: "edit_dollars",
-    label: "Edit Starting Dollars",
-    description: "Add, subtract, or set the player's Starting money",
+    label: "Edit Dollars",
+    description: "Add, subtract, or set the player's money",
     applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
     params: [
       {

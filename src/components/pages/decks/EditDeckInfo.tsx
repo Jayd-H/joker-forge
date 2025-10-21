@@ -97,7 +97,7 @@ const EditDeckInfo: React.FC<EditDeckInfoProps> = ({
   }>({});
 
 const [ConfigVoucherInput, setConfigVoucher] = useState("");
-const [ConfigConsumablesInput, setConfigConsumables] = useState("");
+const [ConfigConsumableInput, setConfigConsumable] = useState("");
 
   const validateField = (field: string, value: string) => {
     let result: ValidationResult;
@@ -194,6 +194,7 @@ const [ConfigConsumablesInput, setConfigConsumables] = useState("");
       setLastDescription(deck.description || "");
       setLastFormattedText("");
       setValidationResults({});
+      setConfigConsumable((deck.Config_consumables || []).join(","));
       setConfigVoucher((deck.Config_vouchers || []).join(","));
     }
   }, [isOpen, deck, decks]);
@@ -790,7 +791,6 @@ const [ConfigConsumablesInput, setConfigConsumables] = useState("");
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
-                            // Parse pools on Enter key
                             const voucher = ConfigVoucherInput
                               .split(",")
                               .map((voucher) => voucher.trim())
@@ -809,30 +809,29 @@ const [ConfigConsumablesInput, setConfigConsumables] = useState("");
                         size="md"
                       />
                     <InputField
-                        value={ConfigConsumablesInput}
-                        onChange={(e) => setConfigConsumables(e.target.value)}
+                        value={ConfigConsumableInput}
+                        onChange={(e) => setConfigConsumable(e.target.value)}
                         onBlur={() => {
-                          const Consumable = ConfigConsumablesInput
+                          const consumable = ConfigConsumableInput
                             .split(",")
-                            .map((Consumable) => Consumable.trim())
-                            .filter((Consumable) => Consumable.length > 0);
+                            .map((consumable) => consumable.trim())
+                            .filter((consumable) => consumable.length > 0);
 
                           setFormData({
                             ...formData,
-                            Config_consumables: Consumable.length > 0 ? Consumable : undefined,
+                            Config_consumables: consumable.length > 0 ? consumable : undefined,
                           });
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
-                            // Parse pools on Enter key
-                            const Consumable = ConfigConsumablesInput
+                            const consumable = ConfigConsumableInput
                               .split(",")
-                              .map((Consumable) => Consumable.trim())
-                              .filter((Consumable) => Consumable.length > 0);
+                              .map((consumable) => consumable.trim())
+                              .filter((consumable) => consumable.length > 0);
 
                             setFormData({
                               ...formData,
-                              Config_consumables: Consumable.length > 0 ? Consumable : undefined,
+                              Config_consumables: consumable.length > 0 ? consumable : undefined,
                             });
                             e.currentTarget.blur();
                           }

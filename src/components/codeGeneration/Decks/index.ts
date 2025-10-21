@@ -414,7 +414,8 @@ ${indentLevel}return {${effectResult.statement}}`;
   });
 
   calculateFunction += `
-  end,`;
+  end,
+  `;
 
   return calculateFunction;
 };

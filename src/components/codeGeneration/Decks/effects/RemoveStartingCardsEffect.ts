@@ -24,15 +24,29 @@ export const generateRemoveStartingCardsReturn = (
     }))
             `;
   } else { 
-    destroyCode =`             
-          G.E_MANAGER:add_event(Event({
-                func = function()
-                for i=#G.deck.cards, ${countCode}, -1 do
-                G.deck.cards[i]:remove()
+    destroyCode =`
+    local destroyed_cards = {}
+            local temp_hand = {}
+G.E_MANAGER:add_event(Event({
+     func = function()
+            for _, playing_card in ipairs(G.deck.cards) do temp_hand[#temp_hand + 1] = playing_card end
+            table.sort(temp_hand,
+                function(a, b)
+                    return not a.playing_card or not b.playing_card or a.playing_card < b.playing_card
                 end
-            return true
-        end
-    }))
+            )
+            pseudoshuffle(temp_hand, 12345)    
+          return true
+    end,
+})) 
+    
+G.E_MANAGER:add_event(Event({
+     func = function()
+            for i = 1, ${countCode} do destroyed_cards[#destroyed_cards + 1] = temp_hand[i]:remove()
+         end
+        return true
+    end
+}))
        `; 
   }
 
