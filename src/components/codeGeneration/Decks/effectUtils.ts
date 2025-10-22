@@ -3,7 +3,10 @@ import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateEditHandsReturn } from "./effects/EditHandsEffect";
 import { generateEditDiscardsReturn } from "./effects/EditDiscardsEffect";
 import { generateSetAnteReturn } from "./effects/SetAnteEffect";
-import { generateEditDollarsReturn } from "./effects/AddDollarsEffect";
+import { 
+  generateEditDollarsSelectedReturn,
+  generateEditDollarsCalculateReturn,
+ } from "./effects/AddDollarsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
 import { generateEditDiscardSizeReturn } from "./effects/EditDiscardSizeEffect";
 import { generateEditEndRoundDiscardMoneyReturn } from "./effects/EditEndRoundDiscardMoneyEffect";
@@ -128,7 +131,7 @@ export function generateEffectReturnStatement(
     const denominatorToOddsVar: Record<number, string> = {};
 
     if (denominators.length === 1) {
-      denominatorToOddsVar[denominators[0]] = "card.ability.extra.odds";
+      denominatorToOddsVar[denominators[0]] = "self.config.odds";
       const oddsVar = "odds = " + denominators[0];
       if (!configVariableSet.has(oddsVar)) {
         configVariableSet.add(oddsVar);
@@ -137,14 +140,14 @@ export function generateEffectReturnStatement(
     } else {
       denominators.forEach((denom, index) => {
         if (index === 0) {
-          denominatorToOddsVar[denom] = "card.ability.extra.odds";
+          denominatorToOddsVar[denom] = "self.config.odds";
           const oddsVar = "odds = " + denom;
           if (!configVariableSet.has(oddsVar)) {
             configVariableSet.add(oddsVar);
             allConfigVariables.push(oddsVar);
           }
         } else {
-          denominatorToOddsVar[denom] = `card.ability.extra.odds${index + 1}`;
+          denominatorToOddsVar[denom] = `self.config.odds${index + 1}`;
           const oddsVar = `odds${index + 1} = ${denom}`;
           if (!configVariableSet.has(oddsVar)) {
             configVariableSet.add(oddsVar);
@@ -208,7 +211,7 @@ export function generateEffectReturnStatement(
                 ${groupPreReturnCode}${groupContent}`;
       }
 
-      const probabilityStatement = `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `c_${modprefix}_${deckKey}`}', ${group.respect_probability_effects === false})`
+      const probabilityStatement = `SMODS.pseudorandom_probability(back, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `b_${modprefix}_${deckKey}`}', ${group.respect_probability_effects === false})`
       
       const groupStatement = `if ${probabilityStatement} then
                 ${fullGroupContent}
@@ -226,7 +229,7 @@ export function generateEffectReturnStatement(
     const repetitionsToVar: Record<number, string> = {};
 
     if (repetitions.length === 1) {
-      repetitionsToVar[repetitions[0]] = "card.ability.extra.repetitions";
+      repetitionsToVar[repetitions[0]] = "self.config.repetitions";
       const repetitionsVar = "repetitions = " + repetitions[0];
       if (!(typeof repetitions[0] === "string") && !configVariableSet.has(repetitionsVar)) {
         configVariableSet.add(repetitionsVar);
@@ -235,14 +238,14 @@ export function generateEffectReturnStatement(
     } else {
       repetitions.forEach((denom, index) => {
         if (index === 0) {
-          repetitionsToVar[denom] = "card.ability.extra.repetitions";
+          repetitionsToVar[denom] = "self.config.repetitions";
           const repetitionsVar = "repetitions = " + denom;
           if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
             configVariableSet.add(repetitionsVar);
             allConfigVariables.push(repetitionsVar);
           }
         } else {
-          repetitionsToVar[denom] = `card.ability.extra.repetitions${index + 1}`;
+          repetitionsToVar[denom] = `self.config.repetitions${index + 1}`;
           const repetitionsVar = `repetitions${index + 1} = ${denom}`;
           if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
             configVariableSet.add(repetitionsVar);
@@ -332,8 +335,11 @@ const generateSingleEffect = (
 ): EffectReturn => {
   switch (effect.type) {
 
-    case "edit_dollars":
-      return generateEditDollarsReturn(effect);
+    case "edit_dollars_selected":
+      return generateEditDollarsSelectedReturn(effect);
+
+      case "edit_dollars_calculate":
+      return generateEditDollarsCalculateReturn(effect);
 
     case "edit_hand_size":
       return generateEditHandSizeReturn(effect);

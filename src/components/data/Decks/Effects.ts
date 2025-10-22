@@ -1380,10 +1380,37 @@ export const DECK_EFFECT_TYPES: EffectTypeDefinition[] = [
     category: "Consumables",
   },
   {
-    id: "edit_dollars",
+    id: "edit_dollars_selected",
+    label: "Edit Starting Dollars",
+    description: "Add, subtract, or set the player's Starting money",
+    applicableTriggers: ["deck_selected"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Dollar Amount",
+        default: 5,
+        min: 0,
+      },
+    ],
+    category: "Economy",
+  },
+  {
+    id: "edit_dollars_calculate",
     label: "Edit Dollars",
     description: "Add, subtract, or set the player's money",
-    applicableTriggers: [...DECK_GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: DECK_GENERIC_TRIGGERS,
     params: [
       {
         id: "operation",
