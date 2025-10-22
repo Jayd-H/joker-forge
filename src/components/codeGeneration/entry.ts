@@ -276,9 +276,11 @@ export const exportModCode = async (
     key="${sound.key}",
     path="${sound.key}.ogg",
     pitch=${sound.pitch ?? 0.7},
-    volume=${sound.volume ?? 0.6},
-    replace="${sound.replace || ""}"
-}\n\n`
+    volume=${sound.volume ?? 0.6},\n`
+  if (sound.replace !== undefined && sound.replace !== "") {
+    soundsCode += `    replace="${sound.replace}"\n`
+  }
+soundsCode += `}\n\n`
       })
       zip.file("sounds.lua", soundsCode.trim());
     }
