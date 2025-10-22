@@ -3,7 +3,10 @@ import { generateEditHandSizeReturn } from "./effects/EditHandSizeEffect";
 import { generateEditHandsReturn } from "./effects/EditHandsEffect";
 import { generateEditDiscardsReturn } from "./effects/EditDiscardsEffect";
 import { generateSetAnteReturn } from "./effects/SetAnteEffect";
-import { generateEditDollarsReturn } from "./effects/AddDollarsEffect";
+import { 
+  generateEditDollarsSelectedReturn,
+  generateEditDollarsCalculateReturn,
+ } from "./effects/AddDollarsEffect";
 import { generateEditPlaySizeReturn } from "./effects/EditPlaySizeEffect";
 import { generateEditDiscardSizeReturn } from "./effects/EditDiscardSizeEffect";
 import { generateEditEndRoundDiscardMoneyReturn } from "./effects/EditEndRoundDiscardMoneyEffect";
@@ -332,8 +335,11 @@ const generateSingleEffect = (
 ): EffectReturn => {
   switch (effect.type) {
 
-    case "edit_dollars":
-      return generateEditDollarsReturn(effect);
+    case "edit_dollars_selected":
+      return generateEditDollarsSelectedReturn(effect);
+
+      case "edit_dollars_calculate":
+      return generateEditDollarsCalculateReturn(effect);
 
     case "edit_hand_size":
       return generateEditHandSizeReturn(effect);
