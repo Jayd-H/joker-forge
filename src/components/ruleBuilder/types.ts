@@ -64,7 +64,7 @@ export interface GlobalTriggerDefinition {
   label: Record <"joker" | "consumable" | "card" | "voucher" | "deck", string>;
   description: Record <"joker" | "consumable" | "card" | "voucher" | "deck", string>;
   category: string;
-  objectUsers: ("joker" | "consumable" | "card" | "voucher" | "deck")[]
+  objectUsers: Array <"joker" | "consumable" | "card" | "voucher" | "deck">
 }
 
 // When a parameter should be shown based on other parameter values
@@ -94,6 +94,7 @@ export interface ConditionParameter {
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context")[];
+  exemptObjects?: Array<"joker" | "consumable" | "card" | "voucher" | "deck">
 }
 
 // Interface for condition type definitions
@@ -104,6 +105,17 @@ export interface ConditionTypeDefinition {
   params: ConditionParameter[];
   applicableTriggers?: string[];
   category: string;
+  
+}
+
+export interface GlobalConditionTypeDefinition {
+  id: string;
+  label: string;
+  description: string;
+  params: ConditionParameter[];
+  applicableTriggers?: string[];
+  category: string;
+  objectUsers: string[]
 }
 
 // Interface for effect parameter options
@@ -128,7 +140,7 @@ export interface EffectParameter {
   max?: number;
   default?: unknown;
   showWhen?: ShowWhenCondition;
-  variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context")[];
+  variableTypes?: Array <"number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context">;
 }
 
 // Interface for effect type definitions
