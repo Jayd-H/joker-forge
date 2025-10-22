@@ -8,10 +8,10 @@ import {
 } from "../../data/BalatroUtils";
 import { generateConditionChain } from "./conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
-import { generateTriggerCondition } from "./triggerUtils";
 import { extractGameVariablesFromRules, generateGameVariableCode, parseGameVariable } from "../Consumables/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
+import { generateTriggerContext } from "../triggerUtils";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;
@@ -115,7 +115,10 @@ const generateCalculateFunction = (
   }
 
   rules.forEach((rule) => {
-    const triggerCondition = generateTriggerCondition(rule.trigger, itemType);
+    let triggerCondition = generateTriggerContext('card', rule.trigger);
+    if (rule.trigger === "card_scored" && itemType === "edition") {
+      triggerCondition = "context.pre_joker or (context.main_scoring and context.cardarea == G.play)";
+    }
     const conditionCode = generateConditionChain(rule, itemType);
 
     const ruleHasDestroyCardEffects =

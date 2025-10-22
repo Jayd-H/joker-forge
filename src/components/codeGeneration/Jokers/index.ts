@@ -28,7 +28,7 @@ import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from 
 import { generateEffectReturnStatement } from "./effectUtils";
 import { generateConditionChain } from "./conditionUtils";
 import { Rule } from "../../ruleBuilder";
-import { generateTriggerContext } from "./triggerUtils";
+import { generateTriggerContext } from "../triggerUtils";
 
 
 interface CalculateFunctionResult {
@@ -1362,10 +1362,10 @@ const generateCalculateFunction = (
           end`;
       }
     } else {
-      const triggerContext = generateTriggerContext(triggerType, sortedRules);
+      const triggerContext = generateTriggerContext("joker", triggerType, sortedRules);
 
       calculateFunction += `
-        if ${triggerContext.check} then`;
+        if ${triggerContext} then`;
 
       let hasAnyConditions = false;
 

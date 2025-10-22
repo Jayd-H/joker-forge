@@ -7,7 +7,7 @@ export type {
   Condition,
   Effect,
   RandomGroup,
-  TriggerDefinition,
+  GlobalTriggerDefinition,
   ConditionTypeDefinition,
   EffectTypeDefinition,
   ConditionParameter,

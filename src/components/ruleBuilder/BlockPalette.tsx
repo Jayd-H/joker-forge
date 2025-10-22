@@ -3,9 +3,9 @@ import { useDraggable } from "@dnd-kit/core";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Rule,
-  TriggerDefinition,
   ConditionTypeDefinition,
   EffectTypeDefinition,
+  GlobalTriggerDefinition,
 } from "./types";
 import BlockComponent from "./BlockComponent";
 import {
@@ -25,7 +25,10 @@ import {
 
 import {
   TRIGGERS,
-  TRIGGER_CATEGORIES,
+  TRIGGER_CATEGORIES
+} from "../data/Triggers"
+
+import {
   type CategoryDefinition,
 } from "../data/Jokers/Triggers";
 import {
@@ -38,10 +41,6 @@ import {
 } from "../data/Jokers/Effects";
 
 import {
-  CONSUMABLE_TRIGGERS,
-  CONSUMABLE_TRIGGER_CATEGORIES,
-} from "../data/Consumables/Triggers";
-import {
   getConsumableConditionsForTrigger,
   CONSUMABLE_CONDITION_CATEGORIES,
 } from "../data/Consumables/Conditions";
@@ -49,12 +48,6 @@ import {
   getConsumableEffectsForTrigger,
   CONSUMABLE_EFFECT_CATEGORIES,
 } from "../data/Consumables/Effects";
-import { CARD_TRIGGERS, CARD_TRIGGER_CATEGORIES } from "../data/Card/Triggers";
-import {
-  VOUCHER_TRIGGERS,
-  VOUCHER_TRIGGER_CATEGORIES,
-} from "../data/Vouchers/Triggers";
-import { DECK_TRIGGERS, DECK_TRIGGER_CATEGORIES } from "../data/Decks/Triggers";
 import {
   CARD_CONDITION_CATEGORIES,
   getCardConditionsForTrigger,
@@ -117,27 +110,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     id: "panel-blockPalette",
   });
 
-  const triggers =
-    itemType === "joker"
-      ? TRIGGERS
-      : itemType === "consumable"
-      ? CONSUMABLE_TRIGGERS
-      : itemType === "card"
-      ? CARD_TRIGGERS
-      : itemType === "voucher"
-      ? VOUCHER_TRIGGERS
-      : DECK_TRIGGERS;
+  const triggers = TRIGGERS
 
-  const triggerCategories =
-    itemType === "joker"
-      ? TRIGGER_CATEGORIES
-      : itemType === "consumable"
-      ? CONSUMABLE_TRIGGER_CATEGORIES
-      : itemType === "card"
-      ? CARD_TRIGGER_CATEGORIES
-      : itemType === "voucher"
-      ? VOUCHER_TRIGGER_CATEGORIES
-      : DECK_TRIGGER_CATEGORIES;
+  const triggerCategories = TRIGGER_CATEGORIES
 
   const conditionCategories =
     itemType === "joker"
@@ -223,13 +198,13 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     const filteredTriggers = triggers.filter(
       (trigger) =>
-        trigger.label.toLowerCase().includes(normalizedSearch) ||
-        trigger.description.toLowerCase().includes(normalizedSearch)
+        trigger.label[itemType].toLowerCase().includes(normalizedSearch) ||
+        trigger.description[itemType].toLowerCase().includes(normalizedSearch)
     );
 
     const triggersByCategory: Record<
       string,
-      { category: CategoryDefinition; items: TriggerDefinition[] }
+      { category: CategoryDefinition; items: GlobalTriggerDefinition[] }
     > = {};
 
     triggerCategories.forEach((category) => {
@@ -250,9 +225,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     filteredTriggers.forEach((trigger) => {
       const categoryLabel = trigger.category || "Other";
-      if (triggersByCategory[categoryLabel]) {
+      if (triggersByCategory[categoryLabel] && trigger.objectUsers.includes(itemType)) {
         triggersByCategory[categoryLabel].items.push(trigger);
-      } else {
+      } else if (trigger.objectUsers.includes(itemType)) {
         triggersByCategory["Other"].items.push(trigger);
       }
     });
@@ -403,7 +378,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     categoryData: {
       category: CategoryDefinition;
       items:
-        | TriggerDefinition[]
+        | GlobalTriggerDefinition[]
         | ConditionTypeDefinition[]
         | EffectTypeDefinition[];
     },
@@ -413,6 +388,19 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     const { category, items } = categoryData;
     const isExpanded = expandedCategories.has(category.label);
     const IconComponent = category.icon;
+
+    const getItemName = (
+      item: GlobalTriggerDefinition | ConditionTypeDefinition | EffectTypeDefinition
+    ): string => {
+      const label = item.label
+      if (typeof label === "string") {
+        return label
+      } 
+      if (typeof label[itemType] === "string"){
+        return label[itemType]
+      }
+      return ""
+    }
 
     return (
       <div key={category.label} className="mb-3">
@@ -459,7 +447,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
                     className="px-2"
                   >
                     <BlockComponent
-                      label={item.label}
+                      label={getItemName(item)}
                       type={type}
                       onClick={() => onAdd(item.id)}
                       variant="palette"
@@ -480,7 +468,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       {
         category: CategoryDefinition;
         items:
-          | TriggerDefinition[]
+          | GlobalTriggerDefinition[]
           | ConditionTypeDefinition[]
           | EffectTypeDefinition[];
       }

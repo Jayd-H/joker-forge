@@ -157,7 +157,7 @@ export const TRIGGERS: TriggerDefinition[] = [
   {
     id: "boss_defeated",
     label: "When a Boss is Defeated",
-    description: "Triggers after defeating a boss blind.",
+    description: "Triggers after defeating a boss blind",
     category: "Round Events",
   },
   {
