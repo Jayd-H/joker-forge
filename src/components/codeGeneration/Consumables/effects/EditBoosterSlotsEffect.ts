@@ -60,7 +60,7 @@ export const generateEditBoosterSlotsReturn = (effect: Effect): EffectReturn => 
                 trigger = 'after',
                 delay = 0.4,
                 func = function()
-                    local current_booster_slots = G.GAME.modifiers.extra_boosters
+                    local current_booster_slots = (G.GAME.modifiers.extra_boosters or 0)
                     local target_booster_slots = ${valueCode}
                     local difference = target_booster_slots - current_booster_slots
                     card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
