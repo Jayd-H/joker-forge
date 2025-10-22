@@ -7,7 +7,7 @@ import { BOSS_BLINDS, CARD_SCOPES, COMPARISON_OPERATORS, CONSUMABLE_SETS, CUSTOM
 import { PROBABILITY_IDENTIFIERS } from "./Jokers/Conditions";
 import { VOUCHER_GENERIC_TRIGGERS } from "./Vouchers/Conditions";
 
-const GENERIC_TRIGGERS: string[] = [
+export const GENERIC_TRIGGERS: string[] = [
   "blind_selected",
   "card_scored",
   "hand_played",
@@ -41,7 +41,7 @@ const GENERIC_TRIGGERS: string[] = [
   "ante_start",
 ];
 
-const ALL_OBJECTS = [
+export const ALL_OBJECTS = [
   "joker", "consumable",
   "card", "voucher", "deck"
 ]

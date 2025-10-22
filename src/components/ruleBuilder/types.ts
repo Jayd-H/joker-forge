@@ -153,6 +153,16 @@ export interface EffectTypeDefinition {
   category: string;
 }
 
+export interface GlobalEffectTypeDefinition {
+  id: string;
+  label: string;
+  description: string;
+  params: EffectParameter[];
+  applicableTriggers?: string[];
+  category: string;
+  objectUsers: string[]
+}
+
 // Interface for logical operators
 export interface LogicalOperator {
   value: string;
