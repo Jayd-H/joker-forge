@@ -8,7 +8,7 @@ import { generateBossBlindTypeConditionCode } from "./Conditions/BossBlindTypeCo
 import { generateCardEditionConditionCode } from "./Conditions/CardEditionCondition";
 import { generateCardEnhancementConditionCode } from "./Conditions/CardEnhancementCondition";
 import { generateCardIndexConditionCode } from "./Conditions/CardIndexCondition";
-import { generatePokerHandConditionCode } from "./Conditions/PokerHandCondition";
+import { generatePokerHandConditionCode } from "./Conditions/HandTypecondition";
 import { generateCardSealConditionCode } from "./Conditions/CardSealCondition";
 import { generateCardsSelectedConditionCode } from "./Conditions/CardsSelectedCondition";
 import { generateCheckDeckConditionCode } from "./Conditions/CheckDeckCondition";
@@ -20,6 +20,15 @@ import { generateDeckSizeConditionCode } from "./Conditions/DeckSizeCondition";
 import { generateDiscardedHandCountConditionCode } from "./Conditions/DiscardedHandCountCondition";
 import { generateEditionCountConditionCode } from "./Conditions/EditionCountCondition";
 import { generateEnhancementCountConditionCode } from "./Conditions/EnhancementCountCondition";
+import { generateFirstDiscardedHandConditionCode } from "./Conditions/FirstDiscardedHandCondition";
+import { generateFirstPlayedHandConditionCode } from "./Conditions/FirstPlayedHandCondition";
+import { generateFirstLastScoredConditionCode } from "./Conditions/FirstLastScoredCondition";
+import { generateGenericCompareConditionCode } from "./Conditions/GenericCompareCondition";
+import { generateGlassCardDestroyedConditionCode } from "./Conditions/GlassCardDestroyedCondition";
+import { generateHandCountConditionCode } from "./Conditions/HandCountCondition";
+import { generateHandLevelConditionCode } from "./Conditions/HandLevelCondition";
+import { generateHandSizeConditionCode } from "./Conditions/HandSizeCondition";
+import { generateInternalVariableConditionCode } from "./Conditions/InternalVariableCondition";
 
 
 export const generateSingleConditionCode = (
@@ -82,8 +91,26 @@ export const generateSingleConditionCode = (
       return generateEditionCountConditionCode([singleConditionRule], itemType)
     case "enchancement_count":
       return generateEnhancementCountConditionCode([singleConditionRule], itemType)
+    case "first_discarded_hand":
+      return generateFirstDiscardedHandConditionCode()
+    case "first_played_hand":
+      return generateFirstPlayedHandConditionCode()
+    case "first_last_scored":
+      return generateFirstLastScoredConditionCode([singleConditionRule], itemType, joker)
+    case "generic_compare":
+      return generateGenericCompareConditionCode([singleConditionRule])
+    case "glass_card_destroyed":
+      return generateGlassCardDestroyedConditionCode()
+    case "hand_count":
+      return generateHandCountConditionCode([singleConditionRule])
+    case "hand_level":
+      return generateHandLevelConditionCode([singleConditionRule])
     case "hand_type":
       return generatePokerHandConditionCode([singleConditionRule], itemType, joker)
+    case "hand_size":
+      return generateHandSizeConditionCode([singleConditionRule])
+    case "internal_variable":
+      return generateInternalVariableConditionCode([singleConditionRule])
   }
   return null
 }

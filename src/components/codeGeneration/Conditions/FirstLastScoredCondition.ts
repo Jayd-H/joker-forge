@@ -1,26 +1,15 @@
+import { getRankId, JokerData } from "../../data/BalatroUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import { parseRankVariable, parseSuitVariable } from "../Jokers/variableUtils";
 
-export const generateConditionCode = (
+export const generateFirstLastScoredConditionCode = (
   rules: Rule[],
   itemType: string,
   joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ):string | null => {
   switch(itemType) {
     case "joker":
       return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
   }
   return null
 }
@@ -30,47 +19,88 @@ const generateJokerCode = (
   joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const position = (condition.params.position as string) || "first";
+  const checkType = (condition.params.check_type as string) || "any";
+  const specificRank = condition.params.specific_rank;
+  const specificSuit = condition.params.specific_suit;
 
-    return `${value}`;
+  const rankVarInfo = parseRankVariable(specificRank, joker);
+  const suitVarInfo = parseSuitVariable(specificSuit, joker);
+
+  if (checkType === "rank") {
+    let rankCheck = "";
+    if (rankVarInfo.isRankVariable) {
+      rankCheck = `scoring_card:get_id() == ${rankVarInfo.code}`;
+    } else if (typeof specificRank === "string") {
+      // Handle rank groups
+      if (specificRank === "face") {
+        rankCheck = `scoring_card:is_face()`;
+      } else if (specificRank === "even") {
+        rankCheck = `(scoring_card:get_id() == 2 or scoring_card:get_id() == 4 or scoring_card:get_id() == 6 or scoring_card:get_id() == 8 or scoring_card:get_id() == 10)`;
+      } else if (specificRank === "odd") {
+        rankCheck = `(scoring_card:get_id() == 14 or scoring_card:get_id() == 3 or scoring_card:get_id() == 5 or scoring_card:get_id() == 7 or scoring_card:get_id() == 9)`;
+      } else {
+        // Handle specific ranks
+        const rankId = getRankId(specificRank);
+        rankCheck = `scoring_card:get_id() == ${rankId}`;
+      }
+    }
+
+    if (position === "first") {
+      return `(function()
+    for i = 1, #context.scoring_hand do
+        local scoring_card = context.scoring_hand[i]
+        if ${rankCheck} then
+            return scoring_card == context.other_card
+        end
+    end
+    return false
+end)()`;
+    } else {
+      return `(function()
+    for i = #context.scoring_hand, 1, -1 do
+        local scoring_card = context.scoring_hand[i]
+        if ${rankCheck} then
+            return scoring_card == context.other_card
+        end
+    end
+    return false
+end)()`;
+    }
+  } else if (checkType === "suit") {
+    let suitCheck = "";
+    if (suitVarInfo.isSuitVariable) {
+      suitCheck = `scoring_card:is_suit(${suitVarInfo.code})`;
+    } else if (typeof specificSuit === "string") {
+      suitCheck = `scoring_card:is_suit("${specificSuit}")`;
+    }
+
+    if (position === "first") {
+      return `(function()
+    for i = 1, #context.scoring_hand do
+        local scoring_card = context.scoring_hand[i]
+        if ${suitCheck} then
+            return scoring_card == context.other_card
+        end
+    end
+    return false
+end)()`;
+    } else {
+      return `(function()
+    for i = #context.scoring_hand, 1, -1 do
+        local scoring_card = context.scoring_hand[i]
+        if ${suitCheck} then
+            return scoring_card == context.other_card
+        end
+    end
+    return false
+end)()`;
+    }
+  } else {
+    if (position === "first") {
+      return `context.other_card == context.scoring_hand[1]`;
+    } else {
+      return `context.other_card == context.scoring_hand[#context.scoring_hand]`;
+    }
   }
-
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
-
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+};

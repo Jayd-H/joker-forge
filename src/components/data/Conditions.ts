@@ -123,7 +123,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     category: "Hand",
   },
   {
-    id: "card_count",
+    id: "hand_count",
     label: "Card Count",
     description: "Check the number of cards in the played hand",
     objectUsers: ["joker"],
