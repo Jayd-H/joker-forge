@@ -534,3 +534,10 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
 export function getTriggerById(id: string): GlobalTriggerDefinition | undefined {
   return TRIGGERS.find((trigger) => trigger.id === id);
 }
+
+export function getTriggers(itemType: string): GlobalTriggerDefinition[] {
+  if (itemType === "edition" || itemType === "enhancement" || itemType === "seal") {
+    itemType = "card"
+  }
+  return TRIGGERS.filter((trigger) => trigger.objectUsers.includes(itemType));
+}

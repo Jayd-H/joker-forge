@@ -24,7 +24,7 @@ import {
 } from "@heroicons/react/16/solid";
 
 import {
-  TRIGGERS,
+  getTriggers,
   TRIGGER_CATEGORIES
 } from "../data/Triggers"
 
@@ -99,7 +99,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     id: "panel-blockPalette",
   });
 
-  const triggers = TRIGGERS
+  const triggers = getTriggers(itemType)
 
   const triggerCategories = TRIGGER_CATEGORIES
 
