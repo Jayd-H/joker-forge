@@ -81,7 +81,7 @@ export const CONDITION_CATEGORIES: CategoryDefinition[] = [
   },
 ];
 
-export const CONDITION_TYPES: GlobalConditionTypeDefinition[] = [
+export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   {
     id: "hand_type",
     label: "Hand Type",
@@ -2217,5 +2217,17 @@ export const CONDITION_TYPES: GlobalConditionTypeDefinition[] = [
 export function getConditionTypeById(
   id: string
 ): GlobalConditionTypeDefinition | undefined {
-  return CONDITION_TYPES.find((conditionType) => conditionType.id === id);
+  return CONDITIONS.find((conditionType) => conditionType.id === id);
+}
+
+export function getConditionsForTrigger(
+  triggerId: string,
+  itemType: string,
+): GlobalConditionTypeDefinition[] {
+  return CONDITIONS.filter(
+    (condition) =>
+      condition.applicableTriggers &&
+      condition.applicableTriggers.includes(triggerId) && 
+      condition.objectUsers.includes(itemType)
+  );
 }
