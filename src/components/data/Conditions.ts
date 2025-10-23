@@ -39,6 +39,10 @@ const GENERIC_TRIGGERS: string[] = [
   "ante_start",
 ];
 
+export const ALL_OBJECTS = [
+  "joker", "consumable", "card", "voucher", "deck"
+]
+
 export const CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Hand",
@@ -664,7 +668,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "player_money",
     label: "Player Money",
     description: "Check how much money the player has",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -859,7 +863,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "remaining_hands",
     label: "Remaining Hands",
     description: "Check how many hands the player has left",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -882,7 +886,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "remaining_discards",
     label: "Remaining Discards",
     description: "Check how many discards the player has left",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -923,7 +927,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "joker_count",
     label: "Joker Count",
     description: "Check how many jokers the player has",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -1010,7 +1014,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "specific_joker",
     label: "Specific Joker",
     description: "Check if a specific joker is in your collection",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -1078,7 +1082,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "check_flag",
     label: "Check Flag",
     description: "Check if a specific flag from your mod is true",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS,],
     params: [
       {
@@ -1397,7 +1401,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "blind_type",
     label: "Blind Type",
     description: "Check the type of the current blind",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -1417,7 +1421,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "boss_blind_type",
     label: "Boss Blind Type",
     description: "Check the type of the current boss blind",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "blind_selected"],
     params: [
       {
@@ -1587,7 +1591,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "voucher_redeemed",
     label: "Voucher Redeemed",
     description: "Check if a specific Voucher was redeemed during the run",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS],
     params: [
       {
@@ -1662,7 +1666,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "system_condition",
     label: "Player OS",
     description: "Check on what Operating System the player is on",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: GENERIC_TRIGGERS,
     params: [
       {
@@ -1704,7 +1708,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "hand_size",
     label: "Hand Size",
     description: "Check the current hand size",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -1726,7 +1730,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "deck_size",
     label: "Deck Size",
     description: "Check the size of the deck",
-    objectUsers: ["all"],
+    objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
     params: [
       {
@@ -2224,6 +2228,6 @@ export function getConditionsForTrigger(
     (condition) =>
       condition.applicableTriggers &&
       condition.applicableTriggers.includes(triggerId) && 
-      condition.objectUsers.includes(itemType || "all")
+      condition.objectUsers.includes(itemType)
   );
 }
