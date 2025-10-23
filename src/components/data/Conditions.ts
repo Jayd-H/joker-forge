@@ -159,7 +159,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     ],
     category: "Hand",
   },
-{
+  {
     id: "suit_count",
     label: "Suit Count",
     description: "Check how many cards of a specific suit are in the hand",
@@ -234,7 +234,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     ],
     category: "Hand",
   },
-{
+  {
     id: "rank_count",
     label: "Rank Count",
     description: "Check how many cards of a specific rank are in the hand",

@@ -1,4 +1,4 @@
-import { JokerData } from "../data/BalatroUtils";
+import { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../data/BalatroUtils";
 import { Condition, Rule } from "../ruleBuilder";
 import { generatePokerHandConditionCode } from "./Conditions/PokerHandCondition";
 
@@ -8,6 +8,10 @@ export const generateSingleConditionCode = (
   rule: Rule,
   itemType: string,
   joker?: JokerData,
+  consumable?: ConsumableData,
+  card?: EnhancementData | EditionData | SealData,
+  voucher?: VoucherData,
+  deck?: DeckData,
 ): string | null => {
   const singleConditionRule = {
     ...rule,
