@@ -1,4 +1,4 @@
-import { GameObjectData, JokerData } from "../data/BalatroUtils";
+import { JokerData } from "../data/BalatroUtils";
 import { Condition, Rule } from "../ruleBuilder";
 import { generatePokerHandConditionCode } from "./Conditions/pokerHandCondition";
 
