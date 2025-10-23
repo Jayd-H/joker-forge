@@ -1,9 +1,9 @@
 import { JokerData } from "../data/BalatroUtils";
 import { Condition, Rule } from "../ruleBuilder";
-import { generatePokerHandConditionCode } from "./Conditions/pokerHandCondition";
+import { generatePokerHandConditionCode } from "./Conditions/PokerHandCondition";
 
 
-const generateSingleConditionCode = (
+export const generateSingleConditionCode = (
   condition: Condition,
   rule: Rule,
   itemType: string,
@@ -21,7 +21,7 @@ const generateSingleConditionCode = (
 
   switch (condition.type) {
     case "hand_type":
-        return generatePokerHandConditionCode([singleConditionRule], itemType, joker)
+      return generatePokerHandConditionCode([singleConditionRule], itemType, joker)
   }
   return null
 }
