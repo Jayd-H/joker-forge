@@ -1222,7 +1222,7 @@ const Inspector: React.FC<InspectorProps> = ({
       if (!hasShowWhen(param)) return true;
       const { parameter, values } = param.showWhen;
       const parentValue = selectedCondition.params[parameter];
-      return values.includes(parentValue as string);
+      return values.includes(parentValue as string) && !param.exemptObjects?.includes(itemType);
     });
 
     return (

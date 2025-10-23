@@ -56,15 +56,15 @@ export interface TriggerDefinition {
   label: string;
   description: string;
   category: string;
-  objectUsers?: ("joker" | "consumable" | "card" | "voucher" | "deck")[]
+  objectUsers?: (string)[]
 }
 
 export interface GlobalTriggerDefinition {
   id: string;
-  label: Record <"joker" | "consumable" | "card" | "voucher" | "deck", string>;
-  description: Record <"joker" | "consumable" | "card" | "voucher" | "deck", string>;
+  label: Record <string, string>;
+  description: Record <string, string>;
   category: string;
-  objectUsers: Array <"joker" | "consumable" | "card" | "voucher" | "deck">
+  objectUsers: Array <string>
 }
 
 // When a parameter should be shown based on other parameter values

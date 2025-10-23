@@ -3,9 +3,9 @@ import { useDraggable } from "@dnd-kit/core";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Rule,
-  ConditionTypeDefinition,
   EffectTypeDefinition,
   GlobalTriggerDefinition,
+  GlobalConditionTypeDefinition,
 } from "./types";
 import BlockComponent from "./BlockComponent";
 import {
@@ -24,50 +24,39 @@ import {
 } from "@heroicons/react/16/solid";
 
 import {
-  TRIGGERS,
+  getTriggers,
   TRIGGER_CATEGORIES
 } from "../data/Triggers"
 
 import {
+  CONDITION_CATEGORIES,
+  getConditionsForTrigger
+} from "../data/Conditions"
+
+import {
   type CategoryDefinition,
 } from "../data/Jokers/Triggers";
-import {
-  getConditionsForTrigger,
-  CONDITION_CATEGORIES,
-} from "../data/Jokers/Conditions";
+
 import {
   getEffectsForTrigger,
   EFFECT_CATEGORIES,
 } from "../data/Jokers/Effects";
 
 import {
-  getConsumableConditionsForTrigger,
-  CONSUMABLE_CONDITION_CATEGORIES,
-} from "../data/Consumables/Conditions";
-import {
   getConsumableEffectsForTrigger,
   CONSUMABLE_EFFECT_CATEGORIES,
 } from "../data/Consumables/Effects";
-import {
-  CARD_CONDITION_CATEGORIES,
-  getCardConditionsForTrigger,
-} from "../data/Card/Conditions";
+
 import {
   CARD_EFFECT_CATEGORIES,
   getCardEffectsForTrigger,
 } from "../data/Card/Effects";
-import {
-  VOUCHER_CONDITION_CATEGORIES,
-  getVoucherConditionsForTrigger,
-} from "../data/Vouchers/Conditions";
+
 import {
   VOUCHER_EFFECT_CATEGORIES,
   getVoucherEffectsForTrigger,
 } from "../data/Vouchers/Effects";
-import {
-  DECK_CONDITION_CATEGORIES,
-  getDeckConditionsForTrigger,
-} from "../data/Decks/Conditions";
+
 import {
   DECK_EFFECT_CATEGORIES,
   getDeckEffectsForTrigger,
@@ -110,20 +99,12 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     id: "panel-blockPalette",
   });
 
-  const triggers = TRIGGERS
+  const triggers = getTriggers(itemType)
 
   const triggerCategories = TRIGGER_CATEGORIES
 
-  const conditionCategories =
-    itemType === "joker"
-      ? CONDITION_CATEGORIES
-      : itemType === "consumable"
-      ? CONSUMABLE_CONDITION_CATEGORIES
-      : itemType === "card"
-      ? CARD_CONDITION_CATEGORIES
-      : itemType === "voucher"
-      ? VOUCHER_CONDITION_CATEGORIES
-      : DECK_CONDITION_CATEGORIES;
+  const conditionCategories = CONDITION_CATEGORIES
+
 
   const effectCategories =
     itemType === "joker"
@@ -136,16 +117,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       ? VOUCHER_EFFECT_CATEGORIES
       : DECK_EFFECT_CATEGORIES;
 
-  const getConditionsForTriggerFn =
-    itemType === "joker"
-      ? getConditionsForTrigger
-      : itemType === "consumable"
-      ? getConsumableConditionsForTrigger
-      : itemType === "card"
-      ? getCardConditionsForTrigger
-      : itemType === "voucher"
-      ? getVoucherConditionsForTrigger
-      : getDeckConditionsForTrigger;
+  const getConditionsForTriggerFn = getConditionsForTrigger
 
   const getEffectsForTriggerFn =
     itemType === "joker"
@@ -186,7 +158,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   }, [activeFilter]);
 
   const availableConditions = useMemo(() => {
-    return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger) : [];
+    return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger, itemType) : [];
   }, [selectedRule, getConditionsForTriggerFn]);
 
   const availableEffects = useMemo(() => {
@@ -246,7 +218,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     const conditionsByCategory: Record<
       string,
-      { category: CategoryDefinition; items: ConditionTypeDefinition[] }
+      { category: CategoryDefinition; items: GlobalConditionTypeDefinition[] }
     > = {};
 
     conditionCategories.forEach((category) => {
@@ -379,7 +351,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       category: CategoryDefinition;
       items:
         | GlobalTriggerDefinition[]
-        | ConditionTypeDefinition[]
+        | GlobalConditionTypeDefinition[]
         | EffectTypeDefinition[];
     },
     type: "trigger" | "condition" | "effect",
@@ -390,7 +362,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     const IconComponent = category.icon;
 
     const getItemName = (
-      item: GlobalTriggerDefinition | ConditionTypeDefinition | EffectTypeDefinition
+      item: GlobalTriggerDefinition | GlobalConditionTypeDefinition | EffectTypeDefinition
     ): string => {
       const label = item.label
       if (typeof label === "string") {
@@ -469,7 +441,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
         category: CategoryDefinition;
         items:
           | GlobalTriggerDefinition[]
-          | ConditionTypeDefinition[]
+          | GlobalConditionTypeDefinition[]
           | EffectTypeDefinition[];
       }
     >,
