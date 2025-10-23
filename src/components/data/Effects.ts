@@ -48,7 +48,7 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   },
 ];
 
-export const EFFECT_TYPES: GlobalEffectTypeDefinition[] = [
+export const EFFECTS: GlobalEffectTypeDefinition[] = [
   {
     id: "add_chips",
     label: "Add Chips",
@@ -2199,5 +2199,19 @@ export const EFFECT_TYPES: GlobalEffectTypeDefinition[] = [
 export function getEffectTypeById(
   id: string
 ): GlobalEffectTypeDefinition | undefined {
-  return EFFECT_TYPES.find((effectType) => effectType.id === id);
+  return EFFECTS.find((effectType) => effectType.id === id);
+}
+
+export function getEffectsForTrigger(
+  triggerId: string,
+  itemType: string,
+): GlobalEffectTypeDefinition[] {
+  if (itemType === "enhancement" || itemType === "edition" || itemType === "seal") {
+    itemType = "card"
+  }
+  return EFFECTS.filter((effect) =>
+    effect.applicableTriggers && 
+    effect.applicableTriggers.includes(triggerId) &&
+    effect.objectUsers.includes(itemType)
+  );
 }

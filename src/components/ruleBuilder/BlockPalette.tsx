@@ -3,7 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Rule,
-  EffectTypeDefinition,
+  GlobalEffectTypeDefinition,
   GlobalTriggerDefinition,
   GlobalConditionTypeDefinition,
 } from "./types";
@@ -24,43 +24,24 @@ import {
 } from "@heroicons/react/16/solid";
 
 import {
+  TRIGGER_CATEGORIES,
   getTriggers,
-  TRIGGER_CATEGORIES
 } from "../data/Triggers"
 
 import {
   CONDITION_CATEGORIES,
-  getConditionsForTrigger
+  getConditionsForTrigger,
 } from "../data/Conditions"
+
+import {
+  EFFECT_CATEGORIES,
+  getEffectsForTrigger,
+} from "../data/Effects"
 
 import {
   type CategoryDefinition,
 } from "../data/Jokers/Triggers";
 
-import {
-  getEffectsForTrigger,
-  EFFECT_CATEGORIES,
-} from "../data/Jokers/Effects";
-
-import {
-  getConsumableEffectsForTrigger,
-  CONSUMABLE_EFFECT_CATEGORIES,
-} from "../data/Consumables/Effects";
-
-import {
-  CARD_EFFECT_CATEGORIES,
-  getCardEffectsForTrigger,
-} from "../data/Card/Effects";
-
-import {
-  VOUCHER_EFFECT_CATEGORIES,
-  getVoucherEffectsForTrigger,
-} from "../data/Vouchers/Effects";
-
-import {
-  DECK_EFFECT_CATEGORIES,
-  getDeckEffectsForTrigger,
-} from "../data/Decks/Effects";
 
 interface BlockPaletteProps {
   position: { x: number; y: number };
@@ -102,33 +83,11 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   const triggers = getTriggers(itemType)
 
   const triggerCategories = TRIGGER_CATEGORIES
-
   const conditionCategories = CONDITION_CATEGORIES
-
-
-  const effectCategories =
-    itemType === "joker"
-      ? EFFECT_CATEGORIES
-      : itemType === "consumable"
-      ? CONSUMABLE_EFFECT_CATEGORIES
-      : itemType === "card"
-      ? CARD_EFFECT_CATEGORIES
-      : itemType === "voucher"
-      ? VOUCHER_EFFECT_CATEGORIES
-      : DECK_EFFECT_CATEGORIES;
+  const effectCategories = EFFECT_CATEGORIES
 
   const getConditionsForTriggerFn = getConditionsForTrigger
-
-  const getEffectsForTriggerFn =
-    itemType === "joker"
-      ? getEffectsForTrigger
-      : itemType === "consumable"
-      ? getConsumableEffectsForTrigger
-      : itemType === "card"
-      ? getCardEffectsForTrigger
-      : itemType === "voucher"
-      ? getVoucherEffectsForTrigger
-      : getDeckEffectsForTrigger;
+  const getEffectsForTriggerFn = getEffectsForTrigger
 
   const style = transform
     ? {
@@ -162,7 +121,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   }, [selectedRule, getConditionsForTriggerFn]);
 
   const availableEffects = useMemo(() => {
-    return selectedRule ? getEffectsForTriggerFn(selectedRule.trigger) : [];
+    return selectedRule ? getEffectsForTriggerFn(selectedRule.trigger, itemType) : [];
   }, [selectedRule, getEffectsForTriggerFn]);
 
   const categorizedItems = useMemo(() => {
@@ -256,7 +215,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     const effectsByCategory: Record<
       string,
-      { category: CategoryDefinition; items: EffectTypeDefinition[] }
+      { category: CategoryDefinition; items: GlobalEffectTypeDefinition[] }
     > = {};
 
     effectCategories.forEach((category) => {
@@ -352,7 +311,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       items:
         | GlobalTriggerDefinition[]
         | GlobalConditionTypeDefinition[]
-        | EffectTypeDefinition[];
+        | GlobalEffectTypeDefinition[];
     },
     type: "trigger" | "condition" | "effect",
     onAdd: (id: string) => void
@@ -362,7 +321,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     const IconComponent = category.icon;
 
     const getItemName = (
-      item: GlobalTriggerDefinition | GlobalConditionTypeDefinition | EffectTypeDefinition
+      item: GlobalTriggerDefinition | GlobalConditionTypeDefinition | GlobalEffectTypeDefinition
     ): string => {
       const label = item.label
       if (typeof label === "string") {
@@ -442,7 +401,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
         items:
           | GlobalTriggerDefinition[]
           | GlobalConditionTypeDefinition[]
-          | EffectTypeDefinition[];
+          | GlobalEffectTypeDefinition[];
       }
     >,
     type: "trigger" | "condition" | "effect",
