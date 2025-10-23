@@ -39,6 +39,10 @@ export const GENERIC_TRIGGERS: string[] = [
   "ante_start",
 ];
 
+export const ALL_OBJECTS = [
+  "joker", "consumable", "card", "voucher", "deck"
+]
+
 export const CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Hand",
