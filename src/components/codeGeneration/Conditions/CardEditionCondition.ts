@@ -1,76 +1,81 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 
-export const generateConditionCode = (
+export const generateCardEditionConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ):string | null => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
+      return generateJokerCode(rules)
     case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+      return generateCardCode(rules)
   }
   return null
 }
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const triggerType = rules[0].trigger || "hand_played";
+  const editionType = (condition.params.edition as string) || "any";
 
-    return `${value}`;
+  if (triggerType === "card_destroyed") {
+    if (editionType === "any") {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        if removed_card.edition ~= nil then
+            return true
+        end
+    end
+    return false
+end)()`;
+    } else if (editionType === "none") {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        if removed_card.edition == nil then
+            return true
+        end
+    end
+    return false
+end)()`;
+    } else {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        if removed_card.edition and removed_card.edition.key == "${editionType}" then
+            return true
+        end
+    end
+    return false
+end)()`;
+    }
   }
 
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
+  if (editionType === "any") {
+    return `context.other_card.edition ~= nil`;
+  } else if (editionType === "none") {
+    return `context.other_card.edition == nil`;
+  } else {
+    return `context.other_card.edition and context.other_card.edition.key == "${editionType}"`;
+  }
+};
 
 const generateCardCode = (
   rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
 ): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  if (rules.length === 0) return "";
 
-  return `${value}`;
-}
+  const rule = rules[0];
+  const condition = rule.conditionGroups?.[0]?.conditions?.[0];
+  if (!condition || condition.type !== "card_edition") return "";
 
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const editionType = (condition.params?.edition as string) || "any";
 
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+  if (editionType === "any") {
+    return `card.edition ~= nil`;
+  } else if (editionType === "none") {
+    return `card.edition == nil`;
+  } else {
+    return `card.edition and card.edition.key == "${editionType}"`;
+  }
+};

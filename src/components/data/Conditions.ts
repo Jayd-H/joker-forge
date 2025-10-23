@@ -1686,8 +1686,8 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     category: "Game State",
   },
   {
-    id: "deck_check",
-    label: "Deck Check",
+    id: "check_deck",
+    label: "Check Deck",
     description: "Check on what Deck the player is on",
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     applicableTriggers: GENERIC_TRIGGERS,

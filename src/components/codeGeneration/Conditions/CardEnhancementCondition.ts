@@ -1,76 +1,60 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 
-export const generateConditionCode = (
+export const generateCardEnhancementConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ):string | null => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+      return generateJokerCode(rules)
   }
   return null
 }
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+const condition = rules[0].conditionGroups[0].conditions[0];
+  const triggerType = rules[0].trigger || "hand_played";
+  const enhancementType = (condition.params.enhancement as string) || "any";
 
-    return `${value}`;
+
+  if (triggerType === "card_destroyed") {
+    if (enhancementType === "any") {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        local enhancements = SMODS.get_enhancements(removed_card)
+        for k, v in pairs(enhancements) do
+            if v then
+                return true
+            end
+        end
+    end
+    return false
+end)()`;
+    } else {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        if SMODS.get_enhancements(removed_card)["${enhancementType}"] == true then
+            return true
+        end
+    end
+    return false
+end)()`;
+    }
   }
 
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
-
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+  if (enhancementType === "any") {
+    return `(function()
+        local enhancements = SMODS.get_enhancements(context.other_card)
+        for k, v in pairs(enhancements) do
+            if v then
+                return true
+            end
+        end
+        return false
+    end)()`;
+  } else {
+    return `SMODS.get_enhancements(context.other_card)["${enhancementType}"] == true`;
+  }
+};

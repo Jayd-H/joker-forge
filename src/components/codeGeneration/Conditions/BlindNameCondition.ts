@@ -1,76 +1,18 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 
-export const generateConditionCode = (
+export const generateBlindNameConditionCode = (
   rules: Rule[],
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-):string | null => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+): string | null => {
+  const condition = rules[0].conditionGroups[0].conditions[0];
+  const operator = (condition.params.operator as string) || "equals";
+  const value = condition.params?.value || "Small Blind";
+
+  switch (operator) {
+    case "equals":
+      return `G.GAME.blind.name == "${value}`;
+    case "not_equals":
+      return `G.GAME.blind.name ~= "${value}`;
+    default:
+      return `G.GAME.blind.name == "${value}`;
   }
-  return null
-}
-
-const generateJokerCode = (
-  rules: Rule[],
-  joker?: JokerData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-    return `${value}`;
-  }
-
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
-
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
 }

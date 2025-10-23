@@ -1,76 +1,75 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 
-export const generateConditionCode = (
+export const generateCardSealConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-):string | null => {
+): string | null => {
+
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
+      return generateJokerCode(rules)
     case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+      return generateCardCode(rules)
   }
   return null
 }
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const triggerType = rules[0].trigger || "hand_played";
+  const sealType = (condition.params.seal as string) || "any";
 
-    return `${value}`;
+  const capitalizedSealType =
+    sealType === "any"
+      ? "any"
+      : sealType.charAt(0).toUpperCase() + sealType.slice(1).toLowerCase();
+
+  if (triggerType === "card_destroyed") {
+    if (sealType === "any") {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        if removed_card.seal ~= nil then
+            return true
+        end
+    end
+    return false
+end)()`;
+    } else {
+      return `(function()
+    for k, removed_card in ipairs(context.removed) do
+        if removed_card.seal == "${capitalizedSealType}" then
+            return true
+        end
+    end
+    return false
+end)()`;
+    }
   }
-
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
+  
+  return sealType === "any"
+    ? `context.other_card.seal ~= nil`
+    : `context.other_card.seal == "${capitalizedSealType}"`;
+};
 
 const generateCardCode = (
   rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
 ): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  if (rules.length === 0) return "";
 
-  return `${value}`;
-}
+  const rule = rules[0];
+  const condition = rule.conditionGroups?.[0]?.conditions?.[0];
+  if (!condition || condition.type !== "card_seal") return "";
 
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const sealType = (condition.params?.seal as string) || "any";
 
-  return `${value}`;
-}
+  const capitalizedSealType =
+    sealType === "any"
+      ? "any"
+      : sealType.charAt(0).toUpperCase() + sealType.slice(1).toLowerCase();
 
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+  return sealType === "any"
+    ? `card.seal ~= nil`
+    : `card.seal == "${capitalizedSealType}"`;
+};

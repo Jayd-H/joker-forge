@@ -1,76 +1,69 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateConditionCode = (
+export const generateEnhancementCountConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ):string | null => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+      return generateJokerCode(rules)
   }
   return null
 }
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+ const condition = rules[0].conditionGroups[0].conditions[0];
+  const operator = (condition.params.operator as string) || "equals";
+  const value = generateGameVariableCode(condition.params.value);
+  const scope = (condition.params.card_scope as string) || "scoring";
 
-    return `${value}`;
+  let propertyCheck = "";
+  const enhancement = condition.params.enhancement as string;
+  if (enhancement === "any") {
+      propertyCheck = "next(SMODS.get_enhancements(playing_card))";
+  } else if (enhancement === "none") {
+      propertyCheck = "not next(SMODS.get_enhancements(playing_card))";
+  } else {
+      propertyCheck = `SMODS.get_enhancements(playing_card)["${enhancement}"] == true`;
+  }
+    
+  let comparison = "";
+  switch (operator) {
+    case "equals":
+      comparison = `== ${value}`;
+      break;
+    case "not_equals":
+      comparison = `~= ${value}`;
+      break;
+    case "greater_than":
+      comparison = `> ${value}`;
+      break;
+    case "less_than":
+      comparison = `< ${value}`;
+      break;
+    case "greater_equals":
+      comparison = `>= ${value}`;
+      break;
+    case "less_equals":
+      comparison = `<= ${value}`;
+      break;
+    default:
+      comparison = `== ${value}`;
   }
 
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const cardsToCheck =
+    scope === "scoring" ? "context.scoring_hand" : "context.full_hand";
 
-   return `${value}`;
-}
-
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+  return `(function()
+    local count = 0
+    for _, playing_card in pairs(${cardsToCheck} or {}) do
+        if ${propertyCheck} then
+            count = count + 1
+        end
+    end
+    return count ${comparison}
+end)()`;
+};

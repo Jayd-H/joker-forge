@@ -1,76 +1,81 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 
-export const generateConditionCode = (
+export const generateConsumableTypeConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-):string | null => {
+): string | null => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+      return generateJokerCode(rules)
   }
   return null
 }
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const triggerType = rules[0].trigger || "consumable_used";
+  const consumableType = (condition.params.consumable_type as string) || "any";
+  const specificCard = (condition.params.specific_card as string) || "any";
 
-    return `${value}`;
+  // Determine the card reference based on trigger type
+  const cardRef =
+    triggerType === "card_bought" ? "context.card" : "context.consumeable";
+
+  if (consumableType === "any") {
+    return `${cardRef} and (${cardRef}.ability.set == 'Tarot' or ${cardRef}.ability.set == 'Planet' or ${cardRef}.ability.set == 'Spectral')`;
   }
 
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  // Handle vanilla sets
+  if (consumableType === "Tarot") {
+    if (specificCard === "any") {
+      return `${cardRef} and ${cardRef}.ability.set == 'Tarot'`;
+    } else {
+      const normalizedCardKey = specificCard.startsWith("c_")
+        ? specificCard
+        : `c_${specificCard}`;
 
-   return `${value}`;
-}
+      return `${cardRef} and ${cardRef}.ability.set == 'Tarot' and ${cardRef}.config.center.key == '${normalizedCardKey}'`;
+    }
+  }
 
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  if (consumableType === "Planet") {
+    if (specificCard === "any") {
+      return `${cardRef} and ${cardRef}.ability.set == 'Planet'`;
+    } else {
+      const normalizedCardKey = specificCard.startsWith("c_")
+        ? specificCard
+        : `c_${specificCard}`;
 
-  return `${value}`;
-}
+      return `${cardRef} and ${cardRef}.ability.set == 'Planet' and ${cardRef}.config.center.key == '${normalizedCardKey}'`;
+    }
+  }
 
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  if (consumableType === "Spectral") {
+    if (specificCard === "any") {
+      return `${cardRef} and ${cardRef}.ability.set == 'Spectral'`;
+    } else {
+      const normalizedCardKey = specificCard.startsWith("c_")
+        ? specificCard
+        : `c_${specificCard}`;
 
-  return `${value}`;
-}
+      return `${cardRef} and ${cardRef}.ability.set == 'Spectral' and ${cardRef}.config.center.key == '${normalizedCardKey}'`;
+    }
+  }
 
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  // Handle custom consumable sets
+  const setKey = consumableType.includes("_")
+    ? consumableType.split("_").slice(1).join("_")
+    : consumableType;
 
-  return `${value}`;
-}
+  if (specificCard === "any") {
+    return `${cardRef} and (${cardRef}.ability.set == '${setKey}' or ${cardRef}.ability.set == '${consumableType}')`;
+  } else {
+    const normalizedCardKey = specificCard.startsWith("c_")
+      ? specificCard
+      : `c_${specificCard}`;
+
+    return `${cardRef} and (${cardRef}.ability.set == '${setKey}' or ${cardRef}.ability.set == '${consumableType}') and ${cardRef}.config.center.key == '${normalizedCardKey}'`;
+  }
+};

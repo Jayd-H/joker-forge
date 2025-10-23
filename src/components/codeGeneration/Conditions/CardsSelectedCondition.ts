@@ -1,76 +1,45 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateConditionCode = (
+export const generateCardsSelectedConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-):string | null => {
+): string | null => {
   switch(itemType) {
-    case "joker":
-      return generateJokerCode(rules, joker)
     case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+      return generateConsumableCode(rules)
   }
   return null
 }
 
-const generateJokerCode = (
-  rules: Rule[],
-  joker?: JokerData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-    return `${value}`;
-  }
-
 const generateConsumableCode = (
   rules: Rule[],
-  consumable?: ConsumableData
 ): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  if (rules.length === 0) return "";
 
-   return `${value}`;
-}
+  const rule = rules[0];
+  const condition = rule.conditionGroups?.[0]?.conditions?.[0];
+  if (!condition || condition.type !== "cards_selected") return "";
 
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
+  const operator = condition.params?.operator || "greater_than";
+  const value = condition.params?.value || 1;
 
-  return `${value}`;
-}
+  const valueCode = generateGameVariableCode(value);
 
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
+  switch (operator) {
+    case "greater_than":
+      return `#G.hand.highlighted > ${valueCode}`;
+    case "greater_equals":
+      return `#G.hand.highlighted >= ${valueCode}`;
+    case "less_than":
+      return `#G.hand.highlighted < ${valueCode}`;
+    case "less_equals":
+      return `#G.hand.highlighted <= ${valueCode}`;
+    case "equals":
+      return `#G.hand.highlighted == ${valueCode}`;
+    case "not_equal":
+      return `#G.hand.highlighted ~= ${valueCode}`;
+    default:
+      return `#G.hand.highlighted > ${valueCode}`;
+  }
 }
