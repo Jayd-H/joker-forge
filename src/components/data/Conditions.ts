@@ -5,7 +5,7 @@ import { PROBABILITY_IDENTIFIERS } from "./Jokers/Conditions";
 import { VOUCHER_GENERIC_TRIGGERS } from "./Vouchers/Conditions";
 import { ArchiveBoxIcon, HandRaisedIcon, ReceiptPercentIcon, InformationCircleIcon, RectangleStackIcon, SparklesIcon, UserIcon } from "@heroicons/react/24/outline";
 
-const GENERIC_TRIGGERS: string[] = [
+export const GENERIC_TRIGGERS: string[] = [
   "blind_selected",
   "card_scored",
   "hand_played",
@@ -38,10 +38,6 @@ const GENERIC_TRIGGERS: string[] = [
   "tag_added",
   "ante_start",
 ];
-
-export const ALL_OBJECTS = [
-  "joker", "consumable", "card", "voucher", "deck"
-]
 
 export const CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
