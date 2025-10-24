@@ -8,7 +8,6 @@ import { generateBossBlindTypeConditionCode } from "./Conditions/BossBlindTypeCo
 import { generateCardEditionConditionCode } from "./Conditions/CardEditionCondition";
 import { generateCardEnhancementConditionCode } from "./Conditions/CardEnhancementCondition";
 import { generateCardIndexConditionCode } from "./Conditions/CardIndexCondition";
-import { generatePokerHandConditionCode } from "./Conditions/HandTypecondition";
 import { generateCardSealConditionCode } from "./Conditions/CardSealCondition";
 import { generateCardsSelectedConditionCode } from "./Conditions/CardsSelectedCondition";
 import { generateCheckDeckConditionCode } from "./Conditions/CheckDeckCondition";
@@ -105,8 +104,6 @@ export const generateSingleConditionCode = (
       return generateHandCountConditionCode([singleConditionRule])
     case "hand_level":
       return generateHandLevelConditionCode([singleConditionRule])
-    case "hand_type":
-      return generatePokerHandConditionCode([singleConditionRule], itemType, joker)
     case "hand_size":
       return generateHandSizeConditionCode([singleConditionRule])
     case "internal_variable":
