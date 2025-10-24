@@ -31,22 +31,7 @@ const generateSingleBooster = (
 
   code += `    loc_txt = {\n`;
   code += `        name = "${booster.name}",\n`;
-  code += `        text = {\n`;
-
-  const descriptionLines = booster.description
-    .replace(/\[s\]/g, "\n")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
-
-  descriptionLines.forEach((line, lineIndex) => {
-    const cleanLine = line.replace(/\{[^}]*\}/g, "").replace(/"/g, '\\"');
-    code += `            "${cleanLine}"${
-      lineIndex < descriptionLines.length - 1 ? "," : ""
-    }\n`;
-  });
-
-  code += `        },\n`;
+  code += `        text = ${formatBoosterDescription(booster.description)},\n`;
 
   const groupName = booster.group_key
     ? `"${booster.group_key}"`
@@ -403,6 +388,28 @@ const generateParticlesFunction = (boosterType: string): string => {
 
   code += `    end,\n`;
   return code;
+};
+
+const formatBoosterDescription = (description: string) => {
+  const formatted = description.replace(/<br\s*\/?>/gi, "[s]");
+
+  const escaped = formatted.replace(/\n/g, "[s]");
+  const lines = escaped.split("[s]").map((line) => line.trim());
+  // .filter((line) => line.length > 0);
+
+  if (lines.length === 0) {
+    lines.push(escaped.trim());
+  }
+
+  return `{\n${lines
+    .map(
+      (line, i) =>
+        `            [${i + 1}] = '${line
+          .replace(/\\/g, "\\\\")
+          .replace(/"/g, '\\"')
+          .replace(/'/g, "\\'")}'`
+    )
+    .join(",\n")}\n        }`;
 };
 
 const sanitizeKey = (name: string): string => {

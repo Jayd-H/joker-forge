@@ -17276,19 +17276,6 @@
       "unlocked": false,
       "discovered": false,
       "rules": [
-        {
-          "id": "d3d578b1-c395-4a7c-a4d3-536884e108b1",
-          "trigger": "deck_selected",
-          "blueprintCompatible": true,
-          "conditionGroups": [],
-          "effects": [],
-          "randomGroups": [],
-          "loops": [],
-          "position": {
-            "x": 1120,
-            "y": 439.5
-          }
-        }
       ],
       "placeholderCreditIndex": 18,
       "orderValue": 4,
@@ -17322,18 +17309,6 @@
                 "operation": "set",
                 "value": 2
               }
-            },
-            {
-              "id": "8aebb531-8427-4bea-8aae-4d51a4b67c75",
-              "type": "create_consumable",
-              "params": {
-                "set": "Spectral",
-                "specific_card": "c_hex",
-                "soulable": "n",
-                "is_negative": "n",
-                "count": 1,
-                "ignore_slots": "n"
-              }
             }
           ],
           "randomGroups": [],
@@ -17345,6 +17320,9 @@
         }
       ],
       "placeholderCreditIndex": 18,
+      "Config_consumables": [
+        "c_hex"
+      ],
       "orderValue": 3,
       "no_collection": false,
       "no_interest": false,
@@ -17366,19 +17344,6 @@
       "no_faces": false,
       "erratic_deck": false,
       "rules": [
-        {
-          "id": "1246680b-dce3-46bb-8982-7f2ef9d567a4",
-          "trigger": "deck_selected",
-          "blueprintCompatible": true,
-          "conditionGroups": [],
-          "effects": [],
-          "randomGroups": [],
-          "loops": [],
-          "position": {
-            "x": 1120,
-            "y": 439.5
-          }
-        }
       ],
       "placeholderCreditIndex": 16,
       "hasUserUploadedImage": true,
@@ -17449,19 +17414,6 @@
       "no_faces": false,
       "erratic_deck": true,
       "rules": [
-        {
-          "id": "35dd703f-0211-41fc-a9b5-9246daa3d7ac",
-          "trigger": "deck_selected",
-          "blueprintCompatible": true,
-          "conditionGroups": [],
-          "effects": [],
-          "randomGroups": [],
-          "loops": [],
-          "position": {
-            "x": 1120,
-            "y": 439.5
-          }
-        }
       ],
       "placeholderCreditIndex": 11,
       "hasUserUploadedImage": true,

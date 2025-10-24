@@ -12,7 +12,6 @@ export const generateCreateJokerReturn = (
   const edition = (effect.params?.edition as string) || "none";
   const sticker = (effect.params?.sticker as string) || "none";
   const ignoreSlotsParam = (effect.params?.ignore_slots as string) || "respect";
-  const customMessage = effect.customMessage;
 
   const isNegative = edition === "e_negative";
   const hasSticker = sticker !== "none";
@@ -102,10 +101,6 @@ export const generateCreateJokerReturn = (
               __PRE_RETURN_CODE_END__`,
     colour: "G.C.SECONDARY_SET.Tarot",
   };
-
-  if (customMessage) {
-    result.message = `"${customMessage}"`;
-  }
 
   return result;
 };

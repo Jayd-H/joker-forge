@@ -154,6 +154,18 @@ if (ConfigConsumables .length > 0) {
   deckCode += `
       consumables = {${ConfigConsumables.map((value) => `"${value}"`)}},`;
 }
+if (deck.no_interest === true) {
+    deckCode += `
+    no_interest = true,`;
+  }
+  if (deck.no_faces === true) {
+    deckCode += `
+    remove_faces = true,`;
+  }
+  if (deck.erratic_deck === true) {
+    deckCode += `
+    randomize_rank_suit = true,`;
+  }
 deckCode += `
 },`;
 
@@ -198,7 +210,7 @@ deckCode += `
   deckCode += calculateCode;
  }
 
-  const applyCode = generateApplyFunction(deck, activeRules, modPrefix, deck.objectKey);
+  const applyCode = generateApplyFunction(activeRules, modPrefix, deck.objectKey);
   if (applyCode) {
   deckCode += applyCode ;
 }
@@ -243,7 +255,6 @@ export const exportSingleDeck = (deck: DeckData): void => {
 };
 
 const generateApplyFunction = (
-  deck: DeckData,
   rules: Rule[],
   modPrefix: string,
   deckKey?: string,
@@ -282,22 +293,6 @@ if (filtered_rules.length === 0) return "";
 
     applyFunction += ruleCode;
   });
-
- if (deck.no_interest === true) {
-    applyFunction += `
-    G.GAME.modifiers.no_interest = true`;
-  }
-
-
-  if (deck.no_faces === true) {
-    applyFunction += `
-    G.GAME.starting_params.no_faces = true`;
-  }
-
-  if (deck.erratic_deck === true) {
-    applyFunction += `
-    G.GAME.starting_params.erratic_suits_and_ranks = true`;
-  }
 
   applyFunction += `
     end`;
