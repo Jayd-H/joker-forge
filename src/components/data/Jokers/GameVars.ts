@@ -834,7 +834,7 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
         label: "Free Consumable Slots",
         description: "Number of empty consumable slots",
         category: "consumables",
-        code: "(G.consumeables and G.consumeables.config.card_limit or 0 - #(G.consumeables and G.consumeables.cards or {}))",
+        code: "((G.consumeables and G.consumeables.config.card_limit or 0) - #(G.consumeables and G.consumeables.cards or {}))",
       },
     ],
     subcategories: [

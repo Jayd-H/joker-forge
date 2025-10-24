@@ -1639,7 +1639,7 @@ export const TAGS = [
     label: "Top-up Tag - Create up to 2 Common Jokers",
   },
   {
-    value: "speed",
+    value: "skip",
     label: "Speed Tag - Gives $5 for each Blind skipped this run",
   },
   {
@@ -1674,7 +1674,7 @@ export const TAG_TYPES: Record<string, string> = {
   juggle: "tag_juggle",
   d_six: "tag_d_six",
   top_up: "tag_top_up",
-  speed: "tag_speed",
+  speed: "tag_skip",
   orbital: "tag_orbital",
   economy: "tag_economy",
 } as const;

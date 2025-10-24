@@ -34,7 +34,7 @@ export const generateEditBoosterSlotsReturn = (effect: Effect): EffectReturn => 
                 trigger = 'after',
                 delay = 0.4,
                 func = function()
-                    local current_booster_slots = G.GAME.modifiers.extra_boosters
+                    local current_booster_slots = (G.GAME.modifiers.extra_boosters or 0)
                     local target_booster_slots = ${valueCode}
                     local difference = target_booster_slots - current_booster_slots
                     SMODS.change_booster_limit(difference)

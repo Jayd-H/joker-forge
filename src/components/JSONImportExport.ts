@@ -153,7 +153,7 @@ const normalizeSoundData = (sound: Partial<SoundData>): SoundData => {
     soundString: sound.soundString || "",
     volume: sound.volume || 0.6,
     pitch: sound.pitch || 0.7,
-    replace: sound.replace || "",
+    replace: sound.replace || undefined,
   };
 };
 
