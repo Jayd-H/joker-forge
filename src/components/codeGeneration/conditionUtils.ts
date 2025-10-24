@@ -28,6 +28,7 @@ import { generateHandCountConditionCode } from "./Conditions/HandCountCondition"
 import { generateHandLevelConditionCode } from "./Conditions/HandLevelCondition";
 import { generateHandSizeConditionCode } from "./Conditions/HandSizeCondition";
 import { generateInternalVariableConditionCode } from "./Conditions/InternalVariableCondition";
+import { generatePokerHandConditionCode } from "./Conditions/HandTypeCondition";
 
 
 export const generateSingleConditionCode = (
@@ -104,6 +105,8 @@ export const generateSingleConditionCode = (
       return generateHandCountConditionCode([singleConditionRule])
     case "hand_level":
       return generateHandLevelConditionCode([singleConditionRule])
+    case "hand_type":
+      return generatePokerHandConditionCode([singleConditionRule], itemType, joker)
     case "hand_size":
       return generateHandSizeConditionCode([singleConditionRule])
     case "internal_variable":
