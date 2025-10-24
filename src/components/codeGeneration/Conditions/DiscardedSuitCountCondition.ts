@@ -3,16 +3,14 @@ import type { JokerData } from "../../data/BalatroUtils";
 import { generateGameVariableCode } from "../gameVariableUtils";
 import { parseSuitVariable } from "../Jokers/variableUtils";
 
-export const generateCardSuitConditionCode = (
+export const generateDiscardedSuitCountConditionCode = (
   rules: Rule[],
   itemType: string,
   joker?: JokerData,
-):string | null => {
+): string | null => {
   switch(itemType) {
     case "joker":
       return generateJokerCode(rules, joker)
-    case "card":
-      return generateCardCode(rules, )
   }
   return null
 }
@@ -22,14 +20,13 @@ const generateJokerCode = (
   joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const triggerType = rules[0].trigger || "hand_played";
+  const triggerType = rules[0].trigger || "hand_discarded";
 
   const suitType = (condition.params.suit_type as string) || "specific";
   const specificSuit = condition.params.specific_suit;
   const suitGroup = (condition.params.suit_group as string) || null;
   const quantifier = (condition.params.quantifier as string) || "at_least_one";
   const count = generateGameVariableCode(condition.params.count);
-  const scope = (condition.params.card_scope as string) || "scoring";
 
   const suitVarInfo = parseSuitVariable(specificSuit, joker);
 
@@ -67,29 +64,7 @@ const generateJokerCode = (
     }
   }
 
-  if (triggerType === "card_destroyed") {
-    const checkLogic = getSuitsCheckLogic(
-      suits,
-      useVariable,
-      variableCode,
-      "removed_card"
-    );
-    return `(function()
-    for k, removed_card in ipairs(context.removed) do
-        if ${checkLogic} then
-            return true
-        end
-    end
-    return false
-end)()`;
-  }
-
-  if (
-    (triggerType === "card_scored" ||
-      triggerType === "card_held_in_hand" ||
-      triggerType === "card_held_in_hand_end_of_round") &&
-    condition.type === "card_suit"
-  ) {
+  if (triggerType === "card_discarded") {
     const checkLogic = getSuitsCheckLogic(
       suits,
       useVariable,
@@ -99,16 +74,11 @@ end)()`;
     return checkLogic;
   }
 
-  const cardsToCheck =
-    scope === "scoring" && !(triggerType === "card_discarded")
-      ? "context.scoring_hand"
-      : "context.full_hand";
-
   switch (quantifier) {
     case "at_least_one":
       return `(function()
     local suitFound = false
-    for i, c in ipairs(${cardsToCheck}) do
+    for i, c in ipairs(context.full_hand) do
         if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
             suitFound = true
             break
@@ -121,20 +91,20 @@ end)()`;
     case "all":
       return `(function()
     local allMatchSuit = true
-    for i, c in ipairs(${cardsToCheck}) do
+    for i, c in ipairs(context.full_hand) do
         if not (${getSuitsCheckLogic(suits, useVariable, variableCode)}) then
             allMatchSuit = false
             break
         end
     end
     
-    return allMatchSuit and #${cardsToCheck} > 0
+    return allMatchSuit and #context.full_hand > 0
 end)()`;
 
     case "exactly":
       return `(function()
     local suitCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
+    for i, c in ipairs(context.full_hand) do
         if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
             suitCount = suitCount + 1
         end
@@ -146,7 +116,7 @@ end)()`;
     case "at_least":
       return `(function()
     local suitCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
+    for i, c in ipairs(context.full_hand) do
         if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
             suitCount = suitCount + 1
         end
@@ -158,7 +128,7 @@ end)()`;
     case "at_most":
       return `(function()
     local suitCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
+    for i, c in ipairs(context.full_hand) do
         if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
             suitCount = suitCount + 1
         end
@@ -170,7 +140,7 @@ end)()`;
     default:
       return `(function()
     local suitFound = false
-    for i, c in ipairs(${cardsToCheck}) do
+    for i, c in ipairs(context.full_hand) do
         if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
             suitFound = true
             break
@@ -180,33 +150,4 @@ end)()`;
     return suitFound
 end)()`;
   }
-};
-
-const generateCardCode = (
-  rules: Rule[],
-): string | null => {
-  if (rules.length === 0) return "";
-
-  const rule = rules[0];
-  const condition = rule.conditionGroups?.[0]?.conditions?.[0];
-  if (!condition || condition.type !== "card_suit") return "";
-
-  const suitType = (condition.params?.suit_type as string) || "specific";
-  const specificSuit = condition.params?.specific_suit as string;
-  const suitGroup = condition.params?.suit_group as string;
-
-  if (suitType === "specific" && specificSuit) {
-    return `card:is_suit("${specificSuit}")`;
-  } else if (suitType === "group" && suitGroup) {
-    switch (suitGroup) {
-      case "red":
-        return `(card:is_suit("Hearts") or card:is_suit("Diamonds"))`;
-      case "black":
-        return `(card:is_suit("Spades") or card:is_suit("Clubs"))`;
-      default:
-        return "";
-    }
-  }
-
-  return "";
 }

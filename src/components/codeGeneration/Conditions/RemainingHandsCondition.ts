@@ -1,76 +1,34 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
-export const generateConditionCode = (
+export const generateRemainingHandsConditionCode = (
   rules: Rule[],
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-):string | null => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
+): string | null => {
+  if (rules.length === 0) return "";
+
+  const rule = rules[0];
+  const condition = rule.conditionGroups?.[0]?.conditions?.[0];
+  if (!condition || condition.type !== "remaining_hands") return "";
+
+  const operator = condition.params?.operator || "greater_than";
+  const value = condition.params?.value ?? 1;
+
+  const valueCode = generateGameVariableCode(value);
+
+  switch (operator) {
+    case "greater_than":
+      return `G.GAME.current_round.hands_left > ${valueCode}`;
+    case "greater_than_or_equal":
+      return `G.GAME.current_round.hands_left >= ${valueCode}`;
+    case "less_than":
+      return `G.GAME.current_round.hands_left < ${valueCode}`;
+    case "less_than_or_equal":
+      return `G.GAME.current_round.hands_left <= ${valueCode}`;
+    case "equal":
+      return `G.GAME.current_round.hands_left == ${valueCode}`;
+    case "not_equal":
+      return `G.GAME.current_round.hands_left ~= ${valueCode}`;
+    default:
+      return `G.GAME.current_round.hands_left > ${valueCode}`;
   }
-  return null
-}
-
-const generateJokerCode = (
-  rules: Rule[],
-  joker?: JokerData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-    return `${value}`;
-  }
-
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
-
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+};

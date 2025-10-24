@@ -29,6 +29,31 @@ import { generateHandLevelConditionCode } from "./Conditions/HandLevelCondition"
 import { generateHandSizeConditionCode } from "./Conditions/HandSizeCondition";
 import { generateInternalVariableConditionCode } from "./Conditions/InternalVariableCondition";
 import { generatePokerHandConditionCode } from "./Conditions/HandTypeCondition";
+import { generateJokerCountConditionCode } from "./Conditions/JokerCountCondition";
+import { generateJokerFlippedConditionCode } from "./Conditions/JokerFlippedCondition";
+import { generateJokerKeyConditionCode } from "./Conditions/JokerKeyCondition";
+import { generateJokerPositionConditionCode } from "./Conditions/JokerPositionCondition";
+import { generateJokerRarityConditionCode } from "./Conditions/JokerRarityCondition";
+import { generateJokerSelectedConditionCode } from "./Conditions/JokerSelectedCondition";
+import { generateJokerStickerConditionCode } from "./Conditions/JokerStickerCondition";
+import { generateLuckyCardTriggeredConditionCode } from "./Conditions/LuckyCardTriggeredCondition";
+import { generatePlayerMoneyConditionCode } from "./Conditions/PlayerMoneyCondition";
+import { generatePokerHandBeenPlayedConditionCode } from "./Conditions/PokerHandBeenPlayedCondition";
+import { generateProbabilityIdentifierConditionCode } from "./Conditions/ProbabilityIdentifierCondition";
+import { generateProbabilityPartCompareConditionCode } from "./Conditions/ProbabilityPartCompareCondition";
+import { generateProbabilitySucceededConditionCode } from "./Conditions/ProbabilitySucceededCondition";
+import { generateRemainingDiscardsConditionCode } from "./Conditions/RemainingDiscardsCondition";
+import { generateRemainingHandsConditionCode } from "./Conditions/RemainingHandsCondition";
+import { generateSealCountConditionCode } from "./Conditions/SealCountCondition";
+import { generateSystemConditionCode } from "./Conditions/SystemCondition";
+import { generateTriggeredBossBlindConditionCode } from "./Conditions/TriggeredBossBlindCondition";
+import { generateVoucherRedeemedConditionCode } from "./Conditions/VoucherRedeemedCondition";
+import { generateWhichTagConditionCode } from "./Conditions/WhichTagCondition";
+import { generateCardSuitConditionCode } from "./Conditions/CardSuitCondition";
+import { generateDiscardedSuitConditionCode } from "./Jokers/conditions/SuitCardCondition";
+import { generateDiscardedSuitCountConditionCode } from "./Conditions/DiscardedSuitCountCondition";
+import { generateCardRankConditionCode } from "./Conditions/CardRankCondition";
+import { generateDiscardedRankCountConditionCode } from "./Conditions/DiscardedRankCountCondition";
 
 
 export const generateSingleConditionCode = (
@@ -68,7 +93,10 @@ export const generateSingleConditionCode = (
       return generateCardEnhancementConditionCode([singleConditionRule], itemType)
     case "card_index":
       return generateCardIndexConditionCode([singleConditionRule], itemType)
-    // ADD CASE FOR card_rank AND card_suit
+    case "card_suit":
+      return generateCardSuitConditionCode([singleConditionRule], itemType, joker)
+    case "card_rank":
+      return generateCardRankConditionCode([singleConditionRule], itemType, joker)
     case "card_seal":
       return generateCardSealConditionCode([singleConditionRule], itemType)
     case "cards_selected":
@@ -87,6 +115,10 @@ export const generateSingleConditionCode = (
       return generateDeckSizeConditionCode([singleConditionRule])
     case "discarded_card_count":
       return generateDiscardedHandCountConditionCode([singleConditionRule], itemType)
+    case "discarded_suit_count":
+      return generateDiscardedSuitCountConditionCode([singleConditionRule], itemType, joker)
+    case "discarded_rank_count":
+      return generateDiscardedRankCountConditionCode([singleConditionRule], itemType)
     case "edition_count":
       return generateEditionCountConditionCode([singleConditionRule], itemType)
     case "enchancement_count":
@@ -111,6 +143,52 @@ export const generateSingleConditionCode = (
       return generateHandSizeConditionCode([singleConditionRule])
     case "internal_variable":
       return generateInternalVariableConditionCode([singleConditionRule])
+    case "joker_count":
+      return generateJokerCountConditionCode([singleConditionRule])
+    case "joker_flipped":
+      return generateJokerFlippedConditionCode(itemType, "other")
+    case "this_joker_flipped":
+      return generateJokerFlippedConditionCode(itemType, "self")
+    case "joker_specific":
+      return generateJokerKeyConditionCode([singleConditionRule], itemType)
+    case "joker_index":
+      return generateJokerPositionConditionCode([singleConditionRule], itemType, "other")
+    case "this_joker_index":
+      return generateJokerPositionConditionCode([singleConditionRule], itemType, "self")
+    case "joker_rarity":
+      return generateJokerRarityConditionCode([singleConditionRule], itemType)
+    case "joker_selected":
+      return generateJokerSelectedConditionCode([singleConditionRule])
+    case "joker_sticker":
+      return generateJokerStickerConditionCode([singleConditionRule], itemType, "other")
+    case "this_joker_sticker":
+      return generateJokerStickerConditionCode([singleConditionRule], itemType, "self")
+    case "lucky_card_triggered":
+      return generateLuckyCardTriggeredConditionCode()
+    case "player_money":
+      return generatePlayerMoneyConditionCode([singleConditionRule])
+    case "poker_hand_been_played":
+      return generatePokerHandBeenPlayedConditionCode()
+    case "probability_identifier":
+      return generateProbabilityIdentifierConditionCode([singleConditionRule], itemType)
+    case "probability_part_compare":
+      return generateProbabilityPartCompareConditionCode([singleConditionRule])
+    case "probability_succeeded":
+      return generateProbabilitySucceededConditionCode([singleConditionRule])
+    case "remaining_discards":
+      return generateRemainingDiscardsConditionCode([singleConditionRule])
+    case "remaining_hands":
+      return generateRemainingHandsConditionCode([singleConditionRule])
+    case "seal_count":
+      return generateSealCountConditionCode([singleConditionRule], itemType)
+    case "system_condition":
+      return generateSystemConditionCode([singleConditionRule])
+    case "triggered_boss_blind":
+      return generateTriggeredBossBlindConditionCode()
+    case "voucher_redeemed":
+      return generateVoucherRedeemedConditionCode([singleConditionRule])
+    case "which_tag":
+      return generateWhichTagConditionCode([singleConditionRule])
   }
   return null
 }

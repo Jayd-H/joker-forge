@@ -1,76 +1,54 @@
 import type { Rule } from "../../ruleBuilder/types";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import { getAllRarities, getModPrefix } from "../../data/BalatroUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
-export const generateConditionCode = (
+export const generateJokerCountConditionCode = (
   rules: Rule[],
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-):string | null => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(rules, joker)
-    case "consumable":
-      return generateConsumableCode(rules, consumable)
-    case "card":
-      return generateCardCode(rules, card)
-    case "voucher":
-      return generateVoucherCode(rules, voucher)
-    case "deck":
-      return generateDeckCode(rules, deck)
-  }
-  return null
-}
-
-const generateJokerCode = (
-  rules: Rule[],
-  joker?: JokerData
 ): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-    return `${value}`;
-  }
-
-const generateConsumableCode = (
-  rules: Rule[],
-  consumable?: ConsumableData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-   return `${value}`;
-}
-
-const generateCardCode = (
-  rules: Rule[],
-  card?: EditionData | EnhancementData | SealData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateVoucherCode = (
-  rules: Rule[],
-  voucher?: VoucherData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
-
-const generateDeckCode = (
-  rules: Rule[],
-  deck?: DeckData
-): string | null => {
-  const condition = rules[0].conditionGroups[0].conditions[0];
-  const value = condition.params.value as string || "0";
-
-  return `${value}`;
-}
+   const condition = rules[0].conditionGroups[0].conditions[0];
+   const operator = (condition.params.operator as string) || "equals";
+   const rarity = (condition.params.rarity as string) || "any";
+   const value = generateGameVariableCode(condition.params.value);
+ 
+   let comparison = "";
+   switch (operator) {
+     case "equals":
+       comparison = `== ${value}`;
+       break;
+     case "not_equals":
+       comparison = `~= ${value}`;
+       break;
+     case "greater_than":
+       comparison = `> ${value}`;
+       break;
+     case "less_than":
+       comparison = `< ${value}`;
+       break;
+     case "greater_equals":
+       comparison = `>= ${value}`;
+       break;
+     case "less_equals":
+       comparison = `<= ${value}`;
+       break;
+     default:
+       comparison = `== ${value}`;
+   }
+ 
+   if (rarity === "any") {
+     return `#G.jokers.cards ${comparison}`;
+   }
+ 
+   const rarityData = getAllRarities().find((r) => r.key === rarity);
+   const modPrefix = getModPrefix();
+   const rarityValue = rarityData?.isCustom ? `"${modPrefix}_${rarity}"`: rarityData?.value;
+ 
+   return `(function()
+     local count = 0
+     for _, joker_owned in pairs(G.jokers.cards or {}) do
+         if joker_owned.config.center.rarity == ${rarityValue} then
+             count = count + 1
+         end
+     end
+     return count ${comparison}
+ end)()`
+ };
