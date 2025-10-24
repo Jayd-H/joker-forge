@@ -50,7 +50,6 @@ import { generateTriggeredBossBlindConditionCode } from "./Conditions/TriggeredB
 import { generateVoucherRedeemedConditionCode } from "./Conditions/VoucherRedeemedCondition";
 import { generateWhichTagConditionCode } from "./Conditions/WhichTagCondition";
 import { generateCardSuitConditionCode } from "./Conditions/CardSuitCondition";
-import { generateDiscardedSuitConditionCode } from "./Jokers/conditions/SuitCardCondition";
 import { generateDiscardedSuitCountConditionCode } from "./Conditions/DiscardedSuitCountCondition";
 import { generateCardRankConditionCode } from "./Conditions/CardRankCondition";
 import { generateDiscardedRankCountConditionCode } from "./Conditions/DiscardedRankCountCondition";
@@ -61,10 +60,6 @@ export const generateSingleConditionCode = (
   rule: Rule,
   itemType: string,
   joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): string | null => {
   const singleConditionRule = {
     ...rule,
