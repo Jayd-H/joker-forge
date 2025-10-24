@@ -1,4 +1,4 @@
-import { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../data/BalatroUtils";
+import { JokerData, } from "../data/BalatroUtils";
 import { Condition, Rule } from "../ruleBuilder";
 import { generateAnteLevelConditionCode } from "./Conditions/AnteLevelCondition";
 import { generateBlindNameConditionCode } from "./Conditions/BlindNameCondition";
