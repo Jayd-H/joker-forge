@@ -313,6 +313,7 @@ export interface DeckData extends GameObjectData{
 interface RegistryState {
   customRarities: RarityData[];
   consumableSets: ConsumableSetData[];
+  sounds: SoundData[],
   consumables: ConsumableData[];
   boosters: BoosterData[];
   enhancements: EnhancementData[];
@@ -326,6 +327,7 @@ interface RegistryState {
 let registryState: RegistryState = {
   customRarities: [],
   consumableSets: [],
+  sounds: [],
   consumables: [],
   boosters: [],
   enhancements: [],
@@ -385,7 +387,7 @@ const VANILLA_VOUCHERS = [
 ];
 
 
-const VANILLA_DECKS = [
+export const VANILLA_DECKS = [
   {key: "Red Deck", value: "Red Deck", label: "Red Deck" },
   {key: "Blue Deck", value: "Blue Deck", label: "Blue Deck" },
   {key: "Yellow Deck", value: "Yellow Deck", label: "Yellow Deck" },
@@ -413,6 +415,7 @@ export const DataRegistry = {
   update: (
     customRarities: RarityData[],
     consumableSets: ConsumableSetData[],
+    sounds: SoundData[],
     consumables: ConsumableData[],
     boosters: BoosterData[],
     enhancements: EnhancementData[],
@@ -425,6 +428,7 @@ export const DataRegistry = {
     registryState = {
       customRarities,
       consumableSets,
+      sounds,
       consumables,
       boosters,
       enhancements,
@@ -455,6 +459,14 @@ export const DataRegistry = {
       key: set.key,
     }));
     return [...VANILLA_CONSUMABLE_SETS, ...custom];
+  },
+
+getSounds: (): Array<{ key: string; label: string }> => {
+    const custom = registryState.sounds.map((sound) => ({
+      key: sound.key,
+      label: sound.key,
+    }));
+    return [...VANILLA_SOUNDS, ...custom];
   },
 
   getConsumables: (): Array<{ value: string; label: string; set: string }> => {
@@ -581,6 +593,7 @@ export const getModPrefix = () => {
 export const updateDataRegistry = (
   customRarities: RarityData[],
   consumableSets: ConsumableSetData[],
+  sounds: SoundData[],
   consumables: ConsumableData[],
   boosters: BoosterData[],
   enhancements: EnhancementData[],
@@ -593,6 +606,7 @@ export const updateDataRegistry = (
   DataRegistry.update(
     customRarities,
     consumableSets,
+    sounds,
     consumables,
     boosters,
     enhancements,
@@ -917,6 +931,184 @@ export const isCustomBooster = (
         }` === key
     )
   );
+};
+
+// =============================================================================
+// SOUNDS SECTION
+// =============================================================================
+
+export const SOUNDS = () => DataRegistry.getSounds();
+export const SOUNDS_KEYS = () => SOUNDS().map((sound) => sound.key);
+export const SOUNDS_LABELS = () => SOUNDS().map((sound) => sound.label);
+
+const VANILLA_SOUNDS = [
+  { key: "ambientFire1", label: "AmbientFire" },
+  { key: "ambientFire2", label: "AmbientFire 2" },
+  { key: "ambientFire3", label: "AmbientFire 3" },
+  { key: "ambientOrgan1", label: "AmbientOrgan" },
+  { key: "button", label: "Button" },
+  { key: "cancel", label: "Cancel" },
+  { key: "card1", label: "Card" },
+  { key: "card3", label: "Card 3" },
+  { key: "cardFan2", label: "Card Fan 2" },
+  { key: "cardSlide1", label: "Card Slide" },
+  { key: "cardSlide2", label: "Card Slide 2" },
+  { key: "chips1", label: "Chips" },
+  { key: "chips2", label: "Chips 2" },
+  { key: "coin1", label: "Coin" },
+  { key: "coin2", label: "Coin 2" },
+  { key: "coin3", label: "Coin 3" },
+  { key: "coin4", label: "Coin 4" },
+  { key: "coin5", label: "Coin 5" },
+  { key: "coin6", label: "Coin 6" },
+  { key: "coin7", label: "Coin 7" },
+  { key: "crumple1", label: "Crumple" },
+  { key: "crumple2", label: "Crumple 2" },
+  { key: "crumple3", label: "Crumple 3" },
+  { key: "crumple4", label: "Crumple 4" },
+  { key: "crumple5", label: "Crumple 5" },
+  { key: "crumpleLong1", label: "Crumple Long" },
+  { key: "crumpleLong2", label: "Crumple Long 2" },
+  { key: "explosion1", label: "Explosion" },
+  { key: "explosion_buildup1", label: "Explosion Buildup" },
+  { key: "explosion_release1", label: "Explosion Release" },
+  { key: "foil1", label: "Foil" },
+  { key: "foil2", label: "Foil 2" },
+  { key: "generic1", label: "Generic" },
+  { key: "glass1", label: "Glass" },
+  { key: "glass2", label: "Glass 2" },
+  { key: "glass3", label: "Glass 3" },
+  { key: "glass4", label: "Glass 4" },
+  { key: "glass5", label: "Glass 5" },
+  { key: "glass6", label: "Glass 6" },
+  { key: "gold_seal", label: "Gold Seal" },
+  { key: "gong", label: "Gong" },
+  { key: "highlight1", label: "Highlight" },
+  { key: "highlight2", label: "Highlight 2" },
+  { key: "holo1", label: "Holo" },
+  { key: "introPad1", label: "Intro Pad" },
+  { key: "magic_crumple", label: "Magic Crumple" },
+  { key: "magic_crumple2", label: "Magic Crumple 2" },
+  { key: "magic_crumple3", label: "Magic Crumple 3" },
+  { key: "multhit1", label: "Mult" },
+  { key: "multhit2", label: "Mult 2" },
+  { key: "music1", label: "Music (Menu Music)" },
+  { key: "music2", label: "Music 2 (Arcana Pack Music)" },
+  { key: "music3", label: "Music 3 (Celestial Pack Music)" },
+  { key: "music4", label: "Music 4 (Shop Music)" },
+  { key: "music5", label: "Music 5 (Boss Blind Music)" },
+  { key: "negative", label: "Negative" },
+  { key: "other1", label: "Other" },
+  { key: "paper1", label: "Paper" },
+  { key: "polychrome1", label: "Polychrome" },
+  { key: "slice1", label: "Slice" },
+  { key: "splash_buildup", label: "Splash Buildup" },
+  { key: "tarot1", label: "Tarot" },
+  { key: "tarot2", label: "Tarot 2" },
+  { key: "timpani", label: "Timpani" },
+  { key: "voice1", label: "Voice" },
+  { key: "voice2", label: "Voice 2" },
+  { key: "voice3", label: "Voice 3" },
+  { key: "voice4", label: "Voice 4" },
+  { key: "voice5", label: "Voice 5" },
+  { key: "voice6", label: "Voice 6" },
+  { key: "voice7", label: "Voice 7" },
+  { key: "voice8", label: "Voice 8" },
+  { key: "voice9", label: "Voice 9" },
+  { key: "voice10", label: "Voice 10" },
+  { key: "voice11", label: "Voice 11" },
+  { key: "whoosh", label: "Whoosh" },
+  { key: "whoosh1", label: "Whoosh 1" },
+  { key: "whoosh2", label: "Whoosh 2" },
+  { key: "whoosh_long", label: "Whoosh Long" },
+  { key: "win", label: "Win" },
+];
+
+type VanillaSound = {
+  key: string;
+  label: string;
+  isCustom: false;
+};
+
+type CustomSoundOption = {
+  key: string;
+  label: string;
+  isCustom: true;
+  customData: SoundData;
+};
+
+type SoundOption = VanillaSound | CustomSoundOption;
+
+export const getAllSounds = (
+  sounds: SoundData[] = registryState.sounds
+): SoundOption[] => {
+  const vanillaSounds: VanillaSound[] = VANILLA_SOUNDS.map(
+    (sound) => ({
+      key: sound.key,
+      label: sound.key,
+      isCustom: false,
+    })
+  );
+
+  const customSoundOptions: CustomSoundOption[] = sounds.map(
+    (sound) => ({
+      key: sound.key,
+      label: sound.key,
+      isCustom: true,
+      customData: sound,
+    })
+  );
+
+  return [...vanillaSounds, ...customSoundOptions];
+};
+
+export const getSoundByKey = (
+  key: string,
+  sounds: SoundData[] = registryState.sounds
+): SoundOption | undefined => {
+  const allCustomSounds = getAllSounds(sounds);
+  return allCustomSounds.find((sound) => sound.key === key);
+};
+
+export const getSoundDisplayName = (
+  key: string,
+  sounds: SoundData[] = registryState.sounds
+): string => {
+  const sound = getSoundByKey(key, sounds);
+  return sound?.label || "Unknown";
+};
+
+export const isCustomSound = (
+  key: string,
+  sounds: SoundData[] = registryState.sounds,
+  modPrefix: string = registryState.modPrefix
+): boolean => {
+  if (typeof key === "string") {
+    return (
+      key.includes("_") &&
+      sounds.some((sound) => `${modPrefix}_${sound.key}` === key)
+    );
+  }
+  return false;
+};
+
+export const getCustomSoundData = (
+  key: string,
+  sounds: SoundData[] = registryState.sounds
+): SoundData | null => {
+  const sound = getSoundByKey(key, sounds);
+  return sound?.isCustom ? sound.customData : null;
+};
+
+export const getSoundDropdownOptions = (
+  sounds: SoundData[] = registryState.sounds
+) => {
+  return getAllSounds(sounds).map((sound) => ({
+    key: sound.key.toString(),
+    label: sound.label,
+    isCustom: sound.isCustom,
+    customData: sound,
+  }));
 };
 
 // =============================================================================
@@ -1692,96 +1884,6 @@ export const CONSUMABLE_TYPE_VALUES = CONSUMABLE_TYPES.map(
 );
 export const CONSUMABLE_TYPE_LABELS = CONSUMABLE_TYPES.map(
   (type) => type.label
-);
-
-export const VANILLA_SOUNDS = [
-  { value: "ambientFire1", label: "AmbientFire" },
-  { value: "ambientFire2", label: "AmbientFire 2" },
-  { value: "ambientFire3", label: "AmbientFire 3" },
-  { value: "ambientOrgan1", label: "AmbientOrgan" },
-  { value: "button", label: "Button" },
-  { value: "cancel", label: "Cancel" },
-  { value: "card1", label: "Card" },
-  { value: "card3", label: "Card 3" },
-  { value: "cardFan2", label: "Card Fan 2" },
-  { value: "cardSlide1", label: "Card Slide" },
-  { value: "cardSlide2", label: "Card Slide 2" },
-  { value: "chips1", label: "Chips" },
-  { value: "chips2", label: "Chips 2" },
-  { value: "coin1", label: "Coin" },
-  { value: "coin2", label: "Coin 2" },
-  { value: "coin3", label: "Coin 3" },
-  { value: "coin4", label: "Coin 4" },
-  { value: "coin5", label: "Coin 5" },
-  { value: "coin6", label: "Coin 6" },
-  { value: "coin7", label: "Coin 7" },
-  { value: "crumple1", label: "Crumple" },
-  { value: "crumple2", label: "Crumple 2" },
-  { value: "crumple3", label: "Crumple 3" },
-  { value: "crumple4", label: "Crumple 4" },
-  { value: "crumple5", label: "Crumple 5" },
-  { value: "crumpleLong1", label: "Crumple Long" },
-  { value: "crumpleLong2", label: "Crumple Long 2" },
-  { value: "explosion1", label: "Explosion" },
-  { value: "explosion_buildup1", label: "Explosion Buildup" },
-  { value: "explosion_release1", label: "Explosion Release" },
-  { value: "foil1", label: "Foil" },
-  { value: "foil2", label: "Foil 2" },
-  { value: "generic1", label: "Generic" },
-  { value: "glass1", label: "Glass" },
-  { value: "glass2", label: "Glass 2" },
-  { value: "glass3", label: "Glass 3" },
-  { value: "glass4", label: "Glass 4" },
-  { value: "glass5", label: "Glass 5" },
-  { value: "glass6", label: "Glass 6" },
-  { value: "gold_seal", label: "Gold Seal" },
-  { value: "gong", label: "Gong" },
-  { value: "highlight1", label: "Highlight" },
-  { value: "highlight2", label: "Highlight 2" },
-  { value: "holo1", label: "Holo" },
-  { value: "introPad1", label: "Intro Pad" },
-  { value: "magic_crumple", label: "Magic Crumple" },
-  { value: "magic_crumple2", label: "Magic Crumple 2" },
-  { value: "magic_crumple3", label: "Magic Crumple 3" },
-  { value: "multhit1", label: "Mult" },
-  { value: "multhit2", label: "Mult 2" },
-  { value: "music1", label: "Music (Menu Music)" },
-  { value: "music2", label: "Music 2 (Arcana Pack Music)" },
-  { value: "music3", label: "Music 3 (Celestial  Pack Music)"},
-  { value: "music4", label: "Music 4 (Shop Music)" },
-  { value: "music5", label: "Music 5 (Boss Blind Music)" },
-  { value: "negative", label: "Negative" },
-  { value: "other1", label: "Other" },
-  { value: "paper1", label: "Paper" },
-  { value: "polychrome1", label: "Polychrome" },
-  { value: "slice1", label: "Slice" },
-  { value: "splash_buildup", label: "Splash Buildup" },
-  { value: "tarot1", label: "Tarot" },
-  { value: "tarot2", label: "Tarot 2" },
-  { value: "timpani", label: "Timpani" },
-  { value: "voice1", label: "Voice" },
-  { value: "voice2", label: "Voice 2" },
-  { value: "voice3", label: "Voice 3" },
-  { value: "voice4", label: "Voice 4" },
-  { value: "voice5", label: "Voice 5" },
-  { value: "voice6", label: "Voice 6" },
-  { value: "voice7", label: "Voice 7" },
-  { value: "voice8", label: "Voice 8" },
-  { value: "voice9", label: "Voice 9" },
-  { value: "voice10", label: "Voice 10" },
-  { value: "voice11", label: "Voice 11" },
-  { value: "whoosh", label: "Whoosh" },
-  { value: "whoosh1", label: "Whoosh 1" },
-  { value: "whoosh2", label: "Whoosh 2" },
-  { value: "whoosh_long", label: "Whoosh Long" },
-  { value: "win", label: "Win" },
-] as const;
-
-export const VANILLA_SOUNDS_TYPE_VALUES = VANILLA_SOUNDS.map(
-  (sound) => sound.value
-);
-export const VANILLA_SOUNDS_TYPE_LABELS = VANILLA_SOUNDS.map(
-  (sound) => sound.label
 );
 
 // Comparison Operators
