@@ -463,7 +463,7 @@ export const DataRegistry = {
 
  getSounds: (): Array<{ key: string; label: string }> => {
     const custom = registryState.sounds.map((sound) => ({
-      key: sound.key,
+      key: `${registryState.modPrefix}_${sound.key}`,
       label: sound.key,
     }));
     return [...VANILLA_SOUNDS, ...custom];

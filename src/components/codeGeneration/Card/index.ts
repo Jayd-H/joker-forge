@@ -1040,18 +1040,9 @@ const generateSingleSealCode = (
     no_collection = ${seal.no_collection},`;
   }
 
-  if (seal.sound && seal.sound !== "gold_seal") {
+  if (seal.sound !== "gold_seal") {
     sealCode += `
-    sound = { sound = ${(() => {
-      if (typeof seal.sound === "string") {
-        const prefixedSound = modPrefix
-          ? `${modPrefix}_${seal.sound}`
-          : seal.sound;
-        return `"${prefixedSound}"`;
-      } else {
-        return seal.sound;
-      }
-    })()}, per = 1.2, vol = 0.4 },`;
+    sound = { sound = "${seal.sound}", per = 1.2, vol = 0.4 },`;
   }
 
   const locVarsCode = generateLocVarsFunction(
@@ -1232,16 +1223,7 @@ export const generateSingleEditionCode = (
 
   if (edition.sound && edition.sound !== "foil1") {
     editionCode += `
-    sound = { sound = ${(() => {
-      if (typeof edition.sound === "string") {
-        const prefixedSound = modPrefix
-          ? `${modPrefix}_${edition.sound}`
-          : edition.sound;
-        return `"${prefixedSound}"`;
-      } else {
-        return edition.sound;
-      }
-    })()}, per = 1.2, vol = 0.4 },`;
+    sound = { sound = "${edition.sound}", per = 1.2, vol = 0.4 },`;
   }
 
   if (edition.disable_shadow !== undefined) {
