@@ -27,7 +27,7 @@ import {
   BOSS_BLINDS,
   TAGS,
   VOUCHERS,
-  VANILLA_DECKS,
+  DECKS,
   SOUNDS,
 } from "../data/BalatroUtils";
 
@@ -182,7 +182,7 @@ const SECTIONS = {
   decks: {
     title: "Decks",
     icon: ClipboardIcon,
-    items: VANILLA_DECKS,
+    items: DECKS(),
     color: "text-balatro-brown",
   },
   sounds: {

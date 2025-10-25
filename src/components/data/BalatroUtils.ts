@@ -461,7 +461,7 @@ export const DataRegistry = {
     return [...VANILLA_CONSUMABLE_SETS, ...custom];
   },
 
-getSounds: (): Array<{ key: string; label: string }> => {
+ getSounds: (): Array<{ key: string; label: string }> => {
     const custom = registryState.sounds.map((sound) => ({
       key: sound.key,
       label: sound.key,
@@ -1106,8 +1106,6 @@ export const getSoundDropdownOptions = (
   return getAllSounds(sounds).map((sound) => ({
     key: sound.key.toString(),
     label: sound.label,
-    isCustom: sound.isCustom,
-    customData: sound,
   }));
 };
 

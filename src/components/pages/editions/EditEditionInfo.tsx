@@ -750,7 +750,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                               onChange={(e) =>
                                 setFormData((prev) => ({
                                   ...prev,
-                                  key: e.target.value,
+                                  sound: e.target.value,
                                 }))
                               }
                               className="w-full bg-black-darker border border-black-lighter rounded-lg px-3 py-2 text-white-light focus:outline-none focus:border-mint transition-colors text-sm"
