@@ -1,31 +1,20 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import type { ConsumableData, EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 
-export const generateEffectCode = (
+export const generateDisableBossBlindReturn = (
   effect: Effect,
   itemType: string,
+  triggerType: string,
   joker?: JokerData,
   consumable?: ConsumableData,
   card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerCode(effect, triggerType, joker)
     case "consumable":
       return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
 
     default:
       return {
@@ -37,94 +26,76 @@ export const generateEffectCode = (
 
 const generateJokerCode = (
   effect: Effect,
-  sameTypeCount: number = 0,
+  triggerType: string,
   joker?: JokerData
 ): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+const customMessage = effect.customMessage;
 
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
+  const scoringTriggers = ["hand_played", "card_scored"];
+  const isScoring = scoringTriggers.includes(triggerType);
+
+  const disableCode = `
+            if G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.disabled then
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        G.GAME.blind:disable()
+                        play_sound('timpani')
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+                  customMessage
+                    ? `"${customMessage}"`
+                    : `localize('ph_boss_disabled')`
+                }, colour = G.C.GREEN})
+            end`;
+
+  if (isScoring) {
+    return {
+      statement: `__PRE_RETURN_CODE__${disableCode}
+                __PRE_RETURN_CODE_END__`,
+      colour: "G.C.GREEN",
+    };
+  } else {
+    return {
+      statement: `func = function()${disableCode}
+                    return true
+                end`,
+      colour: "G.C.GREEN",
+    };
+  }
 };
 
 const generateConsumableCode = (
   effect: Effect,
   consumable?: ConsumableData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value);
+  const disableCode = `
+            if G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.disabled then
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        G.GAME.blind:disable()
+                        play_sound('timpani')
+                        return true
+                    end
+                }))
+                card_eval_status_text(card, 'extra', nil, nil, nil, {message = ${
+                  customMessage
+                    ? `"${customMessage}"`
+                    : `localize('ph_boss_disabled')`
+                }, colour = G.C.GREEN})
+            end`;
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  const result: EffectReturn = {
+    statement: disableCode,
+    colour: "G.C.SECONDARY_SET.Tarot",
+  };
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  if (customMessage) {
+    result.message = `"${customMessage}"`;
+  }
 
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  return result;
+};

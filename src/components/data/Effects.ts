@@ -7,6 +7,7 @@ import {
   PencilSquareIcon,
   CakeIcon,
   VariableIcon,
+  CursorArrowRaysIcon,
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "./Triggers";
 import { GlobalEffectTypeDefinition } from "../ruleBuilder/types";
@@ -14,6 +15,10 @@ import { CONSUMABLE_SETS, CUSTOM_CONSUMABLES, EDITIONS, ENHANCEMENTS, PLANET_CAR
 import { GENERIC_TRIGGERS,ALL_OBJECTS } from "./Conditions";
 
 export const EFFECT_CATEGORIES: CategoryDefinition[] = [
+  {
+    label: "Selected Cards",
+    icon: CursorArrowRaysIcon,
+  },
   {
     label: "Scoring",
     icon: ChartBarIcon,
@@ -31,7 +36,7 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
     icon: CakeIcon,
   },
   {
-    label: "Joker",
+    label: "Jokers",
     icon: RectangleStackIcon,
   },
   {
@@ -2257,7 +2262,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         }
       },
     ],
-    category: "Card Modification",
+    category: "Card Effects",
   },
   {
     id: "convert_all_cards_to_rank",
@@ -2288,7 +2293,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         }
       },     
     ],
-    category: "Card Modification",
+    category: "Card Effects",
   },
   {
     id: "convert_left_to_right",

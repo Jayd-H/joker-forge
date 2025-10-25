@@ -21,8 +21,16 @@ import { generateAddMultEffectCode } from "./Effects/AddMultEffect";
 import { generateApplyXMultEffectCode } from "./Effects/ApplyXMultEffect";
 import { generateApplyExpMultEffectCode } from "./Effects/ApplyExpMultEffect";
 import { generateApplyHyperMultEffectCode } from "./Effects/ApplyHyperMultEffect";
+import { generateDrawCardsReturn } from "./Effects/DrawCardsEffect";
 import { generateBalanceChipsAndMultEffectCode } from "./Effects/BalanceChipsAndMultEffect";
 import { generateSwapChipsAndMultEffectCode } from "./Effects/SwapChipsAndMultEffect";
+import { generateShowMessageReturn } from "./Effects/ShowMessageEffect";
+import { generateDisableBossBlindReturn } from "./Effects/DisableBossBlindEffect";
+import { generateEmitFlagReturn } from "./Effects/EmitFlagEffect";
+import { generatePlaySoundReturn } from "./Effects/PlaySoundEffect";
+import { generateWinBlindReturn } from "./Effects/WinBlindEffect";
+import { generateCrashGameReturn } from "./Effects/CrashGameEffect";
+import { generateEditApperanceReturn } from "./Effects/EditCardAppearanceEffect";
 import { generateChangeJokerVariableEffectCode } from "./Effects/ChangeJokerVariableEffect";
 import { generateChangePokerHandVariableEffectCode } from "./Effects/ChangePokerHandVariableEffect";
 import { generateChangeSuitVariableEffectCode } from "./Effects/ChangeSuitVariableEffect";
@@ -113,10 +121,16 @@ export const generateSingleEffect = (
       return generateApplyExpMultEffectCode(effect, itemType, sameTypeCount)
     case "apply_hyper_mult":
       return generateApplyHyperMultEffectCode(effect, itemType, sameTypeCount)
+    case "draw_cards":
+      return generateDrawCardsReturn(effect, itemType);
     case "balance_chips_mult":
       return generateBalanceChipsAndMultEffectCode(effect)
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
+    case "show_message":
+      return generateShowMessageReturn(effect, itemType);
+    case "disable_boss_blind":
+      return generateDisableBossBlindReturn(effect, itemType, triggerType);
     case "change_joker_variable":
       return generateChangeJokerVariableEffectCode(effect)
     case "change_pokerhand_variable":
@@ -132,6 +146,16 @@ export const generateSingleEffect = (
       return generateConvertAllCardsToSuitEffectCode(effect, itemType)
     case "convert_left_to_right":
       return generateConvertLeftToRightEffectCode(effect, itemType)
+    case "emit_flag":
+      return generateEmitFlagReturn(effect, modprefix);
+    case "play_sound":
+      return generatePlaySoundReturn(effect, itemType)
+    case "win_blind":
+      return generateWinBlindReturn(effect, itemType)
+    case "edit_card_apperance":
+      return generateEditApperanceReturn(effect, itemType);
+    case "crash_game":
+      return generateCrashGameReturn(effect);
 
     default:
       return {
