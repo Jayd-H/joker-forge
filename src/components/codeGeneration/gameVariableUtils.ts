@@ -66,7 +66,7 @@ export const parseRangeVariable = (value: unknown): ParsedRangeVariable => {
 
 export const generateGameVariableCode = (
   value: unknown,
-  itemType: "seal" | "enhancement" | "hook" | "edition" = "enhancement"
+  itemType: string
 ): string => {
   const parsed = parseGameVariable(value);
 
@@ -108,7 +108,7 @@ export const generateConfigVariables = (
   effectValue: unknown,
   effectId: string,
   variableName: string,
-  itemType: "enhancement" | "seal" | "hook" | "edition" = "enhancement"
+  itemType: string
 ): ConfigVariablesReturn => {
   effectValue = effectValue ?? 1;
   const parsed = parseGameVariable(effectValue);
