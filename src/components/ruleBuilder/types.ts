@@ -94,7 +94,7 @@ export interface ConditionParameter {
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: ("number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context")[];
-  exemptObjects?: Array<"joker" | "consumable" | "card" | "voucher" | "deck">
+  exemptObjects?: string[]
 }
 
 // Interface for condition type definitions
@@ -105,7 +105,6 @@ export interface ConditionTypeDefinition {
   params: ConditionParameter[];
   applicableTriggers?: string[];
   category: string;
-  
 }
 
 export interface GlobalConditionTypeDefinition {
@@ -141,6 +140,7 @@ export interface EffectParameter {
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: Array <"number" | "suit" | "rank" | "pokerhand" | "joker" | "joker_context">;
+  exemptObjects?: string[]
 }
 
 // Interface for effect type definitions
