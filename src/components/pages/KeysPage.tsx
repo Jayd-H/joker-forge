@@ -27,8 +27,8 @@ import {
   BOSS_BLINDS,
   TAGS,
   VOUCHERS,
-  DECKS,
-  VANILLA_SOUNDS,
+  VANILLA_DECKS,
+  SOUNDS,
 } from "../data/BalatroUtils";
 
 interface KeyItemProps {
@@ -182,13 +182,16 @@ const SECTIONS = {
   decks: {
     title: "Decks",
     icon: ClipboardIcon,
-    items: DECKS(),
+    items: VANILLA_DECKS,
     color: "text-balatro-brown",
   },
   sounds: {
     title: "Sounds",
     icon: MusicalNoteIcon,
-    items: VANILLA_SOUNDS.map((sound) => ({ key: sound.value, label: sound.label })),
+    items: SOUNDS().map((sound) => ({
+      key: sound.key,
+      label: sound.label,
+    })),
     color: "text-balatro-gold",
   },
 };
