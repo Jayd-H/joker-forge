@@ -387,7 +387,7 @@ const VANILLA_VOUCHERS = [
 ];
 
 
-export const VANILLA_DECKS = [
+const VANILLA_DECKS = [
   {key: "Red Deck", value: "Red Deck", label: "Red Deck" },
   {key: "Blue Deck", value: "Blue Deck", label: "Blue Deck" },
   {key: "Yellow Deck", value: "Yellow Deck", label: "Yellow Deck" },
