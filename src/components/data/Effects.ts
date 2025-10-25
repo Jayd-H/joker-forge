@@ -2228,6 +2228,77 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     params: [],
     category: "Scoring",
   },
+  {
+    id: "convert_all_cards_to_suit",
+    label: "Convert All Cards to Suit",
+    description: "Convert all cards in hand to a specific suit",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used", "held_hand"],
+    params: [
+      {
+        id: "suit",
+        type: "select",
+        label: "Target Suit",
+        options: [
+          ...SUITS, 
+          { value: "random", label: "Random Suit" },
+          { value: "pool", label: "Random from Pool" }
+        ],
+        default: "Hearts",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
+      },
+    ],
+    category: "Card Modification",
+  },
+  {
+    id: "convert_all_cards_to_rank",
+    label: "Convert All Cards to Rank",
+    description: "Convert all cards in hand to a specific rank",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used", "held_hand"],
+    params: [
+      {
+        id: "rank",
+        type: "select",
+        label: "Target Rank",
+        options: [
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          { value: "random", label: "Random Rank" },
+          { value: "pool", label: "Random from Pool" },
+        ],
+        default: "Ace",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
+      },     
+    ],
+    category: "Card Modification",
+  },
+  {
+    id: "convert_left_to_right",
+    label: "Convert Left to Right",
+    description: "Convert all selected cards to match the rightmost selected card (like Death tarot)",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used"],
+    params: [],
+    category: "Selected Cards",
+  },
 ]
 
 export function getEffectTypeById(

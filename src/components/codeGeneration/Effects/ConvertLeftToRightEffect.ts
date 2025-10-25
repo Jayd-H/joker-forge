@@ -1,31 +1,13 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateConvertLeftToRightEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
   switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+      return generateConsumableCode(effect)
 
     default:
       return {
@@ -35,96 +17,86 @@ export const generateEffectCode = (
   }
 }
 
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
-
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
-
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value);
+  const convertLeftToRightCode = `
+            __PRE_RETURN_CODE__
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    play_sound('tarot1')
+                    used_card:juice_up(0.3, 0.5)
+                    return true
+                end
+            }))
+            for i = 1, #G.hand.highlighted do
+                local percent = 1.15 - (i - 0.999) / (#G.hand.highlighted - 0.998) * 0.3
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.15,
+                    func = function()
+                        G.hand.highlighted[i]:flip()
+                        play_sound('card1', percent)
+                        G.hand.highlighted[i]:juice_up(0.3, 0.3)
+                        return true
+                    end
+                }))
+            end
+            delay(0.2)
+            local rightmost = G.hand.highlighted[1]
+            for i = 1, #G.hand.highlighted do
+                if G.hand.highlighted[i].T.x > rightmost.T.x then
+                    rightmost = G.hand.highlighted[i]
+                end
+            end
+            for i = 1, #G.hand.highlighted do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()
+                        if G.hand.highlighted[i] ~= rightmost then
+                            copy_card(rightmost, G.hand.highlighted[i])
+                        end
+                        return true
+                    end
+                }))
+            end
+            for i = 1, #G.hand.highlighted do
+                local percent = 0.85 + (i - 0.999) / (#G.hand.highlighted - 0.998) * 0.3
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.15,
+                    func = function()
+                        G.hand.highlighted[i]:flip()
+                        play_sound('tarot2', percent, 0.6)
+                        G.hand.highlighted[i]:juice_up(0.3, 0.3)
+                        return true
+                    end
+                }))
+            end
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.2,
+                func = function()
+                    G.hand:unhighlight_all()
+                    return true
+                end
+            }))
+            delay(0.5)
+            __PRE_RETURN_CODE_END__`;
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  const result: EffectReturn = {
+    statement: convertLeftToRightCode,
+    colour: "G.C.SECONDARY_SET.Tarot",
+  };
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  if (customMessage) {
+    result.message = `"${customMessage}"`;
+  }
 
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return result;
 }

@@ -23,6 +23,13 @@ import { generateApplyExpMultEffectCode } from "./Effects/ApplyExpMultEffect";
 import { generateApplyHyperMultEffectCode } from "./Effects/ApplyHyperMultEffect";
 import { generateBalanceChipsAndMultEffectCode } from "./Effects/BalanceChipsAndMultEffect";
 import { generateSwapChipsAndMultEffectCode } from "./Effects/SwapChipsAndMultEffect";
+import { generateChangeJokerVariableEffectCode } from "./Effects/ChangeJokerVariableEffect";
+import { generateChangePokerHandVariableEffectCode } from "./Effects/ChangePokerHandVariableEffect";
+import { generateChangeSuitVariableEffectCode } from "./Effects/ChangeSuitVariableEffect";
+import { generateChangeRankVariableEffectCode } from "./Effects/ChangeRankVariableEffect";
+import { generateConvertAllCardToRankEffectCode } from "./Effects/ConvertAllCardsToRankEffect";
+import { generateConvertAllCardsToSuitEffectCode } from "./Effects/ConvertAllCardsToSuitEffect";
+import { generateConvertLeftToRightEffectCode } from "./Effects/ConvertLeftToRightEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -110,6 +117,21 @@ export const generateSingleEffect = (
       return generateBalanceChipsAndMultEffectCode(effect)
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
+    case "change_joker_variable":
+      return generateChangeJokerVariableEffectCode(effect)
+    case "change_pokerhand_variable":
+      return generateChangePokerHandVariableEffectCode(effect)
+    case "change_suit_variable":
+      return generateChangeSuitVariableEffectCode(effect)
+    case "change_rank_variable":
+      return generateChangeRankVariableEffectCode(effect)
+    // ADD CASES FOR COMBINE RANKS/SUITS & CONSIDERED AS EFFECTS
+    case "convert_all_cards_to_rank":
+      return generateConvertAllCardToRankEffectCode(effect, itemType)
+    case "convert_all_cards_to_suit":
+      return generateConvertAllCardsToSuitEffectCode(effect, itemType)
+    case "convert_left_to_right":
+      return generateConvertLeftToRightEffectCode(effect, itemType)
 
     default:
       return {

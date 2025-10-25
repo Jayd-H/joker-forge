@@ -1,130 +1,60 @@
+import { getRankId, RANKS } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateChangeRankVariableEffectCode = (
   effect: Effect,
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+ const variableName = (effect.params.variable_name as string) || "rankvar";
+  const changeType = (effect.params.change_type as string) || "random";
+  const specificRank = (effect.params.specific_rank as string) || "A";
+  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolRanks = RANKS.map(rank => rank.value)
 
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
+  let statement = "";
+
+  if (changeType === "random") {
+    statement = `__PRE_RETURN_CODE__
+                    if G.playing_cards then
+                        local valid_${variableName}_cards = {}
+                        for _, v in ipairs(G.playing_cards) do
+                            if not SMODS.has_no_rank(v) then
+                                valid_${variableName}_cards[#valid_${variableName}_cards + 1] = v
+                            end
+                        end
+                        if valid_${variableName}_cards[1] then
+                            local ${variableName}_card = pseudorandom_element(valid_${variableName}_cards, pseudoseed('${variableName}' .. G.GAME.round_resets.ante))
+                            G.GAME.current_round.${variableName}_card.rank = ${variableName}_card.base.value
+                            G.GAME.current_round.${variableName}_card.id = ${variableName}_card.base.id
+                        end
+                    end
+                    __PRE_RETURN_CODE_END__`;
+  } else if (changeType === "pool") {
+    const rank_pool = []
+    for (let i = 0; i < rankPoolActive.length; i++){
+      if (rankPoolActive[i] == true){
+      rank_pool.push(rankPoolRanks[i])
+    }}
+    statement = `__PRE_RETURN_CODE__
+                local rank_pool = {${rank_pool}}
+                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(rank_pool, pseudoseed('randomRank'))
+                __PRE_RETURN_CODE_END__`;
+  } else {
+    const rankId = getRankId(specificRank);
+    statement = `__PRE_RETURN_CODE__
+                    G.GAME.current_round.${variableName}_card.rank = '${specificRank}'
+                    G.GAME.current_round.${variableName}_card.id = ${rankId}
+                    __PRE_RETURN_CODE_END__`;
   }
-}
 
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
-
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
+  const result: EffectReturn = {
+    statement,
+    colour: "G.C.FILTER",
   };
-};
 
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  if (effect.customMessage) {
+    result.message = `"${effect.customMessage}"`;
+  }
 
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return result;
 }

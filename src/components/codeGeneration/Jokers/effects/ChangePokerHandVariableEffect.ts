@@ -13,9 +13,6 @@ export const generateChangePokerHandVariableReturn = (
   const pokerHandPoolActive = (effect.params.pokerhand_pool as Array<boolean>) || [];
   const pokerHandPoolPokerHands = POKER_HANDS.map(hand => hand.value)
 
-
-
-
   let statement = "";
 
   if (changeType === "random") {
