@@ -26,7 +26,7 @@ import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
-import { generateConditionChain } from "./conditionUtils";
+import { generateConditionChain } from "../conditionUtils";
 import { Rule } from "../../ruleBuilder";
 import { generateTriggerContext } from "../triggerUtils";
 
@@ -520,8 +520,8 @@ const generateCalculateFunction = (
 
   Object.entries(rulesByTrigger).forEach(([triggerType, triggerRules]) => {
     const sortedRules = [...triggerRules].sort((a, b) => {
-      const aHasConditions = generateConditionChain(a, joker).length > 0;
-      const bHasConditions = generateConditionChain(b, joker).length > 0;
+      const aHasConditions = generateConditionChain(a, "joker", joker).length > 0;
+      const bHasConditions = generateConditionChain(b, "joker", joker).length > 0;
 
       if (aHasConditions && !bHasConditions) return -1;
       if (!aHasConditions && bHasConditions) return 1;
@@ -609,7 +609,7 @@ const generateCalculateFunction = (
         )
           return;
 
-        const conditionCode = generateConditionChain(rule, joker);
+        const conditionCode = generateConditionChain(rule, "joker", joker);
 
         if (conditionCode) {
           const conditional = hasAnyConditions ? "elseif" : "if";
@@ -708,10 +708,10 @@ const generateCalculateFunction = (
         hasAnyConditions = false;
 
         const rulesWithConditions = sortedRules.filter(
-          (rule) => generateConditionChain(rule, joker).length > 0
+          (rule) => generateConditionChain(rule, "joker", joker).length > 0
         );
         const rulesWithoutConditions = sortedRules.filter(
-          (rule) => generateConditionChain(rule, joker).length === 0
+          (rule) => generateConditionChain(rule, "joker", joker).length === 0
         );
 
         rulesWithConditions.forEach((rule) => {
@@ -743,7 +743,7 @@ const generateCalculateFunction = (
           )
             return;
 
-          const conditionCode = generateConditionChain(rule, joker);
+          const conditionCode = generateConditionChain(rule, "joker", joker);
 
           const conditional = hasAnyConditions ? "elseif" : "if";
           calculateFunction += `
@@ -944,10 +944,10 @@ const generateCalculateFunction = (
       let hasAnyConditions = false;
 
       const rulesWithConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length > 0
+        (rule) => generateConditionChain(rule, "joker", joker).length > 0
       );
       const rulesWithoutConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length === 0
+        (rule) => generateConditionChain(rule, "joker", joker).length === 0
       );
 
       rulesWithConditions.forEach((rule) => {
@@ -991,7 +991,7 @@ const generateCalculateFunction = (
         )
           return;
 
-        const conditionCode = generateConditionChain(rule, joker);
+        const conditionCode = generateConditionChain(rule, "joker", joker);
 
         const conditional = hasAnyConditions ? "elseif" : "if";
         calculateFunction += `
@@ -1230,7 +1230,7 @@ const generateCalculateFunction = (
           )
             return;
 
-          const conditionCode = generateConditionChain(rule, joker);
+          const conditionCode = generateConditionChain(rule, "joker", joker);
 
           if (conditionCode) {
             const conditional = hasAnyConditions ? "elseif" : "if";
@@ -1309,7 +1309,7 @@ const generateCalculateFunction = (
           )
             return;
 
-          const conditionCode = generateConditionChain(rule, joker);
+          const conditionCode = generateConditionChain(rule, "joker", joker);
 
           if (conditionCode) {
             const conditional = hasAnyConditions ? "elseif" : "if";
@@ -1370,14 +1370,14 @@ const generateCalculateFunction = (
       let hasAnyConditions = false;
 
       const rulesWithConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length > 0
+        (rule) => generateConditionChain(rule, "joker", joker).length > 0
       );
       const rulesWithoutConditions = sortedRules.filter(
-        (rule) => generateConditionChain(rule, joker).length === 0
+        (rule) => generateConditionChain(rule, "joker", joker).length === 0
       );
 
       rulesWithConditions.forEach((rule) => {
-        const conditionCode = generateConditionChain(rule, joker);
+        const conditionCode = generateConditionChain(rule, "joker", joker);
 
         const conditional = hasAnyConditions ? "elseif" : "if";
         calculateFunction += `

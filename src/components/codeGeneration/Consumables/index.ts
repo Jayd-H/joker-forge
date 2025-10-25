@@ -1,6 +1,6 @@
 import { ConsumableData } from "../../data/BalatroUtils";
 import { ConsumableSetData } from "../../data/BalatroUtils";
-import { generateConditionChain } from "./conditionUtils";
+import { generateConditionChain } from "../conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
@@ -353,7 +353,7 @@ if (filtered_rules.length === 0) return "";
   filtered_rules.forEach((rule) => {
 
     const triggerCondition = generateTriggerCondition(rule.trigger);
-    const conditionCode = generateConditionChain(rule);
+    const conditionCode = generateConditionChain(rule, "consumable");
 
     let ruleCode = "";
 
@@ -465,7 +465,7 @@ if (filtered_rules.length === 0) return "";
         local used_card = copier or card`;
 
   filtered_rules.forEach((rule) => {
-    const conditionCode = generateConditionChain(rule);
+    const conditionCode = generateConditionChain(rule, "consumable");
 
     let ruleCode = "";
     if (conditionCode) {
@@ -521,7 +521,7 @@ const generateCanUseFunction = (rules: Rule[], modPrefix: string): string => {
 
   rules.forEach((rule) => {
     if (rule.trigger !== "consumable_used") return;
-    const conditionCode = generateConditionChain(rule);
+    const conditionCode = generateConditionChain(rule, "consumable");
     if (conditionCode) {
       ruleConditions.push(`(${conditionCode})`);
     }

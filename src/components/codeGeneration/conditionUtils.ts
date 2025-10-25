@@ -1,5 +1,5 @@
 import { JokerData, } from "../data/BalatroUtils";
-import { Condition, Rule } from "../ruleBuilder";
+import { Condition, ConditionGroup, Rule } from "../ruleBuilder";
 import { generateAnteLevelConditionCode } from "./Conditions/AnteLevelCondition";
 import { generateBlindNameConditionCode } from "./Conditions/BlindNameCondition";
 import { generateBlindRequirementsConditionCode } from "./Conditions/BlindRequirementsCondition";
@@ -55,12 +55,89 @@ import { generateCardRankConditionCode } from "./Conditions/CardRankCondition";
 import { generateDiscardedRankCountConditionCode } from "./Conditions/DiscardedRankCountCondition";
 
 
+export const generateConditionChain = (
+  rule: Rule,
+  itemType: string,
+  joker?: JokerData,
+): string => {
+  if (!rule.conditionGroups || rule.conditionGroups.length === 0) {
+    return "";
+  }
+
+  const groupConditions: string[] = [];
+
+  rule.conditionGroups.forEach((group) => {
+    const conditions = generateConditionGroupCode(group, rule, itemType, joker);
+    if (conditions) {
+      groupConditions.push(conditions);
+    }
+  });
+
+  if (groupConditions.length === 0) {
+    return "";
+  }
+
+  if (groupConditions.length === 1) {
+    return groupConditions[0];
+  }
+
+  return `(${groupConditions.join(") and (")})`;
+};
+
+const generateConditionGroupCode = (
+  group: ConditionGroup,
+  rule: Rule, 
+  itemType: string,
+  joker?: JokerData,
+): string => {
+  if (!group.conditions || group.conditions.length === 0) {
+    return "";
+  }
+
+  const conditionCodes: string[] = [];
+
+  group.conditions.forEach((condition) => {
+    const code = generateSingleConditionCode(condition, rule, itemType, joker);
+    if (code) {
+      let finalCode = code;
+
+      if (condition.negate) {
+        finalCode = `not (${code})`;
+      }
+
+      conditionCodes.push(finalCode);
+    }
+  });
+
+  if (conditionCodes.length === 0) {
+    return "";
+  }
+
+  if (conditionCodes.length === 1) {
+    return conditionCodes[0];
+  }
+
+  let result = conditionCodes[0];
+  for (let i = 1; i < conditionCodes.length; i++) {
+    const prevCondition = group.conditions[i - 1];
+    const operator = prevCondition.operator === "or" ? " or " : " and ";
+    result += operator + conditionCodes[i];
+  }
+
+  return `(${result})`;
+};
+
 export const generateSingleConditionCode = (
   condition: Condition,
   rule: Rule,
   itemType: string,
   joker?: JokerData,
 ): string | null => {
+  
+  if (itemType === "enhancement" || itemType === "seal" || itemType === "edition") {
+    itemType = "card"
+  }
+
   const singleConditionRule = {
     ...rule,
     conditionGroups: [

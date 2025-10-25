@@ -6,7 +6,7 @@ import {
   SealData,
   slugify,
 } from "../../data/BalatroUtils";
-import { generateConditionChain } from "./conditionUtils";
+import { generateConditionChain } from "../conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { extractGameVariablesFromRules, generateGameVariableCode, parseGameVariable } from "../Consumables/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";

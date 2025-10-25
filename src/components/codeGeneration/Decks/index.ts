@@ -1,5 +1,5 @@
 import { DeckData } from "../../data/BalatroUtils";
-import { generateConditionChain } from "./conditionUtils";
+import { generateConditionChain } from "../conditionUtils";
 import { generateEffectReturnStatement } from "./effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
@@ -315,7 +315,7 @@ if (filtered_rules.length === 0) return "";
   filtered_rules.forEach((rule) => {
 
     const triggerCondition = generateTriggerCondition(rule.trigger);
-    const conditionCode = generateConditionChain(rule);
+    const conditionCode = generateConditionChain(rule, "deck");
 
     let ruleCode = "";
 
