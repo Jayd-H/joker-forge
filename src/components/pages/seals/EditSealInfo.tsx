@@ -17,7 +17,7 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { SealData, slugify, VANILLA_SOUNDS, } from "../../data/BalatroUtils";
+import { SealData, slugify, SOUNDS, } from "../../data/BalatroUtils";
 import {
   validateJokerName,
   validateDescription,
@@ -50,8 +50,12 @@ interface EditSealInfoProps {
   }) => void;
 }
 
-const vanillaSounds = VANILLA_SOUNDS.map(({ value, label }) => ({ value, label }))
-;
+const SoundOptions = [
+  ...SOUNDS().map((sound) => ({
+    key: sound.key,
+    label: sound.label,
+  })),
+];
 
 const predefinedColors = [
   "#FF6B6B",
@@ -851,8 +855,8 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                               }
                               className="w-full bg-black-darker border border-black-lighter rounded-lg px-3 py-2 text-white-light focus:outline-none focus:border-mint transition-colors text-sm"
                             >
-                              {vanillaSounds.map((sound) => (
-                                <option value={sound.value}>
+                              {SoundOptions.map((sound) => (
+                                <option value={sound.key}>
                                   {sound.label}
                                 </option>
                               ))}

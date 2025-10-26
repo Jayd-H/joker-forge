@@ -500,6 +500,7 @@ function AppContent() {
     updateDataRegistry(
       customRarities,
       consumableSets,
+      sounds,
       consumables,
       boosters,
       enhancements,
@@ -512,6 +513,7 @@ function AppContent() {
   }, [
     customRarities,
     consumableSets,
+    sounds,
     consumables,
     boosters,
     enhancements,

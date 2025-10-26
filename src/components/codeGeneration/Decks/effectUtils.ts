@@ -235,24 +235,6 @@ export function generateEffectReturnStatement(
         configVariableSet.add(repetitionsVar);
         allConfigVariables.push(repetitionsVar);
       }
-    } else {
-      repetitions.forEach((denom, index) => {
-        if (index === 0) {
-          repetitionsToVar[denom] = "self.config.repetitions";
-          const repetitionsVar = "repetitions = " + denom;
-          if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
-            configVariableSet.add(repetitionsVar);
-            allConfigVariables.push(repetitionsVar);
-          }
-        } else {
-          repetitionsToVar[denom] = `self.config.repetitions${index + 1}`;
-          const repetitionsVar = `repetitions${index + 1} = ${denom}`;
-          if (!(typeof denom === "string") && !configVariableSet.has(repetitionsVar)) {
-            configVariableSet.add(repetitionsVar);
-            allConfigVariables.push(repetitionsVar);
-          }
-        }
-      });
     }
 
     loopGroups.forEach((group) => {
@@ -275,8 +257,6 @@ export function generateEffectReturnStatement(
       });
 
       if (effectReturns.length === 0) return;
-
-      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
 
       let groupContent = "";
       let groupPreReturnCode = "";
@@ -305,11 +285,12 @@ export function generateEffectReturnStatement(
                 ${groupPreReturnCode}${groupContent}`;
       }
 
-      const loopStatement =  `for i = 1, ${repetitionsVar} do`;
+      const loopStatement = `
+      for i=1, ${group.repetitions} do`;
       
       const groupStatement = `${loopStatement}
               ${fullGroupContent}
-          end`;
+           end`;
 
       combinedPreReturnCode +=
         (combinedPreReturnCode ? "\n            " : "") + groupStatement;

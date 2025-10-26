@@ -464,7 +464,8 @@ const SoundsPage: React.FC<SoundsPageProps> = ({
                           placeholder="e.g. win"
                         />
                         <p className="text-xs text-white-darker ml-0 w-50">
-                          If you want to replace or add music, add "music" somewhere in the sound key                          
+                          If you want to replace or add music, add "music" somewhere in the custom sound key
+                          and put your sound of choice in the "replace Sound Key"                          
                         </p>
                         </div>
                       </div>

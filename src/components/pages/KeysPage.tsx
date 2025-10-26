@@ -28,7 +28,7 @@ import {
   TAGS,
   VOUCHERS,
   DECKS,
-  VANILLA_SOUNDS,
+  SOUNDS,
 } from "../data/BalatroUtils";
 
 interface KeyItemProps {
@@ -188,7 +188,10 @@ const SECTIONS = {
   sounds: {
     title: "Sounds",
     icon: MusicalNoteIcon,
-    items: VANILLA_SOUNDS.map((sound) => ({ key: sound.value, label: sound.label })),
+    items: SOUNDS().map((sound) => ({
+      key: sound.key,
+      label: sound.label,
+    })),
     color: "text-balatro-gold",
   },
 };
