@@ -1,19 +1,17 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import type { ConsumableData, EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateDrawCardsReturn = (
   effect: Effect,
   itemType: string,
   joker?: JokerData,
   consumable?: ConsumableData,
   card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
@@ -22,10 +20,6 @@ export const generateEffectCode = (
       return generateConsumableCode(effect, consumable)
     case "card":
       return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
 
     default:
       return {
@@ -40,91 +34,102 @@ const generateJokerCode = (
   sameTypeCount: number = 0,
   joker?: JokerData
 ): EffectReturn => {
+  const variableName =
+    sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
+
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    variableName
+  )
 
+  const customMessage = effect.customMessage;
+  const statement = `__PRE_RETURN_CODE__
+  if G.GAME.blind.in_blind then
+    SMODS.draw_cards(${valueCode})
+  end__PRE_RETURN_CODE_END__
+  `;
+ 
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
+    statement: statement,
+    message: customMessage ? `"${customMessage}"` : `"+"..tostring(${valueCode}).." Cards Drawn"`,
+    colour: "G.C.BLUE",
+    configVariables: configVariables,
+  }
 };
 
 const generateConsumableCode = (
   effect: Effect,
   consumable?: ConsumableData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const value = effect.params?.value || 1;
+  const customMessage = effect.customMessage;
 
   const valueCode = generateGameVariableCode(value);
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  const defaultMessage = customMessage
+  ? `"${customMessage}"`
+  : `"+"..tostring(${valueCode}).." Cards Drawn"`;
+  
+  const drawCardsCode = `
+      __PRE_RETURN_CODE__
+      if G.GAME.blind.in_blind then
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.4,
+            func = function()
+                card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${defaultMessage}, colour = G.C.BLUE})
+                SMODS.draw_cards(${valueCode})
+                return true
+            end
+        }))
+        delay(0.6)
+      end
+      __PRE_RETURN_CODE_END__`;
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  const configVariables =
+    typeof value === "string" && value.startsWith("GAMEVAR:")
+      ? []
+      : [`hand_size_value = ${value}`];
+
+  return {
+    statement: drawCardsCode,
+    colour: "G.C.BLUE",
+  };
 }
 
 const generateCardCode = (
   effect: Effect,
-  card?: EditionData | EnhancementData | SealData
+  sameTypeCount: number = 0,
+  itemType: "enhancement" | "seal" | "edition" = "enhancement",
+  card?: EditionData | EnhancementData | SealData,
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+const variableName =
+    sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
 
-  const valueCode = generateGameVariableCode(value);
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    itemType
+  );
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  const customMessage = effect.customMessage;
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  const result: EffectReturn = {
+    statement: `__PRE_RETURN_CODE__
+  if G.GAME.blind.in_blind then
+    SMODS.draw_cards(${valueCode})
+  end__PRE_RETURN_CODE_END__`,
+    message: customMessage
+      ? `"${customMessage}"`
+      : `"+"..tostring(${valueCode}).." Cards Drawn"`,
+    colour: "G.C.BLUE",
+    configVariables:
+      configVariables.length > 0
+        ? configVariables.map((cv) => `${cv.name} = ${cv.value}`)
+        : undefined,
+  };
 
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return result;
 }

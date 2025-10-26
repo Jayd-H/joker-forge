@@ -1,12 +1,8 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateEditApperanceReturn = (
   effect: Effect,
   itemType: string,
   joker?: JokerData,
@@ -40,16 +36,27 @@ const generateJokerCode = (
   sameTypeCount: number = 0,
   joker?: JokerData
 ): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+  const card_apperance = effect.params?.card_apperance || "appear";
+  const key = effect.params.key as string || "";
+  const customMessage = effect.customMessage;
+
+  let editweightCode = "";
+if (card_apperance !== "none") {
+    if (card_apperance === "appear") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return true end
+        `;
+  } else if (card_apperance === "disapper") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return false end
+        `;
+  }
+}
 
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
+    statement: editweightCode,
+    message: customMessage ? `"${customMessage}"`: "",
+    colour: "G.C.MONEY",
   };
 };
 
@@ -57,74 +64,106 @@ const generateConsumableCode = (
   effect: Effect,
   consumable?: ConsumableData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const card_apperance = effect.params?.card_apperance || "appear";
+  const key = effect.params.key as string || "";
+  const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value);
+  let editweightCode = "";
+if (card_apperance !== "none") {
+    if (card_apperance === "appear") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return true end
+        `;
+  } else if (card_apperance === "disapper") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return false end
+        `;
+  }
+}
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return {
+    statement: editweightCode,
+    message: customMessage ? `"${customMessage}"`: "",
+    colour: "G.C.MONEY",
+  };
 }
 
 const generateCardCode = (
   effect: Effect,
   card?: EditionData | EnhancementData | SealData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const card_apperance = effect.params?.card_apperance || "appear";
+  const key = effect.params.key as string || "";
+  const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value);
+  let editweightCode = "";
+if (card_apperance !== "none") {
+    if (card_apperance === "appear") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return true end
+        `;
+  } else if (card_apperance === "disapper") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return false end
+        `;
+  }
+}
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return {
+    statement: editweightCode,
+    message: customMessage ? `"${customMessage}"`: "",
+    colour: "G.C.MONEY",
+  };
 }
 
 const generateVoucherCode = (
   effect: Effect,
   voucher?: VoucherData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const card_apperance = effect.params?.card_apperance || "appear";
+  const key = effect.params.key as string || "";
 
-  const valueCode = generateGameVariableCode(value);
+  let editweightCode = "";
+if (card_apperance !== "none") {
+    if (card_apperance === "appear") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return true end
+        `;
+  } else if (card_apperance === "disapper") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return false end
+        `;
+  }
+}
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return {
+    statement: editweightCode,
+    colour: "G.C.MONEY",
+  };
 }
 
 const generateDeckCode = (
   effect: Effect,
   deck?: DeckData
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const card_apperance = effect.params?.card_apperance || "appear";
+  const key = effect.params.key as string || "";
 
-  const valueCode = generateGameVariableCode(value);
+  let editweightCode = "";
+if (card_apperance !== "none") {
+    if (card_apperance === "appear") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return true end
+        `;
+  } else if (card_apperance === "disapper") {
+        editweightCode += `
+        G.P_CENTERS["${key}"].in_pool = function() return false end
+        `;
+  }
+}
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return {
+    statement: editweightCode,
+    colour: "G.C.MONEY",
+  };
 }
