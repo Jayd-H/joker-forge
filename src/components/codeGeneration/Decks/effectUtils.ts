@@ -258,8 +258,6 @@ export function generateEffectReturnStatement(
 
       if (effectReturns.length === 0) return;
 
-      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
-
       let groupContent = "";
       let groupPreReturnCode = "";
 

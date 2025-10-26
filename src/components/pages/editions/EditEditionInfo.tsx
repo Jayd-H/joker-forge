@@ -56,10 +56,7 @@ interface EditEditionInfoProps {
 }
 
 const SoundOptions = [
-  ...SOUNDS().map((sound) => ({
-    key: sound.key,
-    label: sound.label,
-  })),
+  ...SOUNDS()
 ];
 
 const shaderOptions = [
