@@ -78,9 +78,17 @@ const updateConditionParams = (
   id: string, 
   params: Record <string, unknown>
 ): Record <string, unknown> => {
+  const condition = getConditionTypeById(id)
+
   for (const key in params) {
     if (!params[key]) {
-      const condition = getConditionTypeById(id)
+      const param = condition?.params.find(param => param.id === key)
+      params[key] = param?.default
+    }
+  }
+
+  for (const key in condition?.params.map(param => param.id)) {
+    if (!params[key]) {
       const param = condition?.params.find(param => param.id === key)
       params[key] = param?.default
     }
@@ -102,7 +110,10 @@ const updateEffectId = (
   id: string
 ) => {
   switch(id) {
-    
+    case "add_dollars":
+    case "edit_dollars":
+      return "set_dollars"
+
     default:
       return id
   }
@@ -112,10 +123,17 @@ const updateEffectParams = (
   id: string, 
   params: Record <string, unknown>
 ): Record <string, unknown> => {
-  
+  const effect = getEffectTypeById(id)
+
   for (const key in params) {
     if (!params[key]) {
-      const effect = getEffectTypeById(id)
+      const param = effect?.params.find(param => param.id === key)
+      params[key] = param?.default
+    }
+  }
+
+  for (const key in effect?.params.map(param => param.id)) {
+    if (!params[key]) {
       const param = effect?.params.find(param => param.id === key)
       params[key] = param?.default
     }

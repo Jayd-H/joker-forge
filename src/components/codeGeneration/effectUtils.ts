@@ -1,13 +1,5 @@
 import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
-import {
-  JokerData,
-  ConsumableData, 
-  EnhancementData,
-  SealData,
-  EditionData,
-  VoucherData,
-  DeckData,
-} from "../data/BalatroUtils";
+import { JokerData, ConsumableData,  EnhancementData, SealData, EditionData, VoucherData, DeckData } from "../data/BalatroUtils";
 import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
 import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/AddChipsEffect";
@@ -21,12 +13,12 @@ import { generateApplyHyperMultEffectCode } from "./Effects/ApplyHyperMultEffect
 import { generateDrawCardsReturn } from "./Effects/DrawCardsEffect";
 import { generateBalanceChipsAndMultEffectCode } from "./Effects/BalanceChipsAndMultEffect";
 import { generateSwapChipsAndMultEffectCode } from "./Effects/SwapChipsAndMultEffect";
-import { generateShowMessageReturn } from "./Effects/ShowMessageEffect";
+import { generateShowMessageEffectCode } from "./Effects/ShowMessageEffect";
 import { generateDisableBossBlindReturn } from "./Effects/DisableBossBlindEffect";
-import { generateEmitFlagReturn } from "./Effects/EmitFlagEffect";
-import { generatePlaySoundReturn } from "./Effects/PlaySoundEffect";
-import { generateWinBlindReturn } from "./Effects/WinBlindEffect";
-import { generateEditApperanceReturn } from "./Effects/EditCardAppearanceEffect";
+import { generateEmitFlagEffectCode } from "./Effects/EmitFlagEffect";
+import { generatePlaySoundEffectCode } from "./Effects/PlaySoundEffect";
+import { generateWinBlindEffectCode } from "./Effects/WinBlindEffect";
+import { generateEditApperanceEffectCode } from "./Effects/EditCardAppearanceEffect";
 import { generateChangeJokerVariableEffectCode } from "./Effects/ChangeJokerVariableEffect";
 import { generateChangePokerHandVariableEffectCode } from "./Effects/ChangePokerHandVariableEffect";
 import { generateChangeSuitVariableEffectCode } from "./Effects/ChangeSuitVariableEffect";
@@ -41,6 +33,13 @@ import { generateCreateConsumableEffectCode } from "./Effects/CreateConsumableEf
 import { generateCreateJokerEffectCode } from "./Effects/CreateJokerEffect";
 import { generateCreateLastPlayedPlanetEffectCode } from "./Effects/CreateLastPlayedPlanetEffect";
 import { generateCreateTagEffectCode } from "./Effects/CreateTagEffect";
+import { generateUnlockJokerEffectCode } from "./Effects/UnlockJokerEffect";
+import { generateShuffleJokersEffectCode } from "./Effects/ShuffleJokersEffect";
+import { generateSetSellValueEffectCode } from "./Effects/SetSellValueEffect";
+import { generateSetDollarsEffectCode } from "./Effects/SetDollarsEffect";
+import { generateSetAnteEffectCode } from "./Effects/SetAnteEffect";
+import { tr } from "framer-motion/client";
+import { generateSavedEffectCode } from "./Effects/SavedEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -130,8 +129,6 @@ export const generateSingleEffect = (
       return generateBalanceChipsAndMultEffectCode(effect)
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
-    case "show_message":
-      return generateShowMessageReturn(effect, itemType);
     case "disable_boss_blind":
       return generateDisableBossBlindReturn(effect, itemType, triggerType);
     case "change_joker_variable":
@@ -164,16 +161,29 @@ export const generateSingleEffect = (
       return generateCreateLastPlayedPlanetEffectCode(effect, itemType)
     case "create_tag":
       return generateCreateTagEffectCode(effect, triggerType)
-    
+    case "set_sell_value":
+      return generateSetSellValueEffectCode(effect, itemType, triggerType, sameTypeCount)
+    case "set_dollars":
+      return generateSetDollarsEffectCode(effect, itemType, sameTypeCount, card)
+    case "set_ante":
+      return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
+    case "prevent_game_over":
+      return generateSavedEffectCode(effect)
     case "emit_flag":
-      return generateEmitFlagReturn(effect, modprefix);
+      return generateEmitFlagEffectCode(effect, modprefix);
     case "play_sound":
-      return generatePlaySoundReturn(effect, itemType)
+      return generatePlaySoundEffectCode(effect, itemType)
     case "win_blind":
-      return generateWinBlindReturn(effect, itemType)
+      return generateWinBlindEffectCode(effect, itemType)
     case "edit_card_apperance":
-      return generateEditApperanceReturn(effect, itemType);
-
+      return generateEditApperanceEffectCode(effect, itemType);
+    case "unlock_joker":
+      return generateUnlockJokerEffectCode(effect)
+    case "shuffle_jokers":
+      return generateShuffleJokersEffectCode(effect)
+    case "show_message":
+      return generateShowMessageEffectCode(effect)
+    
     default:
       return {
         statement: "",

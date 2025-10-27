@@ -1,27 +1,21 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 
-export const generatePlaySoundReturn = (
+export const generatePlaySoundEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerCode(effect)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
+      return generateConsumableCode(effect)
     case "card":
-      return generateCardCode(effect, card)
+      return generateCardCode(effect)
     case "voucher":
-      return generateVoucherCode(effect, voucher)
+      return generateVoucherCode(effect)
     case "deck":
-      return generateDeckCode(effect, deck)
+      return generateDeckCode(effect)
 
     default:
       return {
@@ -33,8 +27,6 @@ export const generatePlaySoundReturn = (
 
 const generateJokerCode = (
   effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
   const key = effect.params.sound_key as string || "";
 
@@ -56,7 +48,6 @@ const generateJokerCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
 ): EffectReturn => {
   const key = effect.params.sound_key as string || "";
 
@@ -78,7 +69,6 @@ const generateConsumableCode = (
 
 const generateCardCode = (
   effect: Effect,
-  card?: EditionData | EnhancementData | SealData
 ): EffectReturn => {
   const key = effect.params.sound_key as string || "";
 
@@ -100,7 +90,6 @@ const generateCardCode = (
 
 const generateVoucherCode = (
   effect: Effect,
-  voucher?: VoucherData
 ): EffectReturn => {
   const key = effect.params.sound_key as string || "";
 
@@ -119,7 +108,6 @@ const generateVoucherCode = (
 
 const generateDeckCode = (
   effect: Effect,
-  deck?: DeckData
 ): EffectReturn => {
   const key = effect.params.sound_key as string || "";
 

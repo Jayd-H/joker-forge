@@ -1,21 +1,17 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 
-export const generateWinBlindReturn = (
+export const generateWinBlindEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerCode(effect)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
+      return generateConsumableCode(effect)
     case "card":
-      return generateCardCode(effect, card)
+      return generateCardCode(effect)
 
     default:
       return {
@@ -27,8 +23,6 @@ export const generateWinBlindReturn = (
 
 const generateJokerCode = (
   effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
   const customMessage = effect.customMessage;
 
@@ -55,7 +49,6 @@ const generateJokerCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
 ): EffectReturn => {
 const customMessage = effect.customMessage;
 
@@ -82,7 +75,6 @@ const customMessage = effect.customMessage;
 
 const generateCardCode = (
   effect: Effect,
-  card?: EditionData | EnhancementData | SealData
 ): EffectReturn => {
 const customMessage = effect.customMessage;
 

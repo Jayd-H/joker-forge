@@ -1,130 +1,48 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateUnlockJokerEffectCode = (
   effect: Effect,
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+  const selectionMethod = (effect.params?.selection_method as string) || "key"
+  const jokerKey = (effect.params?.joker_key as string) || "j_joker";
+  const discover = (effect.params?.discover as string) === "true" ? true : false
+  const customMessage = effect.customMessage;
+  const jokerVariable = (effect.params?.joker_variable as string) || "j_joker";
 
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
+  const normalizedJokerKey = jokerKey.startsWith("j_") 
+  ? jokerKey 
+  : `j_${jokerKey}`
+
+  let statement = ''
+
+  if (selectionMethod === "key") {
+    statement = `func = function()
+      local target_joker = G.P_CENTERS["${normalizedJokerKey}"]
+      if target_joker then
+        unlock_card(target_joker)
+        ${discover ? "discover_card(target_joker)" : ""}
+        ${customMessage ? `SMODS.calculate_effect({message = "${customMessage}"}, card)` : ""}
+      else
+        error("JOKERFORGE: Invalid joker key in Unlock Joker Effect. Did you forget the modprefix or misspelled the key?")
+      end
+      return true
+    end`
+  } else {
+    statement = `func = function()
+      local target_joker = card.ability.extra.${jokerVariable} 
+      if target_joker then
+        unlock_card(target_joker)
+        ${discover ? "discover_card(target_joker)" : ""}
+        ${customMessage ? `SMODS.calculate_effect({message = "${customMessage}"}, card)` : ""}
+      else
+        error("JOKERFORGE: Invalid joker key in Unlock Joker Effect. Did you forget the modprefix or misspelled the key?")
+      end
+      return true
+    end`
   }
-}
-
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
-
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+    statement: statement,
+    colour: "G.C.BLUE"
+  }
 }

@@ -1,7 +1,7 @@
 import { Effect } from "../../ruleBuilder";
 import { EffectReturn } from "../effectUtils";
 
-export const generateEmitFlagReturn = (
+export const generateEmitFlagEffectCode = (
   effect: Effect,
   modprefix: string
 ): EffectReturn => {

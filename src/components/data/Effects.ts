@@ -790,7 +790,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "all", label: "All Jokers and Consumables" },
         ],
         default: "specific",
-      },{
+      },
+      {
         id: "specific_target",
         type: "select",
         label: "Specific Joker",
@@ -807,7 +808,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           values: ["specific"],},
         default: "self",
         variableTypes: ["joker_context"],
-      },{
+      },
+      {
         id: "operation",
         type: "select",
         label: "Operation",

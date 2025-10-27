@@ -1,31 +1,22 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateSetAnteEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  triggerType: string,
+  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerCode(effect, triggerType, sameTypeCount)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
+      return generateConsumableCode(effect, sameTypeCount)
     case "voucher":
-      return generateVoucherCode(effect, voucher)
+      return generateVoucherCode(effect, sameTypeCount)
     case "deck":
-      return generateDeckCode(effect, deck)
+      return generateDeckCode(effect, sameTypeCount)
 
     default:
       return {
@@ -37,94 +28,290 @@ export const generateEffectCode = (
 
 const generateJokerCode = (
   effect: Effect,
+  triggerType: string,
   sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
+  const operation = (effect.params?.operation as string) || "set";
+
+  const variableName =
+    sameTypeCount === 0 ? "ante_value" : `ante_value${sameTypeCount + 1}`;
+
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    variableName,
+    'joker'
+  )
 
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
+  const customMessage = effect.customMessage ? `"${effect.customMessage}"` : undefined;
+  let anteCode = "";
+  let messageText = "";
+
+  switch (operation) {
+    case "set":
+      anteCode = `local mod = ${valueCode} - G.GAME.round_resets.ante
+    ease_ante(mod)
+    G.E_MANAGER:add_event(Event({
+      func = function()
+        G.GAME.round_resets.blind_ante = ${valueCode}
+        return true
+      end,
+    }))`;
+      messageText = customMessage || `"Ante set to " .. ${valueCode} .. "!"`;
+      break;
+    case "add":
+      anteCode = `local mod = ${valueCode}
+    ease_ante(mod)
+    G.E_MANAGER:add_event(Event({
+      func = function()
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        return true
+      end,
+    }))`;
+      messageText = customMessage || `"Ante +" .. ${valueCode}`;
+      break;
+    case "subtract":
+      anteCode = `local mod = -${valueCode}
+    ease_ante(mod)
+    G.E_MANAGER:add_event(Event({
+      func = function()
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        return true
+      end,
+    }))`;
+      messageText = customMessage || `"Ante -" .. ${valueCode}`;
+      break;
+    default:
+      anteCode = `local mod = ${valueCode} - G.GAME.round_resets.ante
+    ease_ante(mod)
+    G.E_MANAGER:add_event(Event({
+      func = function()
+        G.GAME.round_resets.blind_ante = ${valueCode}
+        return true
+      end,
+    }))`;
+      messageText = customMessage || `"Ante set to " .. ${valueCode} .. "!"`;
+  }
+
+  const scoringTriggers = ["hand_played", "card_scored"];
+  const isScoring = scoringTriggers.includes(triggerType);
+
+  const result: EffectReturn = {
+    statement: isScoring
+      ? `__PRE_RETURN_CODE__${anteCode}
+                __PRE_RETURN_CODE_END__`
+      : `func = function()
+                    ${anteCode}
+                    return true
+                end`,
+    message: customMessage ? `"${customMessage}"` : messageText,
+    colour: "G.C.FILTER",
     configVariables: configVariables.length > 0 ? configVariables : undefined,
   };
+
+  return result;
 };
 
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
+  sameTypeCount: number = 0,
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const operation = effect.params?.operation || "set";
+  const variableName =
+    sameTypeCount === 0 ? "ante_value" : `ante_value${sameTypeCount + 1}`;
 
-  const valueCode = generateGameVariableCode(value);
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'voucher'
+  )
+  const customMessage = effect.customMessage;
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  let anteCode = "";
+  
+  switch (operation) {
+    case "set": {
+      const setMessage = customMessage
+        ? `"${customMessage}"`
+        : `"Ante set to "..tostring(${valueCode})`;
+      anteCode = `
+            __PRE_RETURN_CODE__
+local mod = ${valueCode} - G.GAME.round_resets.ante
+		ease_ante(mod)
+		G.E_MANAGER:add_event(Event({
+			func = function()
+				G.GAME.round_resets.blind_ante = ${valueCode}
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.YELLOW})
+				return true
+			end,
+		}))
+            delay(0.6)
+            __PRE_RETURN_CODE_END__`;
+      break;
+    }
+    case "add": {
+      const addMessage = customMessage
+        ? `"${customMessage}"`
+        : `"+"..tostring(${valueCode}).." Ante"`;
+      anteCode = `
+            __PRE_RETURN_CODE__
+local mod = ${valueCode}
+		ease_ante(mod)
+		G.E_MANAGER:add_event(Event({
+			func = function()
+				G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.YELLOW})
+				return true
+			end,
+		}))
+            delay(0.6)
+            __PRE_RETURN_CODE_END__`;
+      break;
+    }
+    case "subtract": {
+      const subtractMessage = customMessage
+        ? `"${customMessage}"`
+        : `"-"..tostring(${valueCode}).." Ante"`;
+      anteCode = `
+            __PRE_RETURN_CODE__
+local mod = -${valueCode}
+		ease_ante(mod)
+		G.E_MANAGER:add_event(Event({
+			func = function()
+				G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
+				return true
+			end,
+    }))
+            delay(0.6)
+            __PRE_RETURN_CODE_END__`;
+      break;
+    }
+    default: {
+      const defaultMessage = customMessage
+        ? `"${customMessage}"`
+        : `"Ante set to "..tostring(${valueCode})`;
+      anteCode = `
+            __PRE_RETURN_CODE__
+local mod = ${valueCode} - G.GAME.round_resets.ante
+		ease_ante(mod)
+		G.E_MANAGER:add_event(Event({
+			func = function()
+				G.GAME.round_resets.blind_ante = ${valueCode}
+        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${defaultMessage}, colour = G.C.YELLOW})
+				return true
+			end,
+		}))
+            delay(0.6)
+            __PRE_RETURN_CODE_END__`;
+      break;
+    }
+  }
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  return {
+    statement: anteCode,
+    colour: "G.C.YELLOW",
+    configVariables,
+  };
+};
 
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
 
 const generateVoucherCode = (
   effect: Effect,
-  voucher?: VoucherData
+  sameTypeCount: number = 0,
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const operation = effect.params?.operation || "set";
+  const variableName =
+    sameTypeCount === 0 ? "ante_value" : `ante_value${sameTypeCount + 1}`;
 
-  const valueCode = generateGameVariableCode(value);
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'voucher'
+  )
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  let anteCode = "";
+  
+    if (operation === "add") {
+        anteCode += `local mod = ${valueCode}
+        ease_ante(mod)
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        `;
+  } else if (operation === "subtract") {
+        anteCode += `local mod = -${valueCode}
+        ease_ante(mod)
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        `;
+  } else if (operation === "set") {
+        anteCode += `local mod = ${valueCode} - G.GAME.round_resets.ante
+        ease_ante(mod)
+     G.GAME.round_resets.blind_ante = ${valueCode}
+        `;
+  }
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  return {
+    statement: anteCode,
+    colour: "G.C.YELLOW",
+    configVariables,
+  };
+};
 
 const generateDeckCode = (
   effect: Effect,
-  deck?: DeckData
+  sameTypeCount: number = 0
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const operation = effect.params?.operation || "set";
+  const variableName =
+    sameTypeCount === 0 ? "ante_value" : `ante_value${sameTypeCount + 1}`;
 
-  const valueCode = generateGameVariableCode(value);
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'voucher'
+  )
+  let anteCode = "";
+  
+    if (operation === "add") {
+        anteCode += `
+local mod = ${valueCode}
+    G.E_MANAGER:add_event(Event({
+      func = function()
+      ease_ante(mod)
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        return true
+      end,
+    }))
+      `;
+  } else if (operation === "subtract") {
+        anteCode += `
+local mod = -${valueCode}
+    G.E_MANAGER:add_event(Event({
+      func = function()
+      ease_ante(mod)
+        G.GAME.round_resets.blind_ante = G.GAME.round_resets.blind_ante + mod
+        return true
+      end,
+    }))
+        `;
+  } else if (operation === "set") {
+        anteCode += `
+    local mod = ${valueCode} - G.GAME.round_resets.ante
+    G.E_MANAGER:add_event(Event({
+            func = function()
+    ease_ante(mod)
+    G.GAME.round_resets.blind_ante = ${valueCode}
+    return true
+            end
+        }))
+        `;
+  }
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  return {
+    statement: anteCode,
+    colour: "G.C.YELLOW",
+    configVariables,
+  };
+};
