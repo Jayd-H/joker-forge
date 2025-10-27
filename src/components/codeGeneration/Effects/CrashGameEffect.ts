@@ -1,9 +1,10 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import { Effect } from "../../ruleBuilder";
+import { EffectReturn } from "../effectUtils";
 
 export const generateCrashGameEffectCode = (
   effect: Effect,
 ): EffectReturn => {
+
   const customMessage = (effect.customMessage ?? "EasternFarmer Was Here")
     .replace(/"/g, '\\"')
     .replace(/'/g, "\\'")
