@@ -1,130 +1,86 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import type { ConfigExtraVariable, EffectReturn } from "../effectUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
-  effect: Effect,
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
-
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
-  }
-}
-
-const generateJokerCode = (
+export const generateJuiceUpEffectCode = (
   effect: Effect,
   sameTypeCount: number = 0,
-  joker?: JokerData
+  effectType: string,
 ): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
+  const mode = effect.params?.mode || "onetime";
+
+  const configVariables: ConfigExtraVariable[] = [];
+
+  const scaleVariableName =
+    sameTypeCount === 0 ? "scale" : `scale${sameTypeCount + 1}`;
+  const scaleRet = generateConfigVariables(
+    effect.params.scale,
     effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    scaleVariableName,
+    'joker'
+  )
+
+  scaleRet.configVariables.forEach((cv) => {
+    configVariables.push(cv)
+  })
+  const scaleValueCode = scaleRet.valueCode
+
+  const rotationVariableName =
+    sameTypeCount === 0 ? "rotation" : `rotation${sameTypeCount + 1}`;
+  const rotationRet = generateConfigVariables(
+    effect.params.rotation,
+    effect.id,
+    rotationVariableName,
+    'joker'
+  )
+
+  rotationRet.configVariables.forEach((cv) => {
+    configVariables.push(cv)
+  })
+  const rotationValueCode = rotationRet.valueCode
+
+  let cardType: string;
+  if (effectType == "card") {
+    cardType = "target_card"
+  } else {
+    cardType = "card"
+  }
+
+  let statement = `__PRE_RETURN_CODE__
+      local target_card = context.other_card`;
+
+  if (mode === "constant") {
+      statement += `
+      local function juice_card_until_(card, eval_func, first, delay) -- balatro function doesn't allow for custom scale and rotation
+          G.E_MANAGER:add_event(Event({
+              trigger = 'after',delay = delay or 0.1, blocking = false, blockable = false, timer = 'REAL',
+              func = (function() if eval_func(card) then if not first or first then ${cardType}:juice_up(${scaleValueCode}, ${rotationValueCode}) end;juice_card_until_(card, eval_func, nil, 0.8) end return true end)
+          }))
+      end`
+  }
+  
+  statement += `
+  __PRE_RETURN_CODE_END__`
+
+  switch (mode) {
+    case "constant":
+      statement += `func = function()
+                        local eval = function() return not G.RESET_JIGGLES end
+                        juice_card_until_(card, eval, true)
+                        return true
+                    end`;
+      break;
+    case "onetime":
+      statement += `func = function()
+                      ${cardType}:juice_up(${scaleValueCode}, ${rotationValueCode})
+                      return true
+                    end`;
+      break;
+  }
 
   return {
-    statement: valueCode,
+    statement,
     colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+    configVariables
+  }
 }

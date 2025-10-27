@@ -38,8 +38,20 @@ import { generateShuffleJokersEffectCode } from "./Effects/ShuffleJokersEffect";
 import { generateSetSellValueEffectCode } from "./Effects/SetSellValueEffect";
 import { generateSetDollarsEffectCode } from "./Effects/SetDollarsEffect";
 import { generateSetAnteEffectCode } from "./Effects/SetAnteEffect";
-import { tr } from "framer-motion/client";
 import { generateSavedEffectCode } from "./Effects/SavedEffect";
+import { generateRetriggerEffectCode } from "./Effects/RetriggerEffect";
+import { generateRedeemVoucherEffectCode } from "./Effects/RedeemVoucherEffect";
+import { generatePermaBonusEffectCode } from "./Effects/PermanentBonusEffect";
+import { generateModProbabilityEffectCode } from "./Effects/ModProbabilityEffect";
+import { generateFixProbabilityEffectCode } from "./Effects/FixProbabilityEffect";
+import { generateFlipJokerEffectCode } from "./Effects/FlipJokerEffect";
+import { generateForceGameOverEffectCode } from "./Effects/ForceGameOverEffect";
+import { generateJuiceUpEffectCode } from "./Effects/JuiceUpEffect";
+import { generateLevelUpHandEffectCode } from "./Effects/LevelUpHandEffect";
+import { generateModifyBlindRequirementEffectCode } from "./Effects/ModifyBlindRequirementEffect";
+import { generateModifyInternalVariableEffectCode } from "./Effects/ModifyInternalVariableEffect";
+import { generateFoolEffectCode } from "./Effects/FoolEffect";
+import { generateIncrementRankEffectCode } from "./Effects/IncrementRankEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -91,7 +103,7 @@ export interface CalculateFunctionResult {
 
 export const generateSingleEffect = (
   effect: ExtendedEffect,
-  itemType: string,
+  cleanItemType: string,
   triggerType: string,
   sameTypeCount: number = 0,
   modprefix: string,
@@ -101,6 +113,8 @@ export const generateSingleEffect = (
   voucher?: VoucherData,
   deck?: DeckData,
 ): EffectReturn => {
+  const itemType = (cleanItemType === 'seal' || cleanItemType === 'edition' || cleanItemType ==='enhancement') 
+    ? 'card' : cleanItemType
 
   switch (effect.type) {
     case "add_card_to_deck":
@@ -139,6 +153,8 @@ export const generateSingleEffect = (
       return generateChangeSuitVariableEffectCode(effect)
     case "change_rank_variable":
       return generateChangeRankVariableEffectCode(effect)
+    case "modify_internal_variable":
+      return generateModifyInternalVariableEffectCode(effect, triggerType)
     // ADD CASES FOR COMBINE RANKS/SUITS & CONSIDERED AS EFFECTS
     case "convert_all_cards_to_rank":
       return generateConvertAllCardToRankEffectCode(effect, itemType)
@@ -161,18 +177,44 @@ export const generateSingleEffect = (
       return generateCreateLastPlayedPlanetEffectCode(effect, itemType)
     case "create_tag":
       return generateCreateTagEffectCode(effect, triggerType)
+    case "fool_effect":
+      return generateFoolEffectCode(effect, itemType)
+    case "increment_rank":
+      return generateIncrementRankEffectCode(effect, itemType)
+    case "modify_blind_requirement":
+      return generateModifyBlindRequirementEffectCode(effect, cleanItemType)
+    case "flip_joker":
+      return generateFlipJokerEffectCode(effect)
+    case "juice_up_joker":
+      return generateJuiceUpEffectCode(effect, sameTypeCount, 'joker')
+    case "juice_up_card":
+      return generateJuiceUpEffectCode(effect, sameTypeCount, 'card')
+    case "level_up_hand":
+      return generateLevelUpHandEffectCode(effect, itemType, triggerType, sameTypeCount, joker, card)
+    case "force_game_over":
+      return generateForceGameOverEffectCode(effect)
+    case "fix_probability":
+      return generateFixProbabilityEffectCode(effect, sameTypeCount)
+    case "mod_probability":
+      return generateModProbabilityEffectCode(effect, sameTypeCount)
+    case "prevent_game_over":
+      return generateSavedEffectCode(effect)
+    case "permanent_bonus":
+      return generatePermaBonusEffectCode(effect, itemType, sameTypeCount)
+    case "play_sound":
+      return generatePlaySoundEffectCode(effect, itemType)
+    case "redeem_voucher":
+      return generateRedeemVoucherEffectCode(effect)
+    case "retrigger":
+      return generateRetriggerEffectCode(effect, itemType, sameTypeCount, card)
     case "set_sell_value":
       return generateSetSellValueEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "set_dollars":
       return generateSetDollarsEffectCode(effect, itemType, sameTypeCount, card)
     case "set_ante":
       return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
-    case "prevent_game_over":
-      return generateSavedEffectCode(effect)
     case "emit_flag":
       return generateEmitFlagEffectCode(effect, modprefix);
-    case "play_sound":
-      return generatePlaySoundEffectCode(effect, itemType)
     case "win_blind":
       return generateWinBlindEffectCode(effect, itemType)
     case "edit_card_apperance":

@@ -1,130 +1,109 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateModifyBlindRequirementEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
-
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
-  }
-}
-
-const generateJokerCode = (
-  effect: Effect,
   sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
+  const operation = effect.params?.operation || "multiply";
+  const variableName =
+    sameTypeCount === 0 ? "blind_size" : `blind_size${sameTypeCount + 1}`;
+
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    variableName,
+    itemType
+  )
+
+  const customMessage = effect.customMessage;
+  let statement = "";
+
+  switch (operation) {
+    case "add": {
+      const addMessage = customMessage
+        ? `"${customMessage}"`
+        : `"+"..tostring(${valueCode}).." Blind Size"`;
+      statement = `func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.GREEN})
+                G.GAME.blind.chips = G.GAME.blind.chips + ${valueCode}
+                G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+                G.HUD_blind:recalculate()
+                return true
+            end`;
+      break;
+    }
+    case "subtract": {
+      const subtractMessage = customMessage
+        ? `"${customMessage}"`
+        : `"-"..tostring(${valueCode}).." Blind Size"`;
+      statement = `func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.GREEN})
+                G.GAME.blind.chips = G.GAME.blind.chips - ${valueCode}
+                G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+                G.HUD_blind:recalculate()
+                return true
+            end`;
+      break;
+    }
+    case "multiply": {
+      const multiplyMessage = customMessage
+        ? `"${customMessage}"`
+        : `"X"..tostring(${valueCode}).." Blind Size"`;
+      statement = `func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${multiplyMessage}, colour = G.C.GREEN})
+                G.GAME.blind.chips = G.GAME.blind.chips * ${valueCode}
+                G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+                G.HUD_blind:recalculate()
+                return true
+            end`;
+      break;
+    }
+    case "divide": {
+      const divideMessage = customMessage
+        ? `"${customMessage}"`
+        : `"/"..tostring(${valueCode}).." Blind Size"`;
+      statement = `func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${divideMessage}, colour = G.C.GREEN})
+                G.GAME.blind.chips = G.GAME.blind.chips / ${valueCode}
+                G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+                G.HUD_blind:recalculate()
+                return true
+            end`;
+      break;
+    }
+    case "set": {
+      const setMessage = customMessage
+        ? `"${customMessage}"`
+        : `"Set to "..tostring(${valueCode}).." Blind Size"`;
+      statement = `func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.GREEN})
+                G.GAME.blind.chips = ${valueCode}
+                G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+                G.HUD_blind:recalculate()
+                return true
+            end`;
+        break
+    }
+    default: {
+      const multiplyMessage = customMessage
+        ? `"${customMessage}"`
+        : `"X"..tostring(${valueCode}).." Blind Size"`;
+      statement = `func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${multiplyMessage}, colour = G.C.GREEN})
+                G.GAME.blind.chips = G.GAME.blind.chips * ${valueCode}
+                G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+                G.HUD_blind:recalculate()
+                return true
+            end`;
+    }
+  }
 
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
+    statement,
+    colour: "G.C.GREEN",
     configVariables: configVariables.length > 0 ? configVariables : undefined,
   };
-};
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
 }

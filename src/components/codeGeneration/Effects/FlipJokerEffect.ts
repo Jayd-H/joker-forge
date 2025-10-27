@@ -1,130 +1,110 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateFlipJokerEffectCode = (
   effect: Effect,
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+  const selectionMethod = effect.params?.selection_method as string || "random";
+  const position = (effect.params?.position as string) || "first";
+  const specificIndex = effect.params?.specific_index as number;
+  const customMessage = effect.customMessage;
+  const jokerVariable = (effect.params?.joker_variable as string) || "j_joker";
 
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
-  }
-}
-
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+  let jokerFlipCode = "";
+ if (selectionMethod === "all") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+      for _, joker in ipairs(G.jokers.cards) do
+        joker:flip()
+      end
+    end`;
+ } else if (selectionMethod === "selected_joker") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+for i = 1, #G.jokers.highlighted do
+        G.jokers.highlighted[i]:flip()
+        break
+      end
+    end`;
+ } else if (selectionMethod === "evaled_joker") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+      context.other_joker:flip()
+    end`;
+ } else if (selectionMethod === "self") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+    for _, joker in ipairs(G.jokers.cards) do
+      if joker == card then
+        joker:flip()
+        break
+      end
+    end
+    end`;
+  } else if (selectionMethod === "random") {
+    jokerFlipCode += `if #G.jokers.cards > 0 then
+    local available_jokers = {}
+      for i, joker in ipairs(G.jokers.cards) do
+        table.insert(available_jokers, joker)
+      end
+      pseudorandom_element(available_jokers, pseudoseed('flip_joker')):flip()
+    end`;
+  } else if (selectionMethod === "position") {
+    switch (position) {
+      case "first":
+        jokerFlipCode += `if G.jokers.cards[1] then
+        G.jokers.cards[1]:flip()
+        end`;
+        break
+      case "last":
+        jokerFlipCode += `if G.jokers.cards[#G.jokers.cards] then
+        G.jokers.cards[#G.jokers.cards]:flip()
+        end`;
+        break
+      case "left":
+        jokerFlipCode += `local self_index = 1
+        if #G.jokers.cards > 0 then
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == card then
+              self_index = i
+              break
+            end
+          end
+          if self_index > 1 then
+            G.jokers.cards[self_index - 1]:flip()
+          end
+        end`;
+        break
+      case "right":
+        jokerFlipCode += `local self_index = 1
+        if #G.jokers.cards > 0 then
+          for i = 1, #G.jokers.cards do
+            if G.jokers.cards[i] == card then
+              self_index = i
+              break
+            end
+          end
+          if self_index < #G.jokers.cards then
+            G.jokers.cards[self_index + 1]:flip()
+          end
+        end`;
+        break
+      case "specific":
+        jokerFlipCode += `if #G.jokers.cards > 0 then
+          if G.jokers.cards[${specificIndex}] then
+            G.jokers.cards[${specificIndex}]:flip()
+          end
+        end`;
+        break
+    }
+  } else if (selectionMethod === "variable") {
+    jokerFlipCode += `local joker_to_flip_key = card.ability.extra.${jokerVariable}
+    for i = 1, #G.jokers.cards do
+      if G.jokers.cards[i].key === joker_to_flip_key then
+        G.jokers.cards[i]:flip()
+      end
+    end`;
+ } 
 
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
+    statement: `__PRE_RETURN_CODE__${jokerFlipCode}__PRE_RETURN_CODE_END__`,
+    message: customMessage ? `"${customMessage}"` : `"Flip!"`,
+    colour: "G.C.ORANGE"
+  }
 };
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}

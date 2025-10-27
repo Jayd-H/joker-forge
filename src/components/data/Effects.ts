@@ -1420,7 +1420,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     description:
       "Add permanent bonuses to the triggered card (like Hiker joker)",
     applicableTriggers: ["card_scored"],
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "consumable"],
     params: [
       {
         id: "bonus_type",
@@ -2324,6 +2324,109 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     objectUsers: ["consumable"],
     applicableTriggers: ["consumable_used"],
     params: [],
+    category: "Selected Cards",
+  },
+  {
+    id: "fix_probability",
+    label: "Set Probability",
+    description: "Set the Numerator or the Denominator of a chance roll",
+    objectUsers: ["joker"],
+    applicableTriggers: ["change_probability"],
+    params: [
+      {
+        id: "part",
+        type: "select",
+        label: "Numerator or Denominator",
+        options: [
+          { value: "numerator", label: "Numerator" },
+          { value: "denominator", label: "Denominator" },
+          { value: "both", label: "Both" },
+        ],
+        default: "numerator",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Probability",
+  },
+  {
+    id: "mod_probability",
+    label: "Modify Probability",
+    description: "Modify the Numerator or the Denominator of a chance roll",
+    objectUsers: ["joker"],
+    applicableTriggers: ["change_probability"],
+    params: [
+      {
+        id: "part",
+        type: "select",
+        label: "Numerator or Denominator",
+        options: [
+          { value: "numerator", label: "Numerator" },
+          { value: "denominator", label: "Denominator" },
+        ],
+        default: "numerator",
+      },
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "increment", label: "Increment by value" },
+          { value: "decrement", label: "Decrement by value" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
+        ],
+        default: "multiply",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 2,
+      },
+    ],
+    category: "Probability",
+  },
+  {
+    id: "fool_effect",
+    label: "Create Last Used Consumable",
+    description: "Create a copy of the last Tarot or Planet card that was used (like The Fool)",
+    objectUsers: ['consumable'],
+    applicableTriggers: ["consumable_used", "held_hand"],
+    params: [],
+    category: "Consumables",
+  },
+  {
+    id: "increment_rank",
+    label: "Increment/Decrement Rank",
+    description: "Increase or decrease the rank of selected cards by a specified amount",
+    objectUsers: ['consumable'],
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "increment", label: "Increment (+)" },
+          { value: "decrement", label: "Decrement (-)" },
+        ],
+        default: "increment",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 1,
+        max: 13,
+      },
+    ],
     category: "Selected Cards",
   },
 ]
