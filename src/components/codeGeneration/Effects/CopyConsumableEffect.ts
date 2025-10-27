@@ -1,31 +1,17 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { PLANET_CARD_KEYS, SPECTRAL_CARD_KEYS, TAROT_CARD_KEYS } from "../../data/BalatroUtils";
 
-export const generateEffectCode = (
+export const generateCopyConsumableEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  triggerType: string,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerCode(effect, triggerType)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+      return generateConsumableCode(effect, triggerType)
 
     default:
       return {
@@ -37,94 +23,267 @@ export const generateEffectCode = (
 
 const generateJokerCode = (
   effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
+  triggerType: string,
 ): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+  const consumableType = (effect.params?.consumable_type as string) || "random";
+  const specificCard = (effect.params?.specific_card as string) || "random";
+  const isNegative = (effect.params?.is_negative as string) === "negative";
+  const customMessage = effect.customMessage;
 
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
+  const scoringTriggers = ["hand_played", "card_scored"];
+  const isScoring = scoringTriggers.includes(triggerType);
+
+  let copyCode = "";
+
+  if (consumableType === "random") {
+    const slotCheck = isNegative
+      ? ""
+      : "and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit";
+    const bufferCode = isNegative
+      ? ""
+      : "G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1";
+    const bufferReset = isNegative ? "" : "G.GAME.consumeable_buffer = 0";
+    const negativeSetCode = isNegative
+      ? `
+                        copied_card:set_edition("e_negative", true)`
+      : "";
+    const messageText = customMessage
+      ? `"${customMessage}"`
+      : `"Copied Consumable!"`;
+
+    copyCode = `
+            local target_cards = {}
+            for i, consumable in ipairs(G.consumeables.cards) do
+                table.insert(target_cards, consumable)
+            end
+            if #target_cards > 0 ${slotCheck} then
+                local card_to_copy = pseudorandom_element(target_cards, pseudoseed('copy_consumable'))
+                ${bufferCode}
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local copied_card = copy_card(card_to_copy)${negativeSetCode}
+                        copied_card:add_to_deck()
+                        G.consumeables:emplace(copied_card)
+                        ${bufferReset}
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+            end`;
+  } else {
+    let cardKeys: string[] = [];
+    let setName = "";
+
+    if (consumableType === "tarot") {
+      setName = "Tarot";
+      if (specificCard === "random") {
+        cardKeys = Object.values(TAROT_CARD_KEYS);
+      } else {
+        cardKeys = [specificCard || "c_fool"];
+      }
+    } else if (consumableType === "planet") {
+      setName = "Planet";
+      if (specificCard === "random") {
+        cardKeys = Object.values(PLANET_CARD_KEYS);
+      } else {
+        cardKeys = [specificCard || "c_pluto"];
+      }
+    } else if (consumableType === "spectral") {
+      setName = "Spectral";
+      if (specificCard === "random") {
+        cardKeys = Object.values(SPECTRAL_CARD_KEYS);
+      } else {
+        cardKeys = [specificCard || "c_familiar"];
+      }
+    }
+
+    const slotCheck = isNegative
+      ? ""
+      : "and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit";
+    const bufferCode = isNegative
+      ? ""
+      : "G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1";
+    const bufferReset = isNegative ? "" : "G.GAME.consumeable_buffer = 0";
+    const negativeSetCode = isNegative
+      ? `
+                        copied_card:set_edition("e_negative", true)`
+      : "";
+    const messageText = customMessage
+      ? `"${customMessage}"`
+      : `"Copied Consumable!"`;
+
+    if (specificCard === "random") {
+      copyCode = `
+            local target_cards = {}
+            for i, consumable in ipairs(G.consumeables.cards) do
+                if consumable.ability.set == "${setName}" then
+                    table.insert(target_cards, consumable)
+                end
+            end
+            if #target_cards > 0 ${slotCheck} then
+                local card_to_copy = pseudorandom_element(target_cards, pseudoseed('copy_consumable'))
+                ${bufferCode}
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local copied_card = copy_card(card_to_copy)${negativeSetCode}
+                        copied_card:add_to_deck()
+                        G.consumeables:emplace(copied_card)
+                        ${bufferReset}
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+            end`;
+    } else {
+      const targetKey = cardKeys[0];
+      copyCode = `
+            local target_cards = {}
+            for i, consumable in ipairs(G.consumeables.cards) do
+                if consumable.ability.set == "${setName}" and consumable.config.center.key == "${targetKey}" then
+                    table.insert(target_cards, consumable)
+                end
+            end
+            if #target_cards > 0 ${slotCheck} then
+                local card_to_copy = pseudorandom_element(target_cards, pseudoseed('copy_consumable'))
+                ${bufferCode}
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local copied_card = copy_card(card_to_copy)${negativeSetCode}
+                        copied_card:add_to_deck()
+                        G.consumeables:emplace(copied_card)
+                        ${bufferReset}
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+            end`;
+    }
+  }
+
+  if (isScoring) {
+    return {
+      statement: `__PRE_RETURN_CODE__${copyCode}
+                __PRE_RETURN_CODE_END__`,
+      colour: "G.C.GREEN",
+    };
+  } else {
+    return {
+      statement: `func = function()${copyCode}
+                    return true
+                end`,
+      colour: "G.C.GREEN",
+    };
+  }
 };
 
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
+  triggerType: string,
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const set = (effect.params?.set as string) || "random";
+  const specificCard = (effect.params?.specific_card as string) || "random";
+  const isNegative = (effect.params?.is_negative as string) === "negative";
+  const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value);
+  const scoringTriggers = ["hand_played", "card_scored"];
+  const isScoring = scoringTriggers.includes(triggerType);
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  let copyCode = "";
+  const slotCheck = isNegative
+    ? ""
+    : "and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit";
+  const bufferCode = isNegative
+    ? ""
+    : "G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1";
+  const bufferReset = isNegative ? "" : "G.GAME.consumeable_buffer = 0";
+  const negativeSetCode = isNegative
+    ? `
+                        copied_card:set_edition("e_negative", true)`
+    : "";
+  const messageText = customMessage
+    ? `"${customMessage}"`
+    : `"Copied Consumable!"`;
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  if (set === "random") {
+    copyCode = `
+            local target_cards = {}
+            for i, consumable in ipairs(G.consumeables.cards) do
+                table.insert(target_cards, consumable)
+            end
+            if #target_cards > 0 ${slotCheck} then
+                local card_to_copy = pseudorandom_element(target_cards, pseudoseed('copy_consumable'))
+                ${bufferCode}
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local copied_card = copy_card(card_to_copy)${negativeSetCode}
+                        copied_card:add_to_deck()
+                        G.consumeables:emplace(copied_card)
+                        ${bufferReset}
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+            end`;
+  } else {
+    if (specificCard === "random") {
+      copyCode = `
+            local target_cards = {}
+            for i, consumable in ipairs(G.consumeables.cards) do
+                if consumable.ability.set == "${set}" then
+                    table.insert(target_cards, consumable)
+                end
+            end
+            if #target_cards > 0 ${slotCheck} then
+                local card_to_copy = pseudorandom_element(target_cards, pseudoseed('copy_consumable'))
+                ${bufferCode}
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local copied_card = copy_card(card_to_copy)${negativeSetCode}
+                        copied_card:add_to_deck()
+                        G.consumeables:emplace(copied_card)
+                        ${bufferReset}
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+            end`;
+    } else {
+      copyCode = `
+            local target_cards = {}
+            for i, consumable in ipairs(G.consumeables.cards) do
+                if consumable.ability.set == "${set}" and consumable.config.center.key == "${specificCard}" then
+                    table.insert(target_cards, consumable)
+                end
+            end
+            if #target_cards > 0 ${slotCheck} then
+                local card_to_copy = pseudorandom_element(target_cards, pseudoseed('copy_consumable'))
+                ${bufferCode}
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local copied_card = copy_card(card_to_copy)${negativeSetCode}
+                        copied_card:add_to_deck()
+                        G.consumeables:emplace(copied_card)
+                        ${bufferReset}
+                        return true
+                    end
+                }))
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+            end`;
+    }
+  }
 
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  if (isScoring) {
+    return {
+      statement: `__PRE_RETURN_CODE__${copyCode}
+                __PRE_RETURN_CODE_END__`,
+      colour: "G.C.GREEN",
+    };
+  } else {
+    return {
+      statement: `func = function()${copyCode}
+                    return true
+                end`,
+      colour: "G.C.GREEN",
+    };
+  }
 }

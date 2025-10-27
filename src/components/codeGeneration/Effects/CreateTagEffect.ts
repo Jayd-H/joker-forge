@@ -1,130 +1,78 @@
+import { TAG_TYPES } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateCreateTagEffectCode = (
   effect: Effect,
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  triggerType: string,
 ): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+  const tagType = (effect.params?.tag_type as string) || "random";
+  const specificTag = (effect.params?.specific_tag as string) || "double";
+  const customMessage = effect.customMessage;
 
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
+  const scoringTriggers = ["hand_played", "card_scored"];
+  const isScoring = scoringTriggers.includes(triggerType);
+
+  let tagCreationCode = "";
+
+  if (tagType === "random") {
+    tagCreationCode = `
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                    local selected_tag = pseudorandom_element(G.P_TAGS, pseudoseed("create_tag")).key
+                    local tag = Tag(selected_tag)
+                    if tag.name == "Orbital Tag" then
+                        local _poker_hands = {}
+                        for k, v in pairs(G.GAME.hands) do
+                            if v.visible then
+                                _poker_hands[#_poker_hands + 1] = k
+                            end
+                        end
+                        tag.ability.orbital_hand = pseudorandom_element(_poker_hands, "jokerforge_orbital")
+                    end
+                    tag:set_ability()
+                    add_tag(tag)
+                    play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)
+                    return true
+                end
+            }))`;
+  } else {
+    const tagKey = TAG_TYPES[specificTag] || "tag_double";
+    tagCreationCode = `
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                    local tag = Tag("${tagKey}")
+                    if tag.name == "Orbital Tag" then
+                        local _poker_hands = {}
+                        for k, v in pairs(G.GAME.hands) do
+                            if v.visible then
+                                _poker_hands[#_poker_hands + 1] = k
+                            end
+                        end
+                        tag.ability.orbital_hand = pseudorandom_element(_poker_hands, "jokerforge_orbital")
+                    end
+                    tag:set_ability()
+                    add_tag(tag)
+                    play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)
+                    return true
+                end
+            }))`;
   }
-}
 
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
-
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  if (isScoring) {
+    return {
+      statement: `__PRE_RETURN_CODE__${tagCreationCode}
+                __PRE_RETURN_CODE_END__`,
+      message: customMessage ? `"${customMessage}"` : `"Created Tag!"`,
+      colour: "G.C.GREEN",
+    };
+  } else {
+    return {
+      statement: `func = function()${tagCreationCode}
+                    return true
+                end`,
+      message: customMessage ? `"${customMessage}"` : `"Created Tag!"`,
+      colour: "G.C.GREEN",
+    };
+  }
 }

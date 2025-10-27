@@ -1,16 +1,13 @@
 import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
-import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 import {
-GameObjectData,
-JokerData,
-ConsumableData, 
-EnhancementData,
-SealData,
-EditionData,
-VoucherData,
-DeckData,
-getModPrefix,
-  } from "../data/BalatroUtils";
+  JokerData,
+  ConsumableData, 
+  EnhancementData,
+  SealData,
+  EditionData,
+  VoucherData,
+  DeckData,
+} from "../data/BalatroUtils";
 import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
 import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/AddChipsEffect";
@@ -30,6 +27,13 @@ import { generateChangeRankVariableEffectCode } from "./Effects/ChangeRankVariab
 import { generateConvertAllCardToRankEffectCode } from "./Effects/ConvertAllCardsToRankEffect";
 import { generateConvertAllCardsToSuitEffectCode } from "./Effects/ConvertAllCardsToSuitEffect";
 import { generateConvertLeftToRightEffectCode } from "./Effects/ConvertLeftToRightEffect";
+import { generateCopyConsumableEffectCode } from "./Effects/CopyConsumableEffect";
+import { generateCopyJokerEffectCode } from "./Effects/CopyJokerEffect";
+import { generateCrashGameEffectCode } from "./Effects/CrashGameEffect";
+import { generateCreateConsumableEffectCode } from "./Effects/CreateConsumableEffect";
+import { generateCreateJokerEffectCode } from "./Effects/CreateJokerEffect";
+import { generateCreateLastPlayedPlanetEffectCode } from "./Effects/CreateLastPlayedPlanetEffect";
+import { generateCreateTagEffectCode } from "./Effects/CreateTagEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -132,6 +136,22 @@ export const generateSingleEffect = (
       return generateConvertAllCardsToSuitEffectCode(effect, itemType)
     case "convert_left_to_right":
       return generateConvertLeftToRightEffectCode(effect, itemType)
+    // ADD CASES FOR COPY CARD TO DECK/HAND EFFECTS
+    case "copy_consumable":
+      return generateCopyConsumableEffectCode(effect, itemType, triggerType)
+    case "copy_joker":
+      return generateCopyJokerEffectCode(effect, itemType, triggerType)
+    case "crash_game":
+      return generateCrashGameEffectCode(effect)
+    case "create_consumable":
+      return generateCreateConsumableEffectCode(effect, itemType, triggerType)
+    case "create_joker":
+      return generateCreateJokerEffectCode(effect, itemType, triggerType)
+    case "create_last_played_planet":
+      return generateCreateLastPlayedPlanetEffectCode(effect, itemType)
+    case "create_tag":
+      return generateCreateTagEffectCode(effect, triggerType)
+    
 
     default:
       return {
@@ -140,3 +160,5 @@ export const generateSingleEffect = (
       };
   }
 };
+
+// COPY JOKER ABILITY PASSIVE

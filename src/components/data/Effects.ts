@@ -1139,7 +1139,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     description:
       "Create consumable cards and add them to your consumables area",
     applicableTriggers: [...GENERIC_TRIGGERS],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable", "card", "deck"],
     params: [
       {
         id: "set",
@@ -1324,37 +1324,57 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     }],
     category: "Jokers",
   },
-{
-  id: "create_tag",
-  label: "Create Tag",
-  description: "Create a specific or random tag",
-  applicableTriggers: [...GENERIC_TRIGGERS],
-  objectUsers: [...ALL_OBJECTS],
-  params: [
-    {
-      id: "tag_type",
-      type: "select",
-      label: "Tag Type",
-      options: [
-        { value: "random", label: "Random Tag" },
-        { value: "specific", label: "Specific Tag" },
-      ],
-      default: "random",
-    },
-    {
-      id: "specific_tag",
-      type: "select",
-      label: "Specific Tag",
-      options: [...TAGS],
-      showWhen: {
-        parameter: "tag_type",
-        values: ["specific"],
+  {
+    id: "create_tag",
+    label: "Create Tag",
+    description: "Create a specific or random tag",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    objectUsers: [...ALL_OBJECTS],
+    params: [
+      {
+        id: "tag_type",
+        type: "select",
+        label: "Tag Type",
+        options: [
+          { value: "random", label: "Random Tag" },
+          { value: "specific", label: "Specific Tag" },
+        ],
+        default: "random",
       },
-    },
-  ],
-  category: "Consumables",
-},
-{
+      {
+        id: "specific_tag",
+        type: "select",
+        label: "Specific Tag",
+        options: [...TAGS],
+        showWhen: {
+          parameter: "tag_type",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Consumables",
+  },
+  {
+    id: "create_last_played_planet",
+    label: "Create Last Played Planet",
+    description: "Create a Planet card corresponding to the last hand played (Blue Seal effect)",
+    objectUsers: ["card"],
+    applicableTriggers: GENERIC_TRIGGERS,
+    params: [
+      {
+        id: "is_negative",
+        type: "select",
+        label: "Edition",
+        options: [
+          { value: "none", label: "No Edition" },
+          { value: "negative", label: "Negative Edition" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Consumables",
+  },
+  {
     id: "destroy_consumable",
     label: "Destroy Consumable",
     description: "Destroy a consumable card from your collection",

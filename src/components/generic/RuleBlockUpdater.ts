@@ -1,4 +1,6 @@
 import { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../data/BalatroUtils";
+import { getConditionTypeById } from "../data/Conditions";
+import { getEffectTypeById } from "../data/Effects";
 import { Condition, Effect, Rule } from "../ruleBuilder";
 
 export const updateRuleBlocks = (
@@ -76,7 +78,13 @@ const updateConditionParams = (
   id: string, 
   params: Record <string, unknown>
 ): Record <string, unknown> => {
-  
+  for (const key in params) {
+    if (!params[key]) {
+      const condition = getConditionTypeById(id)
+      const param = condition?.params.find(param => param.id === key)
+      params[key] = param?.default
+    }
+  }
 
   return params
 }
@@ -105,6 +113,13 @@ const updateEffectParams = (
   params: Record <string, unknown>
 ): Record <string, unknown> => {
   
+  for (const key in params) {
+    if (!params[key]) {
+      const effect = getEffectTypeById(id)
+      const param = effect?.params.find(param => param.id === key)
+      params[key] = param?.default
+    }
+  }
 
   return params
 }
