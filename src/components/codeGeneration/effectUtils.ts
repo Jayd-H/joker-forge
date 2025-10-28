@@ -10,11 +10,11 @@ import { generateAddMultEffectCode } from "./Effects/AddMultEffect";
 import { generateApplyXMultEffectCode } from "./Effects/ApplyXMultEffect";
 import { generateApplyExpMultEffectCode } from "./Effects/ApplyExpMultEffect";
 import { generateApplyHyperMultEffectCode } from "./Effects/ApplyHyperMultEffect";
-import { generateDrawCardsReturn } from "./Effects/DrawCardsEffect";
+import { generateDrawCardsEffectCode } from "./Effects/DrawCardsEffect";
 import { generateBalanceChipsAndMultEffectCode } from "./Effects/BalanceChipsAndMultEffect";
 import { generateSwapChipsAndMultEffectCode } from "./Effects/SwapChipsAndMultEffect";
 import { generateShowMessageEffectCode } from "./Effects/ShowMessageEffect";
-import { generateDisableBossBlindReturn } from "./Effects/DisableBossBlindEffect";
+import { generateDisableBossBlindEffectCode } from "./Effects/DisableBossBlindEffect";
 import { generateEmitFlagEffectCode } from "./Effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "./Effects/PlaySoundEffect";
 import { generateWinBlindEffectCode } from "./Effects/WinBlindEffect";
@@ -54,6 +54,8 @@ import { generateFoolEffectCode } from "./Effects/FoolEffect";
 import { generateIncrementRankEffectCode } from "./Effects/IncrementRankEffect";
 import { generateDestroyCardsEffectCode } from "./Effects/DestroyCardsEffect";
 import { generateDestroySelfEffectCode } from "./Effects/DestroySelfEffect";
+import { generateDestroyJokerEffectCode } from "./Effects/DestroyJokerEffect";
+import { generateDestroyConsumableEffectCode } from "./Effects/DestroyConsumableEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -139,14 +141,10 @@ export const generateSingleEffect = (
       return generateApplyExpMultEffectCode(effect, itemType, sameTypeCount)
     case "apply_hyper_mult":
       return generateApplyHyperMultEffectCode(effect, itemType, sameTypeCount)
-    case "draw_cards":
-      return generateDrawCardsReturn(effect, itemType);
     case "balance_chips_mult":
       return generateBalanceChipsAndMultEffectCode(effect)
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
-    case "disable_boss_blind":
-      return generateDisableBossBlindReturn(effect, itemType, triggerType);
     case "change_joker_variable":
       return generateChangeJokerVariableEffectCode(effect)
     case "change_pokerhand_variable":
@@ -183,7 +181,15 @@ export const generateSingleEffect = (
       return generateDestroyCardsEffectCode(effect, itemType, sameTypeCount)
     case "destroy_self":
       return generateDestroySelfEffectCode(effect, itemType, triggerType)
-    
+    case "destroy_joker":
+      return generateDestroyJokerEffectCode(effect, itemType, triggerType, sameTypeCount)
+    case "destroy_consumable":
+      return generateDestroyConsumableEffectCode(effect, itemType, triggerType)
+    case "draw_cards":
+      return generateDrawCardsEffectCode(effect, itemType, sameTypeCount, card)
+    case "disable_boss_blind":
+      return generateDisableBossBlindEffectCode(effect, itemType, triggerType)
+    // ADD CASE FOR DISCOUNT ITEMS
     case "fool_effect":
       return generateFoolEffectCode(effect, itemType)
     case "increment_rank":
@@ -241,4 +247,4 @@ export const generateSingleEffect = (
   }
 };
 
-// COPY JOKER ABILITY PASSIVE
+// ADD PASSIVE ABILITIES

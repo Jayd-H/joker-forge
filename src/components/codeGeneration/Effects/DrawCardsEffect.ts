@@ -1,25 +1,22 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
+import type { EditionData, EnhancementData, SealData } from "../../data/BalatroUtils";
+import { generateConfigVariables, } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateDrawCardsReturn = (
+export const generateDrawCardsEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
+  sameTypeCount: number = 0,
   card?: EnhancementData | EditionData | SealData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerCode(effect, sameTypeCount)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
+      return generateConsumableCode(effect)
     case "card":
-      return generateCardCode(effect, card)
+      return generateCardCode(effect, sameTypeCount, card)
 
     default:
       return {
@@ -32,7 +29,6 @@ export const generateDrawCardsReturn = (
 const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
   const variableName =
     sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
@@ -40,7 +36,8 @@ const generateJokerCode = (
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    variableName
+    variableName,
+    'joker'
   )
 
   const customMessage = effect.customMessage;
@@ -60,7 +57,6 @@ const generateJokerCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
 ): EffectReturn => {
   const value = effect.params?.value || 1;
   const customMessage = effect.customMessage;
@@ -87,11 +83,6 @@ const generateConsumableCode = (
       end
       __PRE_RETURN_CODE_END__`;
 
-  const configVariables =
-    typeof value === "string" && value.startsWith("GAMEVAR:")
-      ? []
-      : [`hand_size_value = ${value}`];
-
   return {
     statement: drawCardsCode,
     colour: "G.C.BLUE",
@@ -101,7 +92,6 @@ const generateConsumableCode = (
 const generateCardCode = (
   effect: Effect,
   sameTypeCount: number = 0,
-  itemType: "enhancement" | "seal" | "edition" = "enhancement",
   card?: EditionData | EnhancementData | SealData,
 ): EffectReturn => {
 const variableName =
@@ -111,7 +101,7 @@ const variableName =
     effect.params?.value,
     effect.id,
     variableName,
-    itemType
+    card?.objectType ?? "enhancement"
   );
 
   const customMessage = effect.customMessage;
@@ -125,10 +115,7 @@ const variableName =
       ? `"${customMessage}"`
       : `"+"..tostring(${valueCode}).." Cards Drawn"`,
     colour: "G.C.BLUE",
-    configVariables:
-      configVariables.length > 0
-        ? configVariables.map((cv) => `${cv.name} = ${cv.value}`)
-        : undefined,
+    configVariables
   };
 
   return result;

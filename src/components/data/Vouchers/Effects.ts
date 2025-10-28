@@ -290,7 +290,7 @@ export const VOUCHER_EFFECT_TYPES: EffectTypeDefinition[] = [
     id: "edit_Shop_Prices",
     label: "Edit Shop Prices",
     description: "Modify the Prices of Items in Shop",
-    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS,"voucher_used"],
+    applicableTriggers: [...VOUCHER_GENERIC_TRIGGERS, "voucher_used"],
     params: [
       {
         id: "operation",

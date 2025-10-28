@@ -1,20 +1,16 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 
-export const generateDisableBossBlindReturn = (
+export const generateDisableBossBlindEffectCode = (
   effect: Effect,
   itemType: string,
   triggerType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, triggerType, joker)
+      return generateJokerCode(effect, triggerType)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
+      return generateConsumableCode(effect)
 
     default:
       return {
@@ -27,7 +23,6 @@ export const generateDisableBossBlindReturn = (
 const generateJokerCode = (
   effect: Effect,
   triggerType: string,
-  joker?: JokerData
 ): EffectReturn => {
 const customMessage = effect.customMessage;
 
@@ -68,7 +63,6 @@ const customMessage = effect.customMessage;
 
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
 ): EffectReturn => {
   const customMessage = effect.customMessage;
 

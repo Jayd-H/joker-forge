@@ -119,6 +119,8 @@ const updateEffectId = (
       return "destroy_self"
     case "destroy_random_cards":
       return "destroy_cards"
+    case "edit_Shop_Prices":
+      return "discount_items"
 
     default:
       return id

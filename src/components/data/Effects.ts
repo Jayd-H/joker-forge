@@ -2457,6 +2457,57 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Selected Cards",
   },
+  {
+    id: "discount_items",
+    label: "Discount Items",
+    description: "Reduce the cost of specific shop items",
+    objectUsers: ["joker", "voucher"],
+    applicableTriggers: ["passive", "card_used"],
+    params: [
+      {
+        id: "discount_type",
+        type: "select",
+        label: "Discount Type",
+        options: [
+          { value: "planet", label: "Planet (Cards & Packs)" },
+          { value: "tarot", label: "Tarot (Cards & Packs)" },
+          { value: "spectral", label: "Spectral (Cards & Packs)" },
+          { value: "standard", label: "Standard (Playing Cards & Packs)" },
+          { value: "jokers", label: "Jokers" },
+          { value: "vouchers", label: "Vouchers" },
+          { value: "all_consumables", label: "All Consumables" },
+          { value: "all_cards", label: "All Cards" },
+          { value: "all_shop_items", label: "All Shop Items" },
+        ],
+        default: "planet",
+      },
+      {
+        id: "discount_method",
+        type: "select",
+        label: "Discount Method",
+        options: [
+          { value: "flat_reduction", label: "Flat Dollar Reduction ($X off)" },
+          {
+            value: "percentage_reduction",
+            label: "Percentage Reduction (X% off)",
+          },
+          { value: "make_free", label: "Make Completely Free ($0)" },
+        ],
+        default: "make_free",
+      },
+      {
+        id: "discount_amount",
+        type: "number",
+        label: "Discount Amount",
+        default: 1,
+        showWhen: {
+          parameter: "discount_method",
+          values: ["flat_reduction", "percentage_reduction"],
+        },
+      },
+    ],
+    category: "Economy",
+  },
 ]
 
 export function getEffectTypeById(
