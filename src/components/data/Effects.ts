@@ -750,7 +750,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       label: "Set Winner Ante",
         description: "Set the Final Ante where the Player Win's the Game",
         applicableTriggers: [...GENERIC_TRIGGERS],
-        objectUsers: [...ALL_OBJECTS],
+        objectUsers: ["consumable", "deck", "joker", "voucher"],
         params: [
             {
               id: "operation",
@@ -2507,6 +2507,264 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       },
     ],
     category: "Economy",
+  },
+  {
+    id: "edit_all_starting_cards",
+    label: "Edit All Starting Cards",
+    description: "Apply multiple modifications to the starting cards in the deck (enhancement, seal, edition, suit, rank)",
+    objectUsers: ["deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          ...ENHANCEMENTS(),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS(),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "No Change" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random" },
+        ],
+        default: "none",
+      },
+      {
+        id: "suit",
+        type: "select",
+        label: "Suit",
+        options: [
+          { value: "none", label: "No Change" },
+          ...SUITS,
+          { value: "random", label: "Random Suit" },
+        ],
+        default: "none",
+      },
+      {
+        id: "rank",
+        type: "select",
+        label: "Rank",
+        options: [
+          { value: "none", label: "No Change" },
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          { value: "random", label: "Random Rank" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Deck Card Modifications",
+  },
+  {
+    id: "edit_starting_suits",
+    label: "Edit Starting Suits",
+    description: "Apply multiple modifications to the starting suits in the deck (enhancement, seal, edition, replace/delete suit)",
+    objectUsers: ["deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "selected_suit",
+        type: "select",
+        label: "Suit",
+        options: [...SUITS],
+        default: "Spades",
+      },
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          ...ENHANCEMENTS(),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS(),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "No Change" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random" },
+        ],
+        default: "none",
+      },
+      {
+        id: "replace_suit",
+        type: "select",
+        label: "Suit Replacer/Deleter",
+        options: [
+          { value: "none", label: "No Change" },
+          ...SUITS,
+          { value: "random", label: "Random Suit" },
+          { value: "remove", label: "Remove Suit" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Deck Card Modifications",
+  },
+  {
+    id: "edit_starting_ranks",
+    label: "Edit Starting Ranks",
+    description: "Apply multiple modifications to the starting ranks in the deck (enhancement, seal, edition, replace/delete rank)",
+    objectUsers: ["deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "specific_selected_Rank",
+        type: "select",
+        label: "Rank",
+        options: [
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+        ],
+        default: "King",
+      },
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          ...ENHANCEMENTS(),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS(),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "No Change" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random" },
+        ],
+        default: "none",
+      },
+      {
+        id: "specific_replace_Rank",
+        type: "select",
+        label: "Rank Replacer/Deleter",
+        options: [
+          { value: "none", label: "No Change" },
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          { value: "random", label: "Random Rank" },
+          { value: "remove", label: "Remove Rank" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Deck Card Modifications",
+  },
+  {
+    id: "edit_joker",
+    label: "Apply Edition to Random Joker",
+    description: "Apply an edition to random jokers in your joker area",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used", "held_hand"],
+    params: [
+      {
+        id: "method",
+        type: "select",
+        label: "Selection Method",
+        options: [
+          {value: "random", label: "Random"}
+        ],
+        default: "random",
+      },
+      {
+        id: "amount",
+        type: "number",
+        label: "Number of Jokers to Edit",
+        default: 1,
+        min: 1,
+        max: 5,
+        showWhen: {parameter: "method", values: ["random"]},
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition to Apply",
+        options: [
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "none", label: "No Change" },
+          { value: "random", label: "Random Edition" },
+          { value: "remove", label: "Remove Edition" },
+        ],
+        default: "none",
+      },
+      {
+        id: "sticker",
+        type: "select",
+        label: "Sticker",
+        options: [
+          ...STICKERS.map((sticker) => ({
+            key: sticker.key,
+            value: sticker.value,
+            label: sticker.label,
+          })),
+        { value: "none", label: "No Change" },
+        { value: "remove", label: "Remove Sticker" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Jokers",
   },
 ]
 

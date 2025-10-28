@@ -24,7 +24,7 @@ export const generateEditWinnerAnteReturn = (
   let anteCode = "";
   let messageText = "";
 
-     switch (operation) {
+  switch (operation) {
     case "set":
       anteCode = `
             G.E_MANAGER:add_event(Event({

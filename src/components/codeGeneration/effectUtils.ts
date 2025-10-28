@@ -56,6 +56,11 @@ import { generateDestroyCardsEffectCode } from "./Effects/DestroyCardsEffect";
 import { generateDestroySelfEffectCode } from "./Effects/DestroySelfEffect";
 import { generateDestroyJokerEffectCode } from "./Effects/DestroyJokerEffect";
 import { generateDestroyConsumableEffectCode } from "./Effects/DestroyConsumableEffect";
+import { generateEditStartingCardsEffectCode } from "./Effects/EditStartingCardsEffect";
+import { generateEditStartingSuitsEffectCode } from "./Effects/EditStartingSuitsEffect";
+import { generateEditStartingRanksEffectCode } from "./Effects/EditStartingRanksEffect";
+import { generateEditJokerEffectCode } from "./Effects/EditJokerEffect";
+import { generateEditWinnerAnteEffectCode } from "./Effects/EditWinnerAnteEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -190,6 +195,17 @@ export const generateSingleEffect = (
     case "disable_boss_blind":
       return generateDisableBossBlindEffectCode(effect, itemType, triggerType)
     // ADD CASE FOR DISCOUNT ITEMS
+    case "edit_starting_cards":
+      return generateEditStartingCardsEffectCode(effect, modprefix)
+    case "edit_starting_suits":
+      return generateEditStartingSuitsEffectCode(effect, modprefix)
+    case "edit_starting_ranks":
+      return generateEditStartingRanksEffectCode(effect, modprefix)
+    case "edit_joker":
+      return generateEditJokerEffectCode(effect, itemType, modprefix) // NEED TO IMPLEMENT METHODS PROPERLY
+    case "edit_win_ante":
+      return generateEditWinnerAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
+      
     case "fool_effect":
       return generateFoolEffectCode(effect, itemType)
     case "increment_rank":
