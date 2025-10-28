@@ -52,6 +52,8 @@ import { generateModifyBlindRequirementEffectCode } from "./Effects/ModifyBlindR
 import { generateModifyInternalVariableEffectCode } from "./Effects/ModifyInternalVariableEffect";
 import { generateFoolEffectCode } from "./Effects/FoolEffect";
 import { generateIncrementRankEffectCode } from "./Effects/IncrementRankEffect";
+import { generateDestroyCardsEffectCode } from "./Effects/DestroyCardsEffect";
+import { generateDestroySelfEffectCode } from "./Effects/DestroySelfEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -177,6 +179,11 @@ export const generateSingleEffect = (
       return generateCreateLastPlayedPlanetEffectCode(effect, itemType)
     case "create_tag":
       return generateCreateTagEffectCode(effect, triggerType)
+    case "destroy_cards":
+      return generateDestroyCardsEffectCode(effect, itemType, sameTypeCount)
+    case "destroy_self":
+      return generateDestroySelfEffectCode(effect, itemType, triggerType)
+    
     case "fool_effect":
       return generateFoolEffectCode(effect, itemType)
     case "increment_rank":

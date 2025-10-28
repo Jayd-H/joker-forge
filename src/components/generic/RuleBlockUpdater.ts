@@ -100,8 +100,10 @@ const updateConditionParams = (
 const updateEffect = (
   effect: Effect
 ) => {
-  effect.id = updateEffectId(effect.id)
-  effect.params = updateEffectParams(effect.id, effect.params)
+  const oldEffectId = effect.id
+  effect.id = updateEffectId(oldEffectId)
+  effect.params = updateEffectParams(oldEffectId, effect.params)
+  effect.params = updateMissingEffectParams(effect.id, effect.params)
 
   return effect
 }
@@ -113,6 +115,10 @@ const updateEffectId = (
     case "add_dollars":
     case "edit_dollars":
       return "set_dollars"
+    case "destroy_card":
+      return "destroy_self"
+    case "destroy_random_cards":
+      return "destroy_cards"
 
     default:
       return id
@@ -120,6 +126,22 @@ const updateEffectId = (
 }
 
 const updateEffectParams = (
+  id: string, 
+  params: Record <string, unknown>
+): Record <string, unknown> => {
+
+  switch (id) {
+    case "destroy_random_cards":
+      params['method'] = 'random'
+      break
+    case "destroy_selected_cards":
+      params['method'] = 'selected'
+  }
+
+  return params
+}
+
+const updateMissingEffectParams = (
   id: string, 
   params: Record <string, unknown>
 ): Record <string, unknown> => {

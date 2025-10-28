@@ -1309,7 +1309,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Destroy Self",
     description: "Destroy this joker",
     applicableTriggers: [...GENERIC_TRIGGERS],
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "card"],
     params: [{
       id: "animation",
       type: "select",
@@ -1328,6 +1328,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "n", label: "No" },
         ],
       default : "n",
+      exemptObjects: ["card"]
     }],
     category: "Jokers",
   },
@@ -1413,6 +1414,33 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       },
     ],
     category: "Consumables",
+  },
+  {
+    id: "destroy_cards",
+    label: "Destroy Cards",
+    description: "Destroy a number of random cards from hand",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used", "held_hand"],
+    params: [
+      {
+        id: "method",
+        type: "select",
+        label: "Selection Method",
+        options: [
+          { value: 'random', label: 'Random'},
+        ],
+        default: 'random',
+      },
+      {
+        id: "count",
+        type: "number",
+        label: "Number of Cards",
+        default: 1,
+        min: 1,
+        max: 8,
+      },
+    ],
+    category: "Card Modification",
   },
   {
     id: "permanent_bonus",

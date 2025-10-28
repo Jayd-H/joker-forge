@@ -1,31 +1,16 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateDestroySelfEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  triggerType: string,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
+      return generateJokerCode(effect)
     case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+      return generateCardCode(effect, triggerType)
 
     default:
       return {
@@ -37,94 +22,67 @@ export const generateEffectCode = (
 
 const generateJokerCode = (
   effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+  const thing = effect?.params.animation+'()'
+  const isMessage = effect?.params.display_message
+  const customMessage = effect?.customMessage;
+  const statement = `func = function()
+                card:${thing}
+                return true
+            end`;
 
+  if (isMessage == 'y') {
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
+    statement: statement,
+    message: customMessage ? `"${customMessage}"` : `"Destroyed!"`,
+    colour: "G.C.RED",
+  }}
+  else{
+    return {
+      statement:statement,
+      colour:"G.C.RED"
+  }}
 };
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
 
 const generateCardCode = (
   effect: Effect,
-  card?: EditionData | EnhancementData | SealData
+  triggerType: string,
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const customMessage = effect.customMessage;
+  const setGlassTrigger = effect.params?.setGlassTrigger === "true";
 
-  const valueCode = generateGameVariableCode(value);
+  if (triggerType === "card_discarded") {
+    const result: EffectReturn = {
+      statement: `remove = true`,
+      colour: "G.C.RED",
+      configVariables: undefined,
+    };
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+    if (customMessage) {
+      result.message = `"${customMessage}"`;
+    }
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+    return result;
+  }
 
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  let statement: string;
 
-  const valueCode = generateGameVariableCode(value);
+  if (setGlassTrigger) {
+    statement = `__PRE_RETURN_CODE__card.glass_trigger = true
+            card.should_destroy = true__PRE_RETURN_CODE_END__`;
+  } else {
+    statement = `__PRE_RETURN_CODE__card.should_destroy = true__PRE_RETURN_CODE_END__`;
+  }
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  const result: EffectReturn = {
+    statement: statement,
+    colour: "G.C.RED",
+    configVariables: undefined,
+  };
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  if (customMessage) {
+    result.message = `"${customMessage}"`;
+  }
 
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return result;
 }
