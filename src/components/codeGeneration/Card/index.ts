@@ -7,7 +7,7 @@ import {
   slugify,
 } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../conditionUtils";
-import { generateEffectReturnStatement } from "./effectUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
 import { extractGameVariablesFromRules, generateGameVariableCode, parseGameVariable } from "../Consumables/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
@@ -74,7 +74,7 @@ const generateCalculateFunction = (
   modPrefix: string,
   hasNonDiscardDestroy: boolean,
   hasRetrigger: boolean,
-  cardKey: string,
+  card: EditionData | EnhancementData | SealData,
   itemType: "enhancement" | "seal" | "edition"
 ): string => {
   if (rules.length === 0 && !hasNonDiscardDestroy && !hasRetrigger) {
@@ -206,14 +206,20 @@ const generateCalculateFunction = (
           : group.repetitions,
     }));
 
+  const globalEffectCounts = new Map<string, number>();
+
     const effectResult = generateEffectReturnStatement(
       regularEffects,
       randomGroups,
       loopGroups,
-      modPrefix,
-      cardKey,
+      itemType,
       rule.trigger,
-      itemType
+      modPrefix,
+      rule.id,
+      globalEffectCounts,
+      undefined,
+      undefined,
+      card
     );
 
     const indentLevel =
@@ -520,7 +526,7 @@ const generateSingleEnhancementCode = (
   enhancement: EnhancementData,
   atlasKey: string,
   currentPosition: number,
-  modPrefix: string
+  modPrefix: string,
 ): { code: string; nextPosition: number } => {
   const activeRules = enhancement.rules || [];
 
@@ -717,7 +723,8 @@ const generateSingleEnhancementCode = (
         )
     );
 
-  const configItems: string[] = [];
+  const configItems: ConfigExtraVariable[] = [];
+  const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
@@ -725,13 +732,13 @@ const generateSingleEnhancementCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+    configItems.push({name: varName, value: gameVar.startsFrom});
   });
 
   if (enhancement.userVariables && enhancement.userVariables.length > 0) {
     enhancement.userVariables.forEach((variable) => {
       if (variable.type === "number" || !variable.type) {
-        configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
+        configItems.push({name: variable.name, value: variable.initialValue || 0})
       }
     });
   }
@@ -770,9 +777,14 @@ const generateSingleEnhancementCode = (
       regularEffects,
       randomGroups,
       loopGroups,
-      modPrefix,
+      'enhancement',
       rule.trigger,
-      "enhancement"
+      modPrefix,
+      rule.id,
+      globalEffectCounts,
+      undefined,
+      undefined,
+      enhancement,
     );
 
     if (effectResult.configVariables) {
@@ -895,7 +907,7 @@ const generateSingleEnhancementCode = (
     modPrefix,
     hasNonDiscardDestroy,
     hasRetrigger,
-    enhancement.objectKey,
+    enhancement,
     "enhancement"
   );
   if (calculateCode) {
@@ -924,7 +936,8 @@ const generateSingleSealCode = (
   const hasNonDiscardDestroy = hasNonDiscardDestroyEffects(activeRules);
   const hasRetrigger = hasRetriggerEffects(activeRules);
 
-  const configItems: string[] = [];
+  const configItems: ConfigExtraVariable[] = [];
+  const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
@@ -932,7 +945,7 @@ const generateSingleSealCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+    configItems.push({name: varName, value: gameVar.startsFrom})
   });
 
   activeRules.forEach((rule) => {
@@ -969,9 +982,11 @@ const generateSingleSealCode = (
       regularEffects,
       randomGroups,
       loopGroups,
-      modPrefix,
+      'seal',
       rule.trigger,
-      "seal"
+      modPrefix,
+      rule.id,
+      globalEffectCounts,
     );
 
     if (effectResult.configVariables) {
@@ -982,7 +997,7 @@ const generateSingleSealCode = (
   if (seal.userVariables && seal.userVariables.length > 0) {
     seal.userVariables.forEach((variable) => {
       if (variable.type === "number" || !variable.type) {
-        configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
+        configItems.push({name: variable.name, value: variable.initialValue || 0})
       }
     });
   }
@@ -1064,7 +1079,7 @@ const generateSingleSealCode = (
     modPrefix,
     hasNonDiscardDestroy,
     hasRetrigger,
-    seal.objectKey,
+    seal,
     "seal"
   );
   if (calculateCode) {
@@ -1089,7 +1104,8 @@ export const generateSingleEditionCode = (
   const objectKey = edition.objectKey || slugify(edition.name);
   const activeRules = edition.rules || [];
 
-  const configItems: string[] = [];
+  const configItems: ConfigExtraVariable[] = [];
+  const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
@@ -1097,7 +1113,7 @@ export const generateSingleEditionCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1")
       .toLowerCase();
-    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+    configItems.push({name: varName, value: gameVar.startsFrom})
   });
 
   activeRules.forEach((rule) => {
@@ -1134,10 +1150,14 @@ export const generateSingleEditionCode = (
       regularEffects,
       randomGroups,
       loopGroups,
-      modPrefix,
-      objectKey,
+      'edition',
       rule.trigger,
-      "edition"
+      modPrefix,
+      rule.id,
+      globalEffectCounts, 
+      undefined, 
+      undefined, 
+      edition
     );
 
     if (effectResult.configVariables) {
@@ -1155,17 +1175,17 @@ export const generateSingleEditionCode = (
   if (edition.userVariables && edition.userVariables.length > 0) {
     edition.userVariables.forEach((variable) => {
       if (variable.type === "number" || !variable.type) {
-        configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
+        configItems.push({name: variable.name, value: variable.initialValue || 0})
       }
       else if (variable.type === "rank"){
-        configItems.push(`${variable.name} = ${variable.initialValue || "Ace"}`);}
+        configItems.push({name: variable.name, value: variable.initialRank || 'Ace'})}
       else if (variable.type === "suit"){
-        configItems.push(`${variable.name} = ${variable.initialValue || "Hearts"}`)}
+        configItems.push({name: variable.name, value: variable.initialSuit || 'Hearts'})}
       else if (variable.type === "pokerhand"){
-        configItems.push(`${variable.name} = ${variable.initialValue || "High Card"}`);
+        configItems.push({name: variable.name, value: variable.initialPokerHand || 'High Card'})
       }
-    });
-  }
+    })
+  };
 
   editionCode += `SMODS.Edition {
     key = '${objectKey}',`;
@@ -1283,7 +1303,7 @@ export const generateSingleEditionCode = (
     modPrefix,
     false,
     false,
-    objectKey,
+    edition,
     "edition"
   );
   if (calculateCode) {
