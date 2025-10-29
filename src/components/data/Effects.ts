@@ -2062,6 +2062,56 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Variables",
   },
   {
+    id: "unlock_joker",
+    label: "Unlock Joker",
+    description: "Unlock a locked joker in the collection ",
+    objectUsers: ["joker"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "selection_method",
+        type: "select",
+        label: "Selection Method",
+        default: "key",
+        options: [
+          { value: "key", label: "Joker Key" },
+          // { value: "variable", label: "Joker Variable" }, --- TEMP DISABLED
+        ]
+      },
+      {
+        id: "joker_key",
+        type: "text",
+        label: "Joker Key ( [modprefix]_joker )",
+        default: "joker",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["key"],
+        },
+      },
+      {
+        id: "joker_variable",
+        type: "select",
+        label: "Joker Variable",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["variable"],
+        },
+        variableTypes: ["joker"]
+      },
+      {
+        id: "discover",
+        type: "select",
+        label: "Discover the Unlocked Joker",
+        options: [
+          { value: "true", label: "Discover" },
+          { value: "false", label: "Leave Undiscovered" },
+        ],
+        default: "false",
+      },
+    ],
+    category: "Jokers",
+  },
+  {
     id: "prevent_game_over",
     label: "Prevent Game Over",
     description:
@@ -2963,9 +3013,9 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Card Effects",
   },
   {
-    id: "copy_triggered_card",
+    id: "create_copy_triggered_card",
     label: "Copy Triggered Card",
-    description: "Copy the card that triggered this effect to your deck",
+    description: "Copy the card that triggered this effect",
     objectUsers: ["joker"],
     applicableTriggers: [
       "card_scored",
@@ -2973,13 +3023,24 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "card_held_in_hand",
       "card_held_in_hand_end_of_round",
     ],
-    params: [],
+    params: [
+      {
+        id: "add_to",
+        type: "select",
+        label: "Add to",
+        options: [
+          { value: "deck", label: "Deck" },
+          { value: "hand", label: "Hand" },
+        ],
+        default: "deck",
+      },
+    ],
     category: "Card Effects",
   },
   {
-    id: "copy_played_card",
+    id: "create_copy_played_card",
     label: "Copy Played Card",
-    description: "Copy a specific card from the played hand to your deck",
+    description: "Copy a specific card from the played hand",
     objectUsers: ["joker"],
     applicableTriggers: ["hand_played"],
     params: [
@@ -3012,6 +3073,16 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [{ value: "any", label: "Any Suit" }, ...SUITS],
         default: "any",
         variableTypes: ["suit"],
+      },
+      {
+        id: "add_to",
+        type: "select",
+        label: "Add to",
+        options: [
+          { value: "deck", label: "Deck" },
+          { value: "hand", label: "Hand" },
+        ],
+        default: "deck",
       },
     ],
     category: "Card Effects",

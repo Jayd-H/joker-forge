@@ -123,6 +123,12 @@ const updateEffectId = (
       return "discount_items"
     case "edit_triggered_card":
       return "edit_card"
+    case "copy_triggered_card_to_hand":
+    case "copy_triggered_card":
+      return "create_copy_triggered_card"
+    case "copy_played_card_to_hand":
+    case "copy_played_card":
+      return "create_copy_played_card"
 
     default:
       return id
@@ -137,10 +143,19 @@ const updateEffectParams = (
 
   switch (id) {
     case "destroy_random_cards":
-      params['method'] = 'random'
+      params["method"] = 'random'
       break
     case "destroy_selected_cards":
-      params['method'] = 'selected'
+      params["method"] = 'selected'
+      break
+    case "copy_triggered_card_to_hand":
+    case "copy_played_card_to_hand":
+      params["add_to"] = "hand"
+      break
+    case "copy_triggered_card":
+    case "copy_played_card":
+      params["add_to"] = "deck"
+      break
   }
 
   return params

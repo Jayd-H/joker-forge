@@ -85,6 +85,8 @@ import { generateShortcutPassiveEffectCode } from "./Effects/ShortcutEffect";
 import { generateShowmanPassiveEffectCode } from "./Effects/ShowmanEffect";
 import { generateCombineRanksPassiveEffectCode } from "./Effects/CombineRanksEffect";
 import { generateCombineSuitsPassiveEffectCode } from "./Effects/CombineSuitsEffect";
+import { generateCreateCopyTriggeredCardEffectCode } from "./Effects/CreateCopyTriggeredCardEffect";
+import { generateCreateCopyPlayedCardEffectCode } from "./Effects/CreateCopyPlayedCardEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -190,7 +192,10 @@ export const generateSingleEffect = (
       return generateConvertAllCardsToSuitEffectCode(effect, itemType)
     case "convert_left_to_right":
       return generateConvertLeftToRightEffectCode(effect, itemType)
-    // COPY CARD TO DECK,HAND 
+    case "create_copy_triggered_card":
+      return generateCreateCopyTriggeredCardEffectCode(effect, itemType, triggerType)
+    case "create_copy_played_card":
+      return generateCreateCopyPlayedCardEffectCode(effect, itemType, triggerType, joker)
     case "copy_consumable":
       return generateCopyConsumableEffectCode(effect, itemType, triggerType)
     case "copy_joker":
