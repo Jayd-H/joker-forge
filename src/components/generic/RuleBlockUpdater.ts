@@ -121,12 +121,15 @@ const updateEffectId = (
       return "destroy_cards"
     case "edit_Shop_Prices":
       return "discount_items"
+    case "edit_triggered_card":
+      return "edit_card"
 
     default:
       return id
   }
 }
 
+// For similar effects that are merged and have params defining their effect
 const updateEffectParams = (
   id: string, 
   params: Record <string, unknown>
@@ -143,6 +146,7 @@ const updateEffectParams = (
   return params
 }
 
+// For filling in any newly added params with blank values on prior effects
 const updateMissingEffectParams = (
   id: string, 
   params: Record <string, unknown>

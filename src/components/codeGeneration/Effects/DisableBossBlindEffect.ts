@@ -1,5 +1,36 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
+
+export const generateDisableBossBlindPassiveEffectCode = (
+  effect: Effect,
+): PassiveEffectResult => {
+  const customMessage = effect.customMessage;
+
+  const addToDeck = `
+  if G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.disabled then
+      G.GAME.blind:disable()
+      play_sound('timpani')
+      SMODS.calculate_effect({ message = ${
+        customMessage ? `"${customMessage}"` : `localize('ph_boss_disabled')`
+      } }, card)
+  end
+  `; 
+  const calculateFunction = `
+    if G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.disabled then
+        G.GAME.blind:disable()
+        play_sound('timpani')
+        SMODS.calculate_effect({ message = ${
+          customMessage ? `"${customMessage}"` : `localize('ph_boss_disabled')`
+        } }, card)
+    end`;
+
+  return {
+    addToDeck,
+    calculateFunction,
+    configVariables: [],
+    locVars: [],
+  };
+};
 
 export const generateDisableBossBlindEffectCode = (
   effect: Effect,

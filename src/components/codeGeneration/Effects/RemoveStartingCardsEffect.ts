@@ -1,130 +1,68 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
-  effect: Effect,
-  itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
-): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
-
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
-  }
-}
-
-const generateJokerCode = (
+export const generateRemoveStartingCardsEffectCode = (
   effect: Effect,
   sameTypeCount: number = 0,
-  joker?: JokerData
 ): EffectReturn => {
+  const remove_type = effect.params?.remove_type || "all";
+
+  const variableName = (
+    sameTypeCount !== 1 ? `add_starting_cards_count${sameTypeCount}` : `add_starting_cards_count`)
+
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    effect.params?.count,
+    effect.id, 
+    variableName,
+    'deck'
+  )
 
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
+  let destroyCode = ""
+  
+  if (remove_type === "all") {
+    destroyCode =`
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                for i=#G.deck.cards, 1, -1 do
+                G.deck.cards[i]:remove()
+            end
+            return true
+        end
+    }))
+            `;
+  } else { 
+    destroyCode =`
+    local destroyed_cards = {}
+            local temp_hand = {}
+G.E_MANAGER:add_event(Event({
+     func = function()
+            for _, playing_card in ipairs(G.deck.cards) do temp_hand[#temp_hand + 1] = playing_card end
+            table.sort(temp_hand,
+                function(a, b)
+                    return not a.playing_card or not b.playing_card or a.playing_card < b.playing_card
+                end
+            )
+            pseudoshuffle(temp_hand, 12345)    
+          return true
+    end,
+})) 
+    
+G.E_MANAGER:add_event(Event({
+     func = function()
+            for i = 1, ${valueCode} do destroyed_cards[#destroyed_cards + 1] = temp_hand[i]:remove()
+         end
+        return true
+    end
+}))
+       `; 
+  }
+
+  const result: EffectReturn = {
+    statement: destroyCode,
+    colour: "G.C.RED",
+    configVariables,
   };
-};
 
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  return result;
 }

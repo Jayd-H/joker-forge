@@ -1,12 +1,69 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
+  parseGameVariable,
+  parseRangeVariable,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateEditHandSizePassiveEffectCode  = (
+  effect: Effect
+): PassiveEffectResult => {
+  const operation = effect.params?.operation || "add";
+  const effectValue = effect.params.value;
+  const parsed = parseGameVariable(effectValue);
+  const rangeParsed = parseRangeVariable(effectValue);
+
+  let valueCode: string;
+
+  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
+    valueCode = generateGameVariableCode(effectValue as string);
+  } else if (rangeParsed.isRangeVariable) {
+    const seedName = `handsize_passive`;
+    valueCode = `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
+  } else if (typeof effectValue === "string") {
+    valueCode = `card.ability.extra.${effectValue}`;
+  } else {
+    valueCode = (effectValue as number | boolean).toString();
+  }
+
+  let addToDeck = "";
+  let removeFromDeck = "";
+
+  switch (operation) {
+    case "add":
+      addToDeck = `G.hand:change_size(${valueCode})`;
+      removeFromDeck = `G.hand:change_size(-${valueCode})`;
+      break;
+    case "subtract":
+      addToDeck = `G.hand:change_size(-${valueCode})`;
+      removeFromDeck = `G.hand:change_size(${valueCode})`;
+      break;
+    case "set":
+      addToDeck = `card.ability.extra.original_hand_size = G.hand.config.card_limit
+        local difference = ${valueCode} - G.hand.config.card_limit
+        G.hand:change_size(difference)`;
+      removeFromDeck = `if card.ability.extra.original_hand_size then
+            local difference = card.ability.extra.original_hand_size - G.hand.config.card_limit
+            G.hand:change_size(difference)
+        end`;
+      break;
+    default:
+      addToDeck = `G.hand:change_size(${valueCode})`;
+      removeFromDeck = `G.hand:change_size(-${valueCode})`;
+  }
+
+  return {
+    addToDeck,
+    removeFromDeck,
+    configVariables: [],
+    locVars: [],
+  };
+};
+ 
+export const generateEditHandSizeEffectCode = (
   effect: Effect,
   itemType: string,
   joker?: JokerData,

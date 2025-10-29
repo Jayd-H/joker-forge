@@ -14,7 +14,7 @@ import { generateDrawCardsEffectCode } from "./Effects/DrawCardsEffect";
 import { generateBalanceChipsAndMultEffectCode } from "./Effects/BalanceChipsAndMultEffect";
 import { generateSwapChipsAndMultEffectCode } from "./Effects/SwapChipsAndMultEffect";
 import { generateShowMessageEffectCode } from "./Effects/ShowMessageEffect";
-import { generateDisableBossBlindEffectCode } from "./Effects/DisableBossBlindEffect";
+import { generateDisableBossBlindEffectCode, generateDisableBossBlindPassiveEffectCode } from "./Effects/DisableBossBlindEffect";
 import { generateEmitFlagEffectCode } from "./Effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "./Effects/PlaySoundEffect";
 import { generateWinBlindEffectCode } from "./Effects/WinBlindEffect";
@@ -61,6 +61,30 @@ import { generateEditStartingSuitsEffectCode } from "./Effects/EditStartingSuits
 import { generateEditStartingRanksEffectCode } from "./Effects/EditStartingRanksEffect";
 import { generateEditJokerEffectCode } from "./Effects/EditJokerEffect";
 import { generateEditWinnerAnteEffectCode } from "./Effects/EditWinnerAnteEffect";
+import { generateAddStartingCardsEffectCode } from "./Effects/AddStartingCardsEffect";
+import { generateRemoveStartingCardsEffectCode } from "./Effects/RemoveStartingCardsEffect";
+import { generateDestroyCardEffectCode } from "./Effects/DestroyCardEffect";
+import { generateEditCardEffectCode } from "./Effects/EditCardEffect";
+import { generateEditCardsEffectCode } from "./Effects/EditCardsEffect";
+import { generateAllowDebtPassiveEffectCode } from "./Effects/AllowDebtEffect";
+import { generateCopyJokerAbilityPassiveEffectCode } from "./Effects/CopyJokerAbilityEffect";
+import { generateEditHandSizePassiveEffectCode } from "./Effects/EditHandSizeEffect";
+import { generateEditPlaySizePassiveEffectCode } from "./Effects/EditPlaySizeEffect";
+import { generateEditDiscardSizePassiveEffectCode } from "./Effects/EditDiscardSizeEffect";
+import { generateEditDiscardsPassiveEffectCode } from "./Effects/EditDiscardsEffect";
+import { generateEditHandsPassiveEffectCode } from "./Effects/EditHandsEffect";
+import { generateSplashPassiveEffectCode } from "./Effects/SplashEffect";
+import { generateFreeRerollsPassiveEffectCode } from "./Effects/FreeRerollsEffect";
+import { generateEditBoosterSlotsPassiveEffectCode } from "./Effects/EditBoosterSlotsEffect";
+import { generateEditConsumableSlotsPassiveEffectCode } from "./Effects/EditConsumableSlotsEffect";
+import { generateEditJokerSlotsPassiveEffectCode } from "./Effects/EditJokerSlotsEffect";
+import { generateEditVoucherSlotsPassiveEffectCode } from "./Effects/EditVoucherSlotsEffect";
+import { generateDiscountItemsPassiveEffectCode } from "./Effects/DiscountItemsEffect";
+import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "./Effects/ReduceFlushStraightRequirementEffect";
+import { generateShortcutPassiveEffectCode } from "./Effects/ShortcutEffect";
+import { generateShowmanPassiveEffectCode } from "./Effects/ShowmanEffect";
+import { generateCombineRanksPassiveEffectCode } from "./Effects/CombineRanksEffect";
+import { generateCombineSuitsPassiveEffectCode } from "./Effects/CombineSuitsEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -160,14 +184,13 @@ export const generateSingleEffect = (
       return generateChangeRankVariableEffectCode(effect)
     case "modify_internal_variable":
       return generateModifyInternalVariableEffectCode(effect, triggerType)
-    // ADD CASES FOR COMBINE RANKS/SUITS & CONSIDERED AS EFFECTS
     case "convert_all_cards_to_rank":
       return generateConvertAllCardToRankEffectCode(effect, itemType)
     case "convert_all_cards_to_suit":
       return generateConvertAllCardsToSuitEffectCode(effect, itemType)
     case "convert_left_to_right":
       return generateConvertLeftToRightEffectCode(effect, itemType)
-    // ADD CASES FOR COPY CARD TO DECK/HAND EFFECTS
+    // COPY CARD TO DECK,HAND 
     case "copy_consumable":
       return generateCopyConsumableEffectCode(effect, itemType, triggerType)
     case "copy_joker":
@@ -184,6 +207,8 @@ export const generateSingleEffect = (
       return generateCreateTagEffectCode(effect, triggerType)
     case "destroy_cards":
       return generateDestroyCardsEffectCode(effect, itemType, sameTypeCount)
+    case "destroy_card":
+      return generateDestroyCardEffectCode(effect, itemType, triggerType)
     case "destroy_self":
       return generateDestroySelfEffectCode(effect, itemType, triggerType)
     case "destroy_joker":
@@ -194,18 +219,28 @@ export const generateSingleEffect = (
       return generateDrawCardsEffectCode(effect, itemType, sameTypeCount, card)
     case "disable_boss_blind":
       return generateDisableBossBlindEffectCode(effect, itemType, triggerType)
-    // ADD CASE FOR DISCOUNT ITEMS
-    case "edit_starting_cards":
-      return generateEditStartingCardsEffectCode(effect, modprefix)
-    case "edit_starting_suits":
-      return generateEditStartingSuitsEffectCode(effect, modprefix)
-    case "edit_starting_ranks":
-      return generateEditStartingRanksEffectCode(effect, modprefix)
+    // DISCOUNT ITEMS
     case "edit_joker":
       return generateEditJokerEffectCode(effect, itemType, modprefix) // NEED TO IMPLEMENT METHODS PROPERLY
     case "edit_win_ante":
       return generateEditWinnerAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
-      
+    // EDIT BOOSTER PACKS
+    // EDIT BOOSTER, VOUCHER, SHOP CARD SLOTS
+    case "edit_card":
+      return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
+    case "edit_cards":
+      return generateEditCardsEffectCode(effect, itemType, modprefix)
+    // EDIT CARD, RARITY APPEARANCE
+    // EDIT ITEM WEIGHT (POSSIBLE MERGE?)
+    // EDIT CARDS IN HAND (POSSIBLY MERGE INTO EDIT CARD?)
+    // EDIT CONSUMABLE, JOKER SLOTS
+    // EDIT JOKER SLOTS
+    // EDIT DISCARDS, HANDS
+    // EDIT DISCARD, PLAY, HAND SIZE
+    // EDIT END ROUND/HAND MONEY
+    // EDIT INTEREST CAP
+    // EDIT REROLL PRICE
+    // FREE REROLLS
     case "fool_effect":
       return generateFoolEffectCode(effect, itemType)
     case "increment_rank":
@@ -240,6 +275,7 @@ export const generateSingleEffect = (
       return generateSetSellValueEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "set_dollars":
       return generateSetDollarsEffectCode(effect, itemType, sameTypeCount, card)
+    // ADD DOLLARS FROM JOKERS EFFECT (OR MERGE INTO SET DOLLARS WITH GAMEVAR FOR SELL VALUE)
     case "set_ante":
       return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "emit_flag":
@@ -254,6 +290,18 @@ export const generateSingleEffect = (
       return generateShuffleJokersEffectCode(effect)
     case "show_message":
       return generateShowMessageEffectCode(effect)
+
+//    --- DECK EXCLUSIVE EFFECTS ---
+    case "edit_starting_cards":
+      return generateEditStartingCardsEffectCode(effect, modprefix)
+    case "edit_starting_suits":
+      return generateEditStartingSuitsEffectCode(effect, modprefix)
+    case "edit_starting_ranks":
+      return generateEditStartingRanksEffectCode(effect, modprefix)
+    case "add_starting_cards":
+      return generateAddStartingCardsEffectCode(effect, sameTypeCount, modprefix)
+    case "remove_starting_cards":
+      return generateRemoveStartingCardsEffectCode(effect, sameTypeCount)
     
     default:
       return {
@@ -263,4 +311,75 @@ export const generateSingleEffect = (
   }
 };
 
-// ADD PASSIVE ABILITIES
+
+export const processPassiveEffects = (
+  joker: JokerData
+): PassiveEffectResult[] => {
+  const passiveEffects: PassiveEffectResult[] = [];
+
+  if (!joker.rules) return passiveEffects;
+
+  joker.rules
+    .filter((rule) => rule.trigger === "passive")
+    .forEach((rule) => {
+      rule.effects?.forEach((effect) => {
+        const passiveResult: PassiveEffectResult | null = generateSinglePassiveEffect(effect, joker.objectKey)
+
+        if (passiveResult) {
+          passiveEffects.push(passiveResult);
+        }
+      });
+    });
+
+  return passiveEffects;
+};
+
+const generateSinglePassiveEffect = (
+  effect: Effect,
+  jokerKey: string
+): PassiveEffectResult | null => {
+  switch (effect.type) {
+    case "allow_debt":
+      return generateAllowDebtPassiveEffectCode(effect)
+    case "combine_ranks":
+      return generateCombineRanksPassiveEffectCode(effect, jokerKey)
+    case "combine_suits":
+      return generateCombineSuitsPassiveEffectCode(effect, jokerKey)
+    case "copy_joker_ability":
+      return generateCopyJokerAbilityPassiveEffectCode(effect)
+    case "discount_items":
+      return generateDiscountItemsPassiveEffectCode(effect, jokerKey)
+    case "free_rerolls":
+      return generateFreeRerollsPassiveEffectCode(effect)
+    case "disable_boss_blind":
+      return generateDisableBossBlindPassiveEffectCode(effect)
+    case "edit_hand_size":
+      return generateEditHandSizePassiveEffectCode(effect)
+    case "edit_play_size":
+      return generateEditPlaySizePassiveEffectCode(effect)
+    case "edit_discard_size":
+      return generateEditDiscardSizePassiveEffectCode(effect)
+    case "edit_discards":
+      return generateEditDiscardsPassiveEffectCode(effect)
+    case "edit_hands":
+      return generateEditHandsPassiveEffectCode(effect)
+    case "splash_effect":
+      return generateSplashPassiveEffectCode()
+    case "edit_booster_slots":
+      return generateEditBoosterSlotsPassiveEffectCode(effect)
+    case "edit_consumable_slots":
+      return generateEditConsumableSlotsPassiveEffectCode(effect)
+    case "edit_joker_slots":
+      return generateEditJokerSlotsPassiveEffectCode(effect)
+    case "edit_voucher_slots":
+      return generateEditVoucherSlotsPassiveEffectCode(effect)
+    case "shortcut":
+      return generateShortcutPassiveEffectCode(jokerKey)
+    case "reduce_flush_straight_requirements":
+      return generateReduceFlushStraightRequirementsPassiveEffectCode(effect, jokerKey)
+    case "showman":
+      return generateShowmanPassiveEffectCode(jokerKey)
+    default:
+      return null
+  }
+}

@@ -1,10 +1,62 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateDiscountItemsPassiveEffectCode = (
+  effect: Effect,
+  jokerKey: string
+): PassiveEffectResult => {
+  const discountType = (effect.params?.discount_type as string) || "planet";
+  const discountMethod =
+    (effect.params?.discount_method as string) || "make_free";
+
+  const variableName = "discount_amount";
+
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.discount_amount,
+    effect.id,
+    variableName,
+    "hook"
+  );
+
+  return {
+    addToDeck: `G.E_MANAGER:add_event(Event({
+    func = function()
+        for k, v in pairs(G.I.CARD) do
+            if v.set_cost then v:set_cost() end
+        end
+        return true
+    end
+}))`,
+    removeFromDeck: `G.E_MANAGER:add_event(Event({
+    func = function()
+        for k, v in pairs(G.I.CARD) do
+            if v.set_cost then v:set_cost() end
+        end
+        return true
+    end
+}))`,
+    configVariables:
+      configVariables.length > 0
+        ? configVariables.map((cv) => cv.name + " = " + cv.value)
+        : [],
+    locVars: [],
+    needsHook: {
+      hookType: "discount_items",
+      jokerKey: jokerKey || "PLACEHOLDER",
+      effectParams: {
+        discountType,
+        discountMethod,
+        discountAmount: valueCode,
+      },
+    },
+  };
+};
+
 
 export const generateEffectCode = (
   effect: Effect,

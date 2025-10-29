@@ -1,10 +1,83 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateEditConsumableSlotsPassiveEffectCode = (
+  effect: Effect
+): PassiveEffectResult => {
+  const operation = effect.params?.operation || "add";
+
+  const { valueCode, configVariables, isXVariable } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    "slot_change",
+    'joker'
+  )
+
+  let addToDeck = "";
+  let removeFromDeck = "";
+
+  switch (operation) {
+    case "add":
+      addToDeck = `G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = G.consumeables.config.card_limit + ${valueCode}
+            return true
+        end }))`;
+      removeFromDeck = `G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = G.consumeables.config.card_limit - ${valueCode}
+            return true
+        end }))`;
+      break;
+    case "subtract":
+      addToDeck = `G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = math.max(0, G.consumeables.config.card_limit - ${valueCode})
+            return true
+        end }))`;
+      removeFromDeck = `G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = G.consumeables.config.card_limit + ${valueCode}
+            return true
+        end }))`;
+      break;
+    case "set":
+      addToDeck = `original_slots = G.consumeables.config.card_limit
+        G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = ${valueCode}
+            return true
+        end }))`;
+      removeFromDeck = `if original_slots then
+            G.E_MANAGER:add_event(Event({func = function()
+                G.consumeables.config.card_limit = original_slots
+                return true
+            end }))
+        end`;
+      break;
+    default:
+      addToDeck = `G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = G.consumeables.config.card_limit + ${valueCode}
+            return true
+        end }))`;
+      removeFromDeck = `G.E_MANAGER:add_event(Event({func = function()
+            G.consumeables.config.card_limit = G.consumeables.config.card_limit - ${valueCode}
+            return true
+        end }))`;
+  }
+
+  return {
+    addToDeck,
+    removeFromDeck,
+    configVariables: 
+      configVariables.length > 0 ?
+      configVariables.map((cv)=> `${cv.name} = ${cv.value}`)
+      : [],
+    locVars:
+      isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
+  };
+};
+
 
 export const generateEffectCode = (
   effect: Effect,

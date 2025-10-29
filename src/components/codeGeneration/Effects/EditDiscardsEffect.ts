@@ -1,10 +1,60 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateEditDiscardsPassiveEffectCode = (
+  effect: Effect,
+): PassiveEffectResult => {
+  const operation = effect.params?.operation || "add";
+  
+  const variableName = "discard_change";
+  
+  const { valueCode, configVariables, isXVariable } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'joker'
+  )
+
+  let addToDeck = "";
+  let removeFromDeck = "";
+
+  switch (operation) {
+    case "add":
+      addToDeck = `G.GAME.round_resets.discards = G.GAME.round_resets.discards + ${valueCode}`;
+      removeFromDeck = `G.GAME.round_resets.discards = G.GAME.round_resets.discards - ${valueCode}`;
+      break;
+    case "subtract":
+      addToDeck = `G.GAME.round_resets.discards = math.max(0, G.GAME.round_resets.discards - ${valueCode})`;
+      removeFromDeck = `G.GAME.round_resets.discards = G.GAME.round_resets.discards + ${valueCode}`;
+      break;
+    case "set":
+      addToDeck = `card.ability.extra.original_discards = G.GAME.round_resets.discards
+        G.GAME.round_resets.discards = ${valueCode}`;
+      removeFromDeck = `if card.ability.extra.original_discards then
+            G.GAME.round_resets.discards = card.ability.extra.original_discards
+        end`;
+      break;
+    default:
+      addToDeck = `G.GAME.round_resets.discards = G.GAME.round_resets.discards + ${valueCode}`;
+      removeFromDeck = `G.GAME.round_resets.discards = G.GAME.round_resets.discards - ${valueCode}`;
+  }
+  
+  return {
+    addToDeck,
+    removeFromDeck,
+    configVariables: 
+      configVariables.length > 0 ?
+      configVariables.map((cv)=> `${cv.name} = ${cv.value}`)
+      : [],
+    locVars:
+      isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
+  };
+}
 
 export const generateEffectCode = (
   effect: Effect,

@@ -1,10 +1,60 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateEditHandsPassiveEffectCode = (
+  effect: Effect
+): PassiveEffectResult => {
+  const operation = effect.params?.operation || "add";
+
+  const variableName = "hand_change";
+  
+  const { valueCode, configVariables, isXVariable } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'joker'
+  )
+
+  let addToDeck = "";
+  let removeFromDeck = "";
+
+  switch (operation) {
+    case "add":
+      addToDeck = `G.GAME.round_resets.hands = G.GAME.round_resets.hands + ${valueCode}`;
+      removeFromDeck = `G.GAME.round_resets.hands = G.GAME.round_resets.hands - ${valueCode}`;
+      break;
+    case "subtract":
+      addToDeck = `G.GAME.round_resets.hands = math.max(1, G.GAME.round_resets.hands - ${valueCode})`;
+      removeFromDeck = `G.GAME.round_resets.hands = G.GAME.round_resets.hands + ${valueCode}`;
+      break;
+    case "set":
+      addToDeck = `card.ability.extra.original_hands = G.GAME.round_resets.hands
+        G.GAME.round_resets.hands = ${valueCode}`;
+      removeFromDeck = `if card.ability.extra.original_hands then
+            G.GAME.round_resets.hands = card.ability.extra.original_hands
+        end`;
+      break;
+    default:
+      addToDeck = `G.GAME.round_resets.hands = G.GAME.round_resets.hands + ${valueCode}`;
+      removeFromDeck = `G.GAME.round_resets.hands = G.GAME.round_resets.hands - ${valueCode}`;
+  }
+
+  return {
+    addToDeck,
+    removeFromDeck,
+    configVariables: 
+      configVariables.length > 0 ?
+      configVariables.map((cv)=> `${cv.name} = ${cv.value}`)
+      : [],
+    locVars:
+      isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
+  };
+};
 
 export const generateEffectCode = (
   effect: Effect,

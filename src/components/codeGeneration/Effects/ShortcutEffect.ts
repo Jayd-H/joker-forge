@@ -1,10 +1,26 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateShortcutPassiveEffectCode = (
+  jokerKey?: string
+): PassiveEffectResult => {
+  return {
+    addToDeck: `-- Shortcut straights enabled`,
+    removeFromDeck: `-- Shortcut straights disabled`,
+    configVariables: [],
+    locVars: [],
+    needsHook: {
+      hookType: "shortcut",
+      jokerKey: jokerKey || "PLACEHOLDER",
+      effectParams: {},
+    },
+  };
+};
 
 export const generateEffectCode = (
   effect: Effect,

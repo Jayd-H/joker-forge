@@ -1,10 +1,27 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateShowmanPassiveEffectCode = (
+  jokerKey?: string
+): PassiveEffectResult => {
+  return {
+    addToDeck: `-- Showman effect enabled (allow duplicate cards)`,
+    removeFromDeck: `-- Showman effect disabled`,
+    configVariables: [],
+    locVars: [],
+    needsHook: {
+      hookType: "showman",
+      jokerKey: jokerKey || "PLACEHOLDER",
+      effectParams: {},
+    },
+  };
+};
+
 
 export const generateEffectCode = (
   effect: Effect,

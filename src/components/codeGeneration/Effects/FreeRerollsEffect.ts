@@ -1,10 +1,33 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
 } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+
+export const generateFreeRerollsPassiveEffectCode = (
+  effect: Effect,
+): PassiveEffectResult => {
+  const variableName = "reroll_amount";
+
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'joker'
+  );
+
+  return {
+    addToDeck: `SMODS.change_free_rerolls(${valueCode})`,
+    removeFromDeck: `SMODS.change_free_rerolls(-(${valueCode}))`,
+    configVariables:
+      configVariables.length > 0
+        ? configVariables.map((cv) => cv.name + " = " + cv.value)
+        : [],
+    locVars: [],
+  };
+};
 
 export const generateEffectCode = (
   effect: Effect,
@@ -16,8 +39,6 @@ export const generateEffectCode = (
   deck?: DeckData,
 ): EffectReturn => {
   switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
     case "consumable":
       return generateConsumableCode(effect, consumable)
     case "card":
@@ -34,24 +55,6 @@ export const generateEffectCode = (
       };
   }
 }
-
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
-
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
 
 const generateConsumableCode = (
   effect: Effect,
