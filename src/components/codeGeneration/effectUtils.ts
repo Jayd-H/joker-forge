@@ -291,7 +291,7 @@ export const generateSingleEffect = (
     case "show_message":
       return generateShowMessageEffectCode(effect)
 
-//    --- DECK EXCLUSIVE EFFECTS ---
+//////////DECK EXCLUSIVE EFFECTS\\\\\\\\\\\\
     case "edit_starting_cards":
       return generateEditStartingCardsEffectCode(effect, modprefix)
     case "edit_starting_suits":

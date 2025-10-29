@@ -3182,6 +3182,72 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Game Rules",
   },
+  {
+    id: "combine_ranks",
+    label: "Rank X Considered as Y",
+    description: "Treat specified ranks as a different rank",
+    objectUsers: ["joker"],
+    applicableTriggers: ["passive"],
+    params: [
+      {
+        id: "source_rank_type",
+        type: "select",
+        label: "Source Rank Type",
+        options: [
+          { value: "specific", label: "Specific Ranks" },
+          { value: "face_cards", label: "Face Cards (J, Q, K)" },
+          { value: "all", label: "All Ranks" },
+        ],
+        default: "specific",
+      },
+      {
+        id: "source_ranks",
+        type: "text",
+        label: "Source Ranks (comma-separated: 2,3,J,K)",
+        default: "J,Q,K",
+        showWhen: {
+          parameter: "source_rank_type",
+          values: ["specific"],
+        },
+      },
+      {
+        id: "target_rank",
+        type: "select",
+        label: "Target Rank",
+        options: [
+          ...RANKS,
+          { value: "face_cards", label: "Face Cards (J, Q, K)" },
+        ],
+        default: "J",
+        variableTypes: ["rank"],
+      },
+    ],
+    category: "Card Effects",
+  },
+  {
+    id: "combine_suits",
+    label: "Combine Suits",
+    description: "Two suits are considered as each other (bidirectional)",
+    objectUsers: ["joker"],
+    applicableTriggers: ["passive"],
+    params: [
+      {
+        id: "suit_1",
+        type: "select",
+        label: "First Suit",
+        options: [...SUITS],
+        default: "Spades",
+      },
+      {
+        id: "suit_2",
+        type: "select",
+        label: "Second Suit",
+        options: [...SUITS],
+        default: "Hearts",
+      },
+    ],
+    category: "Card Effects",
+  },
 ]
 
 export function getEffectTypeById(
