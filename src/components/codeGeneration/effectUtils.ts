@@ -1,5 +1,5 @@
-import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
-import { JokerData, ConsumableData,  EnhancementData, SealData, EditionData, VoucherData, DeckData } from "../data/BalatroUtils";
+import type { Effect } from "../ruleBuilder/types";
+import { JokerData, EnhancementData, SealData, EditionData } from "../data/BalatroUtils";
 import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
 import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/AddChipsEffect";
@@ -152,10 +152,7 @@ export const generateSingleEffect = (
   sameTypeCount: number = 0,
   modprefix: string,
   joker?: JokerData,
-  consumable?: ConsumableData,
   card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
 ): EffectReturn => {
   const itemType = (cleanItemType === 'seal' || cleanItemType === 'edition' || cleanItemType ==='enhancement') 
     ? 'card' : cleanItemType
