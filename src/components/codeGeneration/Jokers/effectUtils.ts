@@ -1,6 +1,8 @@
 import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
+import { generateSingleEffect } from "../effectUtils";
+/* 
 import { generateAddMultReturn } from "./effects/AddMultEffect";
 import { generateApplyXMultReturn } from "./effects/ApplyXMultEffect";
 import { generateRetriggerReturn } from "./effects/RetriggerEffect";
@@ -103,7 +105,7 @@ import { generateApplyHyperMultReturn } from "./effects/ApplyHyperMultEffect";
 import { generateSwapChipsMultReturn } from "./effects/SwapChipsMultEffect";
 import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 import { generateChangeJokerVariableReturn } from "./effects/ChangeJokerVariableEffect";
-
+*/
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -202,6 +204,7 @@ export function generateEffectReturnStatement(
 
         const result = generateSingleEffect(
           effectWithContext,
+          'joker',
           triggerType,
           currentCount,
           modprefix,
@@ -311,6 +314,7 @@ export function generateEffectReturnStatement(
 
           const result = generateSingleEffect(
             effectWithContext,
+            'joker',
             triggerType,
             currentCount,
             modprefix,
@@ -485,6 +489,7 @@ export function generateEffectReturnStatement(
         const firstEffect = randomGroups[0].effects[0];
         const firstEffectResult = generateSingleEffect(
           firstEffect,
+          'joker',
           triggerType,
           0,
           modprefix,
@@ -566,6 +571,7 @@ export function generateEffectReturnStatement(
 
           const result = generateSingleEffect(
             effectWithContext,
+            'joker',
             triggerType,
             currentCount,
             modprefix,
@@ -711,6 +717,7 @@ export function generateEffectReturnStatement(
         const firstEffect = loopGroups[0].effects[0];
         const firstEffectResult = generateSingleEffect(
           firstEffect,
+          'joker',
           triggerType,
           0,
           modprefix,
@@ -729,7 +736,7 @@ export function generateEffectReturnStatement(
   };
 }
 
-const generateSingleEffect = (
+/* const generateSingleEffect = (
   effect: ExtendedEffect,
   triggerType: string,
   sameTypeCount: number = 0,
@@ -884,6 +891,7 @@ const generateSingleEffect = (
       };
   }
 };
+*/
 
 const buildReturnStatement = (effects: EffectReturn[]): string => {
   if (effects.length === 0) return "";
@@ -976,6 +984,8 @@ const buildReturnStatement = (effects: EffectReturn[]): string => {
 
   return returnStatement;
 };
+
+/*
 
 export const processPassiveEffects = (
   joker: JokerData
@@ -1082,6 +1092,7 @@ export const processPassiveEffects = (
 
   return passiveEffects;
 };
+*/
 
 function extractPreReturnCode(statement: string): {
   newStatement: string;

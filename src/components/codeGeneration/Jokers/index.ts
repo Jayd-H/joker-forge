@@ -1,8 +1,9 @@
 import { JokerData } from "../../data/BalatroUtils";
 import {
-  processPassiveEffects,
+  // processPassiveEffects,
   ConfigExtraVariable,
 } from "./effectUtils";
+import { processPassiveEffects } from "../effectUtils";
 import {
   extractVariablesFromRules,
   generateVariableConfig,
