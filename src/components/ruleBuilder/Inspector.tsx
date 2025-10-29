@@ -21,13 +21,9 @@ import {
   getNumberVariables,
 } from "../codeGeneration/Jokers/variableUtils";
 
-import { getTriggerById } from "../data/Jokers/Triggers";
-import { getConditionTypeById } from "../data/Jokers/Conditions";
-import { getEffectTypeById } from "../data/Jokers/Effects";
-
-import { getConsumableTriggerById } from "../data/Consumables/Triggers";
-import { getConsumableConditionTypeById } from "../data/Consumables/Conditions";
-import { getConsumableEffectTypeById } from "../data/Consumables/Effects";
+import { getTriggerById } from "../data/Triggers";
+import { getConditionTypeById } from "../data/Conditions";
+import { getEffectTypeById } from "../data/Effects";
 
 import InputField from "../generic/InputField";
 import InputDropdown from "../generic/InputDropdown";
@@ -53,18 +49,6 @@ import {
 import { GameVariable, getGameVariableById } from "../data/Jokers/GameVars";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { SelectedItem } from "./types";
-
-import { getCardTriggerById } from "../data/Card/Triggers";
-import { getCardConditionTypeById } from "../data/Card/Conditions";
-import { getCardEffectTypeById } from "../data/Card/Effects";
-
-import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
-import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
-import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
-
-import { getDeckTriggerById } from "../data/Decks/Triggers";
-import { getDeckConditionTypeById } from "../data/Decks/Conditions";
-import { getDeckEffectTypeById } from "../data/Decks/Effects";
 
 import  Checkbox  from "../generic/Checkbox";
 
@@ -969,38 +953,11 @@ const Inspector: React.FC<InspectorProps> = ({
         top: position.y,
       };
 
-  const getTrigger =
-    itemType === "joker"
-      ? getTriggerById
-      : itemType === "consumable"
-      ? getConsumableTriggerById
-      : itemType === "card"
-      ? getCardTriggerById
-      : itemType === "voucher"
-      ? getVoucherTriggerById
-      : getDeckTriggerById;
+  const getTrigger = getTriggerById
 
-  const getConditionType =
-    itemType === "joker"
-      ? getConditionTypeById
-      : itemType === "consumable"
-      ? getConsumableConditionTypeById
-      : itemType === "card"
-      ? getCardConditionTypeById
-      : itemType === "voucher"
-      ? getVoucherConditionTypeById
-      : getDeckConditionTypeById;
+  const getConditionType = getConditionTypeById
 
-  const getEffectType =
-    itemType === "joker"
-      ? getEffectTypeById
-      : itemType === "consumable"
-      ? getConsumableEffectTypeById
-      : itemType === "card"
-      ? getCardEffectTypeById
-      : itemType === "voucher"
-      ? getVoucherEffectTypeById
-      : getDeckEffectTypeById;
+  const getEffectType = getEffectTypeById
 
   const availableVariables = getNumberVariables(joker).map(
     (variable: { name: string }) => ({
@@ -1160,7 +1117,7 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
             <div>
               <h4 className="text-trigger font-medium text-lg">
-                {trigger.label}
+                {trigger.label[itemType]}
               </h4>
               <span className="text-white-darker text-xs uppercase tracking-wider">
                 Trigger Event ({itemType})
@@ -1168,7 +1125,7 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           </div>
           <p className="text-white-light text-sm leading-relaxed">
-            {trigger.description}
+            {trigger.description[itemType]}
           </p>
         </div>
 

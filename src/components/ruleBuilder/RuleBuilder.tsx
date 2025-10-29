@@ -44,13 +44,11 @@ import {
   WindowIcon,
   Squares2X2Icon,
 } from "@heroicons/react/24/outline";
-import { getConditionTypeById } from "../data/Jokers/Conditions";
-import { getEffectTypeById } from "../data/Jokers/Effects";
+import { getConditionTypeById } from "../data/Conditions";
+import { getEffectTypeById } from "../data/Effects";
 import GameVariables from "./GameVariables";
 import { GameVariable } from "../data/Jokers/GameVars";
 import { motion } from "framer-motion";
-import { getConsumableConditionTypeById } from "../data/Consumables/Conditions";
-import { getConsumableEffectTypeById } from "../data/Consumables/Effects";
 import {
   JokerData,
   ConsumableData,
@@ -60,12 +58,6 @@ import {
   VoucherData,
   DeckData,
 } from "../data/BalatroUtils";
-import { getCardConditionTypeById } from "../data/Card/Conditions";
-import { getCardEffectTypeById } from "../data/Card/Effects";
-import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
-import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
-import { getDeckConditionTypeById } from "../data/Decks/Conditions";
-import { getDeckEffectTypeById } from "../data/Decks/Effects";
 import { UserConfigContext } from "../Contexts";
 
 export type ItemData =
@@ -113,26 +105,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
   const [isFirstSelection, setIsFirstSelection] = useState(true);
 
-  const getConditionType =
-    itemType === "joker"
-      ? getConditionTypeById
-      : itemType === "consumable"
-      ? getConsumableConditionTypeById
-      : itemType === "card"
-      ? getCardConditionTypeById
-      : itemType === "voucher"
-      ? getVoucherConditionTypeById
-      : getDeckConditionTypeById;
-  const getEffectType =
-    itemType === "joker"
-      ? getEffectTypeById
-      : itemType === "consumable"
-      ? getConsumableEffectTypeById
-      : itemType === "card"
-      ? getCardEffectTypeById
-      : itemType === "voucher"
-      ? getVoucherEffectTypeById
-      : getDeckEffectTypeById;
+  const getConditionType = getConditionTypeById
+  const getEffectType = getEffectTypeById
 
   const [rules, setRules] = useState<Rule[]>([]);
   const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);

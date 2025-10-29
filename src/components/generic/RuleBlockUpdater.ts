@@ -15,7 +15,8 @@ export const updateRuleBlocks = (
   const allData = [jokers, consumables, enhancements, seals, editions, vouchers, decks]
 
   allData.forEach(objectType => {
-    objectType.forEach(item => {item.rules?.forEach(rule => {
+    objectType.forEach(item => {      
+      item.rules?.forEach(rule => {
 
       rule.trigger = updateTrigger(rule);
 
@@ -34,6 +35,7 @@ export const updateRuleBlocks = (
       (rule.loops || []).forEach(group => {group.effects.forEach(effect =>
         effect = updateEffect(effect)
       )});
+
     })})
   }) 
   return {
@@ -64,8 +66,8 @@ const updateCondition = (
   condition: Condition
 ) => {
 
-  condition.id = updateConditionId(condition.id)
-  condition.params = updateConditionParams(condition.id, condition.params)
+  condition.type = updateConditionId(condition.type)
+  condition.params = updateConditionParams(condition.type, condition.params)
 
   return condition
 }
@@ -86,7 +88,6 @@ const updateConditionParams = (
   params: Record <string, unknown>
 ): Record <string, unknown> => {
   const condition = getConditionTypeById(id)
-
   for (const key in params) {
     if (!params[key]) {
       const param = condition?.params.find(param => param.id === key)
@@ -94,12 +95,13 @@ const updateConditionParams = (
     }
   }
 
-  for (const key in condition?.params.map(param => param.id)) {
+  condition?.params.forEach(param => {
+    const key = param.id
     if (!params[key]) {
       const param = condition?.params.find(param => param.id === key)
       params[key] = param?.default
     }
-  }
+  })
 
   return params
 }
@@ -107,10 +109,10 @@ const updateConditionParams = (
 const updateEffect = (
   effect: Effect
 ) => {
-  const oldEffectId = effect.id
-  effect.id = updateEffectId(oldEffectId)
+  const oldEffectId = effect.type
+  effect.type = updateEffectId(oldEffectId)
   effect.params = updateEffectParams(oldEffectId, effect.params)
-  effect.params = updateMissingEffectParams(effect.id, effect.params)
+  effect.params = updateMissingEffectParams(effect.type, effect.params)
 
   return effect
 }
@@ -188,12 +190,13 @@ const updateMissingEffectParams = (
     }
   }
 
-  for (const key in effect?.params.map(param => param.id)) {
+  effect?.params.forEach(param => {
+    const key = param.id
     if (!params[key]) {
       const param = effect?.params.find(param => param.id === key)
       params[key] = param?.default
     }
-  }
+  })
 
   return params
 }
