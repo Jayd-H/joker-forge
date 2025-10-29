@@ -1,7 +1,7 @@
 import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
 import { coordinateVariableConflicts } from "./variableUtils";
-import { generateSingleEffect } from "../effectUtils";
+import { extractPreReturnCode, generateSingleEffect, getOrdinalSuffix } from "../effectUtils";
 /* 
 import { generateAddMultReturn } from "./effects/AddMultEffect";
 import { generateApplyXMultReturn } from "./effects/ApplyXMultEffect";
@@ -1093,37 +1093,3 @@ export const processPassiveEffects = (
   return passiveEffects;
 };
 */
-
-function extractPreReturnCode(statement: string): {
-  newStatement: string;
-  preReturnCode?: string;
-} {
-  const preReturnStart = "__PRE_RETURN_CODE__";
-  const preReturnEnd = "__PRE_RETURN_CODE_END__";
-
-  if (statement.includes(preReturnStart) && statement.includes(preReturnEnd)) {
-    const startIndex =
-      statement.indexOf(preReturnStart) + preReturnStart.length;
-    const endIndex = statement.indexOf(preReturnEnd);
-
-    if (startIndex < endIndex) {
-      const preReturnCode = statement.substring(startIndex, endIndex).trim();
-      const newStatement = statement
-        .replace(
-          new RegExp(`${preReturnStart}[\\s\\S]*?${preReturnEnd}`, "g"),
-          ""
-        )
-        .trim();
-
-      return { newStatement, preReturnCode };
-    }
-  }
-
-  return { newStatement: statement };
-}
-
-function getOrdinalSuffix(num: number): string {
-  if (num === 2) return "nd";
-  if (num === 3) return "rd";
-  return "th";
-}

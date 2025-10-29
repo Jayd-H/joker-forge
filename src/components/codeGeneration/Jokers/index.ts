@@ -26,7 +26,7 @@ import { slugify } from "../../data/BalatroUtils";
 import { RarityData } from "../../data/BalatroUtils";
 import { generateUnlockFunction } from "./unlockUtils";
 import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
-import { generateEffectReturnStatement } from "./effectUtils";
+import { generateEffectReturnStatement } from "../effectUtils";
 import { generateConditionChain } from "../conditionUtils";
 import { Rule } from "../../ruleBuilder";
 import { generateTriggerContext } from "../triggerUtils";
@@ -628,11 +628,12 @@ const generateCalculateFunction = (
           regularRetriggerEffects,
           convertRandomGroupsForCodegen(randomRetriggerEffects),
           convertLoopGroupsForCodegen(loopRetriggerEffects),
+          'joker',
           triggerType,
           modprefix,
-          joker,
           rule.id,
-          globalEffectCounts
+          globalEffectCounts,
+          joker
         );
 
         if (effectResult.configVariables) {
@@ -764,11 +765,12 @@ const generateCalculateFunction = (
             regularNonRetriggerEffects,
             convertRandomGroupsForCodegen(randomNonRetriggerGroups),
             convertLoopGroupsForCodegen(loopNonRetriggerGroups),
+            'joker',
             triggerType,
             modprefix,
-            joker,
             rule.id,
-            globalEffectCounts
+            globalEffectCounts,
+            joker
           );
 
           if (effectResult.configVariables) {
@@ -843,11 +845,12 @@ const generateCalculateFunction = (
               regularNonRetriggerEffects,
               convertRandomGroupsForCodegen(randomNonRetriggerGroups),
               convertLoopGroupsForCodegen(loopNonRetriggerGroups),
+              'joker',
               triggerType,
               modprefix,
-              joker,
               rule.id,
-              globalEffectCounts
+              globalEffectCounts,
+              joker
             );
 
             if (effectResult.configVariables) {
@@ -891,11 +894,12 @@ const generateCalculateFunction = (
                 regularNonRetriggerEffects,
                 [],
                 [],
+                'joker',
                 triggerType,
                 modprefix,
-                joker,
                 rule.id,
-                globalEffectCounts
+                globalEffectCounts,
+                joker
               );
 
               if (effectResult.configVariables) {
@@ -1016,11 +1020,12 @@ const generateCalculateFunction = (
             allEffects,
             convertRandomGroupsForCodegen(allRandomGroups),
             convertLoopGroupsForCodegen(allLoopGroups),
+            'joker',
             triggerType,
             modprefix,
-            joker,
             rule.id,
-            globalEffectCounts
+            globalEffectCounts,
+            joker
           );
 
           if (effectResult.configVariables) {
@@ -1113,11 +1118,12 @@ const generateCalculateFunction = (
               allEffects,
               convertRandomGroupsForCodegen(allRandomGroups),
               convertLoopGroupsForCodegen(allLoopGroups),
+              'joker',
               triggerType,
               modprefix,
-              joker,
               rule.id,
-              globalEffectCounts
+              globalEffectCounts,
+              joker
             );
 
             if (effectResult.configVariables) {
@@ -1171,11 +1177,12 @@ const generateCalculateFunction = (
                 allEffects,
                 [],
                 [],
+                'joker',
                 triggerType,
                 modprefix,
-                joker,
                 rule.id,
-                globalEffectCounts
+                globalEffectCounts,
+                joker
               );
 
               if (effectResult.configVariables) {
@@ -1249,11 +1256,12 @@ const generateCalculateFunction = (
             regularFixProbablityEffects,
             convertRandomGroupsForCodegen(randomFixProbablityEffects),
             convertLoopGroupsForCodegen(loopFixProbablityEffects),
+            'joker',
             triggerType,
             modprefix,
-            joker,
             rule.id,
-            globalEffectCounts
+            globalEffectCounts,
+            joker,
           );
 
           if (effectResult.configVariables) {
@@ -1328,11 +1336,12 @@ const generateCalculateFunction = (
             regularModProbablityEffects,
             convertRandomGroupsForCodegen(randomModProbablityEffects),
             convertLoopGroupsForCodegen(loopModProbablityEffects),
+            'joker',
             triggerType,
             modprefix,
-            joker,
             rule.id,
-            globalEffectCounts
+            globalEffectCounts,
+            joker
           );
 
           if (effectResult.configVariables) {
@@ -1388,11 +1397,12 @@ const generateCalculateFunction = (
           rule.effects || [],
           convertRandomGroupsForCodegen(rule.randomGroups || []),
           convertLoopGroupsForCodegen(rule.loops || []),
+          'joker',
           triggerType,
           modprefix,
-          joker,
           rule.id,
-          globalEffectCounts
+          globalEffectCounts,
+          joker
         );
 
         if (effectResult.configVariables) {
@@ -1430,11 +1440,12 @@ const generateCalculateFunction = (
             rule.effects || [],
             convertRandomGroupsForCodegen(rule.randomGroups || []),
             convertLoopGroupsForCodegen(rule.loops || []),
+            'joker',
             triggerType,
             modprefix,
-            joker,
             rule.id,
-            globalEffectCounts
+            globalEffectCounts,
+            joker,
           );
 
           if (effectResult.configVariables) {
@@ -1463,11 +1474,12 @@ const generateCalculateFunction = (
               rule.effects || [],
               [],
               [],
+              'joker',
               triggerType,
               modprefix,
-              joker,
               rule.id,
-              globalEffectCounts
+              globalEffectCounts,
+              joker
             );
 
             if (effectResult.configVariables) {

@@ -1,5 +1,5 @@
-import type { Effect } from "../ruleBuilder/types";
-import { JokerData, EnhancementData, SealData, EditionData } from "../data/BalatroUtils";
+import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
+import { JokerData, EnhancementData, SealData, EditionData, ConsumableData, VoucherData, DeckData } from "../data/BalatroUtils";
 import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
 import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/AddChipsEffect";
@@ -96,6 +96,7 @@ import { generateEditShopCardSlotsEffectCode } from "./Effects/EditShopCardSlots
 import { generateEditRarityWeightEffectCode } from "./Effects/EditRarityWeightEffect";
 import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect";
 import { generateEditCardsInHandEffectCode } from "./Effects/EditCardsInHandEffect";
+import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -144,6 +145,610 @@ export interface CalculateFunctionResult {
   code: string;
   configVariables: ConfigExtraVariable[];
 }
+
+export function generateEffectReturnStatement(
+  regularEffects: Effect[] = [],
+  randomGroups: RandomGroup[] = [],
+  loopGroups: LoopGroup[] = [],
+  itemType: string,
+  triggerType: string = "hand_played",
+  modprefix: string,
+  ruleId?: string,
+  globalEffectCounts?: Map<string, number>,
+  joker?: JokerData,
+  consumable?: ConsumableData,
+  card?: EditionData | EnhancementData | SealData,
+  voucher?: VoucherData,
+  deck?: DeckData,
+): ReturnStatementResult {
+  if (regularEffects.length === 0 && randomGroups.length === 0 && loopGroups.length === 0) {
+    return {
+      statement: "",
+      colour: "G.C.WHITE",
+      configVariables: [],
+    };
+  }
+
+  const object = 
+    (itemType === "joker") ? joker :
+    (itemType === "consumable") ? consumable :
+    (itemType === "card") ? card :
+    (itemType === "voucher") ? voucher :
+    (itemType === "deck") ? deck : 
+    null
+    
+  const allRandomGroups: RandomGroup[] = []
+  const allLoopGroups: LoopGroup[] = []
+
+  object?.rules?.forEach(rule => {
+    const randoms = rule.randomGroups || []
+    const loops = rule.loops || []
+    allLoopGroups.push(...loops)
+    allRandomGroups.push(...randoms)
+  });
+
+  let combinedPreReturnCode = "";
+  let mainReturnStatement = "";
+  let primaryColour = "G.C.WHITE";
+  const allConfigVariables: ConfigExtraVariable[] = [];
+
+  if (regularEffects.length > 0) {
+    const { preReturnCode: regularPreCode, modifiedEffects } =
+      coordinateVariableConflicts(regularEffects);
+
+    const effectReturns: EffectReturn[] = modifiedEffects
+      .map((effect) => {
+        const effectWithContext: ExtendedEffect = {
+          ...effect,
+          _ruleContext: ruleId,
+        };
+
+        const currentCount = globalEffectCounts?.get(effect.type) || 0;
+        if (globalEffectCounts) {
+          globalEffectCounts.set(effect.type, currentCount + 1);
+        }
+
+        const result = generateSingleEffect(
+          effectWithContext,
+          itemType,
+          triggerType,
+          currentCount,
+          modprefix,
+          joker,
+          card,
+        );
+        return {
+          ...result,
+          effectType: effect.type,
+        };
+      })
+      .filter((ret) => ret.statement || ret.message);
+
+    if (regularPreCode) {
+      combinedPreReturnCode += regularPreCode;
+    }
+
+    effectReturns.forEach((effectReturn) => {
+      if (effectReturn.configVariables) {
+        allConfigVariables.push(...effectReturn.configVariables);
+      }
+    });
+
+    const processedEffects: EffectReturn[] = [];
+    effectReturns.forEach((effect) => {
+      const { newStatement, preReturnCode } = extractPreReturnCode(
+        effect.statement
+      );
+
+      if (preReturnCode) {
+        combinedPreReturnCode +=
+          (combinedPreReturnCode ? "\n                " : "") + preReturnCode;
+      }
+
+      processedEffects.push({
+        ...effect,
+        statement: newStatement,
+      });
+    });
+
+    if (processedEffects.length > 0) {
+      mainReturnStatement = buildReturnStatement(processedEffects);
+      primaryColour = processedEffects[0]?.colour ?? "G.C.WHITE";
+    }
+  }
+
+  if (randomGroups.length > 0) {
+    const randomGroupStatements: string[] = [];
+  
+    const currentDenominators = [
+      ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
+    ];
+    const allDenominators = [
+      ...new Set(allRandomGroups.map((group) => group.chance_denominator as number)),
+    ];
+    const denominatorToOddsVar: Record<number, string> = {};
+    const abilityPath =
+      itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
+
+    allDenominators.forEach((denom, index) => {
+      if (index === 0) {
+        denominatorToOddsVar[denom] =`${abilityPath}.odds`;
+      } else {
+        denominatorToOddsVar[denom] = `${abilityPath}.odds${index + 1}`;
+      }
+    })
+
+    if (currentDenominators.length === 1) {
+      allConfigVariables.push({
+        name: "odds",
+        value: currentDenominators[0],
+        description: "Probability denominator",
+      });
+    } else {
+      currentDenominators.forEach((denom, index) => {
+        if (index === 0) {
+          allConfigVariables.push({
+            name: "odds",
+            value: denom,
+            description: "First probability denominator",
+          });
+        } else {
+          allConfigVariables.push({
+            name: `odds${index + 1}`,
+            value: denom,
+            description: `${index + 1}${getOrdinalSuffix(
+              index + 1
+            )} probability denominator`,
+          });
+        }
+      });
+    }
+
+    randomGroups.forEach((group, groupIndex) => {
+      const { preReturnCode: groupPreCode, modifiedEffects } =
+        coordinateVariableConflicts(group.effects);
+
+      const effectReturns: EffectReturn[] = modifiedEffects
+        .map((effect) => {
+          const effectWithContext: ExtendedEffect = {
+            ...effect,
+            _ruleContext: ruleId,
+            _isInRandomGroup: true,
+          };
+
+          const currentCount = globalEffectCounts?.get(effect.type) || 0;
+          if (globalEffectCounts) {
+            globalEffectCounts.set(effect.type, currentCount + 1);
+          }
+
+          const result = generateSingleEffect(
+            effectWithContext,
+            itemType,
+            triggerType,
+            currentCount,
+            modprefix,
+            joker,
+            card,
+          );
+          return {
+            ...result,
+            effectType: effect.type,
+          };
+        })
+        .filter((ret) => ret.statement || ret.message);
+
+      effectReturns.forEach((effectReturn) => {
+        if (effectReturn.configVariables) {
+          allConfigVariables.push(...effectReturn.configVariables);
+        }
+      });
+
+      if (effectReturns.length === 0) return;
+
+      let groupPreReturnCode = groupPreCode || "";
+      const processedEffects: EffectReturn[] = [];
+
+      effectReturns.forEach((effect) => {
+        const { newStatement, preReturnCode } = extractPreReturnCode(
+          effect.statement
+        );
+
+        if (preReturnCode) {
+          groupPreReturnCode +=
+            (groupPreReturnCode ? "\n                        " : "") +
+            preReturnCode;
+        }
+
+        processedEffects.push({
+          ...effect,
+          statement: newStatement,
+        });
+      });
+
+      const oddsVar = denominatorToOddsVar[group.chance_denominator as number];
+      const probabilityIdentifier = `group_${groupIndex}_${group.id.substring(
+        0,
+        8
+      )}`;
+
+      let groupContent = "";
+
+      const hasDeleteInGroup = group.effects.some(
+        (effect) => effect.type === "delete_triggered_card"
+      );
+
+      if (
+        hasDeleteInGroup &&
+        (triggerType === "card_scored" ||
+          triggerType === "card_held_in_hand" ||
+          triggerType === "card_held_in_hand_end_of_round")
+      ) {
+        groupContent += `context.other_card.should_destroy = true
+                        `;
+      }
+
+      if (groupPreReturnCode && groupPreReturnCode.trim()) {
+        groupContent += `${groupPreReturnCode}
+                        `;
+      }
+
+      const isRetriggerEffect = (effect: EffectReturn): boolean => {
+        return (
+          effect.effectType === "retrigger_cards" ||
+          (effect.statement
+            ? effect.statement.includes("repetitions") ||
+              effect.statement.includes("repetition")
+            : false)
+        );
+      };
+
+      const retriggerEffects = processedEffects.filter(isRetriggerEffect);
+      const nonRetriggerEffects = processedEffects.filter(
+        (effect) => !isRetriggerEffect(effect)
+      );
+      const hasFixProbablityEffects = processedEffects.some(
+        (effect) => effect.effectType === "fix_probability"
+      );
+      const hasModProbablityEffects = processedEffects.some(
+        (effect) => effect.effectType === "mod_probability"
+      );
+
+      const nonRetriggerEffectCalls: string[] = [];
+      if (retriggerEffects.length > 0) {
+        const retriggerStatements = retriggerEffects
+          .filter((effect) => effect.statement && effect.statement.trim())
+          .map((effect) => effect.statement);
+
+        nonRetriggerEffects.forEach((effect) => {
+          if (effect.message) {
+            nonRetriggerEffectCalls.push(
+              `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+                effect.message
+              }, colour = ${effect.colour || "G.C.WHITE"}})`  
+            );        
+          }
+        })
+
+        if (nonRetriggerEffectCalls.length > 0) {
+          groupContent += nonRetriggerEffectCalls.join("\n                        ");
+        }
+
+        if (retriggerStatements.length > 0) {
+          const returnObj = `{${retriggerStatements.join(", ")}}`;
+          groupContent += `
+          return ${returnObj}`;
+        }
+      }
+
+      const effectCalls: string[] = [];
+      nonRetriggerEffects.forEach((effect) => {
+        if (effect.statement && effect.statement.trim()) {
+          const effectObj = `{${effect.statement}}`;
+          effectCalls.push(`SMODS.calculate_effect(${effectObj}, card)`);
+        }
+        if (effect.message) {
+          effectCalls.push(
+            `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+              effect.message
+            }, colour = ${effect.colour || "G.C.WHITE"}})`
+          );
+        }
+      });
+      
+      if (effectCalls.filter(effect => !nonRetriggerEffectCalls.includes(effect)).length > 0) {
+        groupContent += effectCalls.filter(effect => 
+          !nonRetriggerEffectCalls.includes(effect)).join("\n                        ");
+      }
+
+      const no_modParam = (
+        hasFixProbablityEffects || hasModProbablityEffects // prevents stack overflow
+      ) || group.respect_probability_effects === false;
+      
+      const probabilityStatement =  `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${object?.objectKey}`}', ${no_modParam})`;
+      
+      const groupStatement = `if ${probabilityStatement} then
+              ${groupContent}
+          end`;
+
+      randomGroupStatements.push(groupStatement);
+    });
+
+    if (mainReturnStatement && randomGroupStatements.length > 0) {
+      const randomGroupCode = randomGroupStatements.join(
+        "\n                    "
+      );
+      const funcStatement = `func = function()
+                        ${randomGroupCode}
+                        return true
+                    end`;
+
+      if (
+        mainReturnStatement.includes("return {") &&
+        mainReturnStatement.includes("}")
+      ) {
+        const insertIndex = mainReturnStatement.lastIndexOf("}");
+        mainReturnStatement =
+          mainReturnStatement.slice(0, insertIndex) +
+          `,
+                    ${funcStatement}
+                ${mainReturnStatement.slice(insertIndex)}`;
+      }
+    } else if (!mainReturnStatement && randomGroupStatements.length > 0) {
+      mainReturnStatement = randomGroupStatements.join("\n                ");
+      if (randomGroups.length > 0 && randomGroups[0].effects.length > 0) {
+        const firstEffect = randomGroups[0].effects[0];
+        const firstEffectResult = generateSingleEffect(
+          firstEffect,
+          itemType,
+          triggerType,
+          0,
+          modprefix,
+          joker,
+          card
+        );
+        primaryColour = firstEffectResult.colour || "G.C.WHITE";
+      }
+    }
+  }
+  
+  if (loopGroups.length > 0) {
+    const loopGroupStatements: string[] = [];
+
+    const allRepetitions = [
+      ...new Set(allLoopGroups.map((group) => group.repetitions as number)),
+    ];
+    const currentRepetitions = [
+      ...new Set(loopGroups.map((group) => group.repetitions as number)),
+    ];
+
+    const repetitionsToVar: Record<number, string> = {};
+    const abilityPath =
+      itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
+
+    allRepetitions.forEach((value, index) => {
+      if (index === 0) {
+        repetitionsToVar[value] = `${abilityPath}.repetitions`;
+      } else {
+        repetitionsToVar[value] = `${abilityPath}.repetitions${index + 1}`;
+      }
+    })
+
+    if (currentRepetitions.length === 1) {
+      if (!(typeof currentRepetitions[0] === "string")) {
+        allConfigVariables.push({
+          name: "repetitions",
+          value: currentRepetitions[0],
+          description: "Loop repetitions",
+        });
+      }
+    } else {
+      currentRepetitions.forEach((value, index) => {
+        if (index === 0) {
+          if (!(typeof value === "string")) {
+            allConfigVariables.push({
+              name: "repetitions",
+              value: value,
+              description: "First loop repetitions",
+            });
+          }
+        } else {
+          if (!(typeof value === "string")) {
+            allConfigVariables.push({
+              name: `repetitions${index + 1}`,
+              value: value,
+              description: `${index + 1}${getOrdinalSuffix(
+                index + 1
+              )} loop repetitions`,
+            });
+          }
+        }
+      });
+    }
+
+    loopGroups.forEach((group) => {
+      const { preReturnCode: groupPreCode, modifiedEffects } =
+        coordinateVariableConflicts(group.effects);
+
+      const effectReturns: EffectReturn[] = modifiedEffects
+        .map((effect) => {
+          const effectWithContext: ExtendedEffect = {
+            ...effect,
+            _ruleContext: ruleId,
+            _isInRandomGroup: true,
+          };
+
+          const currentCount = globalEffectCounts?.get(effect.type) || 0;
+          if (globalEffectCounts) {
+            globalEffectCounts.set(effect.type, currentCount + 1);
+          }
+
+          const result = generateSingleEffect(
+            effectWithContext,
+            itemType,
+            triggerType,
+            currentCount,
+            modprefix,
+            joker,
+            card,
+          );
+          return {
+            ...result,
+            effectType: effect.type,
+          };
+        })
+        .filter((ret) => ret.statement || ret.message);
+
+      effectReturns.forEach((effectReturn) => {
+        if (effectReturn.configVariables) {
+          allConfigVariables.push(...effectReturn.configVariables);
+        }
+      });
+
+      if (effectReturns.length === 0) return;
+
+      let groupPreReturnCode = groupPreCode || "";
+      const processedEffects: EffectReturn[] = [];
+
+      effectReturns.forEach((effect) => {
+        const { newStatement, preReturnCode } = extractPreReturnCode(
+          effect.statement
+        );
+
+        if (preReturnCode) {
+          groupPreReturnCode +=
+            (groupPreReturnCode ? "\n                        " : "") +
+            preReturnCode;
+        }
+
+        processedEffects.push({
+          ...effect,
+          statement: newStatement,
+        });
+      });
+
+      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
+
+      let groupContent = "";
+
+      const hasDeleteInGroup = group.effects.some(
+        (effect) => effect.type === "delete_triggered_card"
+      );
+
+      if (
+        hasDeleteInGroup &&
+        (triggerType === "card_scored" ||
+          triggerType === "card_held_in_hand" ||
+          triggerType === "card_held_in_hand_end_of_round")
+      ) {
+        groupContent += `context.other_card.should_destroy = true
+                        `;
+      }
+
+      if (groupPreReturnCode && groupPreReturnCode.trim()) {
+        groupContent += `${groupPreReturnCode}
+                        `;
+      }
+
+      const isRetriggerEffect = (effect: EffectReturn): boolean => {
+        return (
+          effect.effectType === "retrigger_cards" ||
+          (effect.statement
+            ? effect.statement.includes("repetitions") ||
+              effect.statement.includes("repetition")
+            : false)
+        );
+      };
+
+      const retriggerEffects = processedEffects.filter(isRetriggerEffect);
+      const nonRetriggerEffects = processedEffects.filter(
+        (effect) => !isRetriggerEffect(effect)
+      );
+
+      if (retriggerEffects.length > 0) {
+        const retriggerStatements = retriggerEffects
+          .filter((effect) => effect.statement && effect.statement.trim())
+          .map((effect) => effect.statement);
+
+        if (retriggerStatements.length > 0) {
+          const returnObj = `{${retriggerStatements.join(", ")}}`;
+          groupContent += `return ${returnObj}
+                        `;
+        }
+      }
+
+      const effectCalls: string[] = [];
+      nonRetriggerEffects.forEach((effect) => {
+        if (effect.statement && effect.statement.trim()) {
+          const effectObj = `{${effect.statement}}`;
+          effectCalls.push(`SMODS.calculate_effect(${effectObj}, card)`);
+        }
+        if (effect.message) {
+          effectCalls.push(
+            `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+              effect.message
+            }, colour = ${effect.colour || "G.C.WHITE"}})`
+          );
+        }
+      });
+
+      if (effectCalls.length > 0) {
+        groupContent += effectCalls.join("\n                        ");
+      }
+
+      
+      const loopStatement =  `for i = 1, ${repetitionsVar} do`;
+      
+      const groupStatement = `${loopStatement}
+              ${groupContent}
+          end`;
+
+      loopGroupStatements.push(groupStatement);
+    });
+
+    if (mainReturnStatement && loopGroupStatements.length > 0) {
+      const loopGroupCode = loopGroupStatements.join(
+        "\n                    "
+      );
+      const funcStatement = `func = function()
+                        ${loopGroupCode}
+                        return true
+                    end`;
+
+      if (
+        mainReturnStatement.includes("return {") &&
+        mainReturnStatement.includes("}")
+      ) {
+        const insertIndex = mainReturnStatement.lastIndexOf("}");
+        mainReturnStatement =
+          mainReturnStatement.slice(0, insertIndex) +
+          `,
+                    ${funcStatement}
+                ${mainReturnStatement.slice(insertIndex)}`;
+      }
+    } else if (!mainReturnStatement && loopGroupStatements.length > 0) {
+      mainReturnStatement = loopGroupStatements.join("\n                ");
+      if (loopGroups.length > 0 && loopGroups[0].effects.length > 0) {
+        const firstEffect = loopGroups[0].effects[0];
+        const firstEffectResult = generateSingleEffect(
+          firstEffect,
+          itemType,
+          triggerType,
+          0,
+          modprefix,
+          joker, 
+        );
+        primaryColour = firstEffectResult.colour || "G.C.WHITE";
+      }
+    }
+  }
+  return {
+    statement: mainReturnStatement,
+    colour: primaryColour,
+    preReturnCode: combinedPreReturnCode || undefined,
+    isRandomChance: randomGroups.length > 0,
+    configVariables: allConfigVariables,
+  };
+};
 
 export const generateSingleEffect = (
   effect: ExtendedEffect,
@@ -422,4 +1027,134 @@ const generateSinglePassiveEffect = (
     default:
       return null
   }
+}
+
+export const extractPreReturnCode = function (
+  statement: string
+): {
+  newStatement: string;
+  preReturnCode?: string;
+} {
+  const preReturnStart = "__PRE_RETURN_CODE__";
+  const preReturnEnd = "__PRE_RETURN_CODE_END__";
+
+  if (statement.includes(preReturnStart) && statement.includes(preReturnEnd)) {
+    const startIndex =
+      statement.indexOf(preReturnStart) + preReturnStart.length;
+    const endIndex = statement.indexOf(preReturnEnd);
+
+    if (startIndex < endIndex) {
+      const preReturnCode = statement.substring(startIndex, endIndex).trim();
+      const newStatement = statement
+        .replace(
+          new RegExp(`${preReturnStart}[\\s\\S]*?${preReturnEnd}`, "g"),
+          ""
+        )
+        .trim();
+
+      return { newStatement, preReturnCode };
+    }
+  }
+
+  return { newStatement: statement };
+}
+
+export const getOrdinalSuffix = (
+  num: number
+): string => {
+  if (num === 2) return "nd";
+  if (num === 3) return "rd";
+  return "th";
+};
+
+const buildReturnStatement = (effects: EffectReturn[]): string => {
+  if (effects.length === 0) return "";
+
+  let firstContentEffectIndex = -1;
+  for (let i = 0; i < effects.length; i++) {
+    const effect = effects[i];
+    if (effect.statement.trim().length > 0 || effect.message) {
+      firstContentEffectIndex = i;
+      break;
+    }
+  }
+
+  if (firstContentEffectIndex === -1) {
+    return "";
+  }
+
+  const firstContentEffect = effects[firstContentEffectIndex];
+  const hasFirstStatement = firstContentEffect.statement.trim().length > 0;
+
+  let returnStatement = "";
+
+  if (hasFirstStatement) {
+    returnStatement = `return {
+                    ${firstContentEffect.statement}`;
+
+    if (firstContentEffect.message) {
+      returnStatement += `,
+                    message = ${firstContentEffect.message}`;
+    }
+  } else if (firstContentEffect.message) {
+    returnStatement = `return {
+                    message = ${firstContentEffect.message}`;
+  }
+
+  const remainingEffects = effects.slice(firstContentEffectIndex + 1);
+  if (remainingEffects.length > 0) {
+    let extraChain = "";
+    let extraCount = 0;
+
+    for (let i = 0; i < remainingEffects.length; i++) {
+      const effect = remainingEffects[i];
+      const hasStatement = effect.statement.trim().length > 0;
+
+      let extraContent = "";
+      if (hasStatement) {
+        extraContent = effect.statement;
+        if (effect.message) {
+          extraContent += `,
+                            message = ${effect.message}`;
+        }
+      } else if (effect.message) {
+        extraContent = `message = ${effect.message}`;
+      }
+
+      if (!extraContent) continue;
+
+      if (extraCount === 0) {
+        extraChain = `,
+                    extra = {
+                        ${extraContent}`;
+
+        if (effect.colour && effect.colour.trim()) {
+          extraChain += `,
+                        colour = ${effect.colour}`;
+        }
+      } else {
+        extraChain += `,
+                        extra = {
+                            ${extraContent}`;
+
+        if (effect.colour && effect.colour.trim()) {
+          extraChain += `,
+                            colour = ${effect.colour}`;
+        }
+      }
+      extraCount++;
+    }
+
+    for (let i = 0; i < extraCount; i++) {
+      extraChain += `
+                        }`;
+    }
+
+    returnStatement += extraChain;
+  }
+
+  returnStatement += `
+                }`;
+
+  return returnStatement;
 }
