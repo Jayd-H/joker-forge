@@ -17,27 +17,34 @@ export const updateRuleBlocks = (
   allData.forEach(objectType => {
     objectType.forEach(item => {item.rules?.forEach(rule => {
 
-      rule.trigger = updateTrigger(rule)
+      rule.trigger = updateTrigger(rule);
 
-      rule.conditionGroups.forEach(group => {group.conditions.forEach(condition => {
+      (rule.conditionGroups || []).forEach(group => {group.conditions.forEach(condition => {
         condition = updateCondition(condition)
-      })})
+      })});
 
-      rule.effects.forEach(effect => {
+      (rule.effects|| []).forEach(effect => {
         effect = updateEffect(effect)
-      })
+      });
 
-      rule.randomGroups.forEach(group => {group.effects.forEach(effect =>
+      (rule.randomGroups || []).forEach(group => {group.effects.forEach(effect =>
         effect = updateEffect(effect)
-      )})
+      )});
 
-      rule.loops.forEach(group => {group.effects.forEach(effect =>
+      (rule.loops || []).forEach(group => {group.effects.forEach(effect =>
         effect = updateEffect(effect)
-      )})
-
-    })
-  })
+      )});
+    })})
   }) 
+  return {
+    jokers,
+    consumables, 
+    enhancements,
+    seals, 
+    editions,
+    vouchers,
+    decks
+  }
 }
 
 const updateTrigger = (

@@ -16,13 +16,6 @@ import type {
   LoopGroup,
 } from "./types";
 
-import { getTriggerById } from "../data/Jokers/Triggers";
-import { getConditionTypeById } from "../data/Jokers/Conditions";
-import { getEffectTypeById } from "../data/Jokers/Effects";
-import { getConsumableTriggerById } from "../data/Consumables/Triggers";
-import { getConsumableConditionTypeById } from "../data/Consumables/Conditions";
-import { getConsumableEffectTypeById } from "../data/Consumables/Effects";
-
 import BlockComponent from "./BlockComponent";
 import { ChevronDownIcon, Bars3Icon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import {
@@ -41,18 +34,9 @@ import {
   DeckData,
 } from "../data/BalatroUtils";
 import { WrenchIcon } from "@heroicons/react/24/solid";
-
-import { getCardTriggerById } from "../data/Card/Triggers";
-import { getCardConditionTypeById } from "../data/Card/Conditions";
-import { getCardEffectTypeById } from "../data/Card/Effects";
-
-import { getVoucherTriggerById } from "../data/Vouchers/Triggers";
-import { getVoucherConditionTypeById } from "../data/Vouchers/Conditions";
-import { getVoucherEffectTypeById } from "../data/Vouchers/Effects";
-
-import { getDeckTriggerById } from "../data/Decks/Triggers";
-import { getDeckConditionTypeById } from "../data/Decks/Conditions";
-import { getDeckEffectTypeById } from "../data/Decks/Effects";
+import { getTriggerById } from "../data/Triggers";
+import { getEffectTypeById } from "../data/Effects";
+import { getConditionTypeById } from "../data/Conditions";
 
 interface RuleCardProps {
   rule: Rule;
@@ -115,18 +99,8 @@ const SortableCondition: React.FC<{
   onDelete,
   parameterCount,
   dynamicTitle,
-  itemType,
 }) => {
-  const getConditionType =
-    itemType === "joker"
-      ? getConditionTypeById
-      : itemType === "consumable"
-      ? getConsumableConditionTypeById
-      : itemType === "card"
-      ? getCardConditionTypeById
-      : itemType === "voucher"
-      ? getVoucherConditionTypeById
-      : getDeckConditionTypeById
+  const getConditionType = getConditionTypeById
   const conditionType = getConditionType(condition.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -184,18 +158,8 @@ const SortableEffect: React.FC<{
   onDelete,
   parameterCount,
   dynamicTitle,
-  itemType,
 }) => {
-  const getEffectType =
-    itemType === "joker"
-      ? getEffectTypeById
-      : itemType === "consumable"
-      ? getConsumableEffectTypeById
-      : itemType === "card"
-      ? getCardEffectTypeById
-      : itemType === "voucher"
-      ? getVoucherEffectTypeById
-      : getDeckEffectTypeById;
+  const getEffectType = getEffectTypeById
   const effectType = getEffectType(effect.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -341,16 +305,7 @@ const RuleCard: React.FC<RuleCardProps> = ({
   itemType,
   onRuleDoubleClick,
 }) => {
-  const getTrigger =
-    itemType === "joker"
-      ? getTriggerById
-      : itemType === "consumable"
-      ? getConsumableTriggerById
-      : itemType === "card"
-      ? getCardTriggerById
-      : itemType === "voucher"
-      ? getVoucherTriggerById
-      : getDeckTriggerById;
+  const getTrigger = getTriggerById
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [groupOperators, setGroupOperators] = useState<Record<string, string>>(
@@ -990,7 +945,7 @@ const RuleCard: React.FC<RuleCardProps> = ({
             >
               <BlockComponent
                 type="trigger"
-                label={trigger?.label || "Unknown Trigger"}
+                label={trigger?.label[itemType] || "Unknown Trigger"}
                 isSelected={isItemSelected("trigger")}
                 onClick={(e) => {
                   e?.stopPropagation();
