@@ -336,45 +336,45 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Game Rules",
   },
   {
-      id: "edit_hand",
-      label: "Edit Hands",
-      description: "Modify the number of hands available",
-      applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
-      objectUsers: [...ALL_OBJECTS],
-      params: [
-        {
-          id: "operation",
-          type: "select",
-          label: "Operation",
-          options: [
-            { value: "add", label: "Add" },
-            { value: "subtract", label: "Subtract" },
-            { value: "set", label: "Set to" },
-          ],
-          default: "add",
-        },
-        {
-          id: "duration",
-          type: "select",
-          label: "Duration",
-          options: [
-            { value: "permanent", label: "Permanent" },
-            { value: "round", label: "This Round" },
-          ],
-          default: "permanent",
-        },
-        {
-          id: "value",
-          type: "number",
-          label: "Amount",
-          default: 1,
-          min: 0,
-        },
-      ],
-      category: "Game Rules",
-    },
+    id: "edit_hands",
+    label: "Edit Hands",
+    description: "Modify the number of hands available",
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "duration",
+        type: "select",
+        label: "Duration",
+        options: [
+          { value: "permanent", label: "Permanent" },
+          { value: "round", label: "This Round" },
+        ],
+        default: "permanent",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Game Rules",
+  },
   {
-    id: "edit_discard",
+    id: "edit_discards",
     label: "Edit Discards",
     description: "Modify the number of discards available",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
@@ -498,7 +498,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     description:
       "Modify the Discard size (number of cards you can select and Discard)",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable"],
     params: [
       {
         id: "operation",
@@ -520,7 +520,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Game Rules",
   },
-{
+  {
     id: "modify_internal_variable",
     label: "Modify Internal Variable",
     description: "Change an internal variable value for this joker",
@@ -610,7 +610,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Variables",
   },
-{
+  {
     id: "add_card_to_deck",
     label: "Add Card to Deck",
     description: "Create a new playing card and add it to your deck",
@@ -1547,7 +1547,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Boosters Packs",
     description: "Modify the values the of booster packs available in shop",
     applicableTriggers: [...GENERIC_TRIGGERS],
-    objectUsers: ["joker", "consumable", "voucher"],
+    objectUsers: ["joker", "consumable", "voucher", "decks"],
     params: [
       {
         id: "selected_type",
@@ -1651,7 +1651,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Consumable Slots",
     description: "Modify the number of consumable slots available",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -1707,7 +1707,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Booster Slots",
     description: "Modify the number of booster packs available in shop",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -1735,7 +1735,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Joker Slots",
     description: "Modify the number of joker slots available",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -1808,7 +1808,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Card Appearance",
     description: "Modify if a Card can appear or not the current Run",
     applicableTriggers: GENERIC_TRIGGERS,
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
           id: "key",
@@ -2959,7 +2959,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_rerolls",
     label: "Edit Reroll Price",
     description: "Modify the price of the shop Reroll",
-    objectUsers: ["deck"],
+    objectUsers: ["voucher", "deck"],
     applicableTriggers: ["card_used"],
     params: [
       {
@@ -3088,7 +3088,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Card Effects",
   },
   {
-    id: "edit_card",
+    id: "edit_playing_card",
     label: "Edit Card",
     description: "Modify the properties of the card that triggered this effect",
     objectUsers: ["joker"],
@@ -3318,6 +3318,343 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       },
     ],
     category: "Card Effects",
+  },
+  {
+    id: "edit_hands_money",
+    label: "Edit Hand Money",
+    description: "Add, subtract, or set the player's end of the round hand money",
+    objectUsers: ["voucher", "deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 1,
+        max: 50,
+      },
+    ],
+    category: "Economy",
+  },
+  {
+    id: "edit_discards_money",
+    label: "Edit Discard Money",
+    description: "set the player's end of the round discard money",
+    objectUsers: ["voucher", "deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [{ value: "set", label: "Set" }],
+        default: "set",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 1,
+        max: 50,
+      },
+    ],
+    category: "Economy",
+  },
+  {
+    id: "edit_interest_cap",
+    label: "Edit Interest Cap",
+    description: "Modify the Cap on Interest Earned in each round",
+    objectUsers: ["voucher", "deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Economy",
+  },
+  {
+    id: "edit_rarity_weight",
+    label: "Edit Rarity Weight",
+    description: "Modify the Rate Probability for Joker Rarities in the Shop",
+    objectUsers: ["voucher", "deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+          id: "key_rarity",
+          type: "text",
+          label: "Joker Rarity Key (key)",
+          default: "",
+        },
+       {
+          id: "operation",
+          type: "select",
+          label: "Operation",
+          options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
+          ],
+          default: "add",
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Amount",
+          default: 1,
+          min: 1,
+        },
+      ],
+    category: "Shop Effects",
+  },
+  {
+    id: "edit_item_weight",
+    label: "Edit Card Weight",
+    description: "Modify the Rate Probability for Shop Cards",
+    objectUsers: ["voucher", "deck"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+          id: "key",
+          type: "text",
+          label: "Card Key (key)",
+          default: "",
+        },
+       {
+          id: "operation",
+          type: "select",
+          label: "Operation",
+          options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
+          ],
+          default: "add",
+        },
+        {
+          id: "value",
+          type: "number",
+          label: "Amount",
+          default: 1,
+          min: 1,
+        },
+      ],
+    category: "Shop Effects",
+  },
+  {
+    id: "edit_cards",
+    label: "Edit Selected Cards",
+    description: "Apply multiple modifications to selected cards (enhancement, seal, edition, suit, rank)",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used"],
+    params: [
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          { value: "remove", label: "Remove Enhancement" },
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          { value: "remove", label: "Remove Seal" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "No Change" },
+          { value: "remove", label: "Remove Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random Edition" },
+        ],
+        default: "none",
+      },
+      {
+        id: "suit",
+        type: "select",
+        label: "Suit",
+        options: [
+          { value: "none", label: "No Change" },
+          ...SUITS,
+          { value: "random", label: "Random Suit" },
+        ],
+        default: "none",
+      },
+      {
+        id: "rank",
+        type: "select",
+        label: "Rank",
+        options: [
+          { value: "none", label: "No Change" },
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          { value: "random", label: "Random Rank" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Selected Cards",
+  },
+  {
+    id: "edit_cards_in_hand",
+    label: "Edit Cards in Hand",
+    description: "Apply multiple modifications to random cards in hand (enhancement, seal, edition, suit, rank)",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["consumable_used", "held_hand"],
+    params: [
+      {
+        id: "amount",
+        type: "number",
+        label: "Number of Cards",
+        default: 1,
+        min: 1,
+        max: 8,
+      },
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "No Change" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "No Change" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random Edition" },
+        ],
+        default: "none",
+      },
+      {
+        id: "suit",
+        type: "select",
+        label: "Suit",
+        options: [
+          { value: "none", label: "No Change" },
+          ...SUITS,
+          { value: "random", label: "Random Suit" },
+          { value: "pool", label: "Random from Pool" },
+        ],
+        default: "none",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
+      },
+      {
+        id: "rank",
+        type: "select",
+        label: "Rank",
+        options: [
+          { value: "none", label: "No Change" },
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          { value: "random", label: "Random Rank" },
+          { value: "pool", label: "Random from Pool" },
+        ],
+        default: "none",
+      },
+      {
+        id: "rank_pool",
+        type: "checkbox",
+        label: "Possible Ranks",
+        checkboxOptions: [...RANKS],
+        showWhen: {
+          parameter: "rank",
+          values: ["pool"],
+        }
+      },      
+    ],
+    category: "Card Modification",
   },
 ]
 

@@ -1,130 +1,66 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateEditItemWeightEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  sameTypeCount: number = 0
 ): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+  const operation = effect.params?.operation as string|| "add";
+  const key = effect.params?.key as string || "";
 
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
-  }
-}
+  const variableName =
+    sameTypeCount === 0 ? "item_rate" : `item${sameTypeCount + 1}`;
 
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
+    variableName,
+    itemType
   );
 
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
+  let ItemWeightCode = "";
 
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  if (operation === "add") {
+    ItemWeightCode += `
+    G.GAME.${key}_rate = G.GAME.${key}_rate +${valueCode}
+    `;
+  } else if (operation === "subtract") {
+        ItemWeightCode += `
+        G.GAME.${key}_rate = G.GAME.${key}_rate -${valueCode}
+        `;
+  } else if (operation === "set") {
+        ItemWeightCode += `
+        G.GAME.${key}_rate = ${valueCode}
+        `;
+  } else if (operation === "multiply") {
+        ItemWeightCode += `
+        G.GAME.${key}_rate = G.GAME.${key}_rate *${valueCode}
+        `;
+  } else if (operation === "divide") {
+        ItemWeightCode += `
+        G.GAME.${key}_rate = G.GAME.${key}_rate /${valueCode}
+        `;
+  }
 
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+  if (itemType === "voucher") {
+    return {
+      statement: `
+        G.E_MANAGER:add_event(Event({
+          func = function()
+            ${ItemWeightCode}               
+            return true
+          end
+        }))`,
+      colour: "G.C.BLUE",
+      configVariables,
+    }
+  } else {
+    return {
+      statement: ItemWeightCode,
+      colour: "G.C.BLUE",
+      configVariables,
+    }
+  }
 }

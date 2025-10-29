@@ -5,7 +5,7 @@ import { generateGameVariableCode } from "../gameVariableUtils";
 export const generateEditItemWeightReturn = (
 effect: Effect,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation as string || "add";
   const value = effect.params?.value;
   const key = effect.params.key as string || "";
 

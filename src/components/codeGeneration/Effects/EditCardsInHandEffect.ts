@@ -1,31 +1,17 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { EDITIONS, SEALS } from "../../data/BalatroUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateEditCardsInHandEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  sameTypeCount: number = 0, 
+  modPrefix: string
 ): EffectReturn => {
   switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
     case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+      return generateConsumableCode(effect, sameTypeCount, modPrefix)
 
     default:
       return {
@@ -35,96 +21,266 @@ export const generateEffectCode = (
   }
 }
 
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
-    `value${sameTypeCount + 1}`,
-  );
-
-  return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
-
 const generateConsumableCode = (
   effect: Effect,
-  consumable?: ConsumableData
+  sameTypeCount: number = 0,
+  modPrefix: string,
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const enhancement = effect.params?.enhancement as string || "none";
+  const seal = effect.params?.seal as string || "none";
+  const edition = effect.params?.edition as string || "none";
+  const suit = effect.params?.suit as string || "none";
+  const rank = effect.params?.rank as string || "none";
 
-  const valueCode = generateGameVariableCode(value);
+  const variableName =
+    sameTypeCount === 0 ? "cards_amount" : `cards_amount${sameTypeCount + 1}`;
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.amount,
+    effect.id,
+    variableName,
+    'consumable'
+  );
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  const customMessage = effect.customMessage;
 
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
+  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolRanks = [
+    "'A'","'2'","'3'","'4'","'5'",
+    "'6'","'7'","'8'","'9'","'10'",
+    "'J'","'Q'","'K'"
+  ]
 
-  const valueCode = generateGameVariableCode(value);
+  // Check if any modifications are actually being made
+  const hasModifications = [enhancement, seal, edition, suit, rank].some(
+    (param) => param !== "none"
+  );
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  if (!hasModifications) {
+    return {
+      statement: "",
+      colour: "G.C.WHITE",
+    };
+  }
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  let editCardsCode = `
+            local affected_cards = {}
+            local temp_hand = {}
 
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+            for _, playing_card in ipairs(G.hand.cards) do temp_hand[#temp_hand + 1] = playing_card end
+            table.sort(temp_hand,
+                function(a, b)
+                    return not a.playing_card or not b.playing_card or a.playing_card < b.playing_card
+                end
+            )
 
-  const valueCode = generateGameVariableCode(value);
+            pseudoshuffle(temp_hand, 12345)
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+            for i = 1, math.min(${valueCode}, #temp_hand) do 
+                affected_cards[#affected_cards + 1] = temp_hand[i] 
+            end
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    play_sound('tarot1')
+                    card:juice_up(0.3, 0.5)
+                    return true
+                end
+            }))
+            for i = 1, #affected_cards do
+                local percent = 1.15 - (i - 0.999) / (#affected_cards - 0.998) * 0.3
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.15,
+                    func = function()
+                        affected_cards[i]:flip()
+                        play_sound('card1', percent)
+                        affected_cards[i]:juice_up(0.3, 0.3)
+                        return true
+                    end
+                }))
+            end
+            delay(0.2)`;
 
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+    if (enhancement !== "none") {
+        if (enhancement === "random") {
+            editCardsCode += `
+                        local cen_pool = {}
+                        for _, enhancement_center in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+                            if enhancement_center.key ~= 'm_stone' then
+                                cen_pool[#cen_pool + 1] = enhancement_center
+                            end
+                        end
+                        local enhancement = pseudorandom_element(cen_pool, 'random_enhance')
+                        affected_cards[i]:set_ability(enhancement)`
+        } else {
+        editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()
+                        affected_cards[i]:set_ability(G.P_CENTERS['${enhancement}'])`
+    }
+    editCardsCode += `
+                        return true
+                    end
+                }))
+            end`
+    }
 
-  const valueCode = generateGameVariableCode(value);
+    if (seal !== "none") {
+        editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
+        if (seal === "random") {
+            const sealPool = SEALS().map(seal => `'${seal.value}'`)
+            editCardsCode += `
+                        local seal_pool = {${sealPool}}
+                        local random_seal = pseudorandom_element(seal_pool, 'random_seal')
+                        affected_cards[i]:set_seal(random_seal, nil, true)`
+        } else {
+            editCardsCode += `
+                        affected_cards[i]:set_seal("${seal}", nil, true)`
+        }
+        
+    editCardsCode += `
+                        return true
+                    end
+                }))
+            end`
+  }
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  if (edition !== "none") {
+    if (edition === "random") {
+        const editionPool = EDITIONS().map(edition => `'${
+            edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
+      editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()
+                            local edition = pseudorandom_element({${editionPool}}, 'random edition')
+                        affected_cards[i]:set_edition(edition, true)
+                        return true
+                    end
+                }))
+            end`;
+    } else {
+      editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()
+                        affected_cards[i]:set_edition('${edition}', true)
+                        return true
+                    end
+                }))
+            end`;
+    }
+  }
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+    if (suit !== "none") {
+        editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
+        if (suit === "random") {
+            editCardsCode += `
+                        local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
+                        assert(SMODS.change_base(affected_cards[i], _suit.key))`
+        } else if (suit === "pool") {
+
+            const suitPool = []
+            for (let i = 0; i < suitPoolActive.length; i++){
+                if (suitPoolActive[i] == true){
+                    suitPool.push(suitPoolSuits[i])
+            }}
+
+            editCardsCode += `
+                        local suit_pool = {${suitPool}}
+                        local _suit = pseudorandom_element(suit_pool, 'random_suit')
+                        assert(SMODS.change_base(effected_cards[i], _suit))`
+        } else {
+            editCardsCode += `
+                        assert(SMODS.change_base(affected_cards[i], '${suit}'))`
+        }
+            editCardsCode += `
+                        return true
+                    end
+                }))
+            end`;
+    }
+
+    if (rank !== "none") {
+        editCardsCode += `
+            for i = 1, #affected_cards do
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.1,
+                    func = function()`
+        if (rank === "random") {
+            editCardsCode += `
+                        local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
+                        assert(SMODS.change_base(affected_cards[i], nil, _rank.key))`
+        } else if (rank === "pool") {
+            const rankPool = []
+            for (let i = 0; i < rankPoolActive.length; i++){
+                if (rankPoolActive[i] == true){
+                    rankPool.push(rankPoolRanks[i])
+            }}
+
+            editCardsCode += `
+                        local rank_pool = {${rankPool}}
+                        local _rank = pseudorandom_element(rank_pool, 'random_rank')
+                        assert(SMODS.change_base(affected_cards[i], nil, _rank))`
+        } else {
+            editCardsCode += `
+                        assert(SMODS.change_base(affected_cards[i], nil, '${rank}'))`
+        }
+        editCardsCode += `
+                        return true
+                    end
+                }))
+            end`;
+    }
+
+  editCardsCode += `
+            for i = 1, #affected_cards do
+                local percent = 0.85 + (i - 0.999) / (#affected_cards - 0.998) * 0.3
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.15,
+                    func = function()
+                        affected_cards[i]:flip()
+                        play_sound('tarot2', percent, 0.6)
+                        affected_cards[i]:juice_up(0.3, 0.3)
+                        return true
+                    end
+                }))
+            end
+            delay(0.5)`;
+
+  const result: EffectReturn = {
+    statement: editCardsCode,
+    colour: "G.C.SECONDARY_SET.Tarot",
+    configVariables
+  };
+
+  if (customMessage) {
+    result.message = `"${customMessage}"`;
+  }
+
+  return result;
 }

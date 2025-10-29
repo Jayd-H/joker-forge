@@ -1,31 +1,20 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateEditBoosterPacksEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, 0, joker)
+      return generateJokerAndConsumableCode(effect, sameTypeCount, 'joker')
     case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
+      return generateJokerAndConsumableCode(effect, sameTypeCount, 'consumable')
     case "voucher":
-      return generateVoucherCode(effect, voucher)
     case "deck":
-      return generateDeckCode(effect, deck)
+      return generateVoucherAndDeckCode(effect, sameTypeCount)
 
     default:
       return {
@@ -35,96 +24,210 @@ export const generateEffectCode = (
   }
 }
 
-const generateJokerCode = (
+const generateJokerAndConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0,
-  joker?: JokerData
+  itemType: string
 ): EffectReturn => {
+  const operation = effect.params?.operation || "add";
+  const selected_type = effect.params?.selected_type || "size";
+  const customMessage = effect.customMessage;
+
+  const variableName =
+    sameTypeCount === 0 ? "booster_packs_edit" : `booster_packs_edit${sameTypeCount + 1}`;
+  
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    variableName,
+    'joker'
+  )
+
+  let EditBoosterCode = "";
+
+  
+  if (itemType === "consumable") {
+    EditBoosterCode += `
+      G.E_MANAGER:add_event(Event({
+      trigger = 'after',
+          delay = 0.4,`
+  }
+
+  if (selected_type !== "none") { 
+    if (selected_type === "size") {
+      switch (operation) {
+        case "add": 
+          const addMessage = customMessage
+            ? `"${customMessage}"`
+            : `"+"..tostring(${valueCode}).." Booster Size"`;
+            EditBoosterCode += `
+                func = function()
+            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
+            G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) +${valueCode}
+                    return true
+                end`;
+          break;
+        case "subtract":
+          const subtractMessage = customMessage
+            ? `"${customMessage}"`
+            : `"-"..tostring(${valueCode}).." Booster Size"`;
+            EditBoosterCode += `
+                func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
+            G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) -${valueCode}
+                    return true
+                end`;
+          break;
+        case "set":
+          const setMessage = customMessage
+            ? `"${customMessage}"`
+            : `"Booster Size "..tostring(${valueCode})`;
+            EditBoosterCode += `
+                func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
+            G.GAME.modifiers.booster_size_mod = ${valueCode}
+                    return true
+                end`;
+          break
+      }
+    }
+
+    if (selected_type === "choice") {
+      switch (operation) {
+        case "add":
+          const addMessage = customMessage
+            ? `"${customMessage}"`
+            : `"+"..tostring(${valueCode}).." Booster Choice"`;
+            EditBoosterCode += `
+                func = function()
+            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
+            G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) +${valueCode}
+                    return true
+                end`;
+          break;
+        case "subtract":
+          const subtractMessage = customMessage
+            ? `"${customMessage}"`
+            : `"-"..tostring(${valueCode}).." Booster Choice"`;
+            EditBoosterCode += `
+                func = function()
+                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
+            G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) -${valueCode}
+                    return true
+                end`;
+          break;
+        case "set":
+          const setMessage = customMessage
+            ? `"${customMessage}"`
+            : `"Booster Choice "..tostring(${valueCode})`;
+            EditBoosterCode += `
+                func = function()
+                  card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
+                  G.GAME.modifiers.booster_choice_mod = ${valueCode}
+                  return true
+                end`;
+      }
+    }
+  }
+
+  if (itemType === "consumable") {
+    EditBoosterCode += `
+      }))`
+  }
 
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
+    statement: EditBoosterCode,
+    colour: "G.C.BLUE",
     configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
+  }
 };
 
-const generateConsumableCode = (
+const generateVoucherAndDeckCode = (
   effect: Effect,
-  consumable?: ConsumableData
+  sameTypeCount: number = 0
 ): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  const operation = effect.params?.operation || "add";
+  const selected_type = effect.params?.selected_type || "size";
+  const variableName =
+    sameTypeCount === 0 ? "edited_booster" : `edited_booster${sameTypeCount + 1}`;
 
-  const valueCode = generateGameVariableCode(value);
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect.params?.value,
+    effect.id,
+    variableName,
+    'voucher'
+  );
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
+  let EditBoosterCode = "";
 
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
 
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
+  if (selected_type !== "none") { 
+    if (selected_type === "size") {
+      if (operation === "add") {
+        EditBoosterCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) +${valueCode}
+                return true
+            end
+        }))
+        `;
+      } else if (operation === "subtract") {
+        EditBoosterCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) -${valueCode}
+                return true
+            end
+        }))
+        `;
+      } else if (operation === "set") {
+        EditBoosterCode += `
+        G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.modifiers.booster_size_mod = ${valueCode}
+                return true
+            end
+        }))
+        `;
+      }
+    }
 
-  const valueCode = generateGameVariableCode(value);
+    if (selected_type === "choice") {
+      if (operation === "add") {
+        EditBoosterCode += `
+          G.E_MANAGER:add_event(Event({
+              func = function()
+          G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) +${valueCode}
+                  return true
+              end
+          }))
+          `;
+      } else if (operation === "subtract") {
+        EditBoosterCode += `
+          G.E_MANAGER:add_event(Event({
+              func = function()
+          G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) -${valueCode}
+                  return true
+              end
+          }))
+          `;
+      } else if (operation === "set") {
+        EditBoosterCode += `
+          G.E_MANAGER:add_event(Event({
+              func = function()
+          G.GAME.modifiers.booster_choice_mod = ${valueCode}
+                  return true
+              end
+          }))
+          `;
+      }
+    }
+  }
 
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
+  return {
+    statement: EditBoosterCode,
+    colour: "G.C.BLUE",
+    configVariables,
+  };
+};

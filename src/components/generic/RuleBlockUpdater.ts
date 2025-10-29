@@ -122,13 +122,19 @@ const updateEffectId = (
     case "edit_Shop_Prices":
       return "discount_items"
     case "edit_triggered_card":
-      return "edit_card"
+      return "edit_playing_card"
     case "copy_triggered_card_to_hand":
     case "copy_triggered_card":
       return "create_copy_triggered_card"
     case "copy_played_card_to_hand":
     case "copy_played_card":
       return "create_copy_played_card"
+    case "edit_hand":
+      return "edit_hands"
+    case "edit_discard":
+      return "edit_discards"
+    case "edit_card_apperance":
+      return "edit_card_appearance"
 
     default:
       return id
@@ -155,7 +161,7 @@ const updateEffectParams = (
     case "copy_triggered_card":
     case "copy_played_card":
       params["add_to"] = "deck"
-      break
+      break      
   }
 
   return params

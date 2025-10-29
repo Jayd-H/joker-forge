@@ -1,31 +1,16 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables } from "../gameVariableUtils";
 
-export const generateEffectCode = (
+export const generateEditHandsMoneyEffectCode = (
   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
     case "voucher":
-      return generateVoucherCode(effect, voucher)
     case "deck":
-      return generateDeckCode(effect, deck)
+      return generateVoucherAndDeckCode(effect, sameTypeCount)
 
     default:
       return {
@@ -35,96 +20,41 @@ export const generateEffectCode = (
   }
 }
 
-const generateJokerCode = (
+const generateVoucherAndDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
+  sameTypeCount: number = 0
 ): EffectReturn => {
+  const operation = effect.params?.operation || "add";
+  const variableName =
+    sameTypeCount === 0 ? "hand_dollars_value" : `hand_dollars_value${sameTypeCount + 1}`;
+
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
+    variableName,
+    'voucher'
   );
 
+
+  let HandMoneyCode = "";
+
+    if (operation === "add") {
+        HandMoneyCode += `
+        G.GAME.modifiers.money_per_hand =  (G.GAME.modifiers.money_per_hand or 1) +${valueCode}
+        `;
+  } else if (operation === "subtract") {
+        HandMoneyCode += `
+        G.GAME.modifiers.money_per_hand =  (G.GAME.modifiers.money_per_hand or 1) -${valueCode}
+        `;
+  } else if (operation === "set") {
+        HandMoneyCode += `
+          G.GAME.modifiers.money_per_hand = ${valueCode}
+        `;
+  }
+
   return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
+    statement: HandMoneyCode,
+    colour: "G.C.MONEY",
+    configVariables,
   };
 };
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}

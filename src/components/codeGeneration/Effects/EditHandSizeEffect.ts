@@ -1,11 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
-import {
-  generateConfigVariables,
-  parseGameVariable,
-  parseRangeVariable,
-} from "../gameVariableUtils";
+import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../gameVariableUtils";
 import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
 export const generateEditHandSizePassiveEffectCode  = (
@@ -64,124 +59,89 @@ export const generateEditHandSizePassiveEffectCode  = (
 };
  
 export const generateEditHandSizeEffectCode = (
-  effect: Effect,
+   effect: Effect,
   itemType: string,
-  joker?: JokerData,
-  consumable?: ConsumableData,
-  card?: EnhancementData | EditionData | SealData,
-  voucher?: VoucherData,
-  deck?: DeckData,
+  sameTypeCount: number = 0
 ): EffectReturn => {
-  switch(itemType) {
-    case "joker":
-      return generateJokerCode(effect, 0, joker)
-    case "consumable":
-      return generateConsumableCode(effect, consumable)
-    case "card":
-      return generateCardCode(effect, card)
-    case "voucher":
-      return generateVoucherCode(effect, voucher)
-    case "deck":
-      return generateDeckCode(effect, deck)
+  const operation = effect.params?.operation || "add";
 
-    default:
-      return {
-        statement: "",
-        colour: "G.C.WHITE",
-      };
-  }
-}
+  const variableName =
+    sameTypeCount === 0 ? "hand_size" : `hand_size${sameTypeCount + 1}`;
 
-const generateJokerCode = (
-  effect: Effect,
-  sameTypeCount: number = 0,
-  joker?: JokerData
-): EffectReturn => {
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
-  );
+    variableName,
+    itemType
+  )
+
+  let value = valueCode
+  let setCode = ''
+  switch (operation){
+    case "subtract":
+      value = `-${valueCode}`
+      break
+    case "set":
+      value = `difference`
+      setCode = `                  
+      local current_hand_size = G.hand.config.card_limit
+      local target_hand_size = ${valueCode}
+      local difference = target_hand_size - current_hand_size`
+      break
+    case "add":
+    default:
+      value = `${valueCode}`
+      break
+  }
+
+  const customMessage = effect.customMessage;
+  const addMessage = customMessage
+    ? `"${customMessage}"`
+    : `"+"..tostring(${valueCode}).." Hand Limit"`;
+  let functionCode = ``
+  
+  if (itemType === "consumable") {
+    functionCode += `__PRE_RETURN_CODE__`
+  }
+  
+  if (itemType === "consumable" || itemType === "voucher" || itemType === "deck") {
+    functionCode += `
+      G.E_MANAGER:add_event(Event({`
+  }
+
+  if (itemType === "consumable") {
+    functionCode += `
+      trigger = 'after',
+      delay = 0.4,
+      func = function()`
+  }
+
+  const evalStatusText = itemType === "joker" || itemType === "consumable"
+    ? `card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.BLUE})`
+    : ``
+
+  functionCode += `
+    func = function()
+      ${evalStatusText}
+      ${setCode}
+      G.hand:change_size(${value})
+      return true
+    end`
+
+  if (itemType === "consumable" || itemType === "voucher" || itemType === "deck") {
+    functionCode += `
+      }))`
+  }
+  
+  if (itemType === "consumable") {
+    functionCode += `
+    delay(0.6)
+__PRE_RETURN_CODE_END__`;
+  }
 
   return {
-    statement: valueCode,
+    statement: functionCode,
     colour: "G.C.WHITE",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
-  };
-};
-
-const generateConsumableCode = (
-  effect: Effect,
-  consumable?: ConsumableData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateCardCode = (
-  effect: Effect,
-  card?: EditionData | EnhancementData | SealData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateVoucherCode = (
-  effect: Effect,
-  voucher?: VoucherData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
-}
-
-const generateDeckCode = (
-  effect: Effect,
-  deck?: DeckData
-): EffectReturn => {
-  const value = effect.params.value as string || "0";
-
-  const valueCode = generateGameVariableCode(value);
-
-const configVariables =
-      typeof value === "string" && value.startsWith("GAMEVAR:")
-        ? []
-        : [`value = ${value}`];
-
-return {
-    statement: valueCode,
-    colour: "G.C.WHITE",
-   };
+    configVariables
+  }
 }

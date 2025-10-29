@@ -18,7 +18,7 @@ import { generateDisableBossBlindEffectCode, generateDisableBossBlindPassiveEffe
 import { generateEmitFlagEffectCode } from "./Effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "./Effects/PlaySoundEffect";
 import { generateWinBlindEffectCode } from "./Effects/WinBlindEffect";
-import { generateEditApperanceEffectCode } from "./Effects/EditCardAppearanceEffect";
+import { generateEditCardAppearanceEffectCode } from "./Effects/EditCardAppearanceEffect";
 import { generateChangeJokerVariableEffectCode } from "./Effects/ChangeJokerVariableEffect";
 import { generateChangePokerHandVariableEffectCode } from "./Effects/ChangePokerHandVariableEffect";
 import { generateChangeSuitVariableEffectCode } from "./Effects/ChangeSuitVariableEffect";
@@ -68,18 +68,18 @@ import { generateEditCardEffectCode } from "./Effects/EditCardEffect";
 import { generateEditCardsEffectCode } from "./Effects/EditCardsEffect";
 import { generateAllowDebtPassiveEffectCode } from "./Effects/AllowDebtEffect";
 import { generateCopyJokerAbilityPassiveEffectCode } from "./Effects/CopyJokerAbilityEffect";
-import { generateEditHandSizePassiveEffectCode } from "./Effects/EditHandSizeEffect";
-import { generateEditPlaySizePassiveEffectCode } from "./Effects/EditPlaySizeEffect";
-import { generateEditDiscardSizePassiveEffectCode } from "./Effects/EditDiscardSizeEffect";
-import { generateEditDiscardsPassiveEffectCode } from "./Effects/EditDiscardsEffect";
-import { generateEditHandsPassiveEffectCode } from "./Effects/EditHandsEffect";
+import { generateEditHandSizeEffectCode, generateEditHandSizePassiveEffectCode } from "./Effects/EditHandSizeEffect";
+import { generateEditPlaySizeEffectCode, generateEditPlaySizePassiveEffectCode } from "./Effects/EditPlaySizeEffect";
+import { generateEditDiscardSizeEffectCode, generateEditDiscardSizePassiveEffectCode } from "./Effects/EditDiscardSizeEffect";
+import { generateEditDiscardsEffectCode, generateEditDiscardsPassiveEffectCode } from "./Effects/EditDiscardsEffect";
+import { generateEditHandsEffectCode, generateEditHandsPassiveEffectCode } from "./Effects/EditHandsEffect";
 import { generateSplashPassiveEffectCode } from "./Effects/SplashEffect";
-import { generateFreeRerollsPassiveEffectCode } from "./Effects/FreeRerollsEffect";
-import { generateEditBoosterSlotsPassiveEffectCode } from "./Effects/EditBoosterSlotsEffect";
-import { generateEditConsumableSlotsPassiveEffectCode } from "./Effects/EditConsumableSlotsEffect";
-import { generateEditJokerSlotsPassiveEffectCode } from "./Effects/EditJokerSlotsEffect";
-import { generateEditVoucherSlotsPassiveEffectCode } from "./Effects/EditVoucherSlotsEffect";
-import { generateDiscountItemsPassiveEffectCode } from "./Effects/DiscountItemsEffect";
+import { generateFreeRerollsEffectCode, generateFreeRerollsPassiveEffectCode } from "./Effects/FreeRerollsEffect";
+import { generateEditBoosterSlotsEffectCode, generateEditBoosterSlotsPassiveEffectCode } from "./Effects/EditBoosterSlotsEffect";
+import { generateEditConsumableSlotsEffectCode, generateEditConsumableSlotsPassiveEffectCode } from "./Effects/EditConsumableSlotsEffect";
+import { generateEditJokerSlotsEffectCode, generateEditJokerSlotsPassiveEffectCode } from "./Effects/EditJokerSlotsEffect";
+import { generateEditVoucherSlotsEffectCode, generateEditVoucherSlotsPassiveEffectCode } from "./Effects/EditVoucherSlotsEffect";
+import { generateDiscountItemsEffectCode, generateDiscountItemsPassiveEffectCode } from "./Effects/DiscountItemsEffect";
 import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "./Effects/ReduceFlushStraightRequirementEffect";
 import { generateShortcutPassiveEffectCode } from "./Effects/ShortcutEffect";
 import { generateShowmanPassiveEffectCode } from "./Effects/ShowmanEffect";
@@ -87,6 +87,15 @@ import { generateCombineRanksPassiveEffectCode } from "./Effects/CombineRanksEff
 import { generateCombineSuitsPassiveEffectCode } from "./Effects/CombineSuitsEffect";
 import { generateCreateCopyTriggeredCardEffectCode } from "./Effects/CreateCopyTriggeredCardEffect";
 import { generateCreateCopyPlayedCardEffectCode } from "./Effects/CreateCopyPlayedCardEffect";
+import { generateEditDiscardsMoneyEffectCode } from "./Effects/EditEndRoundDiscardMoneyEffect";
+import { generateEditHandsMoneyEffectCode } from "./Effects/EditEndRoundHandMoneyEffect";
+import { generateEditInterestCapEffectCode } from "./Effects/EditInterestCapEffect";
+import { generateEditRerollPriceEffectCode } from "./Effects/EditRerollPriceEffect";
+import { generateEditBoosterPacksEffectCode } from "./Effects/EditBoosterPacksEffect";
+import { generateEditShopCardSlotsEffectCode } from "./Effects/EditShopCardSlotsEffect";
+import { generateEditRarityWeightEffectCode } from "./Effects/EditRarityWeightEffect";
+import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect";
+import { generateEditCardsInHandEffectCode } from "./Effects/EditCardsInHandEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -224,28 +233,59 @@ export const generateSingleEffect = (
       return generateDrawCardsEffectCode(effect, itemType, sameTypeCount, card)
     case "disable_boss_blind":
       return generateDisableBossBlindEffectCode(effect, itemType, triggerType)
-    // DISCOUNT ITEMS
+    case "discount_items":
+      return generateDiscountItemsEffectCode(effect, itemType, sameTypeCount)
+    case "free_rerolls":
+      return generateFreeRerollsEffectCode(effect, itemType, sameTypeCount)
     case "edit_joker":
       return generateEditJokerEffectCode(effect, itemType, modprefix) // NEED TO IMPLEMENT METHODS PROPERLY
     case "edit_win_ante":
       return generateEditWinnerAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
-    // EDIT BOOSTER PACKS
-    // EDIT BOOSTER, VOUCHER, SHOP CARD SLOTS
+    case "edit_booster_packs":
+      return generateEditBoosterPacksEffectCode(effect, itemType, sameTypeCount)
+    case "edit_booster_slots":
+      return generateEditBoosterSlotsEffectCode(effect, cleanItemType, sameTypeCount)
+    case "edit_voucher_slots":
+      return generateEditVoucherSlotsEffectCode(effect, cleanItemType, sameTypeCount)
+    case "edit_shop_slots":
+      return generateEditShopCardSlotsEffectCode(effect, cleanItemType, sameTypeCount) 
+    // POSSIBLE MERGE FOR EDIT BOOSTER/VOUCHER/SHOP SLOTS
     case "edit_card":
       return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "edit_cards":
       return generateEditCardsEffectCode(effect, itemType, modprefix)
-    // EDIT CARD, RARITY APPEARANCE
-    // EDIT ITEM WEIGHT (POSSIBLE MERGE?)
-    // EDIT CARDS IN HAND (POSSIBLY MERGE INTO EDIT CARD?)
-    // EDIT CONSUMABLE, JOKER SLOTS
-    // EDIT JOKER SLOTS
-    // EDIT DISCARDS, HANDS
-    // EDIT DISCARD, PLAY, HAND SIZE
-    // EDIT END ROUND/HAND MONEY
-    // EDIT INTEREST CAP
-    // EDIT REROLL PRICE
-    // FREE REROLLS
+    case "edit_cards_in_hand":
+      return generateEditCardsInHandEffectCode(effect, itemType, sameTypeCount, modprefix)
+    case "edit_joker_slots":
+      return generateEditJokerSlotsEffectCode(effect, itemType, sameTypeCount)
+    case "edit_consumable_slots":
+      return generateEditConsumableSlotsEffectCode(effect, itemType, sameTypeCount)
+    case "edit_discards_money":
+      return generateEditDiscardsMoneyEffectCode(effect, itemType, sameTypeCount)
+    case "edit_hands_money":
+      return generateEditHandsMoneyEffectCode(effect, itemType, sameTypeCount)
+    case "edit_interest_cap":
+      return generateEditInterestCapEffectCode(effect, itemType, sameTypeCount)
+    case "edit_reroll_price":
+      return generateEditRerollPriceEffectCode(effect, itemType, sameTypeCount)
+    case "edit_hands":
+      return generateEditHandsEffectCode(effect, itemType, sameTypeCount)
+    case "edit_discards":
+      return generateEditDiscardsEffectCode(effect, itemType, sameTypeCount)
+    case "edit_discard_size":
+      return generateEditDiscardSizeEffectCode(effect, cleanItemType, sameTypeCount)
+    case "edit_hand_size":
+      return generateEditHandSizeEffectCode(effect, cleanItemType, sameTypeCount)
+    case "edit_play_size":
+      return generateEditPlaySizeEffectCode(effect, cleanItemType, sameTypeCount)
+    // POSSIBLE MERGE FOR EDIT DISCARD/HAND/PLAY SIZE 
+    case "edit_card_appearance":
+      return generateEditCardAppearanceEffectCode(effect)
+    case "edit_rarity_weight":
+      return generateEditRarityWeightEffectCode(effect, cleanItemType, sameTypeCount)
+    case "edit_item_weight":
+      return generateEditItemWeightEffectCode(effect, cleanItemType, sameTypeCount)
+    // POSSIBLE MERGE FOR EDIT ITEM/RARITY WEIGHT
     case "fool_effect":
       return generateFoolEffectCode(effect, itemType)
     case "increment_rank":
@@ -287,8 +327,6 @@ export const generateSingleEffect = (
       return generateEmitFlagEffectCode(effect, modprefix);
     case "win_blind":
       return generateWinBlindEffectCode(effect, itemType)
-    case "edit_card_apperance":
-      return generateEditApperanceEffectCode(effect, itemType);
     case "unlock_joker":
       return generateUnlockJokerEffectCode(effect)
     case "shuffle_jokers":
