@@ -221,7 +221,7 @@ const generateCalculateFunction = (
       undefined,
       card
     );
-
+    
     const indentLevel =
       (ruleHasDestroyCardEffects || ruleHasRetriggerEffects) &&
       !isDiscardTrigger &&
@@ -817,7 +817,7 @@ const generateSingleEnhancementCode = (
     if (hasExtraConfig) {
       enhancementCode += `
         extra = {
-            ${configItems.join(",\n            ")}
+            ${configItems.map(item => `${item.name} = ${item.value}`).join(",\n            ")}
         }`;
     }
 
@@ -1018,7 +1018,7 @@ const generateSingleSealCode = (
     sealCode += `
     config = {
         extra = {
-            ${configItems.join(",\n            ")}
+            ${configItems.map(item => `${item.name} = ${item.value}`).join(",\n            ")}
         }
     },`;
   }
@@ -1214,7 +1214,7 @@ export const generateSingleEditionCode = (
     editionCode += `
     config = {
         extra = {
-            ${configItems.join(",\n            ")}
+            ${configItems.map(item => `${item.name} = ${item.value}`).join(",\n            ")}
         }
     },`;
   }
