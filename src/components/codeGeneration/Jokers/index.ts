@@ -458,6 +458,8 @@ G.FUNCS.can_select_card = function(e)
 end`;
   }
 
+  jokerCode = applyIndents(jokerCode)
+
   return {
     code: jokerCode,
     nextPosition,
@@ -1518,8 +1520,6 @@ const generateCalculateFunction = (
   calculateFunction += `
     end`;
   
-  calculateFunction = applyIndents(calculateFunction)
-
   return {
     code: calculateFunction,
     configVariables: allConfigVariables,
@@ -2125,7 +2125,62 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
   return allHooks;
 };
 
-const applyIndents = (
+const checkForKeyWord = (
+  word: string,
+  line: string,
+) => {
+  const regex = new RegExp(`\\b${word}\\b`, 'i');
+
+  return regex.test(line)
+}
+
+const checkPreIndent = (
+  line: string,
+) => {
+  const keyWords: string[] = ["for", "if", "while", "else", "function", "do", "then"]
+  const openBrackets: string[] = ["(", "[", "{"]  
+  const closeBrackets: string[] = [")", "]", "}"]  
+  
+  let returnValue = false
+
+  keyWords.forEach(word => {
+    const lineHasKeyword = checkForKeyWord(word, line)
+    if (lineHasKeyword) {
+      returnValue = true
+    }
+  })
+  openBrackets.forEach(bracket => {
+    if (line.includes(bracket) && !line.includes(closeBrackets[openBrackets.indexOf(bracket)])) {
+      returnValue = true
+    }
+  })
+
+  return returnValue
+}
+
+const checkPostIndent = (
+  line: string,
+) => {
+  const keyWords: string[] = ["else", "end"]
+  const openBrackets: string[] = ["(", "[", "{"]  
+  const closeBrackets: string[] = [")", "]", "}"]
+  let returnValue = false
+
+  keyWords.forEach(word => {
+    const lineHasKeyword = checkForKeyWord(word, line)
+    if (lineHasKeyword) {
+      returnValue = true
+    }
+  })
+  closeBrackets.forEach(bracket => {
+    if (line.includes(bracket) && !line.includes(openBrackets[closeBrackets.indexOf(bracket)])) {
+      returnValue = true
+    }
+  })
+  return returnValue
+}
+
+export const applyIndents = (
   code : string
 ) => {
   let finalCode = ''
@@ -2142,22 +2197,20 @@ const applyIndents = (
   for (let i = 0; i < stringLines.length; i++) {
     
     let line = stringLines[i]
+
     while (line.startsWith(' ')){
       line = line.slice(1)}
-
-    if (line.includes('end') || line.includes('}') && !line.includes('{') || line.includes('else')) 
+    
+    if (checkPostIndent(line)) 
       {indentCount -= 1}
-    if (line.includes('calculate')) {indentCount += 1}
     
     const indent = indents(indentCount)
 
     finalCode += `
 ${indent}${line}`
 
-    if (line.includes('if') || line.includes('else') || (line.includes('function')) || 
-        line.includes('return') && !line.includes('}') || line.includes('for ') || 
-        line.includes('while') || line.includes(' do') || line.includes(' then')) {
-          indentCount += 1}
+    if (checkPreIndent(line)) 
+    {indentCount += 1}
   }
   return finalCode
 }

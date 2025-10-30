@@ -1,12 +1,13 @@
 import { DeckData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../conditionUtils";
-import { generateEffectReturnStatement } from "./effectUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
-import { generateTriggerCondition } from "./triggerUtils";
+import { generateTriggerContext } from "../triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
+import { applyIndents } from "../Jokers";
 
 interface DeckGenerationOptions {
   modPrefix?: string;
@@ -96,7 +97,8 @@ const generateSingleDeckCode = (
 ): { code: string; nextPosition: number } => {
   const activeRules = deck.rules || [];
 
-  const configItems: string[] = [];
+  const configItems: ConfigExtraVariable[] = [];
+  const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
@@ -104,7 +106,7 @@ const generateSingleDeckCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+    configItems.push({name: varName, value: gameVar.startsFrom})
   });
 
   activeRules.forEach((rule) => {
@@ -116,16 +118,19 @@ const generateSingleDeckCode = (
       regularEffects,
       randomGroups,
       loopGroups,
+      'deck',
+      rule.trigger,
       modPrefix,
-      deck.objectKey
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined, undefined,
+      deck,
     );
 
     if (effectResult.configVariables) {
       configItems.push(...effectResult.configVariables);
     }
   });
-
-  const effectsConfig = configItems.join(",\n        ");
 
   const decksPerRow = 10;
   const col = currentPosition % decksPerRow;
@@ -141,22 +146,24 @@ const generateSingleDeckCode = (
   const ConfigVouchers = (deck.Config_vouchers || []).filter((value) => value.startsWith("v_"))
   const ConfigConsumables = (deck.Config_consumables || []).filter((value) => value.startsWith("c_"))
   console.log(ConfigConsumables)
-deckCode += "config = {";
-if (effectsConfig.trim()) {
-  deckCode += `
-      ${effectsConfig},`;
-}
-if (ConfigVouchers.length > 0) {
-  deckCode += `
-      vouchers = {${ConfigVouchers.map((value) => ` "${value}" `)}},`;
-}
-if (ConfigConsumables .length > 0) {
-  deckCode += `
-      consumables = {${ConfigConsumables.map((value) => `"${value}"`)}},`;
-}
-if (deck.no_interest === true) {
+  deckCode += "config = {";
+  if (configItems.length > 0) {
     deckCode += `
-    no_interest = true,`;
+        extra = {
+          ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
+`)}   },`;
+  }
+  if (ConfigVouchers.length > 0) {
+    deckCode += `
+        vouchers = {${ConfigVouchers.map((value) => ` "${value}" `)}},`;
+  }
+  if (ConfigConsumables .length > 0) {
+    deckCode += `
+        consumables = {${ConfigConsumables.map((value) => `"${value}"`)}},`;
+  }
+  if (deck.no_interest === true) {
+      deckCode += `
+      no_interest = true,`;
   }
   if (deck.no_faces === true) {
     deckCode += `
@@ -166,7 +173,7 @@ if (deck.no_interest === true) {
     deckCode += `
     randomize_rank_suit = true,`;
   }
-deckCode += `
+  deckCode += `
 },`;
 
   deckCode += `
@@ -205,19 +212,21 @@ deckCode += `
     ${locVarsCode},`;
   }
 
-  const calculateCode = generateCalculateFunction(activeRules, modPrefix, deck.objectKey);
- if (calculateCode) {
-  deckCode += calculateCode;
- }
+  const calculateCode = generateCalculateFunction(activeRules, modPrefix, deck);
+  if (calculateCode) {
+    deckCode += calculateCode;
+  }
 
-  const applyCode = generateApplyFunction(activeRules, modPrefix, deck.objectKey);
+  const applyCode = generateApplyFunction(activeRules, modPrefix, deck);
   if (applyCode) {
-  deckCode += applyCode ;
-}
+    deckCode += applyCode ;
+  }
 
   deckCode = deckCode.replace(/,$/, "");
   deckCode += `
 }`;
+
+  deckCode = applyIndents(deckCode)
 
   return {
     code: deckCode,
@@ -257,11 +266,13 @@ export const exportSingleDeck = (deck: DeckData): void => {
 const generateApplyFunction = (
   rules: Rule[],
   modPrefix: string,
-  deckKey?: string,
+  deck: DeckData,
 ): string => {
   const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
 
-if (filtered_rules.length === 0) return "";
+  if (filtered_rules.length === 0) return "";
+
+  const globalEffectCounts = new Map<string, number>();
 
   let applyFunction = ` apply = function(self, back)`;
 
@@ -277,8 +288,13 @@ if (filtered_rules.length === 0) return "";
       regularEffects,
       randomGroups,
       loopGroups,
+      'deck',
+      rule.trigger,
       modPrefix,
-      deckKey
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined, undefined,
+      deck,
     );
 
     if (effectResult.preReturnCode) {
@@ -303,18 +319,20 @@ if (filtered_rules.length === 0) return "";
 const generateCalculateFunction = (
   rules: Rule[],
   modPrefix: string,
-  objectKey: string,
+  deck: DeckData,
 ): string => {
 
-const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
-if (filtered_rules.length === 0) return "";
+  if (filtered_rules.length === 0) return "";
+
+  const globalEffectCounts = new Map<string, number>();
 
   let calculateFunction = `calculate = function(self, card, context)`;
 
   filtered_rules.forEach((rule) => {
 
-    const triggerCondition = generateTriggerCondition(rule.trigger);
+    const triggerCondition = generateTriggerContext("deck", rule.trigger);
     const conditionCode = generateConditionChain(rule, "deck");
 
     let ruleCode = "";
@@ -375,8 +393,13 @@ if (filtered_rules.length === 0) return "";
       regularEffects,
       randomGroups,
       loopGroups,
+      'deck',
+      rule.trigger,
       modPrefix,
-      objectKey,
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined, undefined,
+      deck,
     );
 
     const indentLevel =

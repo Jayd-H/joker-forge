@@ -1,4 +1,6 @@
 import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
+import { extractPreReturnCode, generateSingleEffect } from "../effectUtils";
+/*
 import { generateLevelUpHandReturn } from "./effects/LevelUpHandEffect";
 import { generateDestroySelectedCardsReturn } from "./effects/DestroySelectedCardsEffect";
 import { generateDestroyRandomCardsReturn } from "./effects/DestroyRandomCardsEffect";
@@ -56,6 +58,7 @@ import { generateCrashGameReturn } from "./effects/CrashGameEffect";
 import { generateWinBlindReturn } from "./effects/WinBlindEffect";
 import { generateFlipJokerReturn } from "./effects/FlipJokerEffect";
 import { generateModifyBlindRequirementReturn } from "./effects/ModifyBlindRequirementEffect";
+*/
 
 export interface EffectReturn {
   statement: string;
@@ -117,7 +120,7 @@ export function generateEffectReturnStatement(
 
     const processedEffects: EffectReturn[] = [];
     effectReturns.forEach((effect) => {
-      const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+      const { newStatement, preReturnCode } = extractPreReturnCode(
         effect.statement
       );
 
@@ -128,7 +131,7 @@ export function generateEffectReturnStatement(
 
       processedEffects.push({
         ...effect,
-        statement: cleanedStatement,
+        statement: newStatement,
       });
     });
 
@@ -173,7 +176,13 @@ export function generateEffectReturnStatement(
 
     randomGroups.forEach((group, groupIndex) => {
       const effectReturns: EffectReturn[] = group.effects
-        .map((effect) => generateSingleEffect(effect, modprefix))
+        .map((effect) => generateSingleEffect(
+          effect, 
+          'consumable',
+          triggerType,
+          sameTypeCount,
+          modprefix,
+        ))
         .filter((ret) => ret.statement || ret.message);
 
       effectReturns.forEach((effectReturn) => {
@@ -203,7 +212,7 @@ export function generateEffectReturnStatement(
 
       effectReturns.forEach((effect) => {
         if (effect.statement && effect.statement.trim()) {
-          const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+          const { newStatement, preReturnCode } = extractPreReturnCode(
             effect.statement
           );
 
@@ -212,9 +221,9 @@ export function generateEffectReturnStatement(
               (groupPreReturnCode ? "\n                " : "") + preReturnCode;
           }
 
-          if (cleanedStatement.trim()) {
+          if (newStatement.trim()) {
             groupContent += `
-                ${cleanedStatement}`;
+                ${newStatement}`;
           }
         }
       });
@@ -297,7 +306,7 @@ export function generateEffectReturnStatement(
 
       effectReturns.forEach((effect) => {
         if (effect.statement && effect.statement.trim()) {
-          const { cleanedStatement, preReturnCode } = extractPreReturnCode(
+          const { newStatement, preReturnCode } = extractPreReturnCode(
             effect.statement
           );
 
@@ -306,9 +315,9 @@ export function generateEffectReturnStatement(
               (groupPreReturnCode ? "\n                " : "") + preReturnCode;
           }
 
-          if (cleanedStatement.trim()) {
+          if (newStatement.trim()) {
             groupContent += `
-                ${cleanedStatement}`;
+                ${newStatement}`;
           }
         }
       });
@@ -342,7 +351,7 @@ export function generateEffectReturnStatement(
         : undefined,
   };
 }
-
+/*
 const generateSingleEffect = (
   effect: Effect,
   modprefix: string
@@ -519,6 +528,7 @@ const generateSingleEffect = (
       };
   }
 };
+*/
 
 const buildConsumableEffectCode = (effects: EffectReturn[]): string => {
   if (effects.length === 0) return "";
@@ -532,32 +542,4 @@ const buildConsumableEffectCode = (effects: EffectReturn[]): string => {
   });
 
   return effectCode.trim();
-};
-
-function extractPreReturnCode(statement: string): {
-  cleanedStatement: string;
-  preReturnCode?: string;
-} {
-  const preReturnStart = "__PRE_RETURN_CODE__";
-  const preReturnEnd = "__PRE_RETURN_CODE_END__";
-
-  if (statement.includes(preReturnStart) && statement.includes(preReturnEnd)) {
-    const startIndex =
-      statement.indexOf(preReturnStart) + preReturnStart.length;
-    const endIndex = statement.indexOf(preReturnEnd);
-
-    if (startIndex < endIndex) {
-      const preReturnCode = statement.substring(startIndex, endIndex).trim();
-      const cleanedStatement = statement
-        .replace(
-          new RegExp(`${preReturnStart}[\\s\\S]*?${preReturnEnd}`, "g"),
-          ""
-        )
-        .trim();
-
-      return { cleanedStatement, preReturnCode };
-    }
-  }
-
-  return { cleanedStatement: statement };
 }

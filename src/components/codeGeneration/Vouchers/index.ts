@@ -1,13 +1,14 @@
 import { VoucherData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../conditionUtils";
-import { generateEffectReturnStatement } from "./effectUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
 import { generateUnlockFunction } from "./unlockUtils";
-import { generateTriggerCondition } from "./triggerUtils";
+import { generateTriggerContext } from "../triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "./gameVariableUtils";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
+import { applyIndents } from "../Jokers";
 
 interface VoucherGenerationOptions {
   modPrefix?: string;
@@ -91,18 +92,20 @@ export const generateVouchersCode = (
 const generateCalculateFunction = (
   rules: Rule[],
   modPrefix: string,
-  objectKey: string,
+  voucher: VoucherData,
 ): string => {
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
-const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
+  if (filtered_rules.length === 0) return "";
 
-if (filtered_rules.length === 0) return "";
+  const globalEffectCounts = new Map<string, number>();
+
 
   let calculateFunction = `calculate = function(self, card, context)`;
 
   filtered_rules.forEach((rule) => {
 
-    const triggerCondition = generateTriggerCondition(rule.trigger);
+    const triggerCondition = generateTriggerContext("voucher", rule.trigger);
     const conditionCode = generateConditionChain(rule, "voucher");
 
     let ruleCode = "";
@@ -163,8 +166,13 @@ if (filtered_rules.length === 0) return "";
       regularEffects,
       randomGroups,
       loopGroups,
+      'voucher',
+      rule.trigger,
       modPrefix,
-      objectKey,
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined,
+      voucher
     );
 
     const indentLevel =
@@ -210,7 +218,8 @@ const generateSingleVoucherCode = (
 ): { code: string; nextPosition: number } => {
   const activeRules = voucher.rules || [];
 
-  const configItems: string[] = [];
+  const configItems: ConfigExtraVariable[] = [];
+  const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
@@ -218,7 +227,7 @@ const generateSingleVoucherCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+    configItems.push({name: varName, value: gameVar.startsFrom})
   });
 
   activeRules.forEach((rule) => {
@@ -230,16 +239,19 @@ const generateSingleVoucherCode = (
       regularEffects,
       randomGroups,
       loopGroups,
+      'voucher',
+      rule.trigger,
       modPrefix,
-      voucher.objectKey
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined,
+      voucher
     );
 
     if (effectResult.configVariables) {
       configItems.push(...effectResult.configVariables);
     }
   });
-
-  const effectsConfig = configItems.join(",\n        ");
 
   const vouchersPerRow = 10;
   const col = currentPosition % vouchersPerRow;
@@ -251,11 +263,14 @@ const generateSingleVoucherCode = (
     key = '${voucher.objectKey}',
     pos = { x = ${col}, y = ${row} },`;
 
-  if (effectsConfig.trim()) {
+  if (configItems.length > 0) {
     voucherCode += `
-    config = { extra = {
-        ${effectsConfig}
-    } },`;
+    config = { 
+      extra = {
+        ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
+`)}
+      } 
+    },`;
   }
 
   voucherCode += `
@@ -322,12 +337,12 @@ const generateSingleVoucherCode = (
     ${locVarsCode},`;
   }
 
-const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher.objectKey);
+const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher);
  if (calculateCode) {
   voucherCode += calculateCode;
 }
 
-  const redeemCode = generateRedeemFunction(activeRules, modPrefix, voucher.objectKey);
+  const redeemCode = generateRedeemFunction(activeRules, modPrefix, voucher);
   if (redeemCode) {
   voucherCode += redeemCode ;
 }
@@ -339,6 +354,8 @@ if (voucher.unlockTrigger) {
   voucherCode = voucherCode.replace(/,$/, "");
   voucherCode += `
 }`;
+
+  voucherCode = applyIndents(voucherCode)
 
   return {
     code: voucherCode,
@@ -378,11 +395,13 @@ export const exportSingleVoucher = (voucher: VoucherData): void => {
 const generateRedeemFunction = (
   rules: Rule[],
   modPrefix: string,
-  voucherKey?: string,
+  voucher?: VoucherData,
 ): string => {
-const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
 
-if (filtered_rules.length === 0) return "";
+  if (filtered_rules.length === 0) return "";
+
+  const globalEffectCounts = new Map<string, number>();
 
   let redeemFunction = ` redeem = function(self, card)`;
 
@@ -399,8 +418,13 @@ if (filtered_rules.length === 0) return "";
       regularEffects,
       randomGroups,
       loopGroups,
+      'voucher',
+      rule.trigger,
       modPrefix,
-      voucherKey
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined,
+      voucher
     );
 
     if (effectResult.preReturnCode) {

@@ -1,13 +1,14 @@
 import { ConsumableData } from "../../data/BalatroUtils";
 import { ConsumableSetData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../conditionUtils";
-import { generateEffectReturnStatement } from "./effectUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
-import { generateTriggerCondition } from "./triggerUtils";
+import { generateTriggerContext } from "../triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "./gameVariableUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
+import { applyIndents } from "../Jokers";
 
 interface ConsumableGenerationOptions {
   modPrefix?: string;
@@ -31,11 +32,11 @@ const convertRandomGroupsForCodegen = (
     ...group,
     chance_numerator:
       typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator)
+      ? generateGameVariableCode(group.chance_numerator, 'consumable')
       : group.chance_numerator,
     chance_denominator:
       typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator)
+        ? generateGameVariableCode(group.chance_denominator, 'consumable')
         : group.chance_denominator,
   }));
 };
@@ -51,7 +52,7 @@ const convertLoopGroupsForCodegen = (
           const parsed = parseGameVariable(group.repetitions);
           const rangeParsed = parseRangeVariable(group.repetitions);
           if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions);
+            return generateGameVariableCode(group.repetitions, 'consmable');
           } else if (rangeParsed.isRangeVariable) {
             const seedName = `repetitions_${group.id.substring(0, 8)}`;
             return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -176,7 +177,9 @@ const generateSingleConsumableCode = (
   const activeRules =
     consumable.rules?.filter((rule) => rule.trigger !== "passive") || [];
 
-  const configItems: string[] = [];
+  const configItems: ConfigExtraVariable[] = [];
+
+  const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
   gameVariables.forEach((gameVar) => {
@@ -184,7 +187,7 @@ const generateSingleConsumableCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push(`${varName} = ${gameVar.startsFrom}`);
+    configItems.push({name: varName, value: gameVar.startsFrom})
   });
 
   activeRules.forEach((rule) => {
@@ -196,16 +199,19 @@ const generateSingleConsumableCode = (
       regularEffects,
       randomGroups,
       loopGroups,
+      'consumable',
+      rule.trigger,
       modPrefix,
-      consumable.objectKey
+      rule.id,
+      globalEffectCounts,
+      undefined,
+      consumable,
     );
 
     if (effectResult.configVariables) {
       configItems.push(...effectResult.configVariables);
     }
   });
-
-  const effectsConfig = configItems.join(",\n        ");
 
   const consumablesPerRow = 10;
   const col = currentPosition % consumablesPerRow;
@@ -218,11 +224,13 @@ const generateSingleConsumableCode = (
     set = '${consumable.set}',
     pos = { x = ${col}, y = ${row} },`;
 
-  if (effectsConfig.trim()) {
+  if (configItems.length > 0) {
     consumableCode += `
-    config = { extra = {
-        ${effectsConfig}
-    } },`;
+    config = { 
+      extra = {
+        ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
+`)}   } 
+    },`;
   }
 
   consumableCode += `
@@ -282,17 +290,17 @@ const generateSingleConsumableCode = (
     ${locVarsCode},`;
   }
 
-const calculateCode = generateCalculateFunction(activeRules, modPrefix, consumable.objectKey);
- if (calculateCode) {
-  consumableCode += calculateCode;
-}
+  const calculateCode = generateCalculateFunction(activeRules, modPrefix, consumable);
+  if (calculateCode) {
+    consumableCode += calculateCode;
+  }
 
-  const useCode = generateUseFunction(activeRules, modPrefix, consumable.objectKey);
+  const useCode = generateUseFunction(activeRules, modPrefix, consumable);
   if (useCode) {
     consumableCode += useCode;
   }
 
-  const canUseCode = generateCanUseFunction(activeRules, modPrefix);
+  const canUseCode = generateCanUseFunction(activeRules, modPrefix, consumable);
   if (canUseCode) {
      consumableCode += `
     ${canUseCode},`;
@@ -302,6 +310,8 @@ const calculateCode = generateCalculateFunction(activeRules, modPrefix, consumab
   consumableCode += `
 }`;
 
+  consumableCode = applyIndents(consumableCode)
+  
   return {
     code: consumableCode,
     nextPosition,
@@ -340,19 +350,21 @@ export const exportSingleConsumable = (consumable: ConsumableData): void => {
 const generateCalculateFunction = (
   rules: Rule[],
   modPrefix: string,
-  objectKey: string,
+  consumable: ConsumableData,
 ): string => {
 
-const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
-if (filtered_rules.length === 0) return "";
+  if (filtered_rules.length === 0) return "";
+
+  const globalEffectCounts = new Map<string, number>();
 
   let calculateFunction = `
   calculate = function(self, card, context)`;
 
   filtered_rules.forEach((rule) => {
 
-    const triggerCondition = generateTriggerCondition(rule.trigger);
+    const triggerCondition = generateTriggerContext('consumable', rule.trigger);
     const conditionCode = generateConditionChain(rule, "consumable");
 
     let ruleCode = "";
@@ -398,7 +410,7 @@ if (filtered_rules.length === 0) return "";
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions);
+                return generateGameVariableCode(group.repetitions, 'consumable');
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -413,8 +425,13 @@ if (filtered_rules.length === 0) return "";
       regularEffects,
       randomGroups,
       loopGroups,
+      'consumable',
+      rule.trigger,
       modPrefix,
-      objectKey,
+      rule.id,
+      globalEffectCounts,
+      undefined,
+      consumable
     );
 
     const indentLevel =
@@ -455,11 +472,13 @@ ${indentLevel}return {${effectResult.statement}}`;
 const generateUseFunction = (
   rules: Rule[],
   modPrefix: string,
-  objectKey?: string,
+  consumable?: ConsumableData,
 ): string => {
-const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
 
-if (filtered_rules.length === 0) return "";
+  if (filtered_rules.length === 0) return "";
+
+  const globalEffectCounts = new Map<string, number>();
 
   let useFunction = `use = function(self, card, area, copier)
         local used_card = copier or card`;
@@ -481,8 +500,13 @@ if (filtered_rules.length === 0) return "";
       regularEffects,
       randomGroups,
       loopGroups,
+      'consumable',
+      rule.trigger,
       modPrefix,
-      objectKey
+      rule.id,
+      globalEffectCounts,
+      undefined,
+      consumable
     );
 
     if (effectResult.preReturnCode) {
@@ -509,12 +533,18 @@ if (filtered_rules.length === 0) return "";
   return useFunction;
 };
 
-const generateCanUseFunction = (rules: Rule[], modPrefix: string): string => {
+const generateCanUseFunction = (
+  rules: Rule[], 
+  modPrefix: string,
+  consumable: ConsumableData,
+): string => {
   if (rules.length === 0) {
     return `can_use = function(self, card)
         return true
     end`;
   }
+
+  const globalEffectCounts = new Map<string, number>();
 
   const ruleConditions: string[] = [];
   const customCanUseConditions: string[] = [];
@@ -534,7 +564,13 @@ const generateCanUseFunction = (rules: Rule[], modPrefix: string): string => {
       regularEffects,
       randomGroups,
       loopGroups,
-      modPrefix
+      'consumable',
+      rule.trigger,
+      modPrefix,
+      rule.id,
+      globalEffectCounts,
+      undefined,
+      consumable,
     );
 
     if (effectResult.customCanUse) {

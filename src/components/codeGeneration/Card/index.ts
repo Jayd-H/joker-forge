@@ -12,6 +12,7 @@ import { extractGameVariablesFromRules, generateGameVariableCode, parseGameVaria
 import type { Rule, Effect } from "../../ruleBuilder/types";
 import { parseRangeVariable } from "../Jokers/gameVariableUtils";
 import { generateTriggerContext } from "../triggerUtils";
+import { applyIndents } from "../Jokers";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;
@@ -919,6 +920,8 @@ const generateSingleEnhancementCode = (
   enhancementCode += `
 }`;
 
+  enhancementCode = applyIndents(enhancementCode)
+
   return {
     code: enhancementCode,
     nextPosition,
@@ -1090,6 +1093,8 @@ const generateSingleSealCode = (
   sealCode = sealCode.replace(/,$/, "");
   sealCode += `
 }`;
+
+  sealCode = applyIndents(sealCode)
 
   return {
     code: sealCode,
@@ -1314,6 +1319,8 @@ export const generateSingleEditionCode = (
   editionCode = editionCode.replace(/,$/, "");
   editionCode += `
 }`;
+
+  editionCode = applyIndents(editionCode)
 
   return {
     code: editionCode,
