@@ -236,7 +236,7 @@ ${indentLevel}${effectResult.preReturnCode}`;
 
     if (effectResult.statement) {
       ruleCode += `
-${indentLevel}return ${effectResult.statement}`;
+${indentLevel} ${effectResult.statement}`;
     }
 
     if (triggerCondition) {
