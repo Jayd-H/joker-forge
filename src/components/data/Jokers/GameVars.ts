@@ -1563,7 +1563,7 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             code: "(function()local temp_count = -math.huge;for k, v in pairs(G.PROFILES[G.SETTINGS.profile].voucher_usage) do if v.count > temp_count and G.P_CENTERS[k] then temp_count = v.count; end end; return temp_count end)()",
           },
           {
-            id: "card_redeemed_voucher1",
+            id: "card_redeemed_voucher5",
             label: "Most Redeemed Voucher in the Middle",
             description: "Number of Times the Voucher in the Middle has been redeemed",
             category: "global_statistics",
@@ -1571,7 +1571,7 @@ export const GAME_VARIABLE_CATEGORIES: GameVariableCategory[] = [
             code: "(function()local all_most_used_vouchers = {};for k, v in pairs(G.PROFILES[G.SETTINGS.profile].voucher_usage) do if G.P_CENTERS[k] then all_most_used_vouchers[#all_most_used_vouchers + 1] ={count = v.count, key = k};end end;table.sort(all_most_used_vouchers, function(a, b) return a.count > b.count end); return all_most_used_vouchers[5].count end)()", // thank you so much Larswijn :)
           },
           {
-            id: "card_redeemed_voucher1",
+            id: "card_redeemed_voucher10",
             label: "Last Most Redeemed Voucher",
             description: "Number of Times the Last Voucher has been redeemed",
             category: "global_statistics",
