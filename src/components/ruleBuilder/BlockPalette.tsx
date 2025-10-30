@@ -40,8 +40,9 @@ import {
 
 import {
   type CategoryDefinition,
-} from "../data/Jokers/Triggers";
+} from "../data/Jokers/Triggers";;
 
+import { logSelectedTrigger } from "../generic/FileLog";
 
 interface BlockPaletteProps {
   position: { x: number; y: number };
@@ -116,6 +117,10 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   useEffect(() => {
     setExpandedCategories(new Set());
   }, [activeFilter]);
+
+  useEffect(() => {
+    logSelectedTrigger(selectedRule?.trigger, itemType)
+  }, [selectedRule])
 
   const availableConditions = useMemo(() => {
     return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger, itemType) : [];
