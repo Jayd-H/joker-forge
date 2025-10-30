@@ -20,7 +20,6 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { JokerData, ModMetadata } from "../data/BalatroUtils";
-import { logAllRuleCards } from "../generic/DebugLogging";
 
 interface OverviewPageProps {
   jokerCount: number;
@@ -347,10 +346,6 @@ const OverviewPage: React.FC<OverviewPageProps> = ({
           <div className="">
             <div className="space-y-6 flex-1">
               <div className="group">
-                <button
-                  onClick={logAllRuleCards}
-                  className="p-1 text-mint hover:text-mint-light"
-                >CLICK ME TO LOG ALL RULES</button>
                 {editingName ? (
                   <div className="flex items-center gap-2">
                     <input
