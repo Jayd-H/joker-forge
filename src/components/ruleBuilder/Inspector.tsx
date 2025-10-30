@@ -481,17 +481,13 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push({value: "added_card", label: "Added Card"})
         } 
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
-          condition => condition.type === "cards_selected" && condition.negate === false
+          condition => condition.type === "cards_selected" && condition.negate === false 
         ))) {
-          if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
-            condition => condition.type === "cards_selected" && condition.params?.value === 1
-          ))) {
-            options.push({value: "selected_card", label: "Selected Card"})
-          } else {
-            options.push({value: "selected_cards", label: "Selected Cards"})
-          }
+          options.push({value: "selected_cards", label: "Selected Cards"})
         }
       }
+
+
 
       if (param.id === "variable_name" && joker && param.label) {
         if (param.variableTypes?.includes("number")) {
