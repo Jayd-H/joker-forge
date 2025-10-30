@@ -53,7 +53,8 @@ const updateTrigger = (
   rule: Rule
 ) => {
   switch(rule.trigger) {
-    case "consumable_used": case "voucher_redeemed": case "deck_selected":
+    case "consumable_used": 
+    case "voucher_redeemed":
       return "card_used"
     case "card_held":
       return "card_held_in_hand"
@@ -78,6 +79,8 @@ const updateConditionId = (
   switch(id) {
     case "card_count":
       return "hand_count"
+    case "edit_dollars_selected":
+      return "edit_starting_dollars"
     default:
       return id
   }

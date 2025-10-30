@@ -46,16 +46,34 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     id: "card_used",
     label: {
       consumable: "When Consumable is Used",
-      voucher: "When Voucher is Redeemed",
-      deck: "When This Deck is Selected",
     },
     description: {
       consumable: "Triggers when this Consumable is activated by the player",
+    },
+    category: "Usage",
+    objectUsers: ["consumable"],
+  },
+  {
+    id: "voucher_redeemed",
+    label: {
+      voucher: "When Voucher is Redeemed",
+    },
+    description: {
       voucher: "Triggers when this Voucher is redeemed by the player",
+    },
+    category: "Usage",
+    objectUsers: ["voucher"],
+  },
+  {
+    id: "deck_selected",
+    label: {
+      deck: "When This Deck is Selected",
+    },
+    description: {
       deck: "Triggers when this deck is activated by the player",
     },
     category: "Usage",
-    objectUsers: ["consumable", "voucher", "deck"],
+    objectUsers: ["deck"],
   },
   {
     id: "hand_played",
