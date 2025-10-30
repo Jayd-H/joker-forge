@@ -70,7 +70,6 @@ export const generateCreateJokerReturn = (
   lines.push(
     `        local new_joker = SMODS.add_card({ ${cardParams.join(", ")} })`
   );
-  lines.push("        if new_joker then");
 
   if (edition !== "none") {
     lines.push(`            new_joker:set_edition("${edition}", true)`);
@@ -79,8 +78,6 @@ export const generateCreateJokerReturn = (
   if (hasSticker) {
     lines.push(`            new_joker:add_sticker('${sticker}', true)`);
   }
-
-  lines.push("        end");
 
   // Close slot limit check
   if (!(isNegative || ignoreSlots)) {
