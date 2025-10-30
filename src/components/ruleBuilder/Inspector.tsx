@@ -452,14 +452,44 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         }));
       }
 
+      const trigger = selectedRule.trigger
       if (param.variableTypes?.includes("joker_context")) {
-        if (selectedRule.trigger === "joker_evaluated") {
+        if (trigger === "joker_evaluated") {
             options.push({value: "evaled_joker", label: "Evaluated Joker"})
         }
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
           condition => condition.type === "joker_selected" && condition.negate === false
         ))) {
           options.push({value: "selected_joker", label: "Selected Joker"})
+        }
+      }
+
+      if (param.variableTypes?.includes("card_context")) {
+        if (trigger === "card_scored") {
+          options.push({value: "scored_card", label: "Scored Card"})
+        }
+        if (trigger === "card_destroyed") {
+          options.push({value: "destroyed_card", label: "Destroyed Card"})
+        }
+        if (trigger === "card_discarded") {
+          options.push({value: "discarded_card", label: "Discarded Card"})
+        }
+        if (trigger === "card_held_in_hand" || trigger === "card_held_in_hand_end_of_round") {
+          options.push({value: "held_card", label: "Card Held in Hand"})
+        }
+        if (trigger === "card_added") {
+          options.push({value: "added_card", label: "Added Card"})
+        } 
+        if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
+          condition => condition.type === "cards_selected" && condition.negate === false
+        ))) {
+          if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
+            condition => condition.type === "cards_selected" && condition.params?.value === 1
+          ))) {
+            options.push({value: "selected_card", label: "Selected Card"})
+          } else {
+            options.push({value: "selected_cards", label: "Selected Cards"})
+          }
         }
       }
 
