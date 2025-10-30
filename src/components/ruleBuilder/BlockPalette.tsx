@@ -105,7 +105,6 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   useEffect(() => {
     const ruleChanged = selectedRule !== previousSelectedRule;
     const hasRuleNow = !!selectedRule;
-    console.log(selectedRule)
 
     if (ruleChanged && hasRuleNow && activeFilter === "triggers") {
       setActiveFilter("conditions");
