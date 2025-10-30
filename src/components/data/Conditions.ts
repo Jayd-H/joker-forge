@@ -1683,7 +1683,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: "Windows",
       },
     ],
-    category: "Game State",
+    category: "Special",
   },
   {
     id: "check_deck",
@@ -2189,7 +2189,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Card Selection",
+    category: "Card",
   },
   {
     id: "hand_drawn",
@@ -2198,7 +2198,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     objectUsers: ["consumable", "voucher", "deck"],
     applicableTriggers: ["card_used", ...VOUCHER_GENERIC_TRIGGERS],
     params: [],
-    category: "Game Context",
+    category: "Game State",
   },
   {
     id: "in_blind",
@@ -2207,7 +2207,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     objectUsers: ["consumable"],
     applicableTriggers: ["card_used"],
     params: [],
-    category: "Game Context",
+    category: "Game State",
   },
 ]
 

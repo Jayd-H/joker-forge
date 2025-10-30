@@ -1,6 +1,5 @@
-import { BanknotesIcon, ClockIcon, HandRaisedIcon, PlayIcon, RectangleStackIcon, ShoppingCartIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { BanknotesIcon, ClockIcon, HandRaisedIcon, PlayIcon, RectangleStackIcon, ShoppingCartIcon, SparklesIcon, TicketIcon } from "@heroicons/react/24/outline";
 import { GlobalTriggerDefinition } from "../ruleBuilder/types";
-import { TicketIcon } from "@heroicons/react/24/solid";
 
 export interface CategoryDefinition {
   label: string;

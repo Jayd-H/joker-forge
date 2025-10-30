@@ -7,17 +7,19 @@ import {
   PencilSquareIcon,
   CakeIcon,
   VariableIcon,
-  CursorArrowRaysIcon,
+  ReceiptPercentIcon,
+  ShoppingBagIcon
 } from "@heroicons/react/24/outline";
 import { CategoryDefinition } from "./Triggers";
 import { GlobalEffectTypeDefinition } from "../ruleBuilder/types";
 import { CONSUMABLE_SETS, CUSTOM_CONSUMABLES, EDITIONS, ENHANCEMENTS, PLANET_CARDS, POKER_HANDS, CONSUMABLE_TYPES, RANKS, RARITIES, SEALS, SPECTRAL_CARDS, STICKERS, ALL_CONSUMABLES, SUITS, TAGS, TAROT_CARDS, VOUCHERS } from "./BalatroUtils";
-import { GENERIC_TRIGGERS,ALL_OBJECTS } from "./Conditions";
+import { GENERIC_TRIGGERS, ALL_OBJECTS } from "./Conditions";
+import { FolderIcon } from "@heroicons/react/24/outline";
 
 export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
-    label: "Selected Cards",
-    icon: CursorArrowRaysIcon,
+    label: "Deck Card Modifications",
+    icon: FolderIcon,
   },
   {
     label: "Scoring",
@@ -32,12 +34,16 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
     icon: PencilSquareIcon,
   },
   {
+    label: "Jokers",
+    icon: RectangleStackIcon,
+  },
+  {
     label: "Consumables",
     icon: CakeIcon,
   },
   {
-    label: "Jokers",
-    icon: RectangleStackIcon,
+    label: "Shop",
+    icon: ShoppingBagIcon
   },
   {
     label: "Game Rules",
@@ -46,6 +52,10 @@ export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Variables",
     icon: VariableIcon,
+  },
+  {
+    label: "Probability",
+    icon: ReceiptPercentIcon,
   },
   {
     label: "Special",
@@ -747,31 +757,31 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
   },
   {
     id: "edit_win_ante",
-      label: "Set Winner Ante",
-        description: "Set the Final Ante where the Player Win's the Game",
-        applicableTriggers: [...GENERIC_TRIGGERS],
-        objectUsers: ["consumable", "deck", "joker", "voucher"],
-        params: [
-            {
-              id: "operation",
-              type: "select",
-              label: "Operation",
-              options: [
-              { value: "add", label: "Add" },
-              { value: "subtract", label: "Subtract" },
-              { value: "set", label: "Set to" },
-              ],
-              default: "set",
-            },
-            {
-              id: "value",
-              type: "number",
-              label: "Amount",
-              default: 1,
-              min: 1,
-            },
-          ],
-        category: "Game Rules",
+    label: "Set Winner Ante",
+    description: "Set the Final Ante where the Player Win's the Game",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    objectUsers: ["consumable", "deck", "joker", "voucher"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "set",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 1,
+      },
+    ],
+    category: "Game Rules",
   },
   {
     id: "set_sell_value",
@@ -1307,7 +1317,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
   {
     id: "destroy_self",
     label: "Destroy Self",
-    description: "Destroy this joker",
+    description: "Destroy this Card",
     applicableTriggers: [...GENERIC_TRIGGERS],
     objectUsers: ["joker", "card"],
     params: [{
@@ -1330,7 +1340,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       default : "n",
       exemptObjects: ["card"]
     }],
-    category: "Jokers",
+    category: "Card Effects",
   },
   {
     id: "create_tag",
@@ -1440,7 +1450,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         max: 8,
       },
     ],
-    category: "Card Modification",
+    category: "Card Effects",
   },
   {
     id: "permanent_bonus",
@@ -1578,7 +1588,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Game Rules",
+    category: "Shop",
   },
   {
     id: "edit_shop_slots",
@@ -1606,7 +1616,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Game Rules",
+    category: "Shop",
   },
   {
     id: "modify_blind_requirement",
@@ -1672,7 +1682,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Game Rules",
+    category: "Consumables",
   },
   {
     id: "edit_voucher_slots",
@@ -1700,7 +1710,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Game Rules",
+    category: "Shop",
   },
   {
     id: "edit_booster_slots",
@@ -1728,7 +1738,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Game Rules",
+    category: "Shop",
   },
   {
     id: "edit_joker_slots",
@@ -1755,7 +1765,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         default: 1,
       },
     ],
-    category: "Game Rules",
+    category: "Jokers",
   },
   {
     id: "redeem_voucher",
@@ -1827,7 +1837,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           default: "appear",
         },
       ],
-    category: "Special",
+    category: "Shop",
   },
   {
     id: "change_suit_variable",
@@ -2411,7 +2421,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     objectUsers: ["consumable"],
     applicableTriggers: ["consumable_used"],
     params: [],
-    category: "Selected Cards",
+    category: "Card Effects",
   },
   {
     id: "fix_probability",
@@ -2514,7 +2524,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         max: 13,
       },
     ],
-    category: "Selected Cards",
+    category: "Card Effects",
   },
   {
     id: "discount_items",
@@ -2565,7 +2575,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         },
       },
     ],
-    category: "Economy",
+    category: "Shop",
   },
   {
     id: "edit_all_starting_cards",
@@ -2899,8 +2909,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
   },
   {
     id: "edit_joker",
-    label: "Apply Edition to Random Joker",
-    description: "Apply an edition to random jokers in your joker area",
+    label: "Edit Joker",
+    description: "Edit a joker in your joker area",
     objectUsers: ["consumable"],
     applicableTriggers: ["consumable_used", "held_hand"],
     params: [
@@ -2980,7 +2990,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         min: 0,
       },
     ],
-    category: "Economy",
+    category: "Shop",
   },
   {
     id: "free_rerolls",
@@ -2996,7 +3006,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         default: 1,
       },
     ],
-    category: "Economy",
+    category: "Shop",
   },
   {
     id: "delete_triggered_card",
@@ -3437,7 +3447,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           min: 1,
         },
       ],
-    category: "Shop Effects",
+    category: "Shop",
   },
   {
     id: "edit_item_weight",
@@ -3473,7 +3483,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           min: 1,
         },
       ],
-    category: "Shop Effects",
+    category: "Shop",
   },
   {
     id: "edit_cards",
@@ -3550,7 +3560,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         default: "none",
       },
     ],
-    category: "Selected Cards",
+    category: "Card Effects",
   },
   {
     id: "edit_cards_in_hand",
@@ -3654,7 +3664,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         }
       },      
     ],
-    category: "Card Modification",
+    category: "Card Effects",
   },
 ]
 
