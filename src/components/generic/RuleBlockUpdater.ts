@@ -147,6 +147,8 @@ const updateEffectId = (
       return "edit_discards"
     case "edit_card_apperance":
       return "edit_card_appearance"
+    case "edit_cards_in_hand":
+      return "edit_cards"
 
     default:
       return id
@@ -173,7 +175,9 @@ const updateEffectParams = (
     case "copy_triggered_card":
     case "copy_played_card":
       params["add_to"] = "deck"
-      break      
+      break   
+    case "edit_cards_in_hand":
+      params["selection_method"] = "selected" 
   }
 
   return params

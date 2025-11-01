@@ -3521,19 +3521,26 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Selected Cards",
     description: "Apply multiple modifications to selected cards (enhancement, seal, edition, suit, rank)",
     objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["card_used"],
     params: [
+      {
+        id: "selection_method",
+        type: "select",
+        label: "Cards to Edit",
+        options: [
+          { value: "random", label: "Random Cards"},
+          { value: "selected", label: "Selected Cards"},
+        ],
+        default: "random",
+      },
       {
         id: "enhancement",
         type: "select",
         label: "Enhancement Type",
-        options: () => [
+        options: [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Enhancement" },
-          ...ENHANCEMENTS().map((enhancement) => ({
-            value: enhancement.key,
-            label: enhancement.label,
-          })),
+          ...ENHANCEMENTS().map((enhancement) => ({value: enhancement.key, label: enhancement.label})),
           { value: "random", label: "Random Enhancement" },
         ],
         default: "none",
@@ -3576,88 +3583,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "none", label: "No Change" },
           ...SUITS,
           { value: "random", label: "Random Suit" },
-        ],
-        default: "none",
-      },
-      {
-        id: "rank",
-        type: "select",
-        label: "Rank",
-        options: [
-          { value: "none", label: "No Change" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
-          { value: "random", label: "Random Rank" },
-        ],
-        default: "none",
-      },
-    ],
-    category: "Card Effects",
-  },
-  {
-    id: "edit_cards_in_hand",
-    label: "Edit Cards in Hand",
-    description: "Apply multiple modifications to random cards in hand (enhancement, seal, edition, suit, rank)",
-    objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used", "held_hand"],
-    params: [
-      {
-        id: "amount",
-        type: "number",
-        label: "Number of Cards",
-        default: 1,
-        min: 1,
-        max: 8,
-      },
-      {
-        id: "enhancement",
-        type: "select",
-        label: "Enhancement Type",
-        options: () => [
-          { value: "none", label: "No Change" },
-          ...ENHANCEMENTS().map((enhancement) => ({
-            value: enhancement.key,
-            label: enhancement.label,
-          })),
-          { value: "random", label: "Random Enhancement" },
-        ],
-        default: "none",
-      },
-      {
-        id: "seal",
-        type: "select",
-        label: "Seal Type",
-        options: () => [
-          { value: "none", label: "No Change" },
-          { value: "random", label: "Random Seal" },
-          ...SEALS().map((seal) => ({
-            value: seal.key,
-            label: seal.label,
-          })),
-        ],
-        default: "none",
-      },
-      {
-        id: "edition",
-        type: "select",
-        label: "Edition Type",
-        options: [
-          { value: "none", label: "No Change" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
-          { value: "random", label: "Random Edition" },
-        ],
-        default: "none",
-      },
-      {
-        id: "suit",
-        type: "select",
-        label: "Suit",
-        options: [
-          { value: "none", label: "No Change" },
-          ...SUITS,
-          { value: "random", label: "Random Suit" },
           { value: "pool", label: "Random from Pool" },
         ],
         default: "none",
@@ -3678,7 +3603,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Rank",
         options: [
           { value: "none", label: "No Change" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          ...RANKS.map((rank) => ({ value: rank.value, label: rank.label })),
           { value: "random", label: "Random Rank" },
           { value: "pool", label: "Random from Pool" },
         ],
@@ -3693,7 +3618,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "rank",
           values: ["pool"],
         }
-      },      
+      },
     ],
     category: "Card Effects",
   },

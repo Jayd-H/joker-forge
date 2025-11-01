@@ -1,4 +1,4 @@
-import { EDITIONS, SEALS } from "../../data/BalatroUtils";
+import { EDITIONS, RANKS, SEALS, SUITS } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -28,19 +28,19 @@ const generateConsumableCode = (
   const edition = effect.params?.edition as string || "none";
   const suit = effect.params?.suit as string || "none";
   const rank = effect.params?.rank as string || "none";
+  const method = effect.params?.method as string || "random";
   const customMessage = effect.customMessage;
+
   const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
-  const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
+  const suitPoolSuits = SUITS.map(suit => `'${suit.value}'`)
   const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
-  const rankPoolRanks = [
-    "'A'","'2'","'3'","'4'","'5'",
-    "'6'","'7'","'8'","'9'","'10'",
-    "'J'","'Q'","'K'"
-  ]
+  const rankPoolRanks = RANKS.map(rank => `'${rank.value}'`)
   
   const hasModifications = [enhancement, seal, edition, suit, rank].some(
     (param) => param !== "none"
   );
+
+  const target = (method === "random") ? "affected_cards" : "G.hand.highlighted"
 
   if (!hasModifications) {
     return {
@@ -60,15 +60,15 @@ const generateConsumableCode = (
                     return true
                 end
             }))
-            for i = 1, #G.hand.highlighted do
-                local percent = 1.15 - (i - 0.999) / (#G.hand.highlighted - 0.998) * 0.3
+            for i = 1, #${target} do
+                local percent = 1.15 - (i - 0.999) / (#${target} - 0.998) * 0.3
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.15,
                     func = function()
-                        G.hand.highlighted[i]:flip()
+                        ${target}[i]:flip()
                         play_sound('card1', percent)
-                        G.hand.highlighted[i]:juice_up(0.3, 0.3)
+                        ${target}[i]:juice_up(0.3, 0.3)
                         return true
                     end
                 }))
@@ -77,14 +77,14 @@ const generateConsumableCode = (
 
     if (enhancement !== "none") {
         editCardsCode += `
-            for i = 1, #G.hand.highlighted do
+            for i = 1, #${target} do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()`
     if (enhancement === "remove") {
         editCardsCode += `
-                        G.hand.highlighted[i]:set_ability(G.P_CENTERS.c_base)`
+                        ${target}[i]:set_ability(G.P_CENTERS.c_base)`
     } else if (enhancement === "random") {
         editCardsCode += `
                         local cen_pool = {}
@@ -94,10 +94,10 @@ const generateConsumableCode = (
                             end
                         end
                         local enhancement = pseudorandom_element(cen_pool, 'random_enhance')
-                        G.hand.highlighted[i]:set_ability(enhancement)`
+                        ${target}[i]:set_ability(enhancement)`
     } else {
         editCardsCode += `
-                        G.hand.highlighted[i]:set_ability(G.P_CENTERS['${enhancement}'])`
+                        ${target}[i]:set_ability(G.P_CENTERS['${enhancement}'])`
     } 
 
     editCardsCode += `            
@@ -109,23 +109,23 @@ const generateConsumableCode = (
 
   if (seal !== "none") {
     editCardsCode += `
-            for i = 1, #G.hand.highlighted do
+            for i = 1, #${target} do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
                     func = function()`
     if (seal === "remove") {
         editCardsCode += `
-                        G.hand.highlighted[i]:set_seal(nil, nil, true)`
+                        ${target}[i]:set_seal(nil, nil, true)`
     } else if (seal === "random") {
         const sealPool = SEALS().map(seal => `'${seal.value}'`)
         editCardsCode += `
                         local seal_pool = {${sealPool}}
                         local random_seal = pseudorandom_element(seal_pool, 'random_seal')
-                        G.hand.highlighted[i]:set_seal(random_seal, nil, true)`
+                        ${target}[i]:set_seal(random_seal, nil, true)`
     } else {
         editCardsCode += `
-                        G.hand.highlighted[i]:set_seal("${seal}", nil, true)`
+                        ${target}[i]:set_seal("${seal}", nil, true)`
     }
     editCardsCode += `
                         return true
@@ -136,7 +136,7 @@ const generateConsumableCode = (
 
   if (edition !== "none") {
     editCardsCode += `
-            for i = 1, #G.hand.highlighted do
+            for i = 1, #${target} do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
@@ -144,16 +144,16 @@ const generateConsumableCode = (
 
     if (edition === "remove") {
         editCardsCode += `
-                        G.hand.highlighted[i]:set_edition(nil, true)`
+                        ${target}[i]:set_edition(nil, true)`
     } else if (edition === "random") {
         const editionPool = EDITIONS().map(edition => `'${
                     edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
         editCardsCode += `
                         local edition = pseudorandom_element({${editionPool}}, 'random edition')
-                        G.hand.highlighted[i]:set_edition(edition, true)`
+                        ${target}[i]:set_edition(edition, true)`
     } else {
         editCardsCode += `
-                        G.hand.highlighted[i]:set_edition('${edition}', true)`
+                        ${target}[i]:set_edition('${edition}', true)`
     }
     
     editCardsCode += `
@@ -166,7 +166,7 @@ const generateConsumableCode = (
 
     if (suit !== "none") {
         editCardsCode += `
-            for i = 1, #G.hand.highlighted do
+            for i = 1, #${target} do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
@@ -174,7 +174,7 @@ const generateConsumableCode = (
         if (suit === "random") {
         editCardsCode += `
                     local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
-                    assert(SMODS.change_base(G.hand.highlighted[i], _suit.key))`
+                    assert(SMODS.change_base(${target}[i], _suit.key))`
         } else if (suit === "pool") {
 
             const suitPool = []
@@ -186,10 +186,10 @@ const generateConsumableCode = (
             editCardsCode += `
                     local suit_pool = {${suitPool}}
                     local _suit = pseudorandom_element(suit_pool, 'random_suit')
-                    assert(SMODS.change_base(G.hand.highlighted[i], _suit))`
+                    assert(SMODS.change_base(${target}[i], _suit))`
         } else {
             editCardsCode += `
-                    assert(SMODS.change_base(G.hand.highlighted[i], '${suit}'))`
+                    assert(SMODS.change_base(${target}[i], '${suit}'))`
         }
         editCardsCode += `
                         return true
@@ -200,7 +200,7 @@ const generateConsumableCode = (
 
     if (rank !== "none") {
         editCardsCode += `
-            for i = 1, #G.hand.highlighted do
+            for i = 1, #${target} do
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.1,
@@ -208,7 +208,7 @@ const generateConsumableCode = (
         if (rank === "random") {
             editCardsCode +=`
                         local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
-                        assert(SMODS.change_base(G.hand.highlighted[i], nil, _rank.key))`
+                        assert(SMODS.change_base(${target}[i], nil, _rank.key))`
         } else if (rank === "pool") {
                 const rankPool = []
                 for (let i = 0; i < rankPoolActive.length; i++){
@@ -219,10 +219,10 @@ const generateConsumableCode = (
                 editCardsCode += `
                         local rank_pool = {${rankPool}}
                         local _rank = pseudorandom_element(rank_pool, 'random_rank')
-                        assert(SMODS.change_base(G.hand.highlighted[i], _rank))`
+                        assert(SMODS.change_base(${target}[i], _rank))`
         } else {
         editCardsCode += `
-                        assert(SMODS.change_base(G.hand.highlighted[i], nil, '${rank}'))`
+                        assert(SMODS.change_base(${target}[i], nil, '${rank}'))`
         }
 
         editCardsCode += `
@@ -233,15 +233,15 @@ const generateConsumableCode = (
     }
 
   editCardsCode += `
-            for i = 1, #G.hand.highlighted do
-                local percent = 0.85 + (i - 0.999) / (#G.hand.highlighted - 0.998) * 0.3
+            for i = 1, #${target} do
+                local percent = 0.85 + (i - 0.999) / (#${target} - 0.998) * 0.3
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.15,
                     func = function()
-                        G.hand.highlighted[i]:flip()
+                        ${target}[i]:flip()
                         play_sound('tarot2', percent, 0.6)
-                        G.hand.highlighted[i]:juice_up(0.3, 0.3)
+                        ${target}[i]:juice_up(0.3, 0.3)
                         return true
                     end
                 }))
