@@ -47,7 +47,7 @@ import {
 import { getConditionTypeById } from "../data/Conditions";
 import { getEffectTypeById } from "../data/Effects";
 import GameVariables from "./GameVariables";
-import { GameVariable } from "../data/Jokers/GameVars";
+import { GameVariable } from "../data/GameVars";
 import { motion } from "framer-motion";
 import {
   JokerData,

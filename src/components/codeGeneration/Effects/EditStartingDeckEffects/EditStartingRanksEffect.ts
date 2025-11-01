@@ -1,6 +1,6 @@
-import { EDITIONS, getRankId } from "../../data/BalatroUtils";
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import { EDITIONS, getRankId } from "../../../data/BalatroUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
 
 export const generateEditStartingRanksEffectCode = (
   effect: Effect,

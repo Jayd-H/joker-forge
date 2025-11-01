@@ -1,4 +1,4 @@
-import { getGameVariableById } from "../../data/Jokers/GameVars";
+import { getGameVariableById } from "../../data/GameVars";
 import type { Rule } from "../../ruleBuilder/types";
 
 export interface ParsedGameVariable {

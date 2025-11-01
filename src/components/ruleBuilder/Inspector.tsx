@@ -46,7 +46,7 @@ import {
   validateVariableName,
   validateCustomMessage,
 } from "../generic/validationUtils";
-import { GameVariable, getGameVariableById } from "../data/Jokers/GameVars";
+import { GameVariable, getGameVariableById } from "../data/GameVars";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { SelectedItem } from "./types";
 

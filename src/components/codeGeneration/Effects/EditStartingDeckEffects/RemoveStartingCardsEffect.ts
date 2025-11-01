@@ -1,6 +1,6 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import { generateConfigVariables } from "../gameVariableUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
+import { generateConfigVariables } from "../../gameVariableUtils";
 
 export const generateRemoveStartingCardsEffectCode = (
   effect: Effect,

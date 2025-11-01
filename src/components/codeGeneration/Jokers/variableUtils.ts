@@ -10,7 +10,7 @@ import type {
   DeckData
 } from "../../data/BalatroUtils";
 import { parseGameVariable } from "../Consumables/gameVariableUtils";
-import { getGameVariableById } from "../../data/Jokers/GameVars";
+import { getGameVariableById } from "../../data/GameVars";
 import {
   SUIT_VALUES,
   RANK_VALUES,

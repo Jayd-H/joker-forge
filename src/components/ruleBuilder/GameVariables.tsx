@@ -5,7 +5,7 @@ import {
   GameVariable,
   GameVariableCategory,
   GameVariableSubcategory,
-} from "../data/Jokers/GameVars";
+} from "../data/GameVars";
 import {
   XMarkIcon,
   Bars3Icon,
