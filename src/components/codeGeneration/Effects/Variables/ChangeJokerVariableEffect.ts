@@ -19,7 +19,7 @@ export const generateChangeJokerVariableEffectCode = (
   } else if (changeType === "selected_joker") {
     valueCode = "G.jokers.highlighted[1]"
   } else if (changeType === "specific") {
-    valueCode = specificJoker
+    valueCode = `'${specificJoker}'`
   } else if (changeType === "random") {
 
     valueCode = "random_joker_result"
@@ -76,7 +76,7 @@ export const generateChangeJokerVariableEffectCode = (
       local random_joker_result = pseudorandom_element(possible_jokers, 'random joker')`
 
   } else {
-    valueCode = changeType
+    valueCode = `card.ability.extra.${changeType}`
   }
 
   statement += `

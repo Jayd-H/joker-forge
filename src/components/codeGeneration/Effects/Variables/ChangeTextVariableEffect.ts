@@ -6,7 +6,7 @@ export const generateChangeTextVariableEffectCode = (
 ): EffectReturn => {
   const variableName = (effect.params?.variable_name as string) || "textvar";
   const changeType = (effect.params?.change_type as string) || "random";
-  const customText = (effect.params?.custom_text as string) || "";
+  const customText = (effect.params?.text as string) || "";
   const jokerVar = (effect.params?.joker_var as string) || "jokervar"
 
   let statement = `__PRE_RETURN_CODE__`
@@ -14,7 +14,7 @@ export const generateChangeTextVariableEffectCode = (
   
   if (changeType === "custom_text") {
     statement += `
-      card.ability.extra.${variableName} = ${customText}`
+      card.ability.extra.${variableName} = '${customText}'`
   } else if (changeType === "joker_var") {
     statement += `
       for i = 1, #G.jokers.cards do
