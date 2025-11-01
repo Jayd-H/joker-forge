@@ -39,6 +39,13 @@ export const generateChangeSuitVariableEffectCode = (
                 local suit_pool = {${suitPool}}
                 G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(suit_pool, pseudoseed('randomSuit'))
                 __PRE_RETURN_CODE_END__`;
+  } else if (
+    changeType === "scored_card" || changeType === "destroyed_card" || changeType === "added_card" || 
+    changeType === "card_held_in_hand" || changeType === "discarded_card"
+  ) {
+    statement = `__PRE_RETURN_CODE__
+                G.GAME.current_round.${variableName}_card.suit = context.other_card.base.suit
+                __PRE_RETURN_CODE_END__`
   } else {
     statement = `__PRE_RETURN_CODE__
                 G.GAME.current_round.${variableName}_card.suit = '${specificSuit}'

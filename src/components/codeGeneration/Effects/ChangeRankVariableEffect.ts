@@ -5,7 +5,7 @@ import type { EffectReturn } from "../effectUtils";
 export const generateChangeRankVariableEffectCode = (
   effect: Effect,
 ): EffectReturn => {
- const variableName = (effect.params.variable_name as string) || "rankvar";
+  const variableName = (effect.params.variable_name as string) || "rankvar";
   const changeType = (effect.params.change_type as string) || "random";
   const specificRank = (effect.params.specific_rank as string) || "A";
   const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
@@ -37,8 +37,15 @@ export const generateChangeRankVariableEffectCode = (
     }}
     statement = `__PRE_RETURN_CODE__
                 local rank_pool = {${rank_pool}}
-                G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(rank_pool, pseudoseed('randomRank'))
+                G.GAME.current_round.${variableName}_card.rank = pseudorandom_element(rank_pool, pseudoseed('randomRank'))
                 __PRE_RETURN_CODE_END__`;
+  } else if (
+    changeType === "scored_card" || changeType === "destroyed_card" || changeType === "added_card" || 
+    changeType === "card_held_in_hand" || changeType === "discarded_card"
+  ) {
+    statement = `__PRE_RETURN_CODE__
+                G.GAME.current_round.${variableName}_card.rank = context.other_card.base.id
+                __PRE_RETURN_CODE_END__`
   } else {
     const rankId = getRankId(specificRank);
     statement = `__PRE_RETURN_CODE__

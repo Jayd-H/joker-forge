@@ -1914,7 +1914,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["suit", "joker_context"]
+        variableTypes: ["suit", "suit_context"]
       },
     ],
     category: "Variables",
@@ -1965,7 +1965,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["rank", "joker_context"]
+        variableTypes: ["rank", "rank_context"]
       },
     ],
     category: "Variables",

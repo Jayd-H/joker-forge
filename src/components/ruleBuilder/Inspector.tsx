@@ -464,30 +464,41 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         }
       }
 
-      if (param.variableTypes?.includes("card_context")) {
+      if (param.variableTypes?.includes("rank_context")) {
         if (trigger === "card_scored") {
-          options.push({value: "scored_card", label: "Scored Card"})
+          options.push({value: "scored_card", label: "Scored Card Rank"})
         }
         if (trigger === "card_destroyed") {
-          options.push({value: "destroyed_card", label: "Destroyed Card"})
+          options.push({value: "destroyed_card", label: "Destroyed Card Rank"})
         }
         if (trigger === "card_discarded") {
-          options.push({value: "discarded_card", label: "Discarded Card"})
+          options.push({value: "discarded_card", label: "Discarded Card Rank"})
         }
         if (trigger === "card_held_in_hand" || trigger === "card_held_in_hand_end_of_round") {
-          options.push({value: "held_card", label: "Card Held in Hand"})
+          options.push({value: "held_card", label: "Card Held in Hand Rank"})
         }
         if (trigger === "card_added") {
-          options.push({value: "added_card", label: "Added Card"})
+          options.push({value: "added_card", label: "Added Card Rank"})
         } 
-        if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
-          condition => condition.type === "cards_selected" && condition.negate === false 
-        ))) {
-          options.push({value: "selected_cards", label: "Selected Cards"})
-        }
       }
 
-
+      if (param.variableTypes?.includes("suit_context")) {
+        if (trigger === "card_scored") {
+          options.push({value: "scored_card", label: "Scored Card Suit"})
+        }
+        if (trigger === "card_destroyed") {
+          options.push({value: "destroyed_card", label: "Destroyed Card Suit"})
+        }
+        if (trigger === "card_discarded") {
+          options.push({value: "discarded_card", label: "Discarded Card Suit"})
+        }
+        if (trigger === "card_held_in_hand" || trigger === "card_held_in_hand_end_of_round") {
+          options.push({value: "held_card", label: "Card Held in Hand Suit"})
+        }
+        if (trigger === "card_added") {
+          options.push({value: "added_card", label: "Added Card Suit"})
+        } 
+      }
 
       if (param.id === "variable_name" && joker && param.label) {
         if (param.variableTypes?.includes("number")) {
