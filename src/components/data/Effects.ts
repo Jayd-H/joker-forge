@@ -2016,6 +2016,54 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Variables",
   },
   {
+    id: "change_text_variable",
+    label: "Change Text Variable",
+    description: "Change the value of a text variable",
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    objectUsers: ["joker"],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Text Variable",
+        options: [], // Will be populated dynamically with rank variables
+        variableTypes: ["text"]
+      },
+      {
+        id: "change_type",
+        type: "select",
+        label: "Change Type",
+        options: [
+          { value: "custom_text", label: "Custom Text" },
+          { value: "joker_var", label: "Name of a Joker Variable" },
+        ],
+        default: "random",
+      },
+      {
+        id: "text",
+        type: "text",
+        label: "Custom Text",
+        default: "Hello",
+        showWhen: {
+          parameter: "change_type",
+          values: ["custom_text"],
+        },
+      },
+      {
+        id: "joker_var",
+        type: "select",
+        label: "Joker Variable",
+        options: [],
+        showWhen: {
+          parameter: "change_type",
+          values: ["joker_var"],
+        },
+        variableTypes: ["joker"]
+      },
+    ],
+    category: "Variables",
+  },
+  {
     id: "change_pokerhand_variable",
     label: "Change Poker Hand Variable",
     description:

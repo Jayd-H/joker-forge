@@ -1,7 +1,6 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import { parseGameVariable, parseRangeVariable } from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
+import { parseGameVariable, parseRangeVariable, generateGameVariableCode } from "../../gameVariableUtils";
 
 export const generateModifyInternalVariableEffectCode = (
   effect: Effect,
@@ -17,7 +16,7 @@ export const generateModifyInternalVariableEffectCode = (
   let valueCode: string;
 
   if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
-    valueCode = generateGameVariableCode(effectValue);
+    valueCode = generateGameVariableCode(effectValue, '');
   } else if (rangeParsed.isRangeVariable) {
     const seedName = `${variableName}_${effect.id.substring(0, 8)}`;
     valueCode = `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;

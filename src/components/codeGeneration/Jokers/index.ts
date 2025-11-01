@@ -266,6 +266,9 @@ const generateSingleJokerCode = (
       if (variable.type === "number" || !variable.type) {
         configItems.push(`${variable.name} = ${variable.initialValue || 0}`);
       }
+      if (variable.type === "text" || !variable.type) {
+        configItems.push(`${variable.name} = '${variable.initialText || "Hello"}'`);
+      }
     });
   }
 
@@ -294,7 +297,6 @@ const generateSingleJokerCode = (
       (rule) => rule.trigger !== "passive"
     );
     const variables = extractVariablesFromRules(nonPassiveRules);
-
     const userVariableNames = new Set(
       joker.userVariables?.map((v) => v.name) || []
     );
@@ -306,11 +308,10 @@ const generateSingleJokerCode = (
     if (autoVariables.length > 0) {
       const variableConfig = generateVariableConfig(autoVariables);
       if (variableConfig) {
-        configItems.push(variableConfig);
+        configItems.push(...variableConfig);
       }
     }
   }
-
   const effectsConfig = configItems.join(",\n            ");
 
   const jokersPerRow = 10;
@@ -1615,7 +1616,7 @@ const generateLocVarsFunction = (
   modPrefix?: string
 ): string | null => {
   const descriptionHasVariables = joker.description.includes("#");
-  if (!descriptionHasVariables && (joker.info_queues || []).length === 0) {
+  if (!descriptionHasVariables && (joker.info_queues || []).length === 0 && getAllVariables(joker).length === 0) {
     return null;
   }
 
@@ -1624,7 +1625,8 @@ const generateLocVarsFunction = (
     ...variablePlaceholders.map((placeholder) =>
       parseInt(placeholder.replace(/#/g, ""))
     ),
-    0
+    0, 
+    getAllVariables(joker).length
   );
 
   if (maxVariableIndex === 0 && (joker.info_queues || []).length === 0) {
@@ -1717,7 +1719,6 @@ const generateLocVarsFunction = (
     );
 
     let currentIndex = 0;
-
     for (const variable of remainingVars) {
       if (currentIndex >= maxVariableIndex) break;
       variableMapping.push(`card.ability.extra.${variable.name}`);
@@ -1782,7 +1783,6 @@ const generateLocVarsFunction = (
     }
   } else {
     let currentIndex = 0;
-
     for (const variable of allVariables) {
       if (currentIndex >= maxVariableIndex) break;
 

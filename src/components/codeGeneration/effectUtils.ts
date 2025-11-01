@@ -19,10 +19,10 @@ import { generateEmitFlagEffectCode } from "./Effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "./Effects/PlaySoundEffect";
 import { generateWinBlindEffectCode } from "./Effects/WinBlindEffect";
 import { generateEditCardAppearanceEffectCode } from "./Effects/EditCardAppearanceEffect";
-import { generateChangeJokerVariableEffectCode } from "./Effects/ChangeJokerVariableEffect";
-import { generateChangePokerHandVariableEffectCode } from "./Effects/ChangePokerHandVariableEffect";
-import { generateChangeSuitVariableEffectCode } from "./Effects/ChangeSuitVariableEffect";
-import { generateChangeRankVariableEffectCode } from "./Effects/ChangeRankVariableEffect";
+import { generateChangeJokerVariableEffectCode } from "./Effects/Variables/ChangeJokerVariableEffect";
+import { generateChangePokerHandVariableEffectCode } from "./Effects/Variables/ChangePokerHandVariableEffect";
+import { generateChangeSuitVariableEffectCode } from "./Effects/Variables/ChangeSuitVariableEffect";
+import { generateChangeRankVariableEffectCode } from "./Effects/Variables/ChangeRankVariableEffect";
 import { generateConvertAllCardToRankEffectCode } from "./Effects/ConvertAllCardsToRankEffect";
 import { generateConvertAllCardsToSuitEffectCode } from "./Effects/ConvertAllCardsToSuitEffect";
 import { generateConvertLeftToRightEffectCode } from "./Effects/ConvertLeftToRightEffect";
@@ -49,7 +49,7 @@ import { generateForceGameOverEffectCode } from "./Effects/ForceGameOverEffect";
 import { generateJuiceUpEffectCode } from "./Effects/JuiceUpEffect";
 import { generateLevelUpHandEffectCode } from "./Effects/LevelUpHandEffect";
 import { generateModifyBlindRequirementEffectCode } from "./Effects/ModifyBlindRequirementEffect";
-import { generateModifyInternalVariableEffectCode } from "./Effects/ModifyInternalVariableEffect";
+import { generateModifyInternalVariableEffectCode } from "./Effects/Variables/ModifyInternalVariableEffect";
 import { generateFoolEffectCode } from "./Effects/FoolEffect";
 import { generateIncrementRankEffectCode } from "./Effects/IncrementRankEffect";
 import { generateDestroyCardsEffectCode } from "./Effects/DestroyCardsEffect";
@@ -78,8 +78,8 @@ import { generateDiscountItemsEffectCode, generateDiscountItemsPassiveEffectCode
 import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "./Effects/PassiveEffects/ReduceFlushStraightRequirementEffect";
 import { generateShortcutPassiveEffectCode } from "./Effects/PassiveEffects/ShortcutEffect";
 import { generateShowmanPassiveEffectCode } from "./Effects/PassiveEffects/ShowmanEffect";
-import { generateCombineRanksPassiveEffectCode } from "./Effects/CombineRanksEffect";
-import { generateCombineSuitsPassiveEffectCode } from "./Effects/CombineSuitsEffect";
+import { generateCombineRanksPassiveEffectCode } from "./Effects/PassiveEffects/CombineRanksEffect";
+import { generateCombineSuitsPassiveEffectCode } from "./Effects/PassiveEffects/CombineSuitsEffect";
 import { generateCreateCopyTriggeredCardEffectCode } from "./Effects/CreateCopyTriggeredCardEffect";
 import { generateCreateCopyPlayedCardEffectCode } from "./Effects/CreateCopyPlayedCardEffect";
 import { generateEditDiscardsMoneyEffectCode } from "./Effects/EditEndRoundDiscardMoneyEffect";
@@ -91,6 +91,7 @@ import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect
 import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 import { generateEditStartingDollarsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
 import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode } from "./Effects/EditItemSizeEffect";
+import { generateChangeTextVariableEffectCode } from "./Effects/Variables/ChangeTextVariableEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -789,6 +790,8 @@ export const generateSingleEffect = (
       return generateChangeSuitVariableEffectCode(effect)
     case "change_rank_variable":
       return generateChangeRankVariableEffectCode(effect)
+    case "change_text_variable":
+      return generateChangeTextVariableEffectCode(effect)
     case "modify_internal_variable":
       return generateModifyInternalVariableEffectCode(effect, triggerType)
     case "convert_all_cards_to_rank":

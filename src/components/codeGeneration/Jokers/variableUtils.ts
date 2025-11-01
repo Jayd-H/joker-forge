@@ -572,18 +572,6 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
         }
         variableMap.get(varName)!.usedInEffects.push(effect.type);
       }
-
-      const explicitVariables = extractExplicitVariablesFromEffect(effect);
-      explicitVariables.forEach((varName) => {
-        if (!variableMap.has(varName)) {
-          variableMap.set(varName, {
-            name: varName,
-            initialValue: 0,
-            usedInEffects: [],
-          });
-        }
-        variableMap.get(varName)!.usedInEffects.push(effect.type);
-      });
     });
 
     (rule.randomGroups || []).forEach((group) => {
@@ -599,18 +587,6 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
           }
           variableMap.get(varName)!.usedInEffects.push(effect.type);
         }
-
-        const explicitVariables = extractExplicitVariablesFromEffect(effect);
-        explicitVariables.forEach((varName) => {
-          if (!variableMap.has(varName)) {
-            variableMap.set(varName, {
-              name: varName,
-              initialValue: 0,
-              usedInEffects: [],
-            });
-          }
-          variableMap.get(varName)!.usedInEffects.push(effect.type);
-        });
       });
     });
   });
@@ -618,14 +594,14 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
   return Array.from(variableMap.values());
 };
 
-export const generateVariableConfig = (variables: VariableInfo[]): string => {
-  if (variables.length === 0) return "";
+export const generateVariableConfig = (variables: VariableInfo[]): string[] => {
+  if (variables.length === 0) return [""];
 
   const configItems = variables.map((variable) => {
     return `${variable.name} = ${variable.initialValue}`;
   });
 
-  return configItems.join(",\n            ");
+  return configItems
 };
 
 export const getVariableNamesFromItem = (
@@ -641,11 +617,6 @@ export const getVariableNamesFromItem = (
         const varName = (effect.params.variable_name as string) || "var1";
         variableNames.add(varName);
       }
-
-      const explicitVariables = extractExplicitVariablesFromEffect(effect);
-      explicitVariables.forEach((varName) => {
-        variableNames.add(varName);
-      });
     });
 
     (rule.randomGroups || []).forEach((group) => {
@@ -654,11 +625,6 @@ export const getVariableNamesFromItem = (
           const varName = (effect.params.variable_name as string) || "var1";
           variableNames.add(varName);
         }
-
-        const explicitVariables = extractExplicitVariablesFromEffect(effect);
-        explicitVariables.forEach((varName) => {
-          variableNames.add(varName);
-        });
       });
     });
 
@@ -781,6 +747,7 @@ export const getAllVariables = (
   const autoVars: UserVariable[] = [];
   const probabilityVars: UserVariable[] = [];
 
+  console.log(userVars)
   if (!item.rules) {
     return userVars;
   }
@@ -899,7 +866,6 @@ export const getAllVariables = (
       });
     }
   }
-
   // For jokers, extract explicit variables (consumables/enhancements don't have these complex variables)
   let explicitVariableNames: string[] = [];
   if (item.objectType == 'joker') {
@@ -931,6 +897,10 @@ export const getAllVariables = (
       gameVar.multiplier !== 1 ? ` (×${gameVar.multiplier})` : ""
     }${gameVar.startsFrom !== 0 ? ` (starts from ${gameVar.startsFrom})` : ""}`,
   }));
+  console.log(userVars)
+  console.log(autoVars)
+  console.log(otherAutoVars)
+
 
   return [
     ...userVars,

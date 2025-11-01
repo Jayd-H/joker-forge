@@ -50,6 +50,7 @@ import { GameVariable, getGameVariableById } from "../data/GameVars";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { SelectedItem } from "./types";
 import  Checkbox  from "../generic/Checkbox";
+import { addTextVariablesToOptions } from "../codeGeneration/userVariableUtils";
 
 
 interface InspectorProps {
@@ -541,6 +542,13 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
             value: variable.name,
             label: variable.name,
           })))}
+        if (param.variableTypes?.includes("text")) {
+          const textVariables =
+            joker.userVariables?.filter((v) => v.type === "text") || [];
+          options.push(...textVariables.map((variable) => ({
+            value: variable.name,
+            label: variable.name,
+          })))}
       } else {
 
         if (param.variableTypes?.includes("number") && joker) {
@@ -561,6 +569,10 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
         if (param.variableTypes?.includes("joker") && joker) {
           options = addJokerVariablesToOptions(options, joker)
+        }
+
+        if (param.variableTypes?.includes("text") && joker) {
+          options = addTextVariablesToOptions(options, joker)
         }
       }
 

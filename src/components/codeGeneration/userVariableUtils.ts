@@ -269,6 +269,13 @@ export const getJokerVariables = (
   return (item.userVariables || []).filter((v) => v.type === "joker");
 };
 
+export const getTextVariables = (
+  item: JokerData | EnhancementData
+): UserVariable[] => {
+  return (item.userVariables || []).filter((v) => v.type === "text");
+};
+
+
 export const getRankVariables = (
   item: JokerData | EnhancementData
 ): UserVariable[] => {
@@ -359,6 +366,21 @@ export const addJokerVariablesToOptions = (
 
   return [...baseOptions, ...variableOptions];
 };
+
+
+export const addTextVariablesToOptions = (
+  baseOptions: Array<{ value: string; label: string }>,
+  item: JokerData | EnhancementData
+): Array<{ value: string; label: string }> => {
+  const textVariables = getTextVariables(item);
+  const variableOptions = textVariables.map((variable) => ({
+    value: variable.name,
+    label: `${variable.name} (text variable)`,
+  }));
+
+  return [...baseOptions, ...variableOptions];
+};
+
 
 export const addRankVariablesToOptions = (
   baseOptions: Array<{ value: string; label: string }>,
@@ -641,11 +663,6 @@ export const getVariableNamesFromItem = (
         const varName = (effect.params.variable_name as string) || "var1";
         variableNames.add(varName);
       }
-
-      const explicitVariables = extractExplicitVariablesFromEffect(effect);
-      explicitVariables.forEach((varName) => {
-        variableNames.add(varName);
-      });
     });
 
     (rule.randomGroups || []).forEach((group) => {
@@ -654,11 +671,6 @@ export const getVariableNamesFromItem = (
           const varName = (effect.params.variable_name as string) || "var1";
           variableNames.add(varName);
         }
-
-        const explicitVariables = extractExplicitVariablesFromEffect(effect);
-        explicitVariables.forEach((varName) => {
-          variableNames.add(varName);
-        });
       });
     });
 

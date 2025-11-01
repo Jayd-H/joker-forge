@@ -230,13 +230,10 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       try {
         const response = await fetch("/images/placeholderjokers/credit.txt");
         const text = await response.text();
-        console.log("Raw credit file content:", JSON.stringify(text));
-
         const credits: Record<number, string> = {};
 
-        text.split("\n").forEach((line, lineIndex) => {
+        text.split("\n").forEach(line => {
           const trimmed = line.trim();
-          console.log(`Line ${lineIndex}: "${trimmed}"`);
 
           if (trimmed && trimmed.includes(":")) {
             const [indexStr, nameStr] = trimmed.split(":");
@@ -676,6 +673,8 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   const VariableDisplay = (variable: UserVariable) => {
     if (variable.type === "suit") return variable.initialSuit || "Spades";
     if (variable.type === "rank") return variable.initialRank || "Ace";
+    if (variable.type === "text") return variable.initialText || "Hello";
+    if (variable.type === "joker") return variable.initialJoker || "j_joker";
     if (variable.type === "pokerhand")
       return variable.initialPokerHand || "High Card";
     return variable.initialValue?.toString() || "0";

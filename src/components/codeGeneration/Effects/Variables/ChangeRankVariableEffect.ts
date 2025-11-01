@@ -1,6 +1,6 @@
-import { getRankId, RANKS } from "../../data/BalatroUtils";
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import { getRankId, RANKS } from "../../../data/BalatroUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
 
 export const generateChangeRankVariableEffectCode = (
   effect: Effect,
