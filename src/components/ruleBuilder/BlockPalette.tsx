@@ -79,6 +79,7 @@ import {
   DECK_EFFECT_CATEGORIES,
   getDeckEffectsForTrigger,
 } from "../data/Decks/Effects";
+import { logSelectedTrigger } from "../generic/FileLog";
 
 interface BlockPaletteProps {
   position: { x: number; y: number };
@@ -209,6 +210,10 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   useEffect(() => {
     setExpandedCategories(new Set());
   }, [activeFilter]);
+
+  useEffect(() => {
+    logSelectedTrigger(selectedRule?.trigger, itemType)
+  }, [selectedRule])
 
   const availableConditions = useMemo(() => {
     return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger) : [];
