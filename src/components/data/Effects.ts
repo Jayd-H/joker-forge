@@ -508,7 +508,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     description:
       "Modify the Play size (number of cards you can select and Play)",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
-    objectUsers: ["joker", "consumable", "deck", "voucher"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -536,7 +536,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     description:
       "Modify the Discard size (number of cards you can select and Discard)",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
-    objectUsers: ["joker", "consumable", "deck"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -1622,8 +1622,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_shop_slots",
     label: "Edit Shop Cards Slots",
     description: "Modify the Card slots of the shop ",
-    applicableTriggers: [...GENERIC_TRIGGERS],
-    objectUsers: ["joker", "consumable", "voucher"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -1718,7 +1718,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Voucher Slots",
     description: "Modify the number of vouchers available in shop",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",

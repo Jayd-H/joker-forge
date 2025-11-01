@@ -68,17 +68,12 @@ import { generateEditCardEffectCode } from "./Effects/EditCardEffect";
 import { generateEditCardsEffectCode } from "./Effects/EditCardsEffect";
 import { generateAllowDebtPassiveEffectCode } from "./Effects/AllowDebtEffect";
 import { generateCopyJokerAbilityPassiveEffectCode } from "./Effects/CopyJokerAbilityEffect";
-import { generateEditHandSizeEffectCode, generateEditHandSizePassiveEffectCode } from "./Effects/EditHandSizeEffect";
-import { generateEditPlaySizeEffectCode, generateEditPlaySizePassiveEffectCode } from "./Effects/EditPlaySizeEffect";
-import { generateEditDiscardSizeEffectCode, generateEditDiscardSizePassiveEffectCode } from "./Effects/EditDiscardSizeEffect";
 import { generateEditDiscardsEffectCode, generateEditDiscardsPassiveEffectCode } from "./Effects/EditDiscardsEffect";
 import { generateEditHandsEffectCode, generateEditHandsPassiveEffectCode } from "./Effects/EditHandsEffect";
 import { generateSplashPassiveEffectCode } from "./Effects/SplashEffect";
 import { generateFreeRerollsEffectCode, generateFreeRerollsPassiveEffectCode } from "./Effects/FreeRerollsEffect";
-import { generateEditBoosterSlotsEffectCode, generateEditBoosterSlotsPassiveEffectCode } from "./Effects/EditBoosterSlotsEffect";
 import { generateEditConsumableSlotsEffectCode, generateEditConsumableSlotsPassiveEffectCode } from "./Effects/EditConsumableSlotsEffect";
 import { generateEditJokerSlotsEffectCode, generateEditJokerSlotsPassiveEffectCode } from "./Effects/EditJokerSlotsEffect";
-import { generateEditVoucherSlotsEffectCode, generateEditVoucherSlotsPassiveEffectCode } from "./Effects/EditVoucherSlotsEffect";
 import { generateDiscountItemsEffectCode, generateDiscountItemsPassiveEffectCode } from "./Effects/DiscountItemsEffect";
 import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "./Effects/ReduceFlushStraightRequirementEffect";
 import { generateShortcutPassiveEffectCode } from "./Effects/ShortcutEffect";
@@ -92,12 +87,12 @@ import { generateEditHandsMoneyEffectCode } from "./Effects/EditEndRoundHandMone
 import { generateEditInterestCapEffectCode } from "./Effects/EditInterestCapEffect";
 import { generateEditRerollPriceEffectCode } from "./Effects/EditRerollPriceEffect";
 import { generateEditBoosterPacksEffectCode } from "./Effects/EditBoosterPacksEffect";
-import { generateEditShopCardSlotsEffectCode } from "./Effects/EditShopCardSlotsEffect";
 import { generateEditRarityWeightEffectCode } from "./Effects/EditRarityWeightEffect";
 import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect";
 import { generateEditCardsInHandEffectCode } from "./Effects/EditCardsInHandEffect";
 import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 import { generateEditStartingDollarsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
+import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode } from "./Effects/EditItemSizeEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -846,13 +841,10 @@ export const generateSingleEffect = (
       return generateEditWinnerAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "edit_booster_packs":
       return generateEditBoosterPacksEffectCode(effect, itemType, sameTypeCount)
-    case "edit_booster_slots":
-      return generateEditBoosterSlotsEffectCode(effect, cleanItemType, sameTypeCount)
-    case "edit_voucher_slots":
-      return generateEditVoucherSlotsEffectCode(effect, cleanItemType, sameTypeCount)
-    case "edit_shop_slots":
-      return generateEditShopCardSlotsEffectCode(effect, cleanItemType, sameTypeCount) 
-    // POSSIBLE MERGE FOR EDIT BOOSTER/VOUCHER/SHOP SLOTS
+    case "edit_booster_slots": case "edit_voucher_slots": case "edit_shop_slots":
+    case "edit_discard_size": case "edit_hand_size": case "edit_play_size":
+      const type = effect.type.slice(5)
+      return generateEditItemSizeEffectCode(effect, cleanItemType, sameTypeCount, type)
     case "edit_card":
       return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "edit_cards":
@@ -875,13 +867,6 @@ export const generateSingleEffect = (
       return generateEditHandsEffectCode(effect, itemType, sameTypeCount)
     case "edit_discards":
       return generateEditDiscardsEffectCode(effect, itemType, sameTypeCount)
-    case "edit_discard_size":
-      return generateEditDiscardSizeEffectCode(effect, cleanItemType, sameTypeCount)
-    case "edit_hand_size":
-      return generateEditHandSizeEffectCode(effect, cleanItemType, sameTypeCount)
-    case "edit_play_size":
-      return generateEditPlaySizeEffectCode(effect, cleanItemType, sameTypeCount)
-    // POSSIBLE MERGE FOR EDIT DISCARD/HAND/PLAY SIZE 
     case "edit_card_appearance":
       return generateEditCardAppearanceEffectCode(effect)
     case "edit_rarity_weight":
@@ -1001,32 +986,26 @@ const generateSinglePassiveEffect = (
       return generateFreeRerollsPassiveEffectCode(effect)
     case "disable_boss_blind":
       return generateDisableBossBlindPassiveEffectCode(effect)
-    case "edit_hand_size":
-      return generateEditHandSizePassiveEffectCode(effect)
-    case "edit_play_size":
-      return generateEditPlaySizePassiveEffectCode(effect)
-    case "edit_discard_size":
-      return generateEditDiscardSizePassiveEffectCode(effect)
     case "edit_discards":
       return generateEditDiscardsPassiveEffectCode(effect)
     case "edit_hands":
       return generateEditHandsPassiveEffectCode(effect)
     case "splash_effect":
       return generateSplashPassiveEffectCode()
-    case "edit_booster_slots":
-      return generateEditBoosterSlotsPassiveEffectCode(effect)
     case "edit_consumable_slots":
       return generateEditConsumableSlotsPassiveEffectCode(effect)
     case "edit_joker_slots":
       return generateEditJokerSlotsPassiveEffectCode(effect)
-    case "edit_voucher_slots":
-      return generateEditVoucherSlotsPassiveEffectCode(effect)
     case "shortcut":
       return generateShortcutPassiveEffectCode(jokerKey)
     case "reduce_flush_straight_requirements":
       return generateReduceFlushStraightRequirementsPassiveEffectCode(effect, jokerKey)
     case "showman":
       return generateShowmanPassiveEffectCode(jokerKey)
+    case "edit_voucher_slots": case "edit_booster_slots": case "edit_shop_slots":
+    case "edit_hand_size": case "edit_play_size": case "edit_discard_size":
+      const type = effect.type.slice(5)
+      return generateEditItemSizePassiveEffectCode(effect, type)
     default:
       return null
   }
