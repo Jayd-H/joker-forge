@@ -1,4 +1,4 @@
-import { getGameVariableById } from "../data/Jokers/GameVars";
+import { getGameVariableById } from "../data/GameVars";
 import { ConfigExtraVariable } from "./effectUtils";
 
 export interface ParsedGameVariable {
