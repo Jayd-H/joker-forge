@@ -747,7 +747,6 @@ export const getAllVariables = (
   const autoVars: UserVariable[] = [];
   const probabilityVars: UserVariable[] = [];
 
-  console.log(userVars)
   if (!item.rules) {
     return userVars;
   }
@@ -897,9 +896,6 @@ export const getAllVariables = (
       gameVar.multiplier !== 1 ? ` (×${gameVar.multiplier})` : ""
     }${gameVar.startsFrom !== 0 ? ` (starts from ${gameVar.startsFrom})` : ""}`,
   }));
-  console.log(userVars)
-  console.log(autoVars)
-  console.log(otherAutoVars)
 
 
   return [
