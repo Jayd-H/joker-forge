@@ -286,7 +286,12 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "limit_dollars",
         type: "checkbox",
         label: "Limit Earnings?",
-        checkboxOptions: ["Minimum Earnings", "Maximum Earnings", "Minimum Final Amount", "Maximum Final Amount"],
+        checkboxOptions: [
+          {value: "min_e", label: "Minimum Earnings"}, 
+          {value: "max_e", label: "Maximum Earnings"}, 
+          {value: "min_f", label: "Minimum Final Amount"}, 
+          {value: "max_f", label: "Maximum Final Amount"}, 
+        ],
         default: [false, false, false, false],
         showWhen: {parameter: "operation", values: ["add", "subtract", "multiply", "divide"]}
       },
@@ -295,28 +300,28 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         type: "number",
         label: "Min Earnings",
         default: 0,
-        showWhen: {parameter: "limit_dollars", values: [0]}
+        showWhen: {parameter: "limit_dollars", values: ['0']}
       },
       {
         id: "max_earnings",
         type: "number",
         label: "Max Earnings",
         default: 20,
-        showWhen: {parameter: "limit_dollars", values: [1]}
+        showWhen: {parameter: "limit_dollars", values: ['1']}
       },
       {
         id: "min_total",
         type: "number",
         label: "Min Total",
         default: 0,
-        showWhen: {parameter: "limit_dollars", values: [2]}
+        showWhen: {parameter: "limit_dollars", values: ['2']}
       },
       {
         id: "max_total",
         type: "number",
         label: "Max Total",
         default: 25,
-        showWhen: {parameter: "limit_dollars", values: [3]}
+        showWhen: {parameter: "limit_dollars", values: ['3']}
       }
     ],
     category: "Economy",
@@ -1937,7 +1942,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "suit_pool",
         type: "checkbox",
         label: "Possible Suits",
-        checkboxOptions: [...SUITS.map(suit => suit.label)],
+        checkboxOptions: [...SUITS],
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
@@ -1989,7 +1994,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "rank_pool",
         type: "checkbox",
         label: "Possible Ranks",
-        checkboxOptions: [...RANKS.map(rank => rank.label)],
+        checkboxOptions: [...RANKS],
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
@@ -2042,7 +2047,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "pokerhand_pool",
         type: "checkbox",
         label: "Possible PokerHands",
-        checkboxOptions: [...POKER_HANDS.map(hand => hand.label)],
+        checkboxOptions: [...POKER_HANDS],
         showWhen: {
           parameter: "change_type",
           values: ["pool"],
@@ -2443,7 +2448,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "suit_pool",
         type: "checkbox",
         label: "Possible Suits",
-        checkboxOptions: [...SUITS.map(suit => suit.label)],
+        checkboxOptions: [...SUITS],
         showWhen: {
           parameter: "suit",
           values: ["pool"],
@@ -2474,7 +2479,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "rank_pool",
         type: "checkbox",
         label: "Possible Ranks",
-        checkboxOptions: [...RANKS.map(rank => rank.value)],
+        checkboxOptions: [...RANKS],
         showWhen: {
           parameter: "rank",
           values: ["pool"],
@@ -2878,7 +2883,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "rank_pool",
         type: "checkbox",
         label: "Possible Ranks",
-        checkboxOptions: [...RANKS.map(rank => rank.label)],
+        checkboxOptions: [...RANKS],
         showWhen: {
           parameter: "rank",
           values: ["pool"],
@@ -2899,7 +2904,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "suit_pool",
         type: "checkbox",
         label: "Possible Suits",
-        checkboxOptions: [...SUITS.map(suit => suit.label)],
+        checkboxOptions: [...SUITS],
         showWhen: {
           parameter: "suit",
           values: ["pool"],
@@ -3629,7 +3634,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "suit_pool",
         type: "checkbox",
         label: "Possible Suits",
-        checkboxOptions: [...SUITS.map(suit => suit.label)],
+        checkboxOptions: [...SUITS],
         showWhen: {
           parameter: "suit",
           values: ["pool"],
@@ -3651,7 +3656,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "rank_pool",
         type: "checkbox",
         label: "Possible Ranks",
-        checkboxOptions: [...RANKS.map(rank => rank.label)],
+        checkboxOptions: [...RANKS],
         showWhen: {
           parameter: "rank",
           values: ["pool"],

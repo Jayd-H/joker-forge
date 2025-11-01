@@ -49,7 +49,6 @@ import {
 import { GameVariable, getGameVariableById } from "../data/GameVars";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { SelectedItem } from "./types";
-
 import  Checkbox  from "../generic/Checkbox";
 
 
@@ -427,8 +426,14 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
   if (hasShowWhen(param)) {
     const { parameter, values } = param.showWhen;
     const parentValue = parentValues[parameter];
-    if (!values.includes(parentValue as string)) {
-      return null;
+    if (Array.isArray(parentValue) && typeof parentValue[0] === "boolean") {
+      if (!values.some(value => parentValue[parseFloat(value)])) {
+        return null;
+      }
+    } else if (typeof parentValue === "string") {
+      if (!values.includes(parentValue)) {
+        return null;
+      }
     }
   }
 
@@ -1541,12 +1546,23 @@ const Inspector: React.FC<InspectorProps> = ({
           index += 1
         }})
       }
-      if (!hasShowWhen(param)) return true;
-      const { parameter, values } = param.showWhen;
 
+      if (!hasShowWhen(param)) return true;
+
+      const { parameter, values } = param.showWhen;
       const parentValue = selectedEffect.params[parameter];
-      return values.includes(parentValue as string);
-    });
+      if (Array.isArray(parentValue) && typeof parentValue[0] === "boolean") {
+        if (!values.some(value => parentValue[parseFloat(value)])) {
+          return null;
+        } else return true
+      } else if (typeof parentValue === "string") {
+        if (!values.includes(parentValue)) {
+          return null;
+        } else return true
+      } else return null
+    })
+
+
 
     const isInRandomGroup = selectedRule.randomGroups.some((group) =>
       group.effects.some((effect) => effect.id === selectedEffect.id)

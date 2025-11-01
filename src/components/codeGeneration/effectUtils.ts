@@ -905,7 +905,6 @@ export const generateSingleEffect = (
       return generateSetSellValueEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "set_dollars":
       return generateSetDollarsEffectCode(effect, cleanItemType, sameTypeCount)
-    // ADD DOLLARS FROM JOKERS EFFECT (OR MERGE INTO SET DOLLARS WITH GAMEVAR FOR SELL VALUE)
     case "set_ante":
       return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "emit_flag":
