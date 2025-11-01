@@ -2989,22 +2989,14 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     applicableTriggers: ["consumable_used", "held_hand"],
     params: [
       {
-        id: "method",
+        id: "target",
         type: "select",
         label: "Selection Method",
         options: [
-          {value: "random", label: "Random"}
+          {value: "random", label: "Random"},
         ],
         default: "random",
-      },
-      {
-        id: "amount",
-        type: "number",
-        label: "Number of Jokers to Edit",
-        default: 1,
-        min: 1,
-        max: 5,
-        showWhen: {parameter: "method", values: ["random"]},
+        variableTypes: ["joker_context"]
       },
       {
         id: "edition",
