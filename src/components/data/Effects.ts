@@ -1892,7 +1892,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "specific", label: "Specific Suit" },
           { value: "pool", label: "Random from Pool" },
         ],
-        default: "random",
+        default: "random",      
+        variableTypes: ["suit_context"]
       },
       {
         id: "suit_pool",
@@ -1914,7 +1915,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["suit", "suit_context"]
+        variableTypes: ["suit"]
       },
     ],
     category: "Variables",
@@ -1944,6 +1945,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "pool", label: "Random from Pool" },
         ],
         default: "random",
+        variableTypes: ["rank_context"]
       },
       {
         id: "rank_pool",
@@ -1965,7 +1967,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["rank", "rank_context"]
+        variableTypes: ["rank"]
       },
     ],
     category: "Variables",
