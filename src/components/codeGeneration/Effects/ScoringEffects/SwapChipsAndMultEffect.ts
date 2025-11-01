@@ -1,5 +1,5 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
 
 export const generateSwapChipsAndMultEffectCode = (
   effect: Effect,

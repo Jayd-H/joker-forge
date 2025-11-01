@@ -1,15 +1,14 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import { generateConfigVariables, } from "../gameVariableUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
+import { generateConfigVariables } from "../../gameVariableUtils";
 
-
-export const generateApplyExpChipsEffectCode = (
+export const generateApplyXChipsEffectCode = (
   effect: Effect,
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
   const variableName =
-    sameTypeCount === 0 ? "echips" : `echips${sameTypeCount + 1}`;
+    sameTypeCount === 0 ? "xchips" : `xchips${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
@@ -21,7 +20,7 @@ export const generateApplyExpChipsEffectCode = (
   const customMessage = effect.customMessage;
 
   const result: EffectReturn = {
-    statement: `e_chips = ${valueCode}`,
+    statement: `x_chips = ${valueCode}`,
     colour: "G.C.DARK_EDITION",
     configVariables: configVariables.length > 0 ? configVariables : undefined,
   };
@@ -31,4 +30,4 @@ export const generateApplyExpChipsEffectCode = (
   }
 
   return result;
-}
+};

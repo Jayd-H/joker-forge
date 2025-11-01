@@ -1,17 +1,17 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import { generateConfigVariables } from "../gameVariableUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
+import { generateConfigVariables } from "../../gameVariableUtils";
 
-export const generateApplyHyperMultEffectCode = (
+export const generateApplyHyperChipsEffectCode = (
   effect: Effect,
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
   const variableNameN =
-    sameTypeCount === 0 ? "hypermult_n" : `hypermult_n${sameTypeCount + 1}`;
+    sameTypeCount === 0 ? "hyperchips_n" : `hyperchips_n${sameTypeCount + 1}`;
   
     const variableNameArrows =
-    sameTypeCount === 0 ? "hypermult_arrows" : `hypermult_arrows${sameTypeCount + 1}`;
+    sameTypeCount === 0 ? "hyperchips_arrows" : `hyperchips_arrows${sameTypeCount + 1}`;
 
   const N = generateConfigVariables(
     effect.params?.value,
@@ -32,7 +32,7 @@ export const generateApplyHyperMultEffectCode = (
   const configVariables = [...N.configVariables, ...Arrows.configVariables]
 
   const result: EffectReturn = {
-    statement: `hypermult = {
+    statement: `hyperchips = {
     ${Arrows.valueCode},
     ${N.valueCode}
 }`,

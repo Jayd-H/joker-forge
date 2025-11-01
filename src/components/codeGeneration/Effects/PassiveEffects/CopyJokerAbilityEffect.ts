@@ -1,5 +1,5 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { PassiveEffectResult } from "../effectUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { PassiveEffectResult } from "../../effectUtils";
 
 export const generateCopyJokerAbilityPassiveEffectCode = (
   effect: Effect,
