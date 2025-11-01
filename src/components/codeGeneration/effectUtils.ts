@@ -87,7 +87,6 @@ import { generateEditHandsMoneyEffectCode } from "./Effects/EditEndRoundHandMone
 import { generateEditInterestCapEffectCode } from "./Effects/EditInterestCapEffect";
 import { generateEditRerollPriceEffectCode } from "./Effects/EditRerollPriceEffect";
 import { generateEditBoosterPacksEffectCode } from "./Effects/EditBoosterPacksEffect";
-import { generateEditRarityWeightEffectCode } from "./Effects/EditRarityWeightEffect";
 import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect";
 import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 import { generateEditStartingDollarsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
@@ -842,8 +841,8 @@ export const generateSingleEffect = (
       return generateEditBoosterPacksEffectCode(effect, itemType, sameTypeCount)
     case "edit_booster_slots": case "edit_voucher_slots": case "edit_shop_slots":
     case "edit_discard_size": case "edit_hand_size": case "edit_play_size":
-      const type = effect.type.slice(5)
-      return generateEditItemSizeEffectCode(effect, cleanItemType, sameTypeCount, type)
+      const sizeItemType = effect.type.slice(5)
+      return generateEditItemSizeEffectCode(effect, cleanItemType, sameTypeCount, sizeItemType)
     case "edit_card":
       return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "edit_cards":
@@ -866,11 +865,9 @@ export const generateSingleEffect = (
       return generateEditDiscardsEffectCode(effect, itemType, sameTypeCount)
     case "edit_card_appearance":
       return generateEditCardAppearanceEffectCode(effect)
-    case "edit_rarity_weight":
-      return generateEditRarityWeightEffectCode(effect, cleanItemType, sameTypeCount)
-    case "edit_item_weight":
-      return generateEditItemWeightEffectCode(effect, cleanItemType, sameTypeCount)
-    // POSSIBLE MERGE FOR EDIT ITEM/RARITY WEIGHT
+    case "edit_rarity_weight": case "edit_item_weight":
+      const weightItemType = effect.type.slice(5)
+      return generateEditItemWeightEffectCode(effect, cleanItemType, sameTypeCount, weightItemType)
     case "fool_effect":
       return generateFoolEffectCode(effect, itemType)
     case "increment_rank":

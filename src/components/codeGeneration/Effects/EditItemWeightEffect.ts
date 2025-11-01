@@ -5,9 +5,10 @@ import { generateConfigVariables } from "../gameVariableUtils";
 export const generateEditItemWeightEffectCode = (
   effect: Effect,
   itemType: string,
-  sameTypeCount: number = 0
+  sameTypeCount: number = 0,
+  type: string
 ): EffectReturn => {
-  const operation = effect.params?.operation as string|| "add";
+  const operation = effect.params?.operation as string || "add";
   const key = effect.params?.key as string || "";
 
   const variableName =
@@ -20,28 +21,20 @@ export const generateEditItemWeightEffectCode = (
     itemType
   );
 
+  const itemCode = type === "rarity_weight" ? `G.GAME.${key}_mod` : `G.GAME.${key}_rate`
+
   let ItemWeightCode = "";
 
   if (operation === "add") {
-    ItemWeightCode += `
-    G.GAME.${key}_rate = G.GAME.${key}_rate +${valueCode}
-    `;
+    ItemWeightCode = `${itemCode} = ${itemCode} + ${valueCode}`;
   } else if (operation === "subtract") {
-        ItemWeightCode += `
-        G.GAME.${key}_rate = G.GAME.${key}_rate -${valueCode}
-        `;
+    ItemWeightCode = `${itemCode} = ${itemCode} -${valueCode}`;
   } else if (operation === "set") {
-        ItemWeightCode += `
-        G.GAME.${key}_rate = ${valueCode}
-        `;
+    ItemWeightCode = `${itemCode} = ${valueCode}`;
   } else if (operation === "multiply") {
-        ItemWeightCode += `
-        G.GAME.${key}_rate = G.GAME.${key}_rate *${valueCode}
-        `;
+    ItemWeightCode = `${itemCode} = ${itemCode} * ${valueCode}`;
   } else if (operation === "divide") {
-        ItemWeightCode += `
-        G.GAME.${key}_rate = G.GAME.${key}_rate /${valueCode}
-        `;
+    ItemWeightCode = `${itemCode} = ${itemCode} / ${valueCode}`;
   }
 
   if (itemType === "voucher") {
