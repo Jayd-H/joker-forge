@@ -1,6 +1,6 @@
 import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
 import { JokerData, EnhancementData, SealData, EditionData, ConsumableData, VoucherData, DeckData } from "../data/BalatroUtils";
-import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
+import { generateAddCardToDeckEffectCode } from "./Effects/EditStartingDeckEffects/AddCardToDeckEffect";
 import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/AddChipsEffect";
 import { generateApplyXChipsEffectCode } from "./Effects/ApplyXChipsEffect";
@@ -56,13 +56,13 @@ import { generateDestroyCardsEffectCode } from "./Effects/DestroyCardsEffect";
 import { generateDestroySelfEffectCode } from "./Effects/DestroySelfEffect";
 import { generateDestroyJokerEffectCode } from "./Effects/DestroyJokerEffect";
 import { generateDestroyConsumableEffectCode } from "./Effects/DestroyConsumableEffect";
-import { generateEditStartingCardsEffectCode } from "./Effects/EditStartingCardsEffect";
-import { generateEditStartingSuitsEffectCode } from "./Effects/EditStartingSuitsEffect";
-import { generateEditStartingRanksEffectCode } from "./Effects/EditStartingRanksEffect";
+import { generateEditStartingCardsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingCardsEffect";
+import { generateEditStartingSuitsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingSuitsEffect";
+import { generateEditStartingRanksEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingRanksEffect";
 import { generateEditJokerEffectCode } from "./Effects/EditJokerEffect";
 import { generateEditWinnerAnteEffectCode } from "./Effects/EditWinnerAnteEffect";
 import { generateAddStartingCardsEffectCode } from "./Effects/AddStartingCardsEffect";
-import { generateRemoveStartingCardsEffectCode } from "./Effects/RemoveStartingCardsEffect";
+import { generateRemoveStartingCardsEffectCode } from "./Effects/EditStartingDeckEffects/RemoveStartingCardsEffect";
 import { generateDestroyCardEffectCode } from "./Effects/DestroyCardEffect";
 import { generateEditCardEffectCode } from "./Effects/EditCardEffect";
 import { generateEditCardsEffectCode } from "./Effects/EditCardsEffect";
@@ -97,6 +97,7 @@ import { generateEditRarityWeightEffectCode } from "./Effects/EditRarityWeightEf
 import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect";
 import { generateEditCardsInHandEffectCode } from "./Effects/EditCardsInHandEffect";
 import { coordinateVariableConflicts } from "./Jokers/variableUtils";
+import { generateEditStartingDollarsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -947,6 +948,8 @@ export const generateSingleEffect = (
       return generateAddStartingCardsEffectCode(effect, sameTypeCount, modprefix)
     case "remove_starting_cards":
       return generateRemoveStartingCardsEffectCode(effect, sameTypeCount)
+    case "edit_starting_dollars":
+      return generateEditStartingDollarsEffectCode(effect)
     
     default:
       return {
