@@ -2356,6 +2356,24 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     objectUsers: ["joker", "card"],
     params: [
       {
+        id: "message_type",
+        type: "select",
+        label: "Message Type",
+        options: [
+          { value: "text", label: "Custom Text"},
+          { value: "variable", label: "Text Variable"},
+        ],
+        default: "text",
+      },
+      {
+        id: "text_var",
+        type: "select",
+        label: "Text Variable",
+        options: [],
+        variableTypes: ["text"],
+        showWhen: {parameter: "message_type", values: ["variable"]}
+      },
+      {
         id: "colour",
         type: "select",
         label: "Message Color",
