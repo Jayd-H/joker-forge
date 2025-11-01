@@ -70,7 +70,7 @@ export interface GlobalTriggerDefinition {
 // When a parameter should be shown based on other parameter values
 export interface ShowWhenCondition {
   parameter: string;
-  values: string[];
+  values: string[] | number[];
 }
 
 // Interface for condition parameter options
@@ -137,7 +137,7 @@ export interface EffectParameter {
     | EffectParameterOption[]
     | (() => EffectParameterOption[])
     | ((parentValues: Record<string, unknown>) => EffectParameterOption[]);
-  checkboxOptions?: EffectParameterOption[]
+  checkboxOptions?: string[]
   min?: number;
   max?: number;
   default?: unknown;

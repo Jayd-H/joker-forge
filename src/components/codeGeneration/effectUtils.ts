@@ -89,7 +89,6 @@ import { generateEditRerollPriceEffectCode } from "./Effects/EditRerollPriceEffe
 import { generateEditBoosterPacksEffectCode } from "./Effects/EditBoosterPacksEffect";
 import { generateEditRarityWeightEffectCode } from "./Effects/EditRarityWeightEffect";
 import { generateEditItemWeightEffectCode } from "./Effects/EditItemWeightEffect";
-import { generateEditCardsInHandEffectCode } from "./Effects/EditCardsInHandEffect";
 import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 import { generateEditStartingDollarsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
 import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode } from "./Effects/EditItemSizeEffect";
@@ -849,8 +848,6 @@ export const generateSingleEffect = (
       return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "edit_cards":
       return generateEditCardsEffectCode(effect, itemType, modprefix)
-    case "edit_cards_in_hand":
-      return generateEditCardsInHandEffectCode(effect, itemType, sameTypeCount, modprefix)
     case "edit_joker_slots":
       return generateEditJokerSlotsEffectCode(effect, itemType, sameTypeCount)
     case "edit_consumable_slots":
@@ -907,7 +904,7 @@ export const generateSingleEffect = (
     case "set_sell_value":
       return generateSetSellValueEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "set_dollars":
-      return generateSetDollarsEffectCode(effect, itemType, sameTypeCount, card)
+      return generateSetDollarsEffectCode(effect, cleanItemType, sameTypeCount)
     // ADD DOLLARS FROM JOKERS EFFECT (OR MERGE INTO SET DOLLARS WITH GAMEVAR FOR SELL VALUE)
     case "set_ante":
       return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
