@@ -1,7 +1,7 @@
-import { EDITIONS } from "../../data/BalatroUtils";
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import { generateConfigVariables } from "../gameVariableUtils";
+import { EDITIONS } from "../../../data/BalatroUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
+import { generateConfigVariables } from "../../gameVariableUtils";
 
 export const generateAddStartingCardsEffectCode = (
   effect: Effect,

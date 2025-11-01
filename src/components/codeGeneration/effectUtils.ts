@@ -1,6 +1,6 @@
 import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
 import { JokerData, EnhancementData, SealData, EditionData, ConsumableData, VoucherData, DeckData } from "../data/BalatroUtils";
-import { generateAddCardToDeckEffectCode } from "./Effects/EditStartingDeckEffects/AddCardToDeckEffect";
+import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
 import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/ScoringEffects/AddChipsEffect";
 import { generateApplyXChipsEffectCode } from "./Effects/ScoringEffects/ApplyXChipsEffect";
@@ -61,7 +61,7 @@ import { generateEditStartingSuitsEffectCode } from "./Effects/EditStartingDeckE
 import { generateEditStartingRanksEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingRanksEffect";
 import { generateEditJokerEffectCode } from "./Effects/EditJokerEffect";
 import { generateEditWinnerAnteEffectCode } from "./Effects/EditWinnerAnteEffect";
-import { generateAddStartingCardsEffectCode } from "./Effects/AddStartingCardsEffect";
+import { generateAddStartingCardsEffectCode } from "./Effects/EditStartingDeckEffects/AddStartingCardsEffect";
 import { generateRemoveStartingCardsEffectCode } from "./Effects/EditStartingDeckEffects/RemoveStartingCardsEffect";
 import { generateDestroyCardEffectCode } from "./Effects/DestroyCardEffect";
 import { generateEditCardEffectCode } from "./Effects/EditCardEffect";

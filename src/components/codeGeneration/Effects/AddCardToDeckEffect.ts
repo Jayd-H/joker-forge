@@ -1,7 +1,7 @@
-import type { Effect } from "../../../ruleBuilder/types";
-import type { EffectReturn } from "../../effectUtils";
-import { EDITIONS, SEALS, type JokerData } from "../../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../../userVariableUtils";
+import type { Effect } from "../../ruleBuilder/types";
+import type { EffectReturn } from "../effectUtils";
+import { EDITIONS, SEALS, type JokerData } from "../../data/BalatroUtils";
+import { parseRankVariable, parseSuitVariable } from "../userVariableUtils";
 
 export const generateAddCardToDeckEffectCode = (
   effect: Effect,
