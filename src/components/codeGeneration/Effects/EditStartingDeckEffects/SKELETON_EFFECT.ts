@@ -1,10 +1,10 @@
-import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
-import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
+import type { Effect } from "../../../ruleBuilder/types";
+import type { EffectReturn } from "../../effectUtils";
+import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../../data/BalatroUtils";
 import {
   generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+} from "../../gameVariableUtils";
+import { generateGameVariableCode } from "../../Consumables/gameVariableUtils";
 
 export const generateEffectCode = (
   effect: Effect,
@@ -40,10 +40,14 @@ const generateJokerCode = (
   sameTypeCount: number = 0,
   joker?: JokerData
 ): EffectReturn => {
+const variableName =
+    sameTypeCount === 0 ? "value" : `value${sameTypeCount + 1}`;
+
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
+    variableName,
+    'joker'
   );
 
   return {
