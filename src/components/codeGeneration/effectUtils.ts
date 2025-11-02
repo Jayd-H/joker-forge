@@ -846,7 +846,7 @@ export const generateSingleEffect = (
     case "edit_discard_size": case "edit_hand_size": case "edit_play_size":
       const sizeItemType = effect.type.slice(5)
       return generateEditItemSizeEffectCode(effect, cleanItemType, sameTypeCount, sizeItemType)
-    case "edit_card":
+    case "edit_playing_card":
       return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "edit_cards":
       return generateEditCardsEffectCode(effect, itemType, modprefix)

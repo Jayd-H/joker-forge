@@ -37,6 +37,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "probability_result",
   "tag_added",
   "ante_start",
+  "card_used",
 ];
 
 export const ALL_OBJECTS = [
@@ -53,7 +54,7 @@ export const CONDITION_CATEGORIES: CategoryDefinition[] = [
     icon: RectangleStackIcon,
   },
   {
-    label: "Joker",
+    label: "Jokers",
     icon: RectangleStackIcon,
   },
   {
@@ -61,7 +62,7 @@ export const CONDITION_CATEGORIES: CategoryDefinition[] = [
     icon: UserIcon,
   },
   {
-    label: "Deck & Jokers",
+    label: "Deck",
     icon: ArchiveBoxIcon,
   },
   {
@@ -83,12 +84,14 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "hand_type",
     label: "Hand Type",
     description: "Check the type of poker hand",
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "card"],
     applicableTriggers: [
       "hand_played",
       "card_scored",
+      "card_discarded",
       "after_hand_played",
       "before_hand_played",
+      "card_held_in_hand",
     ],
     params: [
       {
@@ -669,7 +672,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Player Money",
     description: "Check how much money the player has",
     objectUsers: [...ALL_OBJECTS],
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "card_used"],
     params: [
       {
         id: "operator",
@@ -954,7 +957,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: 1,
       },
     ],
-    category: "Deck & Jokers",
+    category: "Jokers",
   },
   {
     id: "first_last_scored",
@@ -1047,7 +1050,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         }
       },
     ],
-    category: "Deck & Jokers",
+    category: "Jokers",
   },
   {
     id: "internal_variable",
@@ -1522,6 +1525,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
       "first_hand_drawn",
       "game_over",
       "card_destroyed",
+      "card_used"
     ],
     params: [
       {
@@ -1545,7 +1549,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Joker Selected",
     description: "Check if a joker is selected/highlighted",
     objectUsers: ["joker", "consumable"],
-    applicableTriggers:  [...GENERIC_TRIGGERS],
+    applicableTriggers:  [...GENERIC_TRIGGERS, "card_used"],
     params: [
       {
         id: "check_key",
@@ -1585,7 +1589,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         exemptObjects: ["consumable"]
       },
     ],
-    category: "Deck & Jokers",
+    category: "Jokers",
   },
   {
     id: "voucher_redeemed",
@@ -1646,6 +1650,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     applicableTriggers: [
       "hand_played",
       "card_scored",
+      "card_held_in_hand",
       "card_discarded",
       "after_hand_played",
       "before_hand_played",
@@ -1702,7 +1707,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: "Red Deck",
       },
     ],
-    category: "Deck & Jokers",
+    category: "Deck",
   },
   {
     id: "hand_size",
@@ -1756,7 +1761,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: 52,
       },
     ],
-    category: "Deck & Jokers",
+    category: "Deck",
   },
   {
     id: "deck_count",
@@ -1862,7 +1867,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: 1,
       },
     ],
-    category: "Deck & Jokers",
+    category: "Deck",
   },
   {
     id: "probability_succeeded",
@@ -2022,7 +2027,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         }
       },
     ],
-    category: "Joker",
+    category: "Jokers",
   },
   {
     id: "joker_rarity",
@@ -2041,7 +2046,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: "common",
       },
     ],
-    category: "Joker",
+    category: "Jokers",
   },
   {
     id: "joker_index",
@@ -2072,7 +2077,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         },
       },
     ],
-    category: "Joker",
+    category: "Jokers",
   },
   {
     id: "this_joker_index",
@@ -2103,7 +2108,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         },
       },
     ],
-    category: "Deck & Jokers",
+    category: "Jokers",
   },
   {
     id: "joker_sticker",
@@ -2122,7 +2127,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: "eternal",
       },
     ],
-    category: "Joker",
+    category: "Jokers",
   },
   {
     id: "this_joker_sticker",
@@ -2141,7 +2146,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: "eternal",
       },
     ],
-    category: "Deck & Jokers",
+    category: "Jokers",
   },
   {
     id: "joker_flipped",
@@ -2150,7 +2155,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     objectUsers: ["joker", "consumable"],
     applicableTriggers: ["joker_evaluated", "card_used"],
     params: [],
-    category: "Joker",
+    category: "Jokers",
   },
   {
     id: "this_joker_flipped",
@@ -2159,7 +2164,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     objectUsers: ["joker"],
     applicableTriggers: [...GENERIC_TRIGGERS],
     params: [],
-    category: "Deck & Jokers",
+    category: "Jokers",
   },
   {
     id: "cards_selected",

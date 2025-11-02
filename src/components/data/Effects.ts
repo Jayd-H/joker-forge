@@ -73,7 +73,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -96,7 +95,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -118,7 +116,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -140,7 +137,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -169,7 +165,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -192,7 +187,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -214,7 +208,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -236,7 +229,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "hand_played",
       "card_scored",
       "card_held_in_hand",
-      "card_discarded",
       "joker_evaluated",
     ],
     params: [
@@ -260,7 +252,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "set_dollars",
     label: "Edit Dollars",
     description: "Modify your money balance",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "voucher_redeemed"],
     objectUsers: [...ALL_OBJECTS],
     params: [
       {
@@ -358,7 +350,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "retrigger_cards",
     label: "Retrigger",
     description: "Retrigger the scored/activated card",
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "card"],
     applicableTriggers: [
       "card_scored",
       "card_discarded",
@@ -420,7 +412,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_hands",
     label: "Edit Hands",
     description: "Modify the number of hands available",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -458,8 +450,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_discards",
     label: "Edit Discards",
     description: "Modify the number of discards available",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
-    objectUsers: [...ALL_OBJECTS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "voucher_redeemed"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
         id: "operation",
@@ -496,7 +488,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_hand_size",
     label: "Edit Hand Size",
     description: "Modify the hand size (number of cards you can hold)",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -531,7 +523,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "card_held_in_hand",
       "after_hand_played",
       "before_hand_played",
-      "consumable_used",
+      "card_used",
       "card_discarded",
       "hand_discarded",
     ],
@@ -550,7 +542,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Play Size",
     description:
       "Modify the Play size (number of cards you can select and Play)",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -578,7 +570,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Discard Size",
     description:
       "Modify the Discard size (number of cards you can select and Discard)",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -830,7 +822,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_win_ante",
     label: "Set Winner Ante",
     description: "Set the Final Ante where the Player Win's the Game",
-    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected", "voucher_redeemed"],
     objectUsers: ["consumable", "deck", "joker", "voucher"],
     params: [
       {
@@ -1361,7 +1353,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "set_ante",
     label: "Set Ante Level",
     description: "Modify the current ante level",
-    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -1499,9 +1491,9 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
   {
     id: "destroy_cards",
     label: "Destroy Cards",
-    description: "Destroy a number of random cards from hand",
+    description: "Destroy a number of cards from hand",
     objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used", "held_hand"],
+    applicableTriggers: ["card_used", "held_hand"],
     params: [
       {
         id: "method",
@@ -1509,6 +1501,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Selection Method",
         options: [
           { value: 'random', label: 'Random'},
+          { value: 'selected', label: 'Selected'},
         ],
         default: 'random',
       },
@@ -1518,7 +1511,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Number of Cards",
         default: 1,
         min: 1,
-        max: 8,
+        showWhen: { parameter: "method", values: ["random"]}
       },
     ],
     category: "Card Effects",
@@ -1627,7 +1620,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_booster_packs",
     label: "Edit Boosters Packs",
     description: "Modify the values the of booster packs available in shop",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "decks"],
     params: [
       {
@@ -1665,7 +1658,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_shop_slots",
     label: "Edit Shop Cards Slots",
     description: "Modify the Card slots of the shop ",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -1701,7 +1694,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "card_discarded",
       "hand_discarded",
       "card_held_in_hand",
-      "consumable_used",
+      "card_used",
       "joker_evaluated",
       "deck_selected",
     ],
@@ -1732,7 +1725,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_consumable_slots",
     label: "Edit Consumable Slots",
     description: "Modify the number of consumable slots available",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "voucher", "deck"],
     params: [
       {
@@ -1760,7 +1753,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_voucher_slots",
     label: "Edit Voucher Slots",
     description: "Modify the number of vouchers available in shop",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -1788,7 +1781,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_booster_slots",
     label: "Edit Booster Slots",
     description: "Modify the number of booster packs available in shop",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -1816,7 +1809,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_joker_slots",
     label: "Edit Joker Slots",
     description: "Modify the number of joker slots available",
-    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -1889,7 +1882,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_card_appearance",
     label: "Edit Card Appearance",
     description: "Modify if a Card can appear or not the current Run",
-    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected", "voucher_redeemed"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
@@ -1969,7 +1962,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     description:
       "Change the value of a rank variable to a specific rank or random rank",
     applicableTriggers: [...GENERIC_TRIGGERS],
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "card"],
     params: [
       {
         id: "variable_name",
@@ -2400,8 +2393,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Emit Flag",
     description:
       "Emit a custom flag. Flags are global variables that can be set to true or false and checked by any other jokers",
-    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected"],
-    objectUsers: ["joker", "consumable", "deck"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected", "voucher_redeemed"],
+    objectUsers: [...ALL_OBJECTS],
     params: [
       {
         id: "flag_name",
@@ -2437,7 +2430,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "play_sound",
     label: "Play a sound",
     description: "Play a specific sound defined in the Sound Tab",
-    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "deck_selected", "voucher_redeemed"],
     objectUsers: [...ALL_OBJECTS],
     params: [
       {
@@ -2497,7 +2490,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Convert All Cards to Suit",
     description: "Convert all cards in hand to a specific suit",
     objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used", "held_hand"],
+    applicableTriggers: ["card_used", "held_hand"],
     params: [
       {
         id: "suit",
@@ -2528,7 +2521,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Convert All Cards to Rank",
     description: "Convert all cards in hand to a specific rank",
     objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used", "held_hand"],
+    applicableTriggers: ["card_used", "held_hand"],
     params: [
       {
         id: "rank",
@@ -2559,7 +2552,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Convert Left to Right",
     description: "Convert all selected cards to match the rightmost selected card (like Death tarot)",
     objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["card_used"],
     params: [],
     category: "Card Effects",
   },
@@ -2634,7 +2627,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Create Last Used Consumable",
     description: "Create a copy of the last Tarot or Planet card that was used (like The Fool)",
     objectUsers: ['consumable'],
-    applicableTriggers: ["consumable_used", "held_hand"],
+    applicableTriggers: ["card_used", "held_hand"],
     params: [],
     category: "Consumables",
   },
@@ -2643,7 +2636,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Increment/Decrement Rank",
     description: "Increase or decrease the rank of selected cards by a specified amount",
     objectUsers: ['consumable'],
-    applicableTriggers: ["consumable_used"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "operation",
@@ -2671,7 +2664,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Discount Items",
     description: "Reduce the cost of specific shop items",
     objectUsers: ["joker", "voucher"],
-    applicableTriggers: ["passive", "card_used"],
+    applicableTriggers: ["passive", "card_used", "voucher_redeemed"],
     params: [
       {
         id: "discount_type",
@@ -3052,7 +3045,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Joker",
     description: "Edit a joker in your joker area",
     objectUsers: ["consumable"],
-    applicableTriggers: ["consumable_used", "held_hand"],
+    applicableTriggers: ["card_used", "held_hand"],
     params: [
       {
         id: "target",
@@ -3102,7 +3095,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Reroll Price",
     description: "Modify the price of the shop Reroll",
     objectUsers: ["voucher", "deck"],
-    applicableTriggers: ["card_used", "deck_selected"],
+    applicableTriggers: ["card_used", "deck_selected", "voucher_redeemed"],
     params: [
       {
         id: "operation",
@@ -3129,7 +3122,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Free Rerolls",
     description: "Provide free shop rerolls",
     objectUsers: ["joker", "voucher"],
-    applicableTriggers: ["card_used", "passive"],
+    applicableTriggers: ["card_used", "passive", "voucher_redeemed"],
     params: [
       {
         id: "value",
@@ -3233,7 +3226,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_playing_card",
     label: "Edit Card",
     description: "Modify the properties of the card that triggered this effect",
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "card"],
     applicableTriggers: [
       "card_scored",
       "card_discarded",
@@ -3466,7 +3459,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Hand Money",
     description: "Add, subtract, or set the player's end of the round hand money",
     objectUsers: ["voucher", "deck"],
-    applicableTriggers: ["card_used", "deck_selected"],
+    applicableTriggers: ["card_used", "deck_selected", "voucher_redeemed"],
     params: [
       {
         id: "operation",
@@ -3495,7 +3488,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Discard Money",
     description: "set the player's end of the round discard money",
     objectUsers: ["voucher", "deck"],
-    applicableTriggers: ["card_used", "deck_selected"],
+    applicableTriggers: ["card_used", "deck_selected", "voucher_redeemed"],
     params: [
       {
         id: "operation",
@@ -3520,7 +3513,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Interest Cap",
     description: "Modify the Cap on Interest Earned in each round",
     objectUsers: ["voucher", "deck"],
-    applicableTriggers: ["card_used"],
+    applicableTriggers: ["card_used", "voucher_redeemed"],
     params: [
       {
         id: "operation",
@@ -3550,7 +3543,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Rarity Weight",
     description: "Modify the Rate Probability for Joker Rarities in the Shop",
     objectUsers: ["voucher", "deck"],
-    applicableTriggers: ["card_used", "deck_selected"],
+    applicableTriggers: ["card_used", "deck_selected", "voucher_redeemed"],
     params: [
       {
           id: "key_rarity",
@@ -3586,7 +3579,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Card Weight",
     description: "Modify the Rate Probability for Shop Cards",
     objectUsers: ["voucher", "deck"],
-    applicableTriggers: ["card_used", "deck_selected"],
+    applicableTriggers: ["card_used", "deck_selected", "voucher_redeemed"],
     params: [
       {
           id: "key",
@@ -3619,7 +3612,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
   },
   {
     id: "edit_cards",
-    label: "Edit Selected Cards",
+    label: "Edit Cards",
     description: "Apply multiple modifications to selected cards (enhancement, seal, edition, suit, rank)",
     objectUsers: ["consumable"],
     applicableTriggers: ["card_used"],
