@@ -268,7 +268,7 @@ const generateApplyFunction = (
   modPrefix: string,
   deck: DeckData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "deck_selected")
 
   if (filtered_rules.length === 0) return "";
 
@@ -322,7 +322,7 @@ const generateCalculateFunction = (
   deck: DeckData,
 ): string => {
 
-  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "deck_selected")
 
   if (filtered_rules.length === 0) return "";
 
@@ -414,7 +414,7 @@ ${indentLevel}${effectResult.preReturnCode}`;
 
     if (effectResult.statement) {
       ruleCode += `
-${indentLevel}return {${effectResult.statement}}`;
+${indentLevel}${effectResult.statement}`;
     }
 
     if (triggerCondition) {

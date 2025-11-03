@@ -94,7 +94,7 @@ const generateCalculateFunction = (
   modPrefix: string,
   voucher: VoucherData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "voucher_redeemed")
 
   if (filtered_rules.length === 0) return "";
 
@@ -187,7 +187,7 @@ ${indentLevel}${effectResult.preReturnCode}`;
 
     if (effectResult.statement) {
       ruleCode += `
-${indentLevel}return {${effectResult.statement}}`;
+${indentLevel}${effectResult.statement}`;
     }
 
     if (triggerCondition) {
@@ -397,7 +397,7 @@ const generateRedeemFunction = (
   modPrefix: string,
   voucher?: VoucherData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "voucher_redeemed")
 
   if (filtered_rules.length === 0) return "";
 

@@ -40,10 +40,14 @@ const generateJokerCode = (
   sameTypeCount: number = 0,
   joker?: JokerData
 ): EffectReturn => {
+const variableName =
+    sameTypeCount === 0 ? "value" : `value${sameTypeCount + 1}`;
+
   const { valueCode, configVariables } = generateConfigVariables(
     effect.params?.value,
     effect.id,
-    `value${sameTypeCount + 1}`,
+    variableName,
+    'joker'
   );
 
   return {
