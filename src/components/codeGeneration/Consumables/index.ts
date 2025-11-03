@@ -480,7 +480,8 @@ const generateUseFunction = (
 
   const globalEffectCounts = new Map<string, number>();
 
-  let useFunction = `use = function(self, card, area, copier)
+  let useFunction = `
+  use = function(self, card, area, copier)
         local used_card = copier or card`;
 
   filtered_rules.forEach((rule) => {

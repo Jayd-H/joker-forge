@@ -3,7 +3,7 @@ import { GlobalConditionTypeDefinition } from "../ruleBuilder/types";
 import { BOSS_BLINDS, CARD_SCOPES, COMPARISON_OPERATORS, CONSUMABLE_SETS, CUSTOM_CONSUMABLES, DECKS, EDITIONS, ENHANCEMENTS, PLANET_CARDS, POKER_HANDS, RANK_GROUPS, RANKS, RARITIES, SEALS, SPECTRAL_CARDS, STICKERS, SUIT_GROUPS, SUITS, TAGS, TAROT_CARDS, VOUCHERS } from "./BalatroUtils";
 import { PROBABILITY_IDENTIFIERS } from "./Jokers/Conditions";
 import { VOUCHER_GENERIC_TRIGGERS } from "./Vouchers/Conditions";
-import { ArchiveBoxIcon, HandRaisedIcon, ReceiptPercentIcon, InformationCircleIcon, RectangleStackIcon, SparklesIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxIcon, HandRaisedIcon, ReceiptPercentIcon, InformationCircleIcon, RectangleStackIcon, SparklesIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 export const GENERIC_TRIGGERS: string[] = [
   "blind_selected",
@@ -55,7 +55,7 @@ export const CONDITION_CATEGORIES: CategoryDefinition[] = [
   },
   {
     label: "Jokers",
-    icon: RectangleStackIcon,
+    icon: UserGroupIcon,
   },
   {
     label: "Player Resources",
