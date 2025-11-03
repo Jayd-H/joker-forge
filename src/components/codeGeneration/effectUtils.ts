@@ -53,7 +53,6 @@ import { generateModifyInternalVariableEffectCode } from "./Effects/Variables/Mo
 import { generateFoolEffectCode } from "./Effects/FoolEffect";
 import { generateIncrementRankEffectCode } from "./Effects/IncrementRankEffect";
 import { generateDestroyCardsEffectCode } from "./Effects/DestroyCardsEffect";
-import { generateDestroySelfEffectCode } from "./Effects/DestroySelfEffect";
 import { generateDestroyJokerEffectCode } from "./Effects/DestroyJokerEffect";
 import { generateDestroyConsumableEffectCode } from "./Effects/DestroyConsumableEffect";
 import { generateEditStartingCardsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingCardsEffect";
@@ -820,10 +819,8 @@ export const generateSingleEffect = (
       return generateCreateTagEffectCode(effect, triggerType)
     case "destroy_cards":
       return generateDestroyCardsEffectCode(effect, itemType, sameTypeCount)
-    case "destroy_card":
+    case "destroy_playing_card":
       return generateDestroyCardEffectCode(effect, itemType, triggerType)
-    case "destroy_self":
-      return generateDestroySelfEffectCode(effect, itemType, triggerType)
     case "destroy_joker":
       return generateDestroyJokerEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "destroy_consumable":

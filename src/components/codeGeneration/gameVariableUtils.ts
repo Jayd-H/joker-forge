@@ -113,7 +113,7 @@ export const generateConfigVariables = (
   effectValue = effectValue ?? 1;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
-
+  
   let abilityPath: string;
   if (itemType === "seal") {
     abilityPath = "card.ability.seal.extra";
@@ -153,6 +153,14 @@ export const generateConfigVariables = (
     });
   }
 
+  if (itemType === "deck" || itemType === "voucher" || itemType === "consumable") {
+    return { 
+      valueCode: effectValue as string, 
+      configVariables: [], 
+      isXVariable: { isGameVariable: false, isRangeVariable: false} 
+    }
+  }
+  
   return {
     valueCode,
     configVariables,
