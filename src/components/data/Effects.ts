@@ -1085,8 +1085,9 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Joker" },
           { value: "specific", label: "Specific Joker" },
+          { value: "self", label: "This Joker", exempt: ["consumable", "card"] },
           { value: "position", label: "By Position" },
-          { value: "selected", label: "Selected Joker" },
+          { value: "selected", label: "Selected Joker", exempt: ["joker", "card"] },
         ],
         default: "random",
         variableTypes: ["joker", "joker_context"],
@@ -1108,8 +1109,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "first", label: "First Joker" },
           { value: "last", label: "Last Joker" },
-          { value: "left", label: "Left of This Joker" },
-          { value: "right", label: "Right of This Joker" },
+          { value: "left", label: "Left of This Joker", exempt: ["consumable", "card"] },
+          { value: "right", label: "Right of This Joker", exempt: ["consumable", "card"] },
           { value: "specific", label: "Specific Index" },
         ],
         default: "first",
@@ -1136,21 +1137,35 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "no", label: "No" },
           { value: "yes", label: "Yes" },
         ],
+        exemptObjects: ["consumable", "card"],
         default: "no",
       },
       {
         id: "sell_value_multiplier",
         type: "number",
         label: "Sell Value Multiplier (0 = disabled)",
-        
         default: 0,
+        exemptObjects: ["consumable", "card"]
       },
       {
         id: "variable_name",
         type: "text",
         label: "Variable to Add Sell Value To",
         default: "var1",
+        exemptObjects: ["consumable", "card"]
       },
+      {
+        id: "animation",
+        type: "select",
+        label: "Animation",
+        options: [
+            { value: "start_dissolve", label: "Dissolve" },
+            { value: "shatter", label: "Shatter" },
+            { value: "explode", label: "Explode" },
+          ],
+        default : "start_dissolve",
+        exemptObjects: ["consumable", "card"]
+      }
     ],
     category: "Jokers",
   },
@@ -1168,7 +1183,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "all", label: "All Jokers" },
           { value: "random", label: "Random Joker" },
-          { value: "self", label: "This Joker" },
+          { value: "self", label: "This Joker", exempt: ["consumable"] },
           { value: "position", label: "By Position" },
           { value: "selected", label: "By Selection" },
         ],
@@ -1181,8 +1196,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "first", label: "First Joker" },
           { value: "last", label: "Last Joker" },
-          { value: "left", label: "Left of This Joker" },
-          { value: "right", label: "Right of This Joker" },
+          { value: "left", label: "Left of This Joker", exempt: ["consumable"]},
+          { value: "right", label: "Right of This Joker", exempt: ["consumable"] },
           { value: "specific", label: "Specific Index" },
         ],
         default: "first",
@@ -1378,31 +1393,25 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Game Rules",
   },
   {
-    id: "destroy_self",
-    label: "Destroy Self",
+    id: "destroy_playing_card",
+    label: "Destroy Card",
     description: "Destroy this Card",
     applicableTriggers: [...GENERIC_TRIGGERS],
     objectUsers: ["joker", "card"],
-    params: [{
-      id: "animation",
-      type: "select",
-      label: "Animation",
-      options: [
-          { value: "start_dissolve", label: "Dissolve" },
-          { value: "shatter", label: "Shatter" },
-          { value: "explode", label: "Explode" },
+    params: [
+      {
+        id: "set_glass_trigger",
+        label: "Glass Cards Triggered?",
+        description: "Should Jokers like glass joker be triggered?",
+        type: "select",
+        options: [
+          { value: "y", label: "True"},
+          { value: "n", label: "False"},
         ],
-      default : "start_dissolve",},{
-      id: "display_message",
-      type: "select",
-      label: "Show Message",
-      options: [
-          { value: "y", label: "Yes" },
-          { value: "n", label: "No" },
-        ],
-      default : "n",
-      exemptObjects: ["card"]
-    }],
+        default: "n",
+        exemptObjects: ["joker"]
+      }
+    ],
     category: "Card Effects",
   },
   {

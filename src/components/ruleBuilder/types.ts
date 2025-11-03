@@ -77,6 +77,7 @@ export interface ShowWhenCondition {
 export interface ConditionParameterOption {
   value: string;
   label: string;
+  exempt?: string[],
 }
 
 // Interface for condition parameters
@@ -124,6 +125,7 @@ export interface GlobalConditionTypeDefinition {
 export interface EffectParameterOption {
   value: string;
   label: string;  
+  exempt?: string[],
   checked?: boolean;
 }
 

@@ -13,6 +13,8 @@ export const generateDestroyJokerEffectCode = (
       return generateJokerCode(effect, triggerType)
     case "consumable":
       return generateConsumableCode(effect, sameTypeCount)
+    case "card":
+      return generateCardCode(effect)
 
     default:
       return {
@@ -26,16 +28,17 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const selectionMethod =
-    (effect.params?.selection_method as string) || "random";
+  const selectionMethod = (effect.params?.selection_method as string) || "random";
   const jokerKey = (effect.params?.joker_key as string) || "";
   const position = (effect.params?.position as string) || "first";
   const specificIndex = effect.params?.specific_index as number;
-  const customMessage = effect.customMessage;
-  const sellValueMultiplier =
-    (effect.params?.sell_value_multiplier as number) || 0;
+  
+  const sellValueMultiplier = (effect.params?.sell_value_multiplier as number) || 0;
   const variableName = (effect.params?.variable_name as string) || "";
   const bypassEternal = (effect.params?.bypass_eternal as string) === "yes";
+  
+  const animation = effect?.params.animation as string
+  const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -58,7 +61,7 @@ const generateJokerCode = (
                         break
                     end
                 end`;
-} else if (selectionMethod === "selected") {
+  } else if (selectionMethod === "selected_joker") {
       jokerSelectionCode = `
                 local self_card = G.jokers.highlighted[1]
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
@@ -70,7 +73,13 @@ const generateJokerCode = (
                         break
                     end
                 end`;
-    } else if (selectionMethod === "position") {
+  } else if (selectionMethod === "self") {
+      jokerSelectionCode = `
+        local target_joker = card`;
+  } else if (selectionMethod === "evaled_joker") {
+      jokerSelectionCode = `
+        local target_joker = context.other_joker`;
+  } else if (selectionMethod === "position") {
     if (position === "first") {
       jokerSelectionCode = `
                 local target_joker = nil
@@ -169,7 +178,7 @@ const generateJokerCode = (
                     target_joker.getting_sliced = true
                     G.E_MANAGER:add_event(Event({
                         func = function()
-                            target_joker:start_dissolve({G.C.RED}, nil, 1.6)
+                            target_joker:${animation}({G.C.RED}, nil, 1.6)
                             return true
                         end
                     }))
@@ -285,3 +294,80 @@ const generateConsumableCode = (
 
   return result;
 }
+
+const generateCardCode = (
+  effect: Effect
+): EffectReturn => {
+  const selectionMethod =
+    (effect.params?.selection_method as string) || "random";
+  const jokerKey = (effect.params?.joker_key as string) || "";
+  const position = (effect.params?.position as string) || "first";
+  const customMessage = effect.customMessage;
+
+  const normalizedJokerKey = jokerKey.startsWith("j_") 
+  ? jokerKey 
+  : `j_${jokerKey}`
+
+  let jokerSelectionCode = "";
+
+  if (selectionMethod === "specific" && normalizedJokerKey) {
+    jokerSelectionCode = `
+                local target_joker = nil
+                for i, joker in ipairs(G.jokers.cards) do
+                    if joker.config.center.key == "${normalizedJokerKey}" and not joker.ability.eternal and not joker.getting_sliced then
+                        target_joker = joker
+                        break
+                    end
+                end`;
+  } else if (selectionMethod === "position") {
+    if (position === "first") {
+      jokerSelectionCode = `
+                local target_joker = nil
+                for i, joker in ipairs(G.jokers.cards) do
+                    if not joker.ability.eternal and not joker.getting_sliced then
+                        target_joker = joker
+                        break
+                    end
+                end`;
+    } else if (position === "last") {
+      jokerSelectionCode = `
+                local target_joker = nil
+                for i = #G.jokers.cards, 1, -1 do
+                    local joker = G.jokers.cards[i]
+                    if not joker.ability.eternal and not joker.getting_sliced then
+                        target_joker = joker
+                        break
+                    end
+                end`;
+    }
+  } else {
+    jokerSelectionCode = `
+                local destructable_jokers = {}
+                for i, joker in ipairs(G.jokers.cards) do
+                    if not joker.ability.eternal and not joker.getting_sliced then
+                        table.insert(destructable_jokers, joker)
+                    end
+                end
+                local target_joker = #destructable_jokers > 0 and pseudorandom_element(destructable_jokers, pseudoseed('destroy_joker_enhanced')) or nil`;
+  }
+
+  const destroyCode = `${jokerSelectionCode}
+                
+                if target_joker then
+                    target_joker.getting_sliced = true
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            target_joker:start_dissolve({G.C.RED}, nil, 1.6)
+                            return true
+                        end
+                    }))
+                end`;
+
+  const result: EffectReturn = {
+    statement: `__PRE_RETURN_CODE__${destroyCode}__PRE_RETURN_CODE_END__`,
+    message: customMessage ? `"${customMessage}"` : `"Destroyed Joker!"`,
+    colour: "G.C.RED",
+  };
+
+  return result;
+};

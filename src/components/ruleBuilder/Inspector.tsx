@@ -440,7 +440,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
   switch (param.type) {
     case "select": {
-      let options: Array<{ value: string; label: string }> = [];
+      let options: Array<{ value: string; label: string; exempt?: string[] }> = [];
 
       if (typeof param.options === "function") {
         // Check if the function expects parentValues parameter
@@ -455,6 +455,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         options = param.options.map((option) => ({
           value: option.value,
           label: option.label,
+          exempt: option.exempt
         }));
       }
 
@@ -466,7 +467,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
           condition => condition.type === "joker_selected" && condition.negate === false
         ))) {
-          options.push({value: "selected_joker", label: "Selected Joker"})
+          options.push({value: "selected_joker", label: "Selected Joker", exempt: ["joker", "card", "voucher", "deck"] })
         }
       }
 
@@ -575,6 +576,8 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options = addTextVariablesToOptions(options, joker)
         }
       }
+
+      options.filter(option => !option.exempt?.includes(itemType))
 
       return (
         <InputDropdown
