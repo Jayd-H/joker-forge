@@ -19,7 +19,7 @@ import { generateEmitFlagEffectCode } from "./Effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "./Effects/PlaySoundEffect";
 import { generateWinBlindEffectCode } from "./Effects/WinBlindEffect";
 import { generateEditCardAppearanceEffectCode } from "./Effects/EditCardAppearanceEffect";
-import { generateChangeJokerVariableEffectCode } from "./Effects/Variables/ChangeJokerVariableEffect";
+import { generateChangeKeyVariableEffectCode } from "./Effects/Variables/ChangeKeyVariableEffect";
 import { generateChangePokerHandVariableEffectCode } from "./Effects/Variables/ChangePokerHandVariableEffect";
 import { generateChangeSuitVariableEffectCode } from "./Effects/Variables/ChangeSuitVariableEffect";
 import { generateChangeRankVariableEffectCode } from "./Effects/Variables/ChangeRankVariableEffect";
@@ -781,8 +781,8 @@ export const generateSingleEffect = (
       return generateBalanceChipsAndMultEffectCode(effect)
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
-    case "change_joker_variable":
-      return generateChangeJokerVariableEffectCode(effect)
+    case "change_key_variable":
+      return generateChangeKeyVariableEffectCode(effect)
     case "change_pokerhand_variable":
       return generateChangePokerHandVariableEffectCode(effect)
     case "change_suit_variable":

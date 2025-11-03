@@ -95,8 +95,9 @@ export interface ConditionParameter {
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: Array<
-  "number" | "suit" | "rank" | "pokerhand" | "joker" | "text" |
-  "rank_context" | "suit_context" | "joker_context"
+  "number" | "suit" | "rank" | "pokerhand" | "key" | "text" |
+  "rank_context" | "suit_context" | "joker_context" | "enhancement_context" | "seal_context" | 
+  "edition_context" | "consumable_context" | "tag_context" | "booster_context" | "voucher_context"
   >;
   exemptObjects?: string[]
 }
@@ -145,8 +146,9 @@ export interface EffectParameter {
   default?: unknown;
   showWhen?: ShowWhenCondition;
   variableTypes?: Array<
-  "number" | "suit" | "rank" | "pokerhand" | "joker" | "text" |
-  "rank_context" | "suit_context" | "joker_context"
+  "number" | "suit" | "rank" | "pokerhand" | "key" | "text" |
+  "rank_context" | "suit_context" | "joker_context" | "enhancement_context" | "seal_context" | 
+  "edition_context" | "consumable_context" | "tag_context" | "booster_context" | "voucher_context"
   >;  
   exemptObjects?: string[]
 }

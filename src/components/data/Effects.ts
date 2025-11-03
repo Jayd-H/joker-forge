@@ -15,6 +15,7 @@ import { GlobalEffectTypeDefinition } from "../ruleBuilder/types";
 import { CONSUMABLE_SETS, CUSTOM_CONSUMABLES, EDITIONS, ENHANCEMENTS, PLANET_CARDS, POKER_HANDS, CONSUMABLE_TYPES, RANKS, RARITIES, SEALS, SPECTRAL_CARDS, STICKERS, ALL_CONSUMABLES, SUITS, TAGS, TAROT_CARDS, VOUCHERS } from "./BalatroUtils";
 import { GENERIC_TRIGGERS, ALL_OBJECTS } from "./Conditions";
 import { FolderIcon } from "@heroicons/react/24/outline";
+import { CHANGE_KEY_VAR_EFFECT } from "./ChangeKeyVariable";
 
 export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
@@ -665,7 +666,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "index_method",
           values: ["variable"],
         },
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "value",
@@ -921,7 +922,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker" },
         ],
         default: "random",
-        variableTypes: ["joker", "joker_context"]
+        variableTypes: ["key", "joker_context"]
       },
       {
         id: "rarity",
@@ -1008,7 +1009,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        // variableTypes: ["joker_context", "joker"], --- VARIABLES FOR COPY ABILITY ARE TEMP DISABLED
+        // variableTypes: ["joker_context", "key"], --- VARIABLES FOR COPY ABILITY ARE TEMP DISABLED
       },
       {
         id: "position",
@@ -1090,7 +1091,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker", exempt: ["joker", "card"] },
         ],
         default: "random",
-        variableTypes: ["joker", "joker_context"],
+        variableTypes: ["key", "joker_context"],
       },
       {
         id: "joker_key",
@@ -2113,84 +2114,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["joker_var"],
         },
-        variableTypes: ["joker"]
-      },
-    ],
-    category: "Variables",
-  },
-  {
-    id: "change_joker_variable",
-    label: "Change Joker Variable",
-    description:
-      "Change the value of a joker variable to a specific Joker key",
-    applicableTriggers: [...GENERIC_TRIGGERS],
-    objectUsers: ["joker"],
-    params: [
-      {
-        id: "variable_name",
-        type: "select",
-        label: "Joker Variable",
-        options: [], // Will be populated dynamically with joker variables
-        variableTypes: ["joker"]
-      },
-      {
-        id: "change_type",
-        type: "select",
-        label: "Change Type",
-        options: [
-          { value: "random", label: "Random Joker" }, 
-          { value: "specific", label: "Specific Joker Key" },
-        ],
-        default: "specific",
-        variableTypes: ["joker", "joker_context"],
-      },
-      {
-        id: "random_type",
-        type: "select",
-        label: "Random from Type",
-        options: [
-          // { value: "all", label: "Random From All Jokers" }, --- TEMP DISABLED
-          // { value: "unlocked", label: "Random from Unlocked Jokers" }, --- TEMP DISABLED
-          { value: "locked", label: "Random from Locked Jokers" },
-          { value: "pool", label: "Random from Pool" },
-          { value: "owned", label: "Random from Owned Jokers" },
-          // { value: "rarity", label: "Random from specific Rarity" }, --- TEMP DISABLED
-        ],
-        default: "all",
-        showWhen: {
-          parameter: "change_type",
-          values: ["random"],
-        },
-      },
-      {
-        id: "rarity",
-        type: "select",
-        label: "Rarity",
-        options: [...RARITIES()],
-        showWhen: {
-          parameter: "random_type",
-          values: ["rarity"],
-        },
-      },
-      {
-        id: "joker_pool",
-        type: "text",
-        label: "Pool",
-        options: [],
-        showWhen: {
-          parameter: "random_type",
-          values: ["pool"],
-        },
-      },
-      {
-        id: "specific_joker",
-        type: "text",
-        label: "Joker Key",
-        options: [],
-        showWhen: {
-          parameter: "change_type",
-          values: ["specific"],
-        },
+        variableTypes: ["key"]
       },
     ],
     category: "Variables",
@@ -2230,7 +2154,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "selection_method",
           values: ["variable"],
         },
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "discover",
@@ -3348,7 +3272,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "specific", label: "Specific Position" },
         ],
         default: "right",
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "specific_index",
@@ -3725,6 +3649,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Card Effects",
   },
+  CHANGE_KEY_VAR_EFFECT,
 ]
 
 export function getEffectTypeById(
