@@ -148,6 +148,9 @@ const updateEffectId = (
       return "edit_card_appearance"
     case "edit_cards_in_hand":
       return "edit_cards"
+    case "add_card_to_deck":
+    case "add_card_to_hand":
+      return "create_playing_card"
 
     default:
       return id
@@ -177,6 +180,13 @@ const updateEffectParams = (
       break   
     case "edit_cards_in_hand":
       params["selection_method"] = "selected" 
+      break
+    case "add_card_to_deck":
+      params["location"] = "deck"
+      break
+    case "add_card_to_hand":
+      params["location"] = "hand"
+      break
   }
 
   return params
