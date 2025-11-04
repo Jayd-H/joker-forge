@@ -3274,10 +3274,11 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "right", label: "Joker to the Right" },
           { value: "left", label: "Joker to the Left" },
+          { value: "first", label: "Left Most Joker" },
+          { value: "last", label: "Right Most Joker" },
           { value: "specific", label: "Specific Position" },
         ],
         default: "right",
-        variableTypes: ["key"]
       },
       {
         id: "specific_index",

@@ -28,11 +28,12 @@ export const generateCopyJokerAbilityPassiveEffectCode = (
             end
         end
         target_joker = (my_pos and my_pos > 1) and G.jokers.cards[my_pos - 1] or nil`;
+  } else if (selectionMethod === "last") {
+      targetJokerLogic = `target_joker = G.jokers.cards[#G.jokers.cards]`;
+  } else if (selectionMethod === "first") {
+      targetJokerLogic = `target_joker = G.jokers.cards[1]]`;
   } else if (selectionMethod === "specific") {
-      targetJokerLogic = `target_joker = G.jokers.cards[${specificIndex}]
-        if target_joker == card then
-            target_joker = nil
-        end`;
+      targetJokerLogic = `target_joker = G.jokers.cards[${specificIndex}]`
   } else {
       targetJokerLogic = `local target_key = card.ability.extra.${selectionMethod}
       for i = 1, #G.P_CENTERS do
@@ -45,6 +46,11 @@ export const generateCopyJokerAbilityPassiveEffectCode = (
         end
       end`
   } 
+  if (selectionMethod === 'last' || selectionMethod === 'first' || selectionMethod === 'specific') {
+    targetJokerLogic = `if target_joker == card then
+            target_joker = nil
+        end`;
+  }
 
   const calculateFunction = `
         local target_joker = nil
