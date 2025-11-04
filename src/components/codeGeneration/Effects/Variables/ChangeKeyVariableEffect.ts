@@ -9,7 +9,8 @@ export const generateChangeKeyVariableEffectCode = (
   const statement = generateKeyCode(effect, keyType)   
 
   const result: EffectReturn = {
-    statement,
+    statement: `__PRE_RETURN_CODE__${statement}
+__PRE_RETURN_CODE_END__`,
     colour: "G.C.FILTER",
   };
 
@@ -57,7 +58,7 @@ const generateJokerKeyCode = (
   const pool = (effect.params.pool as string) || "";
   
   let valueCode = 'j_joker'
-  let statement = ''
+  let statement = '__PRE_RETURN_CODE__'
 
   if (changeType === "evaled_joker") {
     valueCode = "context.other_joker.config.center.key"
@@ -125,9 +126,9 @@ const generateJokerKeyCode = (
   } else {
     valueCode = `card.ability.extra.${changeType}`
   }
+
   statement += `
-                card.ability.extra.${variableName} = ${valueCode}
-                __PRE_RETURN_CODE_END__`;
+    card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement 
 }
@@ -139,8 +140,49 @@ const generateConsumableKeyCode = (
   const changeType = (effect.params.consumable_change_type as string) || "random";
   const specificConsumable = (effect.params.specific_consumable as string) || "none";
   const randomType = (effect.params.consumable_random_type as string) || "all";
+  const set = (effect.params.consumable_set as string) || "tarot"
 
   let statement = ''
+  let valueCode = ''
+
+  if (changeType === "used_consumable") {
+    valueCode = `context.other_card.config.center.key`
+  } else if (changeType === "specific") {
+    valueCode = `'${specificConsumable}'`
+  } else if (changeType === "random") {
+    valueCode = "random_consumable_result"
+    statement += `local possible_consumables = {}`
+
+    if (randomType === "all") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'c' then
+            possible_consumables[#possible_consumables + 1] = G.P_CENTERS[i].config.center.key
+          end
+        end`
+    } else if (randomType === "set") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'c' and G.P_CENTERS[i].set == '${set}' then
+            possible_consumables[#possible_consumables + 1] = G.P_CENTERS[i].config.center.key
+          end
+        end`
+    } else if (randomType === "owned") {
+      statement += `
+        for i = 1, #G.consumeables.cards do
+            possible_consumables[#possible_consumables + 1] = G.consumeables.cards[i].config.center.key
+        end`
+    }
+    statement += `
+      local random_joker_result = pseudorandom_element(possible_jokers, 'random joker')`
+
+  } else {
+    valueCode = `card.ability.extra.${changeType}`
+  }
+  
+  statement += `
+    card.ability.extra.${variableName} = ${valueCode}`;
+
 
   return statement
 }
@@ -169,7 +211,7 @@ const generateEnhancementKeyCode = (
     if (randomType === "all") {
       statement += `
         for i = 1, #G.P_CENTERS do
-          if string.sub(G.P_CENTERS[i], 1, 1) == 'm' or string.sub(G.P_CENTERS[i], 1, 1) == 'c' then
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'm' then
             possible_enhancements[#possible_enhancements + 1] = G.P_CENTERS[i].config.center.key
           end
         end`
@@ -183,8 +225,7 @@ const generateEnhancementKeyCode = (
   }
 
   statement += `
-              card.ability.extra.${variableName} = ${valueCode}
-              __PRE_RETURN_CODE_END__`;
+              card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }
@@ -225,8 +266,7 @@ const generateSealKeyCode = (
   }
 
   statement += `
-              card.ability.extra.${variableName} = ${valueCode}
-              __PRE_RETURN_CODE_END__`;
+    card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }
@@ -273,8 +313,7 @@ const generateEditionKeyCode = (
   }
 
   statement += `
-              card.ability.extra.${variableName} = ${valueCode}
-              __PRE_RETURN_CODE_END__`;
+    card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }
@@ -289,6 +328,40 @@ const generateVoucherKeyCode = (
   const randomType = (effect.params.voucher_random_type as string) || "all";
 
   let statement = ''
+  let valueCode = ''
+
+  if (changeType === "specific") {
+    valueCode = `'${specificVoucher}`
+  } else if (changeType === "random") {
+    valueCode = 'random_voucher_result'
+    statement += `local possible_vouchers = {}`
+
+    if (randomType === "all") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'v' then
+            possible_vouchers[#possible_vouchers + 1] = G.P_CENTERS[i].key
+          end
+        end`
+    } else if (randomType === "redeemed") {
+      statement += `
+        for i = 1, #G.vouchers.cards do
+            possible_vouchers[#possible_vouchers + 1] = G.vouchers.cards[i].key
+        end`
+    } else if (randomType === "possible") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'v' and G.P_CENTERS[i].unlocked == true then
+            possible_vouchers[#possible_vouchers + 1] = G.P_CENTERS[i].key
+          end
+        end`
+    }
+    statement += `
+      local random_voucher_result = pseudorandom_element(possible_vouchers, 'random voucher')`
+  }
+
+  statement += `
+    card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }
@@ -300,12 +373,54 @@ const generateBoosterKeyCode = (
   const changeType = (effect.params.booster_change_type as string) || "random";
   const specificBooster = (effect.params.specific_booster as string) || "none";
   const randomType = (effect.params.booster_random_type as string) || "all";
+  const boosterKind = (effect.params.booster_category as string) || "Aracana"
+  const boosterExtraCount =  (effect.params.booster_size_extra as string) || "3"
+  const boosterChooseCount =  (effect.params.booster_size_choose as string) || "1"
 
   let statement = ''
+  let valueCode = ''
+
+  if (changeType === "opened_booster") {
+    valueCode = `context.card.key`
+  } else if (changeType === "skipped_booster") {
+    valueCode = `context.booster.key`
+  } else if (changeType === "specific") {
+    valueCode = `'${specificBooster}`
+  } else if (changeType === "random") {
+    valueCode = 'random_booster_result'
+    statement += `local possible_boosters = {}`
+
+    if (randomType === "all") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'p' then
+            possible_boosters[#possible_boosters + 1] = G.P_CENTERS[i].key
+          end
+        end`
+    } else if (randomType === "category") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'p' and G.P_CENTERS[i].kind == "${boosterKind}" then
+            possible_boosters[#possible_boosters + 1] = G.P_CENTERS[i].key
+          end
+        end`
+    } else if (randomType === "size") {
+      statement += `
+        for i = 1, #G.P_CENTERS do
+          if string.sub(G.P_CENTERS[i], 1, 1) == 'p' and G.P_CENTERS[i].config.extra == ${boosterExtraCount} and G.P_CENTERS[i].config.choose == ${boosterChooseCount} then
+            possible_boosters[#possible_boosters + 1] = G.P_CENTERS[i].key
+          end
+        end`
+    }
+    statement += `
+      local random_booster_result = pseudorandom_element(possible_boosters, 'random booster')`
+  }
+
+  statement += `
+    card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }
-
 const generateTagKeyCode = (
   effect: Effect
 ) => {
@@ -315,6 +430,37 @@ const generateTagKeyCode = (
   const randomType = (effect.params.tag_random_type as string) || "all";
 
   let statement = ''
+  let valueCode = ''
+
+  if (changeType === "added_tag") {
+    valueCode = `context.tag_added.key`
+  } else if (changeType === "blind_tag") {
+    valueCode = `currentTag`
+    statement += `	
+      local currentTag = 'none'		
+      if G.GAME.blind:get_type() == "Small" then
+				currentTag = G.GAME.round_resets.blind_tags.Small.key
+			elseif G.GAME.blind:get_type() == "Big" then
+				currentTag = G.GAME.round_resets.blind_tags.Big.key
+			end`
+  } else if (changeType === "specific") {
+    valueCode = `'${specificTag}`
+  } else if (changeType === "random") {
+    valueCode = 'random_tag_result'
+    statement += `local possible_tags = {}`
+
+    if (randomType === "all") {
+      statement += `
+        for i = 1, #G.P_TAGS do
+            possible_tags[#possible_tags + 1] = G.P_TAGS[i].key
+        end`
+    }
+    statement += `
+      local random_tag_result = pseudorandom_element(possible_tags, 'random tag')`
+  }
+
+  statement += `
+    card.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }

@@ -286,7 +286,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       label: "Random Voucher from Type",
       options: [
         { value: "all", label: "Random From All Vouchers" },
-        { value: "possible", label: "Random from All Possible Vouchers" },
+        { value: "possible", label: "Random from All Unredeemed Vouchers" },
         { value: "redeemed", label: "Random from Redeemed Vouchers" },
       ],
       default: "all",
@@ -327,6 +327,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "all", label: "Random From All Boosters" },
         { value: "category", label: "Random from a Booster Category" },
+        { value: "size", label: "Random from a Booster Size Category" },
       ],
       default: "all",
       showWhen: {
@@ -336,13 +337,39 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
     },
     {
       id: "booster_category",
-      type: "text",
+      type: "select",
       label: "Booster Category",
+      options: [
+        { value: "Arcana", label: "Arcana Pack" },
+        { value: "Celestial", label: "Celestial Pack" },
+        { value: "Spectral", label: "Spectral Pack" },
+        { value: "Standard", label: "Standard Pack" },
+        { value: "Buffoon", label: "Buffoon Pack" },
+      ],
+      default: 'Arcana',
       showWhen: {
         parameter: "booster_random_type",
         values: ["category"],
       },
-    }, // FIGURE OUT THIS LATER
+    },
+    {
+      id: "booster_size_extra",
+      type: "number",
+      label: "Number of Choices",
+      showWhen: {
+        parameter: "booster_random_type",
+        values: ["size"],
+      },
+    },
+    {
+      id: "booster_size_choose",
+      type: "number",
+      label: "Number of Cards to Select",
+      showWhen: {
+        parameter: "booster_random_type",
+        values: ["size"],
+      },
+    },
     {
       id: "specific_booster",
       type: "text",
@@ -352,6 +379,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    // TAG
     {
       id: "tag_change_type",
       type: "select",
@@ -373,6 +401,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       label: "Random Tag from Type",
       options: [
         { value: "all", label: "Random From All Tags" },
+        { value: "set", label: "Random From A Tag Set Type" },
       ],
       default: "all",
       showWhen: {
