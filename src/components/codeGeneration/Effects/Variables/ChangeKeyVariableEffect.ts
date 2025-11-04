@@ -73,9 +73,9 @@ const generateJokerKeyCode = (
 
     if (randomType === "unlocked") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Joker) do
-          if card.unlocked == true then
-            possible_jokers[#possible_jokers + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Joker) do
+          if v.unlocked == true then
+            possible_jokers[#possible_jokers + 1] = v.key
           end
         end`
     } else if (randomType === "locked") {
@@ -91,10 +91,10 @@ const generateJokerKeyCode = (
       end`
     } else if (randomType === "pool") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Joker) do
-          for _, pool in pairs(card.pools) do
+        for _, v in pairs(G.P_CENTER_POOLS.Joker) do
+          for _, pool in pairs(v.pools) do
             if pool == ${pool} then
-              possible_jokers[#possible_jokers + 1] = card.key
+              possible_jokers[#possible_jokers + 1] = v.key
             end
           end
         end`
@@ -105,15 +105,15 @@ const generateJokerKeyCode = (
         end`
     } else if (randomType === "rarity") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Joker) do
-          if card.rarity == '${rarity}' then
-            possible_jokers[#possible_jokers + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Joker) do
+          if v.rarity == '${rarity}' then
+            possible_jokers[#possible_jokers + 1] = v.key
           end
         end`
     } else {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Joker) do
-            possible_jokers[#possible_jokers + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Joker) do
+            possible_jokers[#possible_jokers + 1] = v.key
         end`
     }
 
@@ -152,14 +152,14 @@ const generateConsumableKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Consumeables) do
-            possible_consumables[#possible_consumables + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Consumeables) do
+            possible_consumables[#possible_consumables + 1] = v.key
         end`
     } else if (randomType === "set") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Consumeables) do
-          if card.set == '${set}' then
-            possible_consumables[#possible_consumables + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Consumeables) do
+          if v.set == '${set}' then
+            possible_consumables[#possible_consumables + 1] = v.key
           end
         end`
     } else if (randomType === "owned") {
@@ -205,8 +205,8 @@ const generateEnhancementKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Enhanced) do
-            possible_enhancements[#possible_enhancements + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Enhanced) do
+            possible_enhancements[#possible_enhancements + 1] = v.key
         end`
     } 
     statement += `
@@ -246,8 +246,8 @@ const generateSealKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Seal) do
-            possible_seals[#possible_seals + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Seal) do
+            possible_seals[#possible_seals + 1] = v.key
         end`
     } 
     statement += `
@@ -291,8 +291,8 @@ const generateEditionKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Edition) do
-            possible_editions[#possible_editions + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Edition) do
+            possible_editions[#possible_editions + 1] = v.key
         end`
     } 
     statement += `
@@ -329,14 +329,14 @@ const generateVoucherKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Voucher) do
-            possible_vouchers[#possible_vouchers + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Voucher) do
+            possible_vouchers[#possible_vouchers + 1] = v.key
         end`
     } else if (randomType === "possible") {
       statement += `
-        for _, card in pairs(G.P_CENTER_POOLS.Voucher) do
-          if card.available == true then
-            possible_vouchers[#possible_vouchers + 1] = card.key
+        for _, v in pairs(G.P_CENTER_POOLS.Voucher) do
+          if v.available == true then
+            possible_vouchers[#possible_vouchers + 1] = v.key
           end
         end`
     }
@@ -345,7 +345,7 @@ const generateVoucherKeyCode = (
   }
 
   statement += `
-    card.ability.extra.${variableName} = ${valueCode}`;
+    v.ability.extra.${variableName} = ${valueCode}`;
 
   return statement
 }

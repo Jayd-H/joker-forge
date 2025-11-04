@@ -2129,7 +2129,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Change Type",
         options: [
           { value: "custom_text", label: "Custom Text" },
-          { value: "joker_var", label: "Name of a Joker Variable" },
+          { value: "key_var", label: "Name of a Key Variable" },
         ],
         default: "random",
       },
@@ -2144,13 +2144,13 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         },
       },
       {
-        id: "joker_var",
+        id: "key_variable",
         type: "select",
-        label: "Joker Variable",
+        label: "Key Variable",
         options: [],
         showWhen: {
           parameter: "change_type",
-          values: ["joker_var"],
+          values: ["key_var"],
         },
         variableTypes: ["key"]
       },
