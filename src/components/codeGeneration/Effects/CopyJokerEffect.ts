@@ -65,7 +65,8 @@ const generateJokerCode = (
   } else if (selectionMethod === "selected_joker") {
     jokerSelectionCode = `
         local _first_materialize = nil
-        local self_card = G.jokers.highlighted[1]
+        for i = 1, #G.jokers.highlighted do
+                local self_card = G.jokers.highlighted[i]
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
             local copied_joker = copy_card(self_card, set_edition, nil, nil, false)
@@ -75,7 +76,8 @@ const generateJokerCode = (
             _first_materialize = true
                          return true
                     end
-                }))`;
+                }))
+            end`;
   } else if (selectionMethod === "evaled_joker") {
     jokerSelectionCode = `
         local _first_materialize = nil
@@ -246,7 +248,8 @@ const generateConsumableCode = (
   copyJokerCode = `
 __PRE_RETURN_CODE__
         local _first_materialize = nil
-        local self_card = G.jokers.highlighted[1]
+        for i = 1, #G.jokers.highlighted do
+                local self_card = G.jokers.highlighted[i]
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
             local copied_joker = copy_card(self_card, set_edition, nil, nil, false)
@@ -275,6 +278,7 @@ copyJokerCode += `
                         return true
                     end
                 }))
+            end        
             delay(0.6)
             __PRE_RETURN_CODE_END__`;
 }

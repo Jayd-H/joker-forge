@@ -1869,6 +1869,33 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Jokers",
   },
   {
+    id: "edit_joker_size",
+    label: "Edit Joker Size",
+    description: "Modify the number of joker Selected/Highlighted",
+    applicableTriggers: [...GENERIC_TRIGGERS, "passive", "deck_selected", "voucher_redeemed"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+        ],
+        default: "add",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+      },
+    ],
+    category: "Jokers",
+  },
+  {
     id: "redeem_voucher",
     label: "Redeem Voucher",
     description: "Redeem a specific or random voucher",
