@@ -1,7 +1,5 @@
 import type { Effect, LoopGroup, RandomGroup } from "../ruleBuilder/types";
 import { JokerData, EnhancementData, SealData, EditionData, ConsumableData, VoucherData, DeckData } from "../data/BalatroUtils";
-import { generateAddCardToDeckEffectCode } from "./Effects/AddCardToDeckEffect";
-import { generateAddCardToHandEffectCode } from "./Effects/AddCardToHandEffect";
 import { generateAddChipsEffectCode } from "./Effects/ScoringEffects/AddChipsEffect";
 import { generateApplyXChipsEffectCode } from "./Effects/ScoringEffects/ApplyXChipsEffect";
 import { generateApplyExpChipsEffectCode } from "./Effects/ScoringEffects/ApplyExpChipsEffect";
@@ -91,6 +89,7 @@ import { coordinateVariableConflicts } from "./Jokers/variableUtils";
 import { generateEditStartingDollarsEffectCode } from "./Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
 import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode } from "./Effects/EditItemSizeEffect";
 import { generateChangeTextVariableEffectCode } from "./Effects/Variables/ChangeTextVariableEffect";
+import { generateCreatePlayingCardEffectCode } from "./Effects/CreatePlayingCardEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -757,10 +756,6 @@ export const generateSingleEffect = (
     ? 'card' : cleanItemType
 
   switch (effect.type) {
-    case "add_card_to_deck":
-      return generateAddCardToDeckEffectCode(effect, itemType, triggerType, modprefix, joker)
-    case "add_card_to_hand":
-      return generateAddCardToHandEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "add_chips":
       return generateAddChipsEffectCode(effect, itemType, sameTypeCount)
     case "apply_x_chips":
@@ -799,6 +794,8 @@ export const generateSingleEffect = (
       return generateConvertAllCardsToSuitEffectCode(effect, itemType)
     case "convert_left_to_right":
       return generateConvertLeftToRightEffectCode(effect, itemType)
+    case "create_playing_card":
+      return generateCreatePlayingCardEffectCode(effect, itemType, triggerType, modprefix, joker)
     case "create_copy_triggered_card":
       return generateCreateCopyTriggeredCardEffectCode(effect, itemType, triggerType)
     case "create_copy_played_card":

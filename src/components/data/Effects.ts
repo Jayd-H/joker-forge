@@ -707,6 +707,18 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         variableTypes: ["rank"],
       },
       {
+        id: "variables",
+        type: "checkbox",
+        label: "Which types are Variables?",
+        checkboxOptions: [
+          { value: "A", label: "Enhancement"},
+          { value: "B", label: "Seal"},
+          { value: "C", label: "Edition"}
+        ],
+        default: [false, false, false],
+        exemptObjects: ["card"]
+      },
+      {
         id: "enhancement",
         type: "select",
         label: "Enhancement",
@@ -755,12 +767,22 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Card Effects",
   },
   {
-    id: "add_card_to_hand",
-    label: "Add Card to Hand",
-    description: "Create a new playing card and add it to your hand",
+    id: "create_playing_card",
+    label: "Create Playing Card",
+    description: "Create a new playing card",
     applicableTriggers: [...GENERIC_TRIGGERS],
     objectUsers: ["joker"],
     params: [
+      {
+        id: "location",
+        type: "select",
+        label: "Where to Add Card to",
+        options: [
+          { value: "deck", label: "Add To Deck"},
+          { value: "hand", label: "Add To Hand"},
+        ],
+        default: ["deck"]
+      },
       {
         id: "suit",
         type: "select",
@@ -776,6 +798,18 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [{ value: "random", label: "Random" }, ...RANKS],
         default: "random",
         variableTypes: ["rank"],
+      },
+      {
+        id: "variables",
+        type: "checkbox",
+        label: "Which types are Variables?",
+        checkboxOptions: [
+          { value: "A", label: "Enhancement"},
+          { value: "B", label: "Seal"},
+          { value: "C", label: "Edition"}
+        ],
+        default: [false, false, false],
+        exemptObjects: ["card"]
       },
       {
         id: "enhancement",
@@ -3228,6 +3262,18 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         ],
         default: "none",
         variableTypes: ["suit"],
+      },
+      {
+        id: "variables",
+        type: "checkbox",
+        label: "Which types are Variables?",
+        checkboxOptions: [
+          { value: "A", label: "Enhancement"},
+          { value: "B", label: "Seal"},
+          { value: "C", label: "Edition"}
+        ],
+        default: [false, false, false],
+        exemptObjects: ["card"]
       },
       {
         id: "new_enhancement",

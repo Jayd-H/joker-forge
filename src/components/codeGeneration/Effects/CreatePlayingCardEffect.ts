@@ -1,20 +1,18 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 import { EDITIONS, SEALS, type JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../userVariableUtils";
+import { parseRankVariable, parseSuitVariable } from "../Jokers/variableUtils";
 
-export const generateAddCardToDeckEffectCode = (
+export const generateCreatePlayingCardEffectCode = (
   effect: Effect,
   itemType: string,
   triggerType: string,
   modprefix: string,
   joker?: JokerData,
 ): EffectReturn => {
-
   switch(itemType) {
     case "joker":
       return generateJokerCode(effect, triggerType, modprefix, joker)
-
     default:
       return {
         statement: "",
@@ -25,15 +23,18 @@ export const generateAddCardToDeckEffectCode = (
 
 const generateJokerCode = (
   effect: Effect,
-  triggerType: string,
+  triggerType: string, 
   modprefix: string,
-  joker?: JokerData
+  joker?: JokerData,
 ): EffectReturn => {
   const suit = (effect.params?.suit as string) || "random";
   const rank = (effect.params?.rank as string) || "random";
   const enhancement = (effect.params?.enhancement as string) || "none";
   const seal = (effect.params?.seal as string) || "none";
   const edition = (effect.params?.edition as string) || "none";
+  const location = (effect.params?.location as string) || "deck";
+
+  const variables = (effect.params?.variables as string) || [false, false, false]
 
   const customMessage = effect.customMessage;
 
@@ -43,12 +44,10 @@ const generateJokerCode = (
   const isScoring = scoringTriggers.includes(triggerType);
   const isHeldInHand = heldInHandTriggers.includes(triggerType);
 
-  
   const rankVar = parseRankVariable((effect.params?.rank as string) || "", joker);
   const suitVar = parseSuitVariable((effect.params?.suit as string) || "", joker);
 
   let cardSelectionCode = "";
-
 
   if (suit === "random" && rank === "random") {
     cardSelectionCode += "local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))";
@@ -79,20 +78,26 @@ const generateJokerCode = (
   let centerParam = "";
   if (enhancement === "none") {
     centerParam = `
-      G.P_CENTERS.c_base`;
+    G.P_CENTERS.c_base`;
   } else if (enhancement === "random") {
     centerParam =`
-      pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_enhancement'))`
+      pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))`;
+  } else if (variables[0]){
+    centerParam = `
+      G.P_CENTERS.[card.ability.extra.${enhancement}]`;
   } else {
     centerParam = `
-      G.P_CENTERS.${enhancement}`;
+    G.P_CENTERS.${enhancement}`;
   }
 
   let sealCode = "";
   if (seal === "random") {
     const sealPool = SEALS().map(seal => `'${seal.value}'`)
     sealCode = `
-      new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_seal')), true)`;
+      new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_hand_seal')), true)`;
+  } else if (variables[1]){
+    centerParam = `
+      new_card:set_seal(card.ability.extra.${seal}, true)`;
   } else if (seal !== "none") {
     sealCode = `
       new_card:set_seal("${seal}", true)`;
@@ -101,29 +106,34 @@ const generateJokerCode = (
   let editionCode = "";
   if (edition === "random") {
     const editionPool = EDITIONS().map(edition => `'${
-      edition.key.startsWith('e_') ? edition.key : `e_${modprefix}_${edition.key}`}'`)
-    editionCode = `
-      new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_edition')), true)`;
+      edition.key.startsWith('e_') ? edition.key : `e_${modprefix}_${edition.key}`}'`)    
+       editionCode = `
+      new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_hand_edition')), true)`;
+  } else if (variables[2]){
+    centerParam = `
+      new_card:set_edition(card.ability.extra.${edition}, true)`;
   } else if (edition !== "none") {
     editionCode = `
       new_card:set_edition("${edition}", true)`;
   }
-
-  if (isScoring || isHeldInHand) {
-    return {
-      statement: `__PRE_RETURN_CODE__
+  
+  if (location === "deck") {
+    if (isScoring || isHeldInHand) {
+      return {
+        statement: `__PRE_RETURN_CODE__
                 ${cardSelectionCode}
                 local base_card = create_playing_card({
                     front = card_front,
                     center = ${centerParam}
-                }, G.discard, true, false, nil, true)${sealCode.replace(
-                  /new_card/g,
-                  "base_card"
-                )}${editionCode.replace(/new_card/g, "base_card")}
+                }, G.discard, true, false, nil, true)
+                ${sealCode.replace(/new_card/g, "base_card")}
+                ${editionCode.replace(/new_card/g, "base_card")}
                 
                 G.playing_card = (G.playing_card and G.playing_card + 1) or 1
                 local new_card = copy_card(base_card, nil, nil, G.playing_card)
+
                 new_card:add_to_deck()
+
                 G.deck.config.card_limit = G.deck.config.card_limit + 1
                 G.deck:emplace(new_card)
                 table.insert(G.playing_cards, new_card)
@@ -137,17 +147,19 @@ const generateJokerCode = (
                     end
                 }))
                 __PRE_RETURN_CODE_END__`,
-      message: customMessage ? `"${customMessage}"` : '"Added Card!"',
-      colour: "G.C.GREEN",
-    };
-  } else {
-    return {
-      statement: `__PRE_RETURN_CODE__
+        message: customMessage ? `"${customMessage}"` : '"Added Card!"',
+        colour: "G.C.GREEN",
+      };
+    } else {
+      return {
+        statement: `__PRE_RETURN_CODE__
             ${cardSelectionCode}
             local new_card = create_playing_card({
                 front = card_front,
                 center = ${centerParam}
-            }, G.discard, true, false, nil, true)${sealCode}${editionCode}
+            }, G.discard, true, false, nil, true)
+            ${sealCode.replace(/new_card/g, "base_card")}
+            ${editionCode.replace(/new_card/g, "base_card")}
             
             G.E_MANAGER:add_event(Event({
                 func = function()
@@ -167,8 +179,68 @@ const generateJokerCode = (
                 draw_card(G.play, G.deck, 90, 'up')
                 SMODS.calculate_context({ playing_card_added = true, cards = { new_card } })
             end`,
-      message: customMessage ? `"${customMessage}"` : '"Added Card!"',
-      colour: "G.C.GREEN",
-    };
+        message: customMessage ? `"${customMessage}"` : '"Added Card!"',
+        colour: "G.C.GREEN",
+      };
+    }
+  } else if (location === "hand") {
+    if (isScoring || isHeldInHand) {
+      return {
+        statement: `__PRE_RETURN_CODE__
+                  ${cardSelectionCode}
+                  local new_card = create_playing_card({
+                      front = card_front,
+                      center = ${centerParam}
+                  }, G.discard, true, false, nil, true)
+                  ${sealCode.replace(/new_card/g, "new_card")}
+                  ${editionCode.replace(/new_card/g, "new_card")}
+                  
+                  G.playing_card = (G.playing_card and G.playing_card + 1) or 1
+                  new_card.playing_card = G.playing_card
+                  table.insert(G.playing_cards, new_card)
+                  
+                  G.E_MANAGER:add_event(Event({
+                      func = function() 
+                          G.hand:emplace(new_card)
+                          new_card:start_materialize()
+                          return true
+                      end
+                  }))
+                  __PRE_RETURN_CODE_END__`,
+        message: customMessage ? `"${customMessage}"` : '"Added Card to Hand!"',
+        colour: "G.C.GREEN",
+      };
+    } else {
+      return {
+        statement: `func = function()
+                  ${cardSelectionCode}
+                  local new_card = create_playing_card({
+                      front = card_front,
+                      center = ${centerParam}
+                  }, G.discard, true, false, nil, true)
+                  ${sealCode.replace(/new_card/g, "new_card")}
+                  ${editionCode.replace(/new_card/g, "new_card")}
+                  
+                  G.playing_card = (G.playing_card and G.playing_card + 1) or 1
+                  new_card.playing_card = G.playing_card
+                  table.insert(G.playing_cards, new_card)
+                  
+                  G.E_MANAGER:add_event(Event({
+                      func = function()
+                          G.hand:emplace(new_card)
+                          new_card:start_materialize()
+                          SMODS.calculate_context({ playing_card_added = true, cards = { new_card } })
+                          return true
+                      end
+                  }))
+              end`,
+        message: customMessage ? `"${customMessage}"` : '"Added Card to Hand!"',
+        colour: "G.C.GREEN",
+      };
+    }
+  }
+  return {
+    statement: '',
+    colour: "G.C.GREEN"
   }
 }

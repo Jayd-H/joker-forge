@@ -37,6 +37,10 @@ const generateJokerCode = (
   const newEdition = (effect.params?.new_edition as string) || "none";
   const customMessage = effect.customMessage;
 
+  const editionPool = EDITIONS().map(edition => `'${
+    edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)    
+
+  const variableUsers = effect.params?.variables as boolean[] || [false, false, false];
   const rankVar = parseRankVariable(newRank, joker)
   const suitVar = parseSuitVariable(newSuit, joker)
 
@@ -72,7 +76,6 @@ const generateJokerCode = (
     modificationCode += `
                 assert(SMODS.change_base(${target}, ${suitParam}, ${rankParam}))`;
   }
-
   if (newEnhancement === "remove") {
     modificationCode += `
                 ${target}:set_ability(G.P_CENTERS.c_base)`;
@@ -86,6 +89,9 @@ const generateJokerCode = (
                 end
                 local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
                 ${target}:set_ability(random_enhancement)`;
+  } else if (variableUsers[0]) {
+    modificationCode += `
+      ${target}:set_ability(G.P_CENTERS[card.ability.extra.${newEnhancement}])`;
   } else if (newEnhancement !== "none") {
     modificationCode += `
                 ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
@@ -93,32 +99,36 @@ const generateJokerCode = (
 
   if (newSeal === "remove") {
     modificationCode += `
-                context.other_card:set_seal(nil)`;
+      ${target}:set_seal(nil)`;
   } else if (newSeal === "random") {
     modificationCode += `
-                local random_seal = SMODS.poll_seal({mod = 10, guaranteed = true})
-                if random_seal then
-                    ${target}:set_seal(random_seal, true)
-                end`;
+      local random_seal = SMODS.poll_seal({mod = 10, guaranteed = true})
+      if random_seal then
+          ${target}:set_seal(random_seal, true)
+      end`;
+  } else if (variableUsers[1]) {
+    modificationCode += `
+      ${target}:set_seal(card.ability.extra.${newSeal}, true)`;
   } else if (newSeal !== "none") {
     modificationCode += `
-                context.other_card:set_seal("${newSeal}", true)`;
+      ${target}:set_seal("${newSeal}", true)`;
   }
 
   if (newEdition === "remove") {
     modificationCode += `
                 ${target}:set_edition(nil)`;
   } else if (newEdition === "random") {
-    const editionPool = EDITIONS().map(edition => `'${
-                edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)    
     modificationCode += `
-                local edition = pseudorandom_element({${editionPool}}, 'random edition')
-                if random_edition then
-                    ${target}:set_edition(random_edition, true)
-                end`;
-  } else if (newEdition !== "none") {
+      local edition = pseudorandom_element({${editionPool}}, 'random edition')
+      if random_edition then
+          ${target}:set_edition(random_edition, true)
+      end`;
+  } else if (variableUsers[2]) {
     modificationCode += `
-                ${target}:set_edition("${newEdition}", true)`;
+      ${target}:set_edition(card.ability.extra.${newEdition}, true)`;
+  }  else if (newEdition !== "none") {
+    modificationCode += `
+      ${target}:set_edition("${newEdition}", true)`;
   }
 
   const scoringTriggers = ["card_scored"];
