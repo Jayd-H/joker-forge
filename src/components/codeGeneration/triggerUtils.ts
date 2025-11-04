@@ -15,10 +15,12 @@ export const generateTriggerContext = (
 );
 
   switch (triggerType) {
-    case "card_used":
+    case "consumable_used":
       switch (objectType) {
         case "consumable":
           return `context.joker_main`
+        case "joker":
+          return `context.using_consumeable ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
         default:
           return ""
       }
@@ -237,13 +239,6 @@ export const generateTriggerContext = (
       switch(objectType) {
         case "joker":
           return `context.reroll_shop ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
-      }
-      break
-            
-    case "consumable_used":
-      switch(objectType) {
-        case "joker":
-          return `context.using_consumeable ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
       }
       break
             

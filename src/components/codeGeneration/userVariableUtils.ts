@@ -263,10 +263,10 @@ export const getNumberVariables = (
   return (item.userVariables || []).filter((v) => v.type === "number");
 };
 
-export const getJokerVariables = (
+export const getKeyVariables = (
   item: JokerData | EnhancementData
 ): UserVariable[] => {
-  return (item.userVariables || []).filter((v) => v.type === "joker");
+  return (item.userVariables || []).filter((v) => v.type === "key");
 };
 
 export const getTextVariables = (
@@ -358,10 +358,10 @@ export const addJokerVariablesToOptions = (
   baseOptions: Array<{ value: string; label: string }>,
   item: JokerData | EnhancementData
 ): Array<{ value: string; label: string }> => {
-  const jokerVariables = getJokerVariables(item);
-  const variableOptions = jokerVariables.map((variable) => ({
+  const keyVariables = getKeyVariables(item);
+  const variableOptions = keyVariables.map((variable) => ({
     value: variable.name,
-    label: `${variable.name} (joker variable)`,
+    label: `${variable.name} (key variable)`,
   }));
 
   return [...baseOptions, ...variableOptions];

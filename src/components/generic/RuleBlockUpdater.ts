@@ -53,9 +53,8 @@ const updateTrigger = (
   rule: Rule
 ) => {
   switch(rule.trigger) {
-    case "consumable_used": 
-    case "voucher_redeemed":
-      return "card_used"
+    case "card_used":
+      return "consumable_used"
     case "card_held":
       return "card_held_in_hand"
     default:

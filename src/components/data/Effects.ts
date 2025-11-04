@@ -719,6 +719,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "seal",
@@ -733,6 +734,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "edition",
@@ -747,6 +749,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
     ],
     category: "Card Effects",
@@ -787,6 +790,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "seal",
@@ -801,6 +805,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "edition",
@@ -815,6 +820,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
     ],
     category: "Card Effects",
@@ -970,6 +976,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "sticker",
@@ -1009,7 +1016,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        // variableTypes: ["joker_context", "key"], --- VARIABLES FOR COPY ABILITY ARE TEMP DISABLED
       },
       {
         id: "position",
@@ -1050,6 +1056,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
           ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "sticker",
@@ -1243,9 +1250,16 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Consumable Set",
         options: () => [
           { value: "random", label: "Random Consumable" },
+          { value: "keyvar", label: "Key Variable" },
           ...CONSUMABLE_SETS(),
         ],
         default: "random",
+      },{
+        id: "variable",
+        type: "select",
+        label: "Key Variable",
+        options: [],
+        variableTypes: ["key"]
       },{
         id: "specific_card",
         type: "select",
@@ -1429,8 +1443,20 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Tag" },
           { value: "specific", label: "Specific Tag" },
+          { value: "keyvar", label: "Key Variable" },
         ],
         default: "random",
+      },
+      {
+        id: "variable",
+        type: "select",
+        label: "Key Variable",
+        options: [],
+        showWhen: {
+          parameter: "tag_type",
+          values: ["keyvar"],
+        },
+        variableTypes: ["key"],
       },
       {
         id: "specific_tag",
@@ -1871,8 +1897,20 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Voucher" },
           { value: "specific", label: "Specific Voucher" },
+          { value: "keyvar", label: "Key Variable" },
         ],
         default: "random",
+      },
+      {
+        id: "variable",
+        type: "select",
+        label: "Key Variable",
+        options: [],
+        showWhen: {
+          parameter: "voucher_type",
+          values: ["keyvar"],
+        },
+        variableTypes: ["key"],
       },
       {
         id: "specific_voucher",
@@ -3205,6 +3243,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "new_seal",
@@ -3220,6 +3259,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
       {
         id: "new_edition",
@@ -3235,6 +3275,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
         ],
         default: "none",
+        variableTypes: ["key"],
       },
     ],
     category: "Card Effects",

@@ -43,17 +43,6 @@ export const TRIGGER_CATEGORIES: CategoryDefinition[] = [
 
 export const TRIGGERS: GlobalTriggerDefinition[] = [
   {
-    id: "card_used",
-    label: {
-      consumable: "When Consumable is Used",
-    },
-    description: {
-      consumable: "Triggers when this Consumable is activated by the player",
-    },
-    category: "Usage",
-    objectUsers: ["consumable"],
-  },
-  {
     id: "voucher_redeemed",
     label: {
       voucher: "When Voucher is Redeemed",
@@ -411,18 +400,19 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     },    
     category: "Economy",
     objectUsers: ["joker"],
-  },
+  },  
   {
     id: "consumable_used",
     label: {
       joker: "When a Consumable is Used",
- 
+      consumable: "When Consumable is Used",
     },
     description: {
       joker: "Triggers when the player uses a Tarot, Planet, or Spectral card",
+      consumable: "Triggers when this Consumable is activated by the player",
     },    
-    category: "Packs & Consumables",
-    objectUsers: ["joker"],
+    category: "Usage",
+    objectUsers: ["joker", "consumable"],
   },
   {
     id: "game_over",

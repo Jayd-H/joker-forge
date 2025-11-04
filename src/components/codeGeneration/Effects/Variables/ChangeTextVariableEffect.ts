@@ -17,8 +17,8 @@ export const generateChangeTextVariableEffectCode = (
       card.ability.extra.${variableName} = '${customText}'`
   } else if (changeType === "joker_var") {
     statement += `
-      for i = 1, #G.jokers.cards do
-          if G.jokers.cards[i].config.center.key == card.ability.extra.${jokerVar} then
+      for i = 1, #G.P_CENTERS do
+          if G.P_CENTERS[i].config.center.key == card.ability.extra.${jokerVar} then
               card.ability.extra.${variableName} = G.jokers.cards[i].config.center.name
               break
           end

@@ -260,8 +260,8 @@ const generateSingleJokerCode = (
 
   if (joker.userVariables && joker.userVariables.length > 0) {
     joker.userVariables.forEach((variable) => {
-      if (variable.type === "joker") {
-        configItems.push(`${variable.name} = '${variable.initialJoker || "j_joker"}'`);
+      if (variable.type === "key") {
+        configItems.push(`${variable.name} = '${variable.initialKey || "none"}'`);
       }
       if (variable.type === "number" || !variable.type) {
         configItems.push(`${variable.name} = ${variable.initialValue || 0}`);

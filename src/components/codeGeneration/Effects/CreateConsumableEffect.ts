@@ -35,6 +35,7 @@ const generateJokerCode = (
   const isSoulable = (effect.params?.soulable as string) === 'y';
   const countCode = String(effect.params?.count) || '1'
   const ignoreSlots = (effect.params?.ignore_slots as string) === 'y';
+  const keyVar = (effect.params?.variable as string)
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -76,9 +77,9 @@ const generateJokerCode = (
   createCode += `
             SMODS.add_card({ `
 
-  if (set == "random") {
+  if (set === "random") {
     createCode += `set = random_set, `
-  } else {
+  } else if (set !== "keyvar") {
     createCode += `set = '${set}', `
   }
 
@@ -86,13 +87,15 @@ const generateJokerCode = (
     createCode += `edition = 'e_negative', `
   }
 
-  if (isSoulable && specificCard == "random") {
+  if (isSoulable && specificCard == "random" && set !== "keyvar") {
     createCode += `soulable = true, `
   }
   
-  if (set !== "random" && specificCard !== "random") {
+  if (set === "keyvar") {
+    createCode += `key = card.ability.extra.${keyVar}`
+  } else if (set !== "random" && specificCard !== "random") {
     createCode += `key = '${specificCard}'`
-  }
+  } 
 
   createCode += `})                            
             card:juice_up(0.3, 0.5)`

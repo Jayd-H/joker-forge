@@ -28,7 +28,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         { value: "enhancement", label: "Enhancement" },
         { value: "seal", label: "Seal" },
         { value: "edition", label: "Edition" },
-        { value: "booster", label: "Booster" },
+        // { value: "booster", label: "Booster" }, --- TEMP DISABLED
         { value: "voucher", label: "Voucher" },
         { value: "tag", label: "Tag" },
       ],
@@ -286,8 +286,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       label: "Random Voucher from Type",
       options: [
         { value: "all", label: "Random From All Vouchers" },
-        { value: "possible", label: "Random from All Unredeemed Vouchers" },
-        { value: "redeemed", label: "Random from Redeemed Vouchers" },
+        { value: "possible", label: "Random from Available Vouchers" },
       ],
       default: "all",
       showWhen: {

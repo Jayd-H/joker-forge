@@ -6,12 +6,15 @@ export const generateRedeemVoucherEffectCode = (
 ): EffectReturn => {
   const voucherType = (effect.params?.voucher_type as string) || "random";
   const voucherKey = (effect.params?.specific_voucher as string) || "v_overstock_norm";
+  const keyVar = (effect.params?.variable as string) || "keyVar";
   const customMessage = effect.customMessage;
 
   let voucherCode: string;
 
   if (voucherType === "random") {
     voucherCode = `local voucher_key = pseudorandom_element(G.P_CENTER_POOLS.Voucher, "${effect.id.substring(0,8)}").key`;
+  } else if (voucherType === "keyvar"){
+    voucherCode = `local voucher_key = card.ability.extra.${keyVar}`;
   } else {
     voucherCode = `local voucher_key = "${voucherKey}"`;
   }
