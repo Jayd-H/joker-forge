@@ -63,7 +63,7 @@ import { generateRemoveStartingCardsEffectCode } from "./Effects/EditStartingDec
 import { generateDestroyCardEffectCode } from "./Effects/DestroyCardEffect";
 import { generateEditCardEffectCode } from "./Effects/EditCardEffect";
 import { generateEditCardsEffectCode } from "./Effects/EditCardsEffect";
-import { generateAllowDebtPassiveEffectCode } from "./Effects/AllowDebtEffect";
+import { generateAllowDebtPassiveEffectCode } from "./Effects/PassiveEffects/AllowDebtEffect";
 import { generateCopyJokerAbilityPassiveEffectCode } from "./Effects/PassiveEffects/CopyJokerAbilityEffect";
 import { generateEditDiscardsEffectCode, generateEditDiscardsPassiveEffectCode } from "./Effects/EditDiscardsEffect";
 import { generateEditHandsEffectCode, generateEditHandsPassiveEffectCode } from "./Effects/EditHandsEffect";
@@ -778,7 +778,7 @@ export const generateSingleEffect = (
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
     case "change_key_variable":
-      return generateChangeKeyVariableEffectCode(effect)
+      return generateChangeKeyVariableEffectCode(effect, cleanItemType, sameTypeCount)
     case "change_pokerhand_variable":
       return generateChangePokerHandVariableEffectCode(effect)
     case "change_suit_variable":

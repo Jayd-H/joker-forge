@@ -1,17 +1,31 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../effectUtils";
+import { generateConfigVariables } from "../../gameVariableUtils";
 
 export const generateChangeKeyVariableEffectCode = (
   effect: Effect,
+  itemType: string,
+  sameTypeCount: number = 0,
 ): EffectReturn => {
   const keyType = (effect.params.key_type as string) || "joker"
 
-  const statement = generateKeyCode(effect, keyType)   
+  const variableName =
+    sameTypeCount === 0 ? "increment_count" : `increment_count${sameTypeCount + 1}`;
+
+  const { valueCode: numberCode, configVariables } = generateConfigVariables(
+    getParamForKeyType(effect, keyType),
+    effect.id,
+    variableName,
+    itemType,
+  );
+  
+  const statement = generateKeyCode(effect, keyType, numberCode)   
 
   const result: EffectReturn = {
     statement: `__PRE_RETURN_CODE__${statement}
 __PRE_RETURN_CODE_END__`,
     colour: "G.C.FILTER",
+    configVariables
   };
 
   if (effect.customMessage) {
@@ -21,34 +35,62 @@ __PRE_RETURN_CODE_END__`,
   return result;
 }
 
-const generateKeyCode = (
-  effect: Effect, 
-  keyType: string,
+const getParamForKeyType = (
+  effect: Effect,
+  keyType: string
 ) => {
   switch(keyType){
     case "joker":
-      return generateJokerKeyCode(effect)
+      return effect.params?.joker_increment_count
     case "consumable":
-      return generateConsumableKeyCode(effect)
+      return effect.params?.consumable_increment_count
     case "enhancement":
-      return generateEnhancementKeyCode(effect)
+      return effect.params?.enhancement_increment_count
     case "seal":
-      return generateSealKeyCode(effect)
+      return effect.params?.seal_increment_count
     case "edition":
-      return generateEditionKeyCode(effect)
+      return effect.params?.edition_increment_count
     case "booster":
-      return generateBoosterKeyCode(effect)
+      return effect.params?.booster_increment_count
     case "voucher":
-      return generateVoucherKeyCode(effect)
+      return effect.params?.voucher_increment_count
     case "tag":
-      return generateTagKeyCode(effect)
+      return effect.params?.tag_increment_count
+    default: 
+      return ''
+  }
+}
+
+const generateKeyCode = (
+  effect: Effect, 
+  keyType: string,
+  numberCode: string,
+) => {
+  switch(keyType){
+    case "joker":
+      return generateJokerKeyCode(effect, numberCode)
+    case "consumable":
+      return generateConsumableKeyCode(effect, numberCode)
+    case "enhancement":
+      return generateEnhancementKeyCode(effect, numberCode)
+    case "seal":
+      return generateSealKeyCode(effect, numberCode)
+    case "edition":
+      return generateEditionKeyCode(effect, numberCode)
+    case "booster":
+      return generateBoosterKeyCode(effect, numberCode)
+    case "voucher":
+      return generateVoucherKeyCode(effect, numberCode)
+    case "tag":
+      return generateTagKeyCode(effect, numberCode)
     default: 
       return ''
   }
 }
 
 const generateJokerKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.joker_change_type as string) || "random";
@@ -120,6 +162,19 @@ const generateJokerKeyCode = (
     statement += `
       local random_joker_result = pseudorandom_element(possible_jokers, 'random joker')`
 
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Joker) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Joker then 
+            index = index - #G.P_CENTER_POOLS.Joker
+          end
+          new_key = G.P_CENTER_POOLS.Joker[index].key
+        end
+      end`
   } else {
     valueCode = `card.ability.extra.${changeType}`
   }
@@ -131,7 +186,8 @@ const generateJokerKeyCode = (
 }
 
 const generateConsumableKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.consumable_change_type as string) || "random";
@@ -171,6 +227,19 @@ const generateConsumableKeyCode = (
     statement += `
       local random_joker_result = pseudorandom_element(possible_jokers, 'random joker')`
 
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Consumeables) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Consumeables then 
+            index = index - #G.P_CENTER_POOLS.Consumeables
+          end
+          new_key = G.P_CENTER_POOLS.Consumeables[index].key
+        end
+      end`
   } else {
     valueCode = `card.ability.extra.${changeType}`
   }
@@ -183,7 +252,8 @@ const generateConsumableKeyCode = (
 }
 
 const generateEnhancementKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.enhancement_change_type as string) || "random";
@@ -213,6 +283,19 @@ const generateEnhancementKeyCode = (
       local random_enhancement_result = pseudorandom_element(possible_enhancements, 'random enhancement')`
   } else if (changeType === "specific") {
     valueCode = `'${specificEnhancement}'`
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Enhanced) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Enhanced then 
+            index = index - #G.P_CENTER_POOLS.Enhanced
+          end
+          new_key = G.P_CENTER_POOLS.Enhanced[index].key
+        end
+      end`
   } else {
     valueCode = `card.ability.extra.${changeType}`
   }
@@ -224,7 +307,8 @@ const generateEnhancementKeyCode = (
 }
 
 const generateSealKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.seal_change_type as string) || "random";
@@ -254,6 +338,19 @@ const generateSealKeyCode = (
       local random_seal_result = pseudorandom_element(possible_seals, 'random seal')`
   } else if (changeType === "specific") {
     valueCode = `'${specificSeal}'`
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Seal) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Seal then 
+            index = index - #G.P_CENTER_POOLS.Seal
+          end
+          new_key = G.P_CENTER_POOLS.Seal[index].key
+        end
+      end`
   } else {
     valueCode = `card.ability.extra.${changeType}`
   }
@@ -265,7 +362,8 @@ const generateSealKeyCode = (
 }
 
 const generateEditionKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.edition_change_type as string) || "random";
@@ -299,6 +397,19 @@ const generateEditionKeyCode = (
       local random_edition_result = pseudorandom_element(possible_editions, 'random edition')`
   } else if (changeType === "specific") {
     valueCode = `'${specificEdition}'`
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Edition) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Edition then 
+            index = index - #G.P_CENTER_POOLS.Edition
+          end
+          new_key = G.P_CENTER_POOLS.Edition[index].key
+        end
+      end`
   } else {
     valueCode = `card.ability.extra.${changeType}`
   }
@@ -311,7 +422,8 @@ const generateEditionKeyCode = (
 
 
 const generateVoucherKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.voucher_change_type as string) || "random";
@@ -342,6 +454,21 @@ const generateVoucherKeyCode = (
     }
     statement += `
       local random_voucher_result = pseudorandom_element(possible_vouchers, 'random voucher')`
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Voucher) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Voucher then 
+            index = index - #G.P_CENTER_POOLS.Voucher
+          end
+          new_key = G.P_CENTER_POOLS.Voucher[index].key
+        end
+      end`
+  } else {
+    valueCode = `card.ability.extra.${changeType}`
   }
 
   statement += `
@@ -351,7 +478,8 @@ const generateVoucherKeyCode = (
 }
 
 const generateBoosterKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.booster_change_type as string) || "random";
@@ -376,28 +504,41 @@ const generateBoosterKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for i = 1, #G.P_CENTERS do
-          if string.sub(G.P_CENTERS[i], 1, 1) == 'p' then
-            possible_boosters[#possible_boosters + 1] = G.P_CENTERS[i].key
-          end
+        for i = 1, #G.P_CENTER_POOLS.Booster do
+          possible_boosters[#possible_boosters + 1] = G.P_CENTER_POOLS.Booster[i].key
         end`
     } else if (randomType === "category") {
       statement += `
-        for i = 1, #G.P_CENTERS do
-          if string.sub(G.P_CENTERS[i], 1, 1) == 'p' and G.P_CENTERS[i].kind == "${boosterKind}" then
-            possible_boosters[#possible_boosters + 1] = G.P_CENTERS[i].key
+        for i = 1, #G.P_CENTER_POOLS.Booster do
+          if G.P_CENTER_POOLS.Booster[i].kind == "${boosterKind}" then
+            possible_boosters[#possible_boosters + 1] = G.P_CENTER_POOLS.Booster[i].key
           end
         end`
     } else if (randomType === "size") {
       statement += `
         for i = 1, #G.P_CENTERS do
-          if string.sub(G.P_CENTERS[i], 1, 1) == 'p' and G.P_CENTERS[i].config.extra == ${boosterExtraCount} and G.P_CENTERS[i].config.choose == ${boosterChooseCount} then
-            possible_boosters[#possible_boosters + 1] = G.P_CENTERS[i].key
+          if G.P_CENTER_POOLS.Booster[i].config.extra == ${boosterExtraCount} and G.P_CENTER_POOLS.Booster[i].config.choose == ${boosterChooseCount} then
+            possible_boosters[#possible_boosters + 1] = G.P_CENTER_POOLS.Booster[i].key
           end
         end`
     }
     statement += `
       local random_booster_result = pseudorandom_element(possible_boosters, 'random booster')`
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Booster) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Booster then 
+            index = index - #G.P_CENTER_POOLS.Booster
+          end
+          new_key = G.P_CENTER_POOLS.Booster[index].key
+        end
+      end`
+  } else {
+    valueCode = `card.ability.extra.${changeType}`
   }
 
   statement += `
@@ -406,7 +547,8 @@ const generateBoosterKeyCode = (
   return statement
 }
 const generateTagKeyCode = (
-  effect: Effect
+  effect: Effect,
+  numberCode: string,
 ) => {
   const variableName = (effect.params.variable_name as string) || "keyvar";
   const changeType = (effect.params.tag_change_type as string) || "random";
@@ -435,12 +577,27 @@ const generateTagKeyCode = (
 
     if (randomType === "all") {
       statement += `
-        for i = 1, #G.P_TAGS do
-            possible_tags[#possible_tags + 1] = G.P_TAGS[i].key
+        for i = 1, #G.P_CENTER_POOLS.Tag do
+            possible_tags[#possible_tags + 1] = G.P_CENTER_POOLS.Tag[i].key
         end`
     }
     statement += `
       local random_tag_result = pseudorandom_element(possible_tags, 'random tag')`
+  } else if (changeType === "increment") {
+    valueCode = `new_key`
+    statement += `
+      local new_key = 'none'
+      for i, v in pairs(G.P_CENTER_POOLS.Tag) do
+        if v.key == card.ability.extra.${changeType} then
+          local index = i + ${numberCode}
+          if i > #G.P_CENTER_POOLS.Tag then 
+            index = index - #G.P_CENTER_POOLS.Tag
+          end
+          new_key = G.P_CENTER_POOLS.Tag[index].key
+        end
+      end`
+  } else {
+    valueCode = `card.ability.extra.${changeType}`
   }
 
   statement += `

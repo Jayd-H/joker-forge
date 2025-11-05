@@ -21,7 +21,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
     {
       id: "key_type",
       type: "select",
-      label: "Key Type",
+      label: "Change Type",
       options: [
         { value: "joker", label: "Joker" }, 
         { value: "consumable", label: "Consumable" },
@@ -42,6 +42,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Joker" }, 
         { value: "specific", label: "Specific Joker Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "joker_context"],
@@ -97,6 +98,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "joker_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "joker_change_type",
+        values: ["increment"],
+      },
+    },
     // CONSUMABLES
     {
       id: "consumable_change_type",
@@ -105,6 +116,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Consumable" }, 
         { value: "specific", label: "Specific Consumable Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "consumable_context"],
@@ -150,6 +162,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "consumable_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "consumable_change_type",
+        values: ["increment"],
+      },
+    },
     // ENHANCEMENTS
     {
       id: "enhancement_change_type",
@@ -158,6 +180,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Enhancement" }, 
         { value: "specific", label: "Specific Enhancement Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "enhancement_context"],
@@ -188,6 +211,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "enhancement_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "enhancement_change_type",
+        values: ["increment"],
+      },
+    },
     // SEALS
     {
       id: "seal_change_type",
@@ -196,6 +229,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Seal" }, 
         { value: "specific", label: "Specific Seal Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "seal_context"],
@@ -226,6 +260,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "seal_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "seal_change_type",
+        values: ["increment"],
+      },
+    },
     // EDITIONS
     {
       id: "edition_change_type",
@@ -234,6 +278,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Edition" }, 
         { value: "specific", label: "Specific Edition Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "edition_context"],
@@ -264,6 +309,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "edition_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "edition_change_type",
+        values: ["increment"],
+      },
+    },
     // VOUCHERS
     {
       id: "voucher_change_type",
@@ -272,6 +327,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Vouchers" }, 
         { value: "specific", label: "Specific Voucher Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "voucher_context"],
@@ -303,6 +359,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "voucher_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "voucher_change_type",
+        values: ["increment"],
+      },
+    },
     // BOOSTERS
     {
       id: "booster_change_type",
@@ -311,6 +377,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Booster" }, 
         { value: "specific", label: "Specific Booster Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "booster_context"],
@@ -378,6 +445,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         values: ["specific"],
       },
     },
+    {
+      id: "booster_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "booster_change_type",
+        values: ["increment"],
+      },
+    },
     // TAG
     {
       id: "tag_change_type",
@@ -386,6 +463,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       options: [
         { value: "random", label: "Random Tag" }, 
         { value: "specific", label: "Specific Tag Key" },
+        { value: "increment", label: "Increment In Collection Order" },
       ],
       default: "specific",
       variableTypes: ["key", "tag_context"],
@@ -400,7 +478,6 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       label: "Random Tag from Type",
       options: [
         { value: "all", label: "Random From All Tags" },
-        { value: "set", label: "Random From A Tag Set Type" },
       ],
       default: "all",
       showWhen: {
@@ -415,6 +492,16 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       showWhen: {
         parameter: "tag_change_type",
         values: ["specific"],
+      },
+    },
+    {
+      id: "tag_increment_count",
+      type: "number",
+      label: "Increment Count",
+      default: 1,
+      showWhen: {
+        parameter: "tag_change_type",
+        values: ["increment"],
       },
     },
   ],
