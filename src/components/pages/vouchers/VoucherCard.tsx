@@ -368,7 +368,7 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
         </div>
 
         <div className="relative z-30">
-          <div className="px-6 py-1 -mt-6 rounded-md bg-black-dark border-2 text-sm tracking-wide font-medium text-balatro-orange">
+          <div className="px-6 py-1 -mt-6 rounded-md bg-black-dark border-2 text-sm tracking-wide font-medium text-balatro-voucher">
             Voucher
           </div>
         </div>

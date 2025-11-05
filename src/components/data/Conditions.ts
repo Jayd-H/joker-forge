@@ -1691,7 +1691,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Player OS",
     description: "Check on what Operating System the player is on",
     objectUsers: [...ALL_OBJECTS],
-    applicableTriggers: GENERIC_TRIGGERS,
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     params: [
       {
         id: "system",
@@ -1713,8 +1713,8 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "check_deck",
     label: "Check Deck",
     description: "Check on what Deck the player is on",
-    objectUsers: ["joker", "consumable", "voucher", "deck", "card_used"],
-    applicableTriggers: GENERIC_TRIGGERS,
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     params: [
       {
         id: "decks",

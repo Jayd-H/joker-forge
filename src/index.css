@@ -30,6 +30,8 @@ html {
   --color-balatro-planet: #13afce;
   --color-balatro-spectral: #4584fa;
   --color-balatro-voucher: #fd682b;
+  --color-balatro-voucher_badgetag: #ff5611;
+  --color-balatro-voucher_badgetag_shadow: #a93202;
   --color-balatro-edition: #4ca893;
   --color-balatro-enhanced: #8389dd;
   --color-balatro-red: #ff4c40;
@@ -41,7 +43,6 @@ html {
   --color-balatro-purple: #aa5bb5;
   --color-balatro-purpleshadow: #6d3574;
   --color-balatro-orange: #fda200;
-  --color-balatro-shadoworange: #9c6300;
   --color-balatro-brown: #d67a5a;
   --color-balatro-shadowbrown: #bf5b48;
   --color-balatro-transparentblack: #00000060;

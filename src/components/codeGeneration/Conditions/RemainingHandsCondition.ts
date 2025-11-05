@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../gameVariableUtils";
+import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
 
 export const generateRemainingHandsConditionCode = (
   rules: Rule[],

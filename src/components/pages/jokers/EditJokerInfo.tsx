@@ -674,7 +674,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
     if (variable.type === "suit") return variable.initialSuit || "Spades";
     if (variable.type === "rank") return variable.initialRank || "Ace";
     if (variable.type === "text") return variable.initialText || "Hello";
-    if (variable.type === "joker") return variable.initialJoker || "j_joker";
+    if (variable.type === "key") return variable.initialKey || "j_joker";
     if (variable.type === "pokerhand")
       return variable.initialPokerHand || "High Card";
     return variable.initialValue?.toString() || "0";
