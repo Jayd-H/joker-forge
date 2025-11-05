@@ -252,8 +252,8 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     }
     if (type === "voucher") {
       return {
-        bg: "bg-balatro-shadoworange",
-        shadow: "bg-balatro-orange",
+        bg: "bg-balatro-voucher_tag_shadow",
+        shadow: "bg-balatro-voucher_tag",
       };
     }
     return {
@@ -337,10 +337,10 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       return data.name || "New Edition";
     }
     if (type === "voucher") {
-      return data.name || "New Voucher";
+      return setName || "Voucher";
     }
     if (type === "deck") {
-      return data.name || "New Deck";
+      return setName || "Deck";
     }
     return "";
   };

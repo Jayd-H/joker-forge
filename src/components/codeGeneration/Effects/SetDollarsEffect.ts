@@ -97,11 +97,15 @@ export const generateSetDollarsEffectCode = (
       configVariables
     };
   } else {
+    const setMessage = customMessage
+        ? `"${customMessage}"`
+        : `"${operationSymbol}"..tostring(${valueCode})`;
     return {
       statement: `
         func = function()
           ${changeCode}
           ${dollarsCode}
+          card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.MONEY})
           return true
         end`,
       colour: "G.C.MONEY",
