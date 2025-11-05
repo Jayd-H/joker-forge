@@ -37,7 +37,6 @@ export const GENERIC_TRIGGERS: string[] = [
   "probability_result",
   "tag_added",
   "ante_start",
-  "card_used",
 ];
 
 export const ALL_OBJECTS = [
@@ -672,7 +671,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Player Money",
     description: "Check how much money the player has",
     objectUsers: [...ALL_OBJECTS],
-    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "card_used"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "consumable_used"],
     params: [
       {
         id: "operator",
@@ -1525,7 +1524,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
       "first_hand_drawn",
       "game_over",
       "card_destroyed",
-      "card_used"
+      "consumable_used"
     ],
     params: [
       {
@@ -1549,7 +1548,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Joker Selected",
     description: "Check if a joker is selected/highlighted",
     objectUsers: ["joker", "consumable"],
-    applicableTriggers:  [...GENERIC_TRIGGERS, "card_used"],
+    applicableTriggers:  [...GENERIC_TRIGGERS, "consumable_used"],
     params: [
       {
         id: "check_key",
@@ -1587,6 +1586,26 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         },
         default: "any",
         exemptObjects: ["consumable"]
+      },
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [
+          { value: "equals", label: "equals" },
+          { value: "greater_than", label: "greater than" },
+          { value: "less_than", label: "less than" },
+          { value: "greater_equals", label: "greater than or equal" },
+          { value: "less_equals", label: "less than or equal" },
+        ],
+        default: "equals",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Number of Jokers",
+        min: 1,
+        default: 1,
       },
     ],
     category: "Jokers",
@@ -2020,7 +2039,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "joker_variable",
         type: "select",
         label: "Joker Variable",
-        variableTypes: ["joker"],
+        variableTypes: ["key"],
         showWhen: {
           parameter: "type",
           values: ["variable"]
@@ -2115,7 +2134,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Joker Sticker",
     description: "Check the stickers of the evaluated joker",
     objectUsers: ["joker", "consumable"],
-    applicableTriggers: ["joker_evaluated", "card_used"],
+    applicableTriggers: ["joker_evaluated", "consumable_used"],
     params: [
       {
         id: "sticker",
@@ -2153,7 +2172,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Joker is Flipped",
     description: "Check if the joker is flipped (facing back)",
     objectUsers: ["joker", "consumable"],
-    applicableTriggers: ["joker_evaluated", "card_used"],
+    applicableTriggers: ["joker_evaluated", "consumable_used"],
     params: [],
     category: "Jokers",
   },
@@ -2171,7 +2190,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Cards Selected",
     description: "Check how many cards are selected/highlighted",
     objectUsers: ["consumable"],
-    applicableTriggers: ["card_used"],
+    applicableTriggers: ["consumable_used"],
     params: [
       {
         id: "operator",
@@ -2201,7 +2220,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Hand Drawn",
     description: "Check if a hand is currently drawn",
     objectUsers: ["consumable", "voucher", "deck"],
-    applicableTriggers: ["card_used", ...VOUCHER_GENERIC_TRIGGERS],
+    applicableTriggers: ["consumable_used", ...VOUCHER_GENERIC_TRIGGERS],
     params: [],
     category: "Game State",
   },
@@ -2210,7 +2229,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "In Blind",
     description: "Check if the player is currently in a blind (gameplay)",
     objectUsers: ["consumable"],
-    applicableTriggers: ["card_used"],
+    applicableTriggers: ["consumable_used"],
     params: [],
     category: "Game State",
   },
