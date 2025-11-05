@@ -8,7 +8,7 @@ export const generateUnlockJokerEffectCode = (
   const jokerKey = (effect.params?.joker_key as string) || "j_joker";
   const discover = (effect.params?.discover as string) === "true" ? true : false
   const customMessage = effect.customMessage;
-  const jokerVariable = (effect.params?.joker_variable as string) || "j_joker";
+  const keyVariable = (effect.params?.key_variable as string) || "none";
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 
   ? jokerKey 
@@ -30,7 +30,7 @@ export const generateUnlockJokerEffectCode = (
     end`
   } else {
     statement = `func = function()
-      local target_joker = card.ability.extra.${jokerVariable} 
+      local target_joker = G.P_CENTERS[card.ability.extra.${keyVariable}]
       if target_joker then
         unlock_card(target_joker)
         ${discover ? "discover_card(target_joker)" : ""}

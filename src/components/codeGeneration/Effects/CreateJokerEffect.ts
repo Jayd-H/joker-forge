@@ -1,4 +1,4 @@
-import { getModPrefix } from "../../data/BalatroUtils";
+import { EDITIONS, getModPrefix } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../effectUtils";
 
@@ -39,6 +39,8 @@ const generateJokerCode = (
   const customMessage = effect.customMessage;
   const sticker = (effect.params?.sticker as string) || "none";
   const ignoreSlots = (effect.params?.ignore_slots as string) === "y";
+
+  const isEditionVar = !EDITIONS().map(edition => edition.value).includes(edition) && edition !== "none"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -102,6 +104,7 @@ const generateJokerCode = (
     ", "
   )} })`;
   const editionCode =
+    isEditionVar ? `joker_card:set_edition(card.ability.extra.${edition}, true)` : 
     edition !== "none" ? `joker_card:set_edition("${edition}", true)` : ``;
 
   const stickerCode = hasSticker

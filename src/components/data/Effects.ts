@@ -1008,7 +1008,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           })),
           ],
         default: "none",
-        variableTypes: ["key"],
       },
       {
         id: "sticker",
@@ -1886,22 +1885,22 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
       {
-          id: "key",
-          type: "text",
-          label: "Card Key (itemkey_key) or (itemkey_modprefix_key)",
-          default: "",
-        },
-        {
-          id: "card_apperance",
-          type: "select",
-          label: "Card Apperance",
-          options: [
-          { value: "appear", label: "Can Appear" },
-          { value: "disapper", label: "Can't Appear" },
-          ],
-          default: "appear",
-        },
-      ],
+        id: "key",
+        type: "text",
+        label: "Card Key (itemkey_key) or (itemkey_modprefix_key)",
+        default: "",
+      },
+      {
+        id: "card_apperance",
+        type: "select",
+        label: "Card Apperance",
+        options: [
+        { value: "appear", label: "Can Appear" },
+        { value: "disapper", label: "Can't Appear" },
+        ],
+        default: "appear",
+      },
+    ],
     category: "Shop",
   },
   {
@@ -2123,7 +2122,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         default: "key",
         options: [
           { value: "key", label: "Joker Key" },
-          // { value: "variable", label: "Joker Variable" }, --- TEMP DISABLED
+          { value: "variable", label: "Key Variable" },
         ]
       },
       {
@@ -2137,9 +2136,9 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         },
       },
       {
-        id: "joker_variable",
+        id: "key_variable",
         type: "select",
-        label: "Joker Variable",
+        label: "Key Variable",
         showWhen: {
           parameter: "selection_method",
           values: ["variable"],
