@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getAllRarities, getModPrefix } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateJokerCountConditionCode = (
   rules: Rule[],

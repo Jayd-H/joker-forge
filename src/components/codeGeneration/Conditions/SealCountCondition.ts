@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateGameVariableCode } from "../gameVariableUtils";
 
 export const generateSealCountConditionCode = (
   rules: Rule[],
