@@ -17,7 +17,7 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const jokerKey = (condition.params?.joker_key as string) || "";
   const selectionMethod = (condition.params?.selection_method as string) || "key"
-  const jokerVariable = (condition.params?.joker_variable as string) || "j_joker"
+  const keyVar = (condition.params?.key_variable as string) || "none"
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 
   ? jokerKey 
@@ -29,7 +29,7 @@ const generateJokerCode = (
       end)()`
   } else {
     return `(function()
-        return context.other_joker.config.center.key == "${jokerVariable}"
+        return context.other_joker.config.center.key == card.ability.extra.${keyVar}
     end)()`
   }
 }

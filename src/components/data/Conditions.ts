@@ -2003,7 +2003,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Joker",
         options: [
           {value: "key", label: "Specific Key"},
-          {value: "variable", label: "Joker Variable"},
+          {value: "variable", label: "Key Variable"},
         ]
       },
       {
@@ -2017,10 +2017,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         }
       },
       {
-        id: "joker_variable",
+        id: "key_varaible",
         type: "select",
-        label: "Joker Variable",
-        variableTypes: ["joker"],
+        label: "Key Variable",
+        variableTypes: ["key"],
         showWhen: {
           parameter: "type",
           values: ["variable"]
@@ -2228,6 +2228,9 @@ export function getConditionsForTrigger(
 ): GlobalConditionTypeDefinition[] {
   if (itemType === "enhancement" || itemType === "edition" || itemType === "seal") {
     itemType = "card"
+  }
+  if ((itemType === "voucher" || itemType === "deck") && triggerId === "card_used") {
+    return []
   }
   return CONDITIONS.filter(
     (condition) =>
