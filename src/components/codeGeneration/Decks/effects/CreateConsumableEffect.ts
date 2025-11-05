@@ -14,18 +14,18 @@ export const generateCreateConsumableReturn = (
 
   let createCode = ``;
   let colour = "G.C.PURPLE";
-
-  if (!isNegative && !ignoreSlots) {
-    createCode += `
-    for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
-  } else {
-    createCode += `
-    for i = 1, ${countCode} do`
-  }
   
   createCode += `
             G.E_MANAGER:add_event(Event({
             func = function()`
+
+if (!isNegative && !ignoreSlots) {
+    createCode += `
+            for i = 1, math.min(${countCode}, G.consumeables.config.card_limit - #G.consumeables.cards) do`
+  } else {
+    createCode += `
+            for i = 1, ${countCode} do`
+  }
 
   if (isNegative) {
     createCode += `
@@ -37,20 +37,14 @@ export const generateCreateConsumableReturn = (
   createCode +=`
   
             play_sound('timpani')`
-                 
-  if (set === "random") {
-    createCode += `
-            local sets = {'Tarot', 'Planet', 'Spectral'}
-            local random_set = pseudorandom_element(sets, 'random_consumable_set')`
-  }
 
   createCode += `
             SMODS.add_card({ `
 
-  if (set == "random") {
-    createCode += `set = random_set, `
+   if (set == "random") {
+    createCode += `set = 'Consumeables', area = G.consumeables,`
   } else  {
-    createCode += `set = '${set}', `
+    createCode += `set = '${set}', area = G.consumeables, `
   }
 
   if (isNegative) {
@@ -67,17 +61,15 @@ export const generateCreateConsumableReturn = (
 
     createCode +=`
              })
-            return true
+        end
+        return true
         end
         }))
-    end
 `
 
   return {
       statement: `__PRE_RETURN_CODE__
                    ${createCode}
-                    end
-                    return true
                     __PRE_RETURN_CODE_END__`,
       colour: colour,
 
