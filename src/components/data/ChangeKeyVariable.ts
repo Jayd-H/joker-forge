@@ -61,7 +61,7 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
         { value: "locked", label: "Random from Locked Jokers" },
         { value: "pool", label: "Random from Pool" },
         { value: "owned", label: "Random from Owned Jokers" },
-        { value: "rarity", label: "Random from specific Rarity" },
+        { value: "rarity", label: "Random from a Specific Rarity" },
       ],
       default: "all",
       showWhen: {
@@ -83,7 +83,6 @@ export const CHANGE_KEY_VAR_EFFECT: GlobalEffectTypeDefinition = {
       id: "joker_pool",
       type: "text",
       label: "Pool",
-      options: [],
       showWhen: {
         parameter: "joker_random_type",
         values: ["pool"],
