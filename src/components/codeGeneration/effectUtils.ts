@@ -71,6 +71,7 @@ import { generateSplashPassiveEffectCode } from "./Effects/PassiveEffects/Splash
 import { generateFreeRerollsEffectCode, generateFreeRerollsPassiveEffectCode } from "./Effects/FreeRerollsEffect";
 import { generateEditConsumableSlotsEffectCode, generateEditConsumableSlotsPassiveEffectCode } from "./Effects/EditConsumableSlotsEffect";
 import { generateEditJokerSlotsEffectCode, generateEditJokerSlotsPassiveEffectCode } from "./Effects/EditJokerSlotsEffect";
+import { generateEditJokerSizeEffectCode, generateEditJokerSizePassiveEffectCode } from "./Effects/EditJokerSizeEffect";
 import { generateDiscountItemsEffectCode, generateDiscountItemsPassiveEffectCode } from "./Effects/DiscountItemsEffect";
 import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "./Effects/PassiveEffects/ReduceFlushStraightRequirementEffect";
 import { generateShortcutPassiveEffectCode } from "./Effects/PassiveEffects/ShortcutEffect";
@@ -846,6 +847,8 @@ export const generateSingleEffect = (
       return generateEditCardsEffectCode(effect, itemType, modprefix)
     case "edit_joker_slots":
       return generateEditJokerSlotsEffectCode(effect, itemType, sameTypeCount)
+    case "edit_joker_size":
+      return generateEditJokerSizeEffectCode(effect, itemType, sameTypeCount)
     case "edit_consumable_slots":
       return generateEditConsumableSlotsEffectCode(effect, itemType, sameTypeCount)
     case "edit_discards_money":
@@ -986,6 +989,8 @@ const generateSinglePassiveEffect = (
       return generateEditConsumableSlotsPassiveEffectCode(effect)
     case "edit_joker_slots":
       return generateEditJokerSlotsPassiveEffectCode(effect)
+    case "edit_joker_size":
+      return generateEditJokerSizePassiveEffectCode(effect)
     case "shortcut":
       return generateShortcutPassiveEffectCode(jokerKey)
     case "reduce_flush_straight_requirements":

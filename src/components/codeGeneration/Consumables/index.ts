@@ -353,7 +353,7 @@ const generateCalculateFunction = (
   consumable: ConsumableData,
 ): string => {
 
-  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "consumable_used")
 
   if (filtered_rules.length === 0) return "";
 
@@ -474,7 +474,7 @@ const generateUseFunction = (
   modPrefix: string,
   consumable?: ConsumableData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "consumable_used")
 
   if (filtered_rules.length === 0) return "";
 

@@ -63,7 +63,8 @@ const generateJokerCode = (
                 end`;
   } else if (selectionMethod === "selected_joker") {
       jokerSelectionCode = `
-                local self_card = G.jokers.highlighted[1]
+      for i = 1, #G.jokers.highlighted do
+                local self_card = G.jokers.highlighted[i]
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
             card:juice_up(0.3, 0.5)
@@ -72,7 +73,8 @@ const generateJokerCode = (
         self_card:start_dissolve()
                         break
                     end
-                end`;
+                end
+            end`;
   } else if (selectionMethod === "self") {
       jokerSelectionCode = `
         local target_joker = card`;
@@ -272,12 +274,14 @@ const generateConsumableCode = (
   if (selection_method === "selected") {
     destroyJokerCode = `
            __PRE_RETURN_CODE__
-        local self_card = G.jokers.highlighted[1]
+        for i = 1, #G.jokers.highlighted do
+                local self_card = G.jokers.highlighted[i]
         G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
             play_sound('timpani')
             card:juice_up(0.3, 0.5)
             return true end }))
         self_card:start_dissolve()
+        end
         delay(0.6)
     __PRE_RETURN_CODE_END__`;
 }
