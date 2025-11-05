@@ -402,7 +402,7 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     description: {
       joker: "Triggers when the player uses a Tarot, Planet, or Spectral card",
     },    
-    category: "Usage",
+    category: "Packs & Consumables",
     objectUsers: ["joker"],
   },
   {

@@ -18,7 +18,7 @@ export const updateRuleBlocks = (
     objectType.forEach(item => {      
       item.rules?.forEach(rule => {
 
-      rule.trigger = updateTrigger(rule);
+      rule.trigger = updateTrigger(rule, item.objectType);
 
       (rule.conditionGroups || []).forEach(group => {group.conditions.forEach(condition => {
         condition = updateCondition(condition)
@@ -50,10 +50,15 @@ export const updateRuleBlocks = (
 }
 
 const updateTrigger = (
-  rule: Rule
+  rule: Rule,
+  itemType: string,
 ) => {
   switch(rule.trigger) {
     case "consumable_used":
+      if (itemType === "consumable") 
+        return "card_used"
+      else 
+        return "consumable_used"
     case "voucher_redeemed":
     case "deck_selected":
       return "card_used"
