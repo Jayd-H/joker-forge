@@ -1014,7 +1014,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   },
   {
     id: "specific_joker",
-    label: "Specific Joker",
+    label: "Owned Joker",
     description: "Check if a specific joker is in your collection",
     objectUsers: [...ALL_OBJECTS],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability", "card_used"],

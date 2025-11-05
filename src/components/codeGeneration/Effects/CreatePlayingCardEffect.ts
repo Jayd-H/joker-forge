@@ -77,17 +77,13 @@ const generateJokerCode = (
 
   let centerParam = "";
   if (enhancement === "none") {
-    centerParam = `
-    G.P_CENTERS.c_base`;
+    centerParam = `G.P_CENTERS.c_base`;
   } else if (enhancement === "random") {
-    centerParam =`
-      pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))`;
+    centerParam = `pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))`;
   } else if (variables[0]){
-    centerParam = `
-      G.P_CENTERS.[card.ability.extra.${enhancement}]`;
+    centerParam = `G.P_CENTERS.[card.ability.extra.${enhancement}]`;
   } else {
-    centerParam = `
-    G.P_CENTERS.${enhancement}`;
+    centerParam = `G.P_CENTERS.${enhancement}`;
   }
 
   let sealCode = "";
@@ -96,7 +92,7 @@ const generateJokerCode = (
     sealCode = `
       new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_hand_seal')), true)`;
   } else if (variables[1]){
-    centerParam = `
+    sealCode = `
       new_card:set_seal(card.ability.extra.${seal}, true)`;
   } else if (seal !== "none") {
     sealCode = `
@@ -110,7 +106,7 @@ const generateJokerCode = (
        editionCode = `
       new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_hand_edition')), true)`;
   } else if (variables[2]){
-    centerParam = `
+    editionCode = `
       new_card:set_edition(card.ability.extra.${edition}, true)`;
   } else if (edition !== "none") {
     editionCode = `

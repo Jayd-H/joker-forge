@@ -41,21 +41,37 @@ const getParamForKeyType = (
 ) => {
   switch(keyType){
     case "joker":
-      return effect.params?.joker_increment_count
+      if (effect.params?.joker_change_type as string === "increment")
+        return effect.params?.joker_increment_count
+      else return ''
     case "consumable":
-      return effect.params?.consumable_increment_count
+      if (effect.params?.consumable_change_type as string === "increment")
+        return effect.params?.consumable_increment_count
+      else return ''
     case "enhancement":
-      return effect.params?.enhancement_increment_count
+      if (effect.params?.enhancement_change_type as string === "increment")
+        return effect.params?.enhancement_increment_count
+      else return ''
     case "seal":
-      return effect.params?.seal_increment_count
+      if (effect.params?.seal_change_type as string === "increment")
+        return effect.params?.seal_increment_count
+      else return ''
     case "edition":
-      return effect.params?.edition_increment_count
+      if (effect.params?.edition_change_type as string === "increment")
+        return effect.params?.edition_increment_count
+      else return ''
     case "booster":
-      return effect.params?.booster_increment_count
+      if (effect.params?.booster_change_type as string === "increment")
+        return effect.params?.booster_increment_count
+      else return ''
     case "voucher":
-      return effect.params?.voucher_increment_count
+      if (effect.params?.voucher_change_type as string === "increment")
+        return effect.params?.voucher_increment_count
+      else return ''    
     case "tag":
-      return effect.params?.tag_increment_count
+      if (effect.params?.tag_change_type as string === "increment")
+        return effect.params?.tag_increment_count
+      else return ''
     default: 
       return ''
   }
@@ -169,8 +185,11 @@ const generateJokerKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Joker) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Joker then 
+          if index > #G.P_CENTER_POOLS.Joker then 
             index = index - #G.P_CENTER_POOLS.Joker
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Joker
           end
           new_key = G.P_CENTER_POOLS.Joker[index].key
         end
@@ -234,8 +253,11 @@ const generateConsumableKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Consumeables) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Consumeables then 
+          if index > #G.P_CENTER_POOLS.Consumeables then 
             index = index - #G.P_CENTER_POOLS.Consumeables
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Consumeables
           end
           new_key = G.P_CENTER_POOLS.Consumeables[index].key
         end
@@ -290,8 +312,11 @@ const generateEnhancementKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Enhanced) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Enhanced then 
+          if index > #G.P_CENTER_POOLS.Enhanced then 
             index = index - #G.P_CENTER_POOLS.Enhanced
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Enhanced
           end
           new_key = G.P_CENTER_POOLS.Enhanced[index].key
         end
@@ -343,10 +368,13 @@ const generateSealKeyCode = (
     statement += `
       local new_key = 'none'
       for i, v in pairs(G.P_CENTER_POOLS.Seal) do
-        if v.key == card.ability.extra.${changeType} then
+        if v.key == card.ability.extra.${variableName} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Seal then 
+          if index > #G.P_CENTER_POOLS.Seal then 
             index = index - #G.P_CENTER_POOLS.Seal
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Seal
           end
           new_key = G.P_CENTER_POOLS.Seal[index].key
         end
@@ -380,7 +408,7 @@ const generateEditionKeyCode = (
   } else if (changeType === "added_card") {
     valueCode = `context.added_card.edition.key`
   } else if (changeType === "evaled_joker") {
-    valueCode = "context.other_joker.edition.key"
+    valueCode = "context.other_joker.config.edition.key"
   } else if (changeType === "selected_joker") {
     valueCode = "G.jokers.highlighted[1].edition.key"
   } else if (changeType === "random") {
@@ -404,8 +432,11 @@ const generateEditionKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Edition) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Edition then 
+          if index > #G.P_CENTER_POOLS.Edition then 
             index = index - #G.P_CENTER_POOLS.Edition
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Edition
           end
           new_key = G.P_CENTER_POOLS.Edition[index].key
         end
@@ -461,8 +492,11 @@ const generateVoucherKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Voucher) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Voucher then 
+          if index > #G.P_CENTER_POOLS.Voucher then 
             index = index - #G.P_CENTER_POOLS.Voucher
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Voucher
           end
           new_key = G.P_CENTER_POOLS.Voucher[index].key
         end
@@ -531,8 +565,11 @@ const generateBoosterKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Booster) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Booster then 
+          if index > #G.P_CENTER_POOLS.Booster then 
             index = index - #G.P_CENTER_POOLS.Booster
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Booster
           end
           new_key = G.P_CENTER_POOLS.Booster[index].key
         end
@@ -590,8 +627,11 @@ const generateTagKeyCode = (
       for i, v in pairs(G.P_CENTER_POOLS.Tag) do
         if v.key == card.ability.extra.${changeType} then
           local index = i + ${numberCode}
-          if i > #G.P_CENTER_POOLS.Tag then 
+          if index > #G.P_CENTER_POOLS.Tag then 
             index = index - #G.P_CENTER_POOLS.Tag
+          end
+          if index < 1 then 
+            index = index + #G.P_CENTER_POOLS.Tag
           end
           new_key = G.P_CENTER_POOLS.Tag[index].key
         end

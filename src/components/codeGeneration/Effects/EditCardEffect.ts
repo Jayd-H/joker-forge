@@ -74,27 +74,28 @@ const generateJokerCode = (
     }
 
     modificationCode += `
-                assert(SMODS.change_base(${target}, ${suitParam}, ${rankParam}))`;
+      assert(SMODS.change_base(${target}, ${suitParam}, ${rankParam}))`;
   }
   if (newEnhancement === "remove") {
     modificationCode += `
-                ${target}:set_ability(G.P_CENTERS.c_base)`;
+      ${target}:set_ability(G.P_CENTERS.c_base)`;
   } else if (newEnhancement === "random") {
     modificationCode += `
-                local enhancement_pool = {}
-                for _, enhancement in pairs(G.P_CENTER_POOLS.Enhanced) do
-                    if enhancement.key ~= 'm_stone' then
-                        enhancement_pool[#enhancement_pool + 1] = enhancement
-                    end
-                end
-                local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
-                ${target}:set_ability(random_enhancement)`;
+      local enhancement_pool = {}
+      for _, enhancement in pairs(G.P_CENTER_POOLS.Enhanced) do
+          if enhancement.key ~= 'm_stone' then
+              enhancement_pool[#enhancement_pool + 1] = enhancement
+          end
+      end
+      local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
+      ${target}:set_ability(random_enhancement)`;
   } else if (variableUsers[0]) {
     modificationCode += `
+  
       ${target}:set_ability(G.P_CENTERS[card.ability.extra.${newEnhancement}])`;
   } else if (newEnhancement !== "none") {
     modificationCode += `
-                ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
+      ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
   }
 
   if (newSeal === "remove") {
@@ -116,7 +117,7 @@ const generateJokerCode = (
 
   if (newEdition === "remove") {
     modificationCode += `
-                ${target}:set_edition(nil)`;
+      ${target}:set_edition(nil)`;
   } else if (newEdition === "random") {
     modificationCode += `
       local edition = pseudorandom_element({${editionPool}}, 'random edition')
@@ -185,25 +186,25 @@ const generateCardCode = (
     }
 
     modificationCode += `
-                assert(SMODS.change_base(${targetCard}, ${suitParam}, ${rankParam}))`;
+      assert(SMODS.change_base(${targetCard}, ${suitParam}, ${rankParam}))`;
   }
 
   if (newEnhancement === "remove") {
     modificationCode += `
-                ${targetCard}:set_ability(G.P_CENTERS.c_base)`;
+      ${targetCard}:set_ability(G.P_CENTERS.c_base)`;
   } else if (newEnhancement === "random") {
     modificationCode += `
-                local enhancement_pool = {}
-                for _, enhancement in pairs(G.P_CENTER_POOLS.Enhanced) do
-                    if enhancement.key ~= 'm_stone' then
-                        enhancement_pool[#enhancement_pool + 1] = enhancement
-                    end
-                end
-                local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
-                ${targetCard}:set_ability(random_enhancement)`;
+      local enhancement_pool = {}
+      for _, enhancement in pairs(G.P_CENTER_POOLS.Enhanced) do
+          if enhancement.key ~= 'm_stone' then
+              enhancement_pool[#enhancement_pool + 1] = enhancement
+          end
+      end
+      local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
+      ${targetCard}:set_ability(random_enhancement)`;
   } else if (newEnhancement !== "none") {
     modificationCode += `
-                ${targetCard}:set_ability(G.P_CENTERS.${newEnhancement})`;
+      ${targetCard}:set_ability(G.P_CENTERS.${newEnhancement})`;
   }
 
   if (newSeal === "remove") {
