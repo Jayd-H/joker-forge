@@ -19,7 +19,8 @@ import {
   addNumberVariablesToOptions,
   getNumberVariables,
   addKeyVariablesToOptions,
-} from "../codeGeneration/Jokers/variableUtils";
+  addTextVariablesToOptions,
+} from "../codeGeneration/Libs/userVariableUtils";
 
 import { getTriggerById } from "../data/Triggers";
 import { getConditionTypeById } from "../data/Conditions";
@@ -50,7 +51,7 @@ import { GameVariable, getGameVariableById } from "../data/GameVars";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { SelectedItem } from "./types";
 import  Checkbox  from "../generic/Checkbox";
-import { addTextVariablesToOptions } from "../codeGeneration/userVariableUtils";
+import {  } from "../codeGeneration/Libs/userVariableUtils";
 
 
 interface InspectorProps {

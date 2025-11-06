@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { ConsumableData, UserVariable } from "../data/BalatroUtils";
-import { getVariableUsageDetails } from "../codeGeneration/Jokers/variableUtils";
+import { getVariableUsageDetails } from "../codeGeneration/Libs/userVariableUtils";
 import {
   SUITS,
   RANKS,

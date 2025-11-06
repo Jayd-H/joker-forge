@@ -354,7 +354,7 @@ export const addNumberVariablesToOptions = (
   return [...baseOptions, ...variableOptions];
 };
 
-export const addJokerVariablesToOptions = (
+export const addKeyVariablesToOptions = (
   baseOptions: Array<{ value: string; label: string }>,
   item: JokerData | EnhancementData
 ): Array<{ value: string; label: string }> => {

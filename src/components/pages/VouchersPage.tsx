@@ -12,7 +12,7 @@ import { Suspense, lazy } from "react";
 const RuleBuilder = lazy(() => import("../ruleBuilder/RuleBuilder"));
 import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
-import { exportSingleVoucher } from "../codeGeneration/Vouchers/index";
+import { exportSingleVoucher } from "../codeGeneration/GameObjects/VouchersIndex";
 import type { Rule } from "../ruleBuilder/types";
 import { VoucherData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";

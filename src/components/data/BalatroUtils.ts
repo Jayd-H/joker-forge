@@ -1,5 +1,4 @@
-import { unlockOptions } from "../codeGeneration/Jokers/unlockUtils";
-import { vouchersunlockOptions } from "../codeGeneration/Vouchers/unlockUtils";
+import { jokerUnlockOptions, vouchersUnlockOptions } from "../codeGeneration/Libs/unlockUtils";
 import { Rule } from "../ruleBuilder/types";
 
 export const slugify = (text: string): string => {
@@ -118,7 +117,7 @@ export interface JokerData extends GameObjectData {
   force_polychrome?: boolean;
   force_negative?: boolean;
   appears_in_shop?: boolean;
-  unlockTrigger?: keyof typeof unlockOptions;
+  unlockTrigger?: keyof typeof jokerUnlockOptions;
   unlockProperties?: Array<{ category: string; property: string }>;
   unlockOperator?: string;
   unlockCount?: number;
@@ -283,7 +282,7 @@ export interface VoucherData extends GameObjectData {
   no_collection?: boolean;
   requires?: string;
   requires_activetor?: boolean;
-  unlockTrigger?: keyof typeof vouchersunlockOptions;
+  unlockTrigger?: keyof typeof vouchersUnlockOptions;
   unlockProperties?: Array<{ category: string; property: string }>;
   unlockOperator?: string;
   unlockCount?: number;

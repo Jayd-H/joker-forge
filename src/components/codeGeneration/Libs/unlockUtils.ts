@@ -115,7 +115,10 @@ export const jokersOptions = [
   { value: "joker_slots", label: "Joker Slots" },
 ];
 
-export const jokerUnlockOptions = {
+export const jokerUnlockOptions: Record<
+  string | number | symbol, 
+  {categories: { value: string, label: string, options: { value: string, label: string }[] }[] }
+> = {
   hand_contents: {
     categories: [
       { value: "rank", label: "Rank", options: rankOptions },
@@ -238,8 +241,10 @@ export const jokerUnlockOptions = {
   },
 };
 
-
-export const vouchersunlockOptions = {
+export const vouchersUnlockOptions: Record<
+  string | number | symbol, 
+  {categories: { value: string, label: string, options: { value: string, label: string }[] }[] }
+> = {
   hand_contents: {
     categories: [
       { value: "rank", label: "Rank", options: rankOptions },

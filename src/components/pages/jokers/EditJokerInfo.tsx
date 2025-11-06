@@ -21,7 +21,7 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { getAllVariables } from "../../codeGeneration/Jokers/variableUtils";
+import { getAllVariables } from "../../codeGeneration/Libs/userVariableUtils";
 import { JokerData, UserVariable } from "../../data/BalatroUtils";
 import {
   validateJokerName,
@@ -43,9 +43,9 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 import {
-  unlockOptions,
+  jokerUnlockOptions,
   unlockTriggerOptions,
-} from "../../codeGeneration/Jokers/unlockUtils";
+} from "../../codeGeneration/Libs/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
 import {
   updateGameObjectIds,
@@ -78,7 +78,7 @@ interface PropertyRuleProps {
   index: number;
 }
 
-type UnlockTrigger = keyof typeof unlockOptions;
+type UnlockTrigger = keyof typeof jokerUnlockOptions;
 
 const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   isOpen,
@@ -159,14 +159,14 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
   const PropertyRule: React.FC<PropertyRuleProps> = ({ formData, index }) => {
     const propertyCategoryOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
-      return unlockOptions[formData.unlockTrigger]?.categories ?? [];
+      return jokerUnlockOptions[formData.unlockTrigger]?.categories ?? [];
     }, [formData.unlockTrigger]);
 
     const selectedPropertyCategory =
       formData.unlockProperties?.[index]?.category;
     const propertyOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
-      const category = unlockOptions[formData.unlockTrigger]?.categories?.find(
+      const category = jokerUnlockOptions[formData.unlockTrigger]?.categories?.find(
         (c) => c.value === selectedPropertyCategory
       );
 
@@ -1264,7 +1264,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                             <div className="grid grid-cols-4 gap-4">
                               <div className="col-span-2">
                                 <InputDropdown
-                                  value={formData.unlockTrigger || ""}
+                                  value={formData.unlockTrigger as string || ""}
                                   onChange={handleUnlockTrigger}
                                   options={unlockTriggerOptions}
                                   separator={true}

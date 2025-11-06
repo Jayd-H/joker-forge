@@ -15,19 +15,16 @@ import {
   getCustomShaderFilepath,
   SoundData,
 } from "../data/BalatroUtils";
-import { addAtlasToZip } from "./ImageProcessor";
-import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
-import { generateConsumablesCode } from "./Consumables/index";
-import { generateVouchersCode } from "./Vouchers/index";
-import { generateDecksCode } from "./Decks/index";
-import { generateBoostersCode } from "./boosters";
+import { addAtlasToZip } from "./Libs/ImageProcessor";
+import { generateJokersCode, generateCustomRaritiesCode } from "./GameObjects/JokersIndex";
+import { generateConsumablesCode } from "./GameObjects/ConsumablesIndex";
+import { generateVouchersCode } from "./GameObjects/VouchersIndex";
+import { generateDecksCode } from "./GameObjects/DecksIndex";
+import { generateEnhancementsCode, generateSealsCode, generateEditionsCode } from "./GameObjects/CardsIndex";
+import { generateBoostersCode } from "./GameObjects/BoostersIndex";
 import { ConsumableSetData, slugify, getModPrefix } from "../data/BalatroUtils";
 import { modToJson } from "../JSONImportExport";
-import {
-  generateEnhancementsCode,
-  generateSealsCode,
-  generateEditionsCode,
-} from "./Card/index";
+
 
 // Old Export Method
 //

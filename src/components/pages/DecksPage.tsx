@@ -12,7 +12,7 @@ import { Suspense, lazy } from "react";
 const RuleBuilder = lazy(() => import("../ruleBuilder/RuleBuilder"));
 import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
-import { exportSingleDeck } from "../codeGeneration/Decks/index";
+import { exportSingleDeck } from "../codeGeneration/GameObjects/DecksIndex";
 import type { Rule } from "../ruleBuilder/types";
 import { DeckData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";

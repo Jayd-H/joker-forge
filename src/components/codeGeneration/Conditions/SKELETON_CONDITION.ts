@@ -1,3 +1,6 @@
+// @ts-nocheck
+// Make sure to Remove the Error Checker Bypass When Copying This File
+
 import type { Rule } from "../../ruleBuilder/types";
 import type { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../../data/BalatroUtils";
 

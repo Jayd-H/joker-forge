@@ -31,9 +31,9 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import {
-  vouchersunlockOptions,
+  vouchersUnlockOptions,
   unlockTriggerOptions,
-} from "../../codeGeneration/Vouchers/unlockUtils";
+} from "../../codeGeneration/Libs/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
 import {
   updateGameObjectIds,
@@ -75,7 +75,7 @@ interface PropertyRuleProps {
   index: number;
 }
 
-type UnlockTrigger = keyof typeof vouchersunlockOptions;
+type UnlockTrigger = keyof typeof vouchersUnlockOptions;
 
 const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
   isOpen,
@@ -124,14 +124,14 @@ const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
 const PropertyRule: React.FC<PropertyRuleProps> = ({ formData, index }) => {
     const propertyCategoryOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
-      return vouchersunlockOptions[formData.unlockTrigger]?.categories ?? [];
+      return vouchersUnlockOptions[formData.unlockTrigger]?.categories ?? [];
     }, [formData.unlockTrigger]);
 
     const selectedPropertyCategory =
       formData.unlockProperties?.[index]?.category;
     const propertyOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
-      const category = vouchersunlockOptions[formData.unlockTrigger]?.categories?.find(
+      const category = vouchersUnlockOptions[formData.unlockTrigger]?.categories?.find(
         (c) => c.value === selectedPropertyCategory
       );
 
@@ -1033,7 +1033,7 @@ const addPropertyHidden =
                             <div className="grid grid-cols-4 gap-4">
                               <div className="col-span-2">
                                 <InputDropdown
-                                  value={formData.unlockTrigger || ""}
+                                  value={formData.unlockTrigger as string || ""}
                                   onChange={handleUnlockTrigger}
                                   options={unlockTriggerOptions}
                                   separator={true}
