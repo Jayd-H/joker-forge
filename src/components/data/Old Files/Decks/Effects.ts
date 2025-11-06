@@ -1,4 +1,4 @@
-import { EffectTypeDefinition } from "../../ruleBuilder/types";
+import { EffectTypeDefinition } from "../../../ruleBuilder/types";
 import {
   PencilSquareIcon,
   BanknotesIcon,
@@ -24,7 +24,7 @@ import {
   RANKS,
   SPECTRAL_CARDS,
   TAGS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 import { DECK_GENERIC_TRIGGERS } from "./Conditions";
 
 export const DECK_EFFECT_CATEGORIES: CategoryDefinition[] = [

@@ -324,7 +324,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Starting Dollars",
     description: "Add, subtract, or set the player's Starting money",
     objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "operation",
@@ -1683,7 +1683,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "card_held_in_hand",
       "card_used",
       "joker_evaluated",
-      "deck_selected",
     ],
     params: [
       {

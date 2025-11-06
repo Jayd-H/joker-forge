@@ -1,4 +1,4 @@
-import { TriggerDefinition } from "../../ruleBuilder/types";
+import { TriggerDefinition } from "../../../ruleBuilder/types";
 import {
   PlayIcon,
   ClockIcon,

@@ -1,4 +1,4 @@
-import { EffectTypeDefinition } from "../../ruleBuilder/types";
+import { EffectTypeDefinition } from "../../../ruleBuilder/types";
 import {
   ChartBarIcon,
   BanknotesIcon,
@@ -30,7 +30,7 @@ import {
   CONSUMABLE_SETS,
   STICKERS,
   VOUCHERS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 
 export const EFFECT_CATEGORIES: CategoryDefinition[] = [
   {
@@ -599,7 +599,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "index_method",
           values: ["variable"],
         },
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "value",
@@ -1049,7 +1049,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker" },
         ],
         default: "random",
-        variableTypes: ["joker", "joker_context"]
+        variableTypes: ["key", "joker_context"]
       },
       {
         id: "rarity",
@@ -1215,7 +1215,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
-        variableTypes: ["joker", "joker_context"],
+        variableTypes: ["key", "joker_context"],
       },
       {
         id: "joker_key",
@@ -1314,7 +1314,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           parameter: "selection_method",
           values: ["variable"],
         },
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "discover",
@@ -2301,7 +2301,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
         type: "select",
         label: "Joker Variable",
         options: [], // Will be populated dynamically with joker variables
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "change_type",
@@ -2312,7 +2312,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker Key" },
         ],
         default: "specific",
-        variableTypes: ["joker", "joker_context"],
+        variableTypes: ["key", "joker_context"],
       },
       {
         id: "random_type",
@@ -2457,7 +2457,7 @@ export const EFFECT_TYPES: EffectTypeDefinition[] = [
           { value: "specific", label: "Specific Position" },
         ],
         default: "right",
-        variableTypes: ["joker"]
+        variableTypes: ["key"]
       },
       {
         id: "specific_index",
