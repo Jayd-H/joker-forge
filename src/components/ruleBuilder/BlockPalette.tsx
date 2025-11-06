@@ -26,6 +26,7 @@ import {
 import {
   TRIGGER_CATEGORIES,
   getTriggers,
+  CategoryDefinition
 } from "../data/Triggers"
 
 import {
@@ -37,10 +38,6 @@ import {
   EFFECT_CATEGORIES,
   getEffectsForTrigger,
 } from "../data/Effects"
-
-import {
-  type CategoryDefinition,
-} from "../data/Jokers/Triggers";;
 
 import { logSelectedTrigger } from "../generic/FileLog";
 

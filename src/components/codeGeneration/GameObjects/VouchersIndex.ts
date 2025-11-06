@@ -7,7 +7,7 @@ import { generateUnlockVoucherFunction } from "../Libs/unlockUtils";
 import { generateTriggerContext } from "../Libs/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { parseRangeVariable, generateGameVariableCode, parseGameVariable } from "../Libs/gameVariableUtils";
-import { applyIndents } from "./JokerIndex";
+import { applyIndents } from "./JokersIndex";
 
 interface VoucherGenerationOptions {
   modPrefix?: string;

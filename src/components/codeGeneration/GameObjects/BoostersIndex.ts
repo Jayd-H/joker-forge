@@ -1,4 +1,5 @@
 import { BoosterData, BoosterCardRule } from "../../data/BalatroUtils";
+import { applyIndents } from "./JokersIndex";
 
 export const generateBoostersCode = (
   boosters: BoosterData[],
@@ -16,6 +17,8 @@ export const generateBoostersCode = (
     code += generateSingleBooster(booster, modPrefix, index);
   });
 
+  code = applyIndents(code)
+  
   return { boostersCode: code };
 };
 

@@ -1,6 +1,6 @@
 import { EDITIONS } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 
 export const generateEditJokerEffectCode = (
   effect: Effect,

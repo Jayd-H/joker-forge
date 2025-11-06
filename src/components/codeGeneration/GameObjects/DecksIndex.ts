@@ -6,7 +6,7 @@ import { parseGameVariable, parseRangeVariable, generateGameVariableCode} from "
 import { generateTriggerContext } from "../Libs/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
-import { applyIndents } from "./JokerIndex";
+import { applyIndents } from "./JokersIndex";
 
 interface DeckGenerationOptions {
   modPrefix?: string;

@@ -1,9 +1,32 @@
 import { CategoryDefinition } from "./Triggers";
-import { GlobalConditionTypeDefinition } from "../ruleBuilder/types";
+import { ConditionParameterOption, GlobalConditionTypeDefinition } from "../ruleBuilder/types";
 import { BOSS_BLINDS, CARD_SCOPES, COMPARISON_OPERATORS, CONSUMABLE_SETS, CUSTOM_CONSUMABLES, DECKS, EDITIONS, ENHANCEMENTS, PLANET_CARDS, POKER_HANDS, RANK_GROUPS, RANKS, RARITIES, SEALS, SPECTRAL_CARDS, STICKERS, SUIT_GROUPS, SUITS, TAGS, TAROT_CARDS, VOUCHERS } from "./BalatroUtils";
-import { PROBABILITY_IDENTIFIERS } from "./Jokers/Conditions";
-import { VOUCHER_GENERIC_TRIGGERS } from "./Vouchers/Conditions";
 import { ArchiveBoxIcon, HandRaisedIcon, ReceiptPercentIcon, InformationCircleIcon, RectangleStackIcon, SparklesIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+
+export const PROBABILITY_IDENTIFIERS: {
+  jokers: ConditionParameterOption[];
+  consumables: ConditionParameterOption[];
+  enhancements: ConditionParameterOption[];
+  blinds: ConditionParameterOption[];
+} = {
+  jokers: [
+    { value: "8ball", label: "8 Ball" },
+    { value: "gros_michel", label: "Gros Michel" },
+    { value: "business", label: "Business Card" },
+    { value: "space", label: "Space Joker" },
+    { value: "cavendish", label: "Cavendish" },
+    { value: "parking", label: "Reserved Parking" },
+    { value: "halu1", label: "Hallucination" },
+    { value: "bloodstone", label: "Bloodstone" },
+  ],
+  consumables: [{ value: "wheel_of_fortune", label: "Wheel of Fortune" }],
+  enhancements: [
+    { value: "lucky_mult", label: "Lucky Card Mult" },
+    { value: "lucky_money", label: "Lucky Card Money" },
+    { value: "glass", label: "Glass Card" },
+  ],
+  blinds: [{ value: "wheel", label: "The Wheel" }],
+};
 
 export const GENERIC_TRIGGERS: string[] = [
   "blind_selected",
@@ -2220,7 +2243,17 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Hand Drawn",
     description: "Check if a hand is currently drawn",
     objectUsers: ["consumable", "voucher", "deck"],
-    applicableTriggers: ["card_used", ...VOUCHER_GENERIC_TRIGGERS],
+    applicableTriggers: [
+      "card_used",
+      "blind_selected",
+      "blind_skipped",
+      "round_end",
+      "boss_defeated",
+      "booster_opened",
+      "booster_skipped",
+      "shop_entered",
+      "shop_exited",
+    ],
     params: [],
     category: "Game State",
   },

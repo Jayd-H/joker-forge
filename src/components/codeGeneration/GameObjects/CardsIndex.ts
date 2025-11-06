@@ -12,7 +12,7 @@ import { generateGameVariableCode, parseGameVariable } from "../Libs/gameVariabl
 import type { Rule, Effect } from "../../ruleBuilder/types";
 import { parseRangeVariable } from "../Libs/gameVariableUtils";
 import { generateTriggerContext } from "../Libs/triggerUtils";
-import { applyIndents } from "./JokerIndex";
+import { applyIndents } from "./JokersIndex";
 import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
 
 interface EnhancementGenerationOptions {
