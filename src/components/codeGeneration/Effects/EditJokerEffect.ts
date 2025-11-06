@@ -40,7 +40,9 @@ const generateConsumableCode = (
   }
   const targetCode = (target === "random") ? 'local index = math.random(1, #G.jokers.cards)' : ''
   const targetJoker = (target === "selected") ? `G.jokers.highlighted[1]` : `G.jokers.cards[index]`
-
+  const editionPool = EDITIONS().map(edition => `'${
+    edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
+    
   let editionCode = ''
 
   if (edition !== "none") {
@@ -50,8 +52,6 @@ const generateConsumableCode = (
           ${targetJoker}:set_edition(nil, true)`
         break
       case "random":
-        const editionPool = EDITIONS().map(edition => `'${
-          edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
         editionCode = `
           local edition = pseudorandom_element({${editionPool}}, 'random edition')
           ${targetJoker}:set_edition(edition, true)`

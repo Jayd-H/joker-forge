@@ -285,7 +285,7 @@ const generateEnhancementKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card" || changeType === "added_card") {
+  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card") {
     valueCode = `context.other_card.config.center.key`
   } else if (changeType === "destroyed_card") {
     valueCode = `context.removed_card.config.center.key`
@@ -343,7 +343,7 @@ const generateSealKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card" || changeType === "added_card") {
+  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card") {
     valueCode = `context.other_card.seal`
   } else if (changeType === "destroyed_card") {
     valueCode = `context.removed_card.seal`
@@ -401,7 +401,7 @@ const generateEditionKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card" || changeType === "added_card") {
+  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card") {
     valueCode = `context.other_card.edition.key`
   } else if (changeType === "destroyed_card") {
     valueCode = `context.removed_card.edition.key`

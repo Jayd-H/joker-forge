@@ -135,7 +135,7 @@ const generateSingleDeckCode = (
   const col = currentPosition % decksPerRow;
   const row = Math.floor(currentPosition / decksPerRow);
 
-  let nextPosition = currentPosition + 1;
+  const nextPosition = currentPosition + 1;
 
   let deckCode = `SMODS.Back {
     key = '${deck.objectKey}',

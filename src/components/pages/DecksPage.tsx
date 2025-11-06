@@ -598,7 +598,7 @@ const handleSortDirectionToggle = () => {
               onSave={handleSaveRules}
               existingRules={currentDeckForRules.rules || []}
               item={currentDeckForRules}
-              onUpdateItem={handleUpdateDeckFromRuleBuilder as (updates: Partial<any>) => void}
+              onUpdateItem={handleUpdateDeckFromRuleBuilder as (updates: Partial<DeckData>) => void}
               itemType="deck"
             />
           </Suspense>

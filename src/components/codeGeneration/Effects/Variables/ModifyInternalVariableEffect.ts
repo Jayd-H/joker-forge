@@ -28,6 +28,9 @@ export const generateModifyInternalVariableEffectCode = (
 
   const customMessage = effect.customMessage;
 
+  const searchKey = (effect.params?.joker_key as string) || "j_joker"
+  const searchVar = (effect.params?.joker_variable) || "jokerVar"
+
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
 
@@ -130,7 +133,6 @@ export const generateModifyInternalVariableEffectCode = (
         `
           break
         case "key":
-          const searchKey = (effect.params?.joker_key as string) || "j_joker"
           operationCode = `local search_key = '${searchKey}'
           card.ability.extra.${variableName} = 0
           for i = 1, #G.jokers.cards do
@@ -141,7 +143,6 @@ export const generateModifyInternalVariableEffectCode = (
           end`
           break
         case "variable":
-          const searchVar = (effect.params?.joker_variable) || "jokerVar"
           operationCode = `local search_key = card.ability.extra.${searchVar}
           card.ability.extra.${variableName} = 0
           for i = 1, #G.jokers.cards do

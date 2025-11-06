@@ -394,7 +394,7 @@ const generateDeckCode = (
 
 
   let createCode = ``;
-  let colour = "G.C.PURPLE";
+  const colour = "G.C.PURPLE";
 
   if (!isNegative && !ignoreSlots) {
     createCode += `

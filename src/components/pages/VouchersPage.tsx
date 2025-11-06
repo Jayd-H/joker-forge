@@ -604,7 +604,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
               onSave={handleSaveRules}
               existingRules={currentVoucherForRules.rules || []}
               item={currentVoucherForRules}
-              onUpdateItem={handleUpdateVoucherFromRuleBuilder as (updates: Partial<any>) => void}
+              onUpdateItem={handleUpdateVoucherFromRuleBuilder as (updates: Partial<VoucherData>) => void}
               itemType="voucher"
             />
           </Suspense>

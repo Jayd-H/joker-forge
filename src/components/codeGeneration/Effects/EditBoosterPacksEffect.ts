@@ -62,9 +62,9 @@ const generateJokerAndConsumableCode = (
             : `"+"..tostring(${valueCode}).." Booster Size"`;
             EditBoosterCode += `
                 func = function()
-            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
-            G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) +${valueCode}
-                    return true
+                  card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
+                  G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) +${valueCode}
+                  return true
                 end`;
           break;
         case "subtract":

@@ -507,8 +507,6 @@ const generateCalculateFunction = (
   joker: JokerData,
   modprefix: string
 ): CalculateFunctionResult => {
-  //@ts-expect-error: backwards compatibility
-  const jokerKey = joker.jokerKey || joker.objectKey;
   const rulesByTrigger: Record<string, Rule[]> = {};
   rules.forEach((rule) => {
     if (!rulesByTrigger[rule.trigger]) {
