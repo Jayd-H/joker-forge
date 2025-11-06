@@ -267,7 +267,7 @@ const generateApplyFunction = (
   modPrefix: string,
   deck: DeckData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "deck_selected")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
 
   if (filtered_rules.length === 0) return "";
 
@@ -321,7 +321,7 @@ const generateCalculateFunction = (
   deck: DeckData,
 ): string => {
 
-  const filtered_rules = rules.filter((rule) => rule.trigger !== "deck_selected")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
   if (filtered_rules.length === 0) return "";
 
