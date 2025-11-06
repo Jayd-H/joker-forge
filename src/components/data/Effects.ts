@@ -324,7 +324,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Starting Dollars",
     description: "Add, subtract, or set the player's Starting money",
     objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "operation",
@@ -1683,7 +1683,6 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
       "card_held_in_hand",
       "card_used",
       "joker_evaluated",
-      "deck_selected",
     ],
     params: [
       {
@@ -2664,7 +2663,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit All Starting Cards",
     description: "Apply multiple modifications to the starting cards in the deck (enhancement, seal, edition, suit, rank)",
     objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "enhancement",
@@ -2732,7 +2731,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Starting Suits",
     description: "Apply multiple modifications to the starting suits in the deck (enhancement, seal, edition, replace/delete suit)",
     objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "selected_suit",
@@ -2797,7 +2796,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Starting Ranks",
     description: "Apply multiple modifications to the starting ranks in the deck (enhancement, seal, edition, replace/delete rank)",
     objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "specific_selected_Rank",
@@ -2864,7 +2863,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Add Starting Cards",
     description: "Create and add new starting cards to the deck with specified properties",
       objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "count",
@@ -2962,7 +2961,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Remove Starting Cards",
     description: "Destroy a number of Starting cards from deck",
     objectUsers: ["deck"],
-    applicableTriggers: ["deck_selected"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "remove_type",

@@ -93,7 +93,7 @@ const generateCalculateFunction = (
   modPrefix: string,
   voucher: VoucherData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger !== "voucher_redeemed")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
   if (filtered_rules.length === 0) return "";
 
@@ -396,7 +396,7 @@ const generateRedeemFunction = (
   modPrefix: string,
   voucher?: VoucherData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "voucher_redeemed")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
 
   if (filtered_rules.length === 0) return "";
 

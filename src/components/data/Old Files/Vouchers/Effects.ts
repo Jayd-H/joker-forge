@@ -1,4 +1,4 @@
-import { EffectTypeDefinition } from "../../ruleBuilder/types";
+import { EffectTypeDefinition } from "../../../ruleBuilder/types";
 import {
   PencilSquareIcon,
   BanknotesIcon,
@@ -12,7 +12,7 @@ import {
 import { CategoryDefinition } from "../Jokers/Triggers";
 import {
   TAGS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 import { VOUCHER_GENERIC_TRIGGERS } from "./Conditions";
 
 export const VOUCHER_EFFECT_CATEGORIES: CategoryDefinition[] = [

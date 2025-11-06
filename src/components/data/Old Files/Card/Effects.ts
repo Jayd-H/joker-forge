@@ -1,4 +1,4 @@
-import { EffectTypeDefinition } from "../../ruleBuilder/types";
+import { EffectTypeDefinition } from "../../../ruleBuilder/types";
 import {
   SparklesIcon,
   BanknotesIcon,
@@ -23,7 +23,7 @@ import {
   ENHANCEMENTS,
   SUITS,
   TAGS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 import { GENERIC_TRIGGERS, SCORING_TRIGGERS } from "./Triggers";
 
 export const CARD_EFFECT_CATEGORIES: CategoryDefinition[] = [

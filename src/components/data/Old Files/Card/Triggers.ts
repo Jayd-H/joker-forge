@@ -1,4 +1,4 @@
-import { TriggerDefinition } from "../../ruleBuilder/types";
+import { TriggerDefinition } from "../../../ruleBuilder/types";
 import { HandRaisedIcon } from "@heroicons/react/24/outline";
 
 export interface CategoryDefinition {

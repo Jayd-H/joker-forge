@@ -1,4 +1,4 @@
-import { ConditionTypeDefinition } from "../../ruleBuilder/types";
+import { ConditionTypeDefinition } from "../../../ruleBuilder/types";
 import {
   UserIcon,
   ArchiveBoxIcon,
@@ -22,7 +22,7 @@ import {
   TAROT_CARDS,
   VOUCHERS,
   DECKS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 
 export const VOUCHER_GENERIC_TRIGGERS: string[] = [
   "blind_selected",
