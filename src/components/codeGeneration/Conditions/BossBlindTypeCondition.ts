@@ -1,4 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
+import { generateOperationCode } from "../Libs/operationUtils";
 
 export const generateBossBlindTypeConditionCode = (
   rules: Rule[],
@@ -7,12 +8,10 @@ export const generateBossBlindTypeConditionCode = (
   const operator = (condition.params.operator as string) || "equals";
   const value = condition.params?.value || "bl_hook";
 
-  switch (operator) {
-    case "equals":
-      return `G.GAME.blind.config.blind.key == "${value}"`;
-    case "not_equals":
-      return `G.GAME.blind.config.blind.key ~= "${value}"`;
-    default:
-      return `G.GAME.blind.config.blind.key == "${value}"`;
-  }
+  return generateOperationCode(
+    operator,
+    "equals",
+    `G.GAME.blind.config.blind.key`,
+    `"${value}"`
+  )
 };

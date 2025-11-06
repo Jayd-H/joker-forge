@@ -1,12 +1,13 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
+import { generateOperationCode } from "../Libs/operationUtils";
 
 export const generateHandCountConditionCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params.operator as string) || "equals";
-  const value = generateGameVariableCode(condition.params.value) || "5";
+  const value = generateGameVariableCode(condition.params.value, '') || "5";
   const scope = (condition.params.card_scope as string) || "scoring";
 
   let cardsToCheck = ""
@@ -22,20 +23,10 @@ export const generateHandCountConditionCode = (
       break
   }  
 
-  switch (operator) {
-    case "equals":
-      return `${cardsToCheck} == ${value}`
-    case "not_equals":
-      return `${cardsToCheck} ~= ${value}`
-    case "greater_than":
-      return `${cardsToCheck} > ${value}`
-    case "less_than":
-      return `${cardsToCheck} < ${value}`
-    case "greater_equals":
-      return `${cardsToCheck} >= ${value}`
-    case "less_equals":
-      return `${cardsToCheck} <= ${value}`
-    default:
-      return `${cardsToCheck} == ${value}`
-  }
+  return generateOperationCode(
+    operator,
+    'equals',
+    cardsToCheck,
+    value
+  )
 }

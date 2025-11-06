@@ -1,4 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
+import { generateOperationCode } from "../Libs/operationUtils";
 
 export const generateBlindNameConditionCode = (
   rules: Rule[],
@@ -7,12 +8,10 @@ export const generateBlindNameConditionCode = (
   const operator = (condition.params.operator as string) || "equals";
   const value = condition.params?.value || "Small Blind";
 
-  switch (operator) {
-    case "equals":
-      return `G.GAME.blind.name == "${value}`;
-    case "not_equals":
-      return `G.GAME.blind.name ~= "${value}`;
-    default:
-      return `G.GAME.blind.name == "${value}`;
-  }
+  return generateOperationCode(
+    operator, 
+    'equals',
+    `G.GAME.blind.name`,
+    `"${value}"`
+  )
 }

@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../Jokers/gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
 
 export const generateCardIndexConditionCode = (
   rules: Rule[],
@@ -9,7 +9,7 @@ export const generateCardIndexConditionCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const indexType = (condition.params.index_type as string) || "number";
   const indexNumber =
-    generateGameVariableCode(condition.params.index_number) || "1";
+    generateGameVariableCode(condition.params.index_number, itemType) || "1";
 
   let cardValue = ''
   let handType = ''

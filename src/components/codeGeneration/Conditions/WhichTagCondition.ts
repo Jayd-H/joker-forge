@@ -1,5 +1,6 @@
 import { TAG_TYPES } from "../../data/BalatroUtils";
 import type { Rule } from "../../ruleBuilder/types";
+import { generateOperationCode } from "../Libs/operationUtils";
 
 export const generateWhichTagConditionCode = (
   rules: Rule[],
@@ -9,12 +10,10 @@ export const generateWhichTagConditionCode = (
   const value = condition.params?.value as string || "double";
   const tag = TAG_TYPES[value];
 
-  switch (operator) {
-    case "equals":
-      return `context.tag_added.key == "${tag}"`
-    case "not_equals":
-      return `context.tag_added.key ~= "${tag}"`
-    default:
-      return `context.tag_added.key == "${tag}"`
-  }
+  return generateOperationCode(
+    operator,
+    'equals',
+    `context.tag_added.key`,
+    `"${tag}"`,
+  )
 }

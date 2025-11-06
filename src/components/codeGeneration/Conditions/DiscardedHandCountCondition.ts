@@ -1,5 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
+import { generateOperationCode } from "../Libs/operationUtils";
 
 export const generateDiscardedHandCountConditionCode = (
   rules: Rule[],
@@ -17,24 +18,12 @@ const generateJokerCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params.operator as string) || "equals";
-  const value = generateGameVariableCode(condition.params.value) || "5";
+  const value = generateGameVariableCode(condition.params.value, 'joker') || "5";
 
-  let comparison = "";
-  switch (operator) {
-    case "equals":
-      comparison = `== ${value}`;
-      return `#context.full_hand == ${value}`;
-    case "not_equals":
-      return `#context.full_hand ~= ${value}`;
-    case "greater_than":
-      return `#context.full_hand > ${value}`;
-    case "less_than":
-      return `#context.full_hand < ${value}`;
-    case "greater_equals":
-      return `#context.full_hand >= ${value}`;
-    case "less_equals":
-      return `#context.full_hand <= ${value}`;
-    default:
-      return `#context.full_hand == ${value}`;
-  }
+  return generateOperationCode(
+    operator,
+    'equals',
+    '#context.full_hand',
+    value
+   )
 };

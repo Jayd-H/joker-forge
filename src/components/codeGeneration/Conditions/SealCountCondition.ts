@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
 
 export const generateSealCountConditionCode = (
   rules: Rule[],
@@ -17,7 +17,7 @@ const generateJokerCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params.operator as string) || "equals";
-  const value = generateGameVariableCode(condition.params.value);
+  const value = generateGameVariableCode(condition.params.value, 'joker');
   const scope = (condition.params.card_scope as string) || "scoring";
 
   let propertyCheck = "";

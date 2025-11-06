@@ -130,13 +130,12 @@ const generateConditionGroupCode = (
 export const generateSingleConditionCode = (
   condition: Condition,
   rule: Rule,
-  itemType: string,
+  cleanItemType: string,
   joker?: JokerData,
 ): string | null => {
-  
-  if (itemType === "enhancement" || itemType === "seal" || itemType === "edition") {
-    itemType = "card"
-  }
+
+  const itemType = (cleanItemType === "enhancement" || cleanItemType === "seal" || cleanItemType === "edition") 
+    ? "card" : cleanItemType
 
   const singleConditionRule = {
     ...rule,
@@ -164,7 +163,7 @@ export const generateSingleConditionCode = (
     case "card_enhancement":
       return generateCardEnhancementConditionCode([singleConditionRule], itemType)
     case "card_index":
-      return generateCardIndexConditionCode([singleConditionRule], itemType)
+      return generateCardIndexConditionCode([singleConditionRule], cleanItemType)
     case "card_suit":
       return generateCardSuitConditionCode([singleConditionRule], itemType, joker)
     case "card_rank":

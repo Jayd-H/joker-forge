@@ -1,7 +1,7 @@
 import type { Rule } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../gameVariableUtils";
-import { parseSuitVariable } from "../Jokers/variableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
+import { parseSuitVariable } from "../Libs/userVariableUtils";
 
 export const generateDiscardedSuitCountConditionCode = (
   rules: Rule[],
@@ -26,7 +26,7 @@ const generateJokerCode = (
   const specificSuit = condition.params.specific_suit;
   const suitGroup = (condition.params.suit_group as string) || null;
   const quantifier = (condition.params.quantifier as string) || "at_least_one";
-  const count = generateGameVariableCode(condition.params.count);
+  const count = generateGameVariableCode(condition.params.count, 'joker');
 
   const suitVarInfo = parseSuitVariable(specificSuit, joker);
 

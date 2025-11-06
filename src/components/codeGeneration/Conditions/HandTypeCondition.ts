@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
-import { parsePokerHandVariable } from "../Jokers/variableUtils";
+import { parsePokerHandVariable } from "../Libs/userVariableUtils";
 
 export const generatePokerHandConditionCode = (
   rules: Rule[],
