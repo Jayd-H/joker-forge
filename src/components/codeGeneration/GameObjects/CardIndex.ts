@@ -6,13 +6,14 @@ import {
   SealData,
   slugify,
 } from "../../data/BalatroUtils";
-import { generateConditionChain } from "../conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
-import { extractGameVariablesFromRules, generateGameVariableCode, parseGameVariable } from "../Consumables/gameVariableUtils";
+import { generateConditionChain } from "../Libs/conditionUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../Libs/effectUtils";
+import { generateGameVariableCode, parseGameVariable } from "../Libs/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
-import { parseRangeVariable } from "../Jokers/gameVariableUtils";
-import { generateTriggerContext } from "../triggerUtils";
-import { applyIndents } from "../Jokers";
+import { parseRangeVariable } from "../Libs/gameVariableUtils";
+import { generateTriggerContext } from "../Libs/triggerUtils";
+import { applyIndents } from "./JokerIndex";
+import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;
@@ -196,7 +197,7 @@ const generateCalculateFunction = (
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions);
+                return generateGameVariableCode(group.repetitions, itemType);
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -763,7 +764,7 @@ const generateSingleEnhancementCode = (
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions);
+                return generateGameVariableCode(group.repetitions, 'enhancement');
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -970,7 +971,7 @@ const generateSingleSealCode = (
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions);
+                return generateGameVariableCode(group.repetitions, 'seal');
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -1140,7 +1141,7 @@ export const generateSingleEditionCode = (
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions);
+                return generateGameVariableCode(group.repetitions, 'edition');
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;

@@ -7,7 +7,7 @@ import {
   SealData,
   VoucherData,
   DeckData
-} from "../data/BalatroUtils";
+} from "../../data/BalatroUtils";
 
 export const processImages = async (
   items: (

@@ -1,13 +1,12 @@
 import { DeckData } from "../../data/BalatroUtils";
-import { generateConditionChain } from "../conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
+import { generateConditionChain } from "../Libs/conditionUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../Libs/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
-import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
-import { generateTriggerContext } from "../triggerUtils";
+import { parseGameVariable, parseRangeVariable, generateGameVariableCode} from "../Libs/gameVariableUtils";
+import { generateTriggerContext } from "../Libs/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "./gameVariableUtils";
-import { parseRangeVariable } from "../Jokers/gameVariableUtils";
-import { applyIndents } from "../Jokers";
+import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
+import { applyIndents } from "./JokerIndex";
 
 interface DeckGenerationOptions {
   modPrefix?: string;
@@ -30,11 +29,11 @@ const convertRandomGroupsForCodegen = (
     ...group,
     chance_numerator:
       typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator)
+      ? generateGameVariableCode(group.chance_numerator, 'deck')
       : group.chance_numerator,
     chance_denominator:
       typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator)
+        ? generateGameVariableCode(group.chance_denominator, 'deck')
         : group.chance_denominator,
   }));
 };
@@ -50,7 +49,7 @@ const convertLoopGroupsForCodegen = (
           const parsed = parseGameVariable(group.repetitions);
           const rangeParsed = parseRangeVariable(group.repetitions);
           if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions);
+            return generateGameVariableCode(group.repetitions, 'deck');
           } else if (rangeParsed.isRangeVariable) {
             const seedName = `repetitions_${group.id.substring(0, 8)}`;
             return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -378,7 +377,7 @@ const generateCalculateFunction = (
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions);
+                return generateGameVariableCode(group.repetitions, 'deck');
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;

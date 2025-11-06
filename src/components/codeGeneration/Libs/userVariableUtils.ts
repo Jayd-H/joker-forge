@@ -1,4 +1,4 @@
-import type { Rule, Effect } from "../ruleBuilder/types";
+import type { Rule, Effect } from "../../ruleBuilder/types";
 import type {
   JokerData,
   ConsumableData,
@@ -8,9 +8,9 @@ import type {
   EditionData,
   VoucherData,
   DeckData
-} from "../data/BalatroUtils";
+} from "../../data/BalatroUtils";
 import { parseGameVariable } from "./gameVariableUtils";
-import { getGameVariableById } from "../data/GameVars";
+import { getGameVariableById } from "../../data/GameVars";
 import {
   SUIT_VALUES,
   RANK_VALUES,
@@ -18,7 +18,7 @@ import {
   ENHANCEMENT_VALUES,
   EDITION_VALUES,
   SEAL_VALUES,
-} from "../data/BalatroUtils";
+} from "../../data/BalatroUtils";
 
 export interface VariableInfo {
   name: string;

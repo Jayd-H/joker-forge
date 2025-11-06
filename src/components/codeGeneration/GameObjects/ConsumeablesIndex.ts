@@ -1,14 +1,13 @@
 import { ConsumableData } from "../../data/BalatroUtils";
 import { ConsumableSetData } from "../../data/BalatroUtils";
-import { generateConditionChain } from "../conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../effectUtils";
+import { generateConditionChain } from "../Libs/conditionUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../Libs/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
-import { extractGameVariablesFromRules, parseGameVariable } from "./gameVariableUtils";
-import { generateTriggerContext } from "../triggerUtils";
+import { parseGameVariable, generateGameVariableCode, parseRangeVariable } from "../Libs/gameVariableUtils";
+import { generateTriggerContext } from "../Libs/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../gameVariableUtils";
-import { parseRangeVariable } from "../Jokers/gameVariableUtils";
-import { applyIndents } from "../Jokers";
+import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
+import { applyIndents } from "./JokerIndex";
 
 interface ConsumableGenerationOptions {
   modPrefix?: string;

@@ -1,4 +1,4 @@
-import type { Rule } from "../ruleBuilder/types";
+import type { Rule } from "../../ruleBuilder/types";
 
 export const generateTriggerContext = (
   objectType: "joker" | "consumable" | "card" | "voucher" | "deck",

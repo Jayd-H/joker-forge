@@ -1,4 +1,4 @@
-import { BoosterData, BoosterCardRule } from "../data/BalatroUtils";
+import { BoosterData, BoosterCardRule } from "../../data/BalatroUtils";
 
 export const generateBoostersCode = (
   boosters: BoosterData[],

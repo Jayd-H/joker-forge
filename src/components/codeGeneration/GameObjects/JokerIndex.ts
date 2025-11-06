@@ -1,35 +1,35 @@
 import { JokerData } from "../../data/BalatroUtils";
-import {
-  // processPassiveEffects,
-  ConfigExtraVariable,
-} from "./effectUtils";
-import { processPassiveEffects } from "../effectUtils";
+import { 
+  ConfigExtraVariable, 
+  processPassiveEffects, 
+  PassiveEffectResult, 
+  generateEffectReturnStatement 
+} from "../Libs/effectUtils";
 import {
   extractVariablesFromRules,
   generateVariableConfig,
   getAllVariables,
   extractGameVariablesFromRules,
-} from "./variableUtils";
-import type { PassiveEffectResult } from "./effectUtils";
-import { generateDiscountItemsHook } from "./effects/DiscountItemsEffect";
-import { generateReduceFlushStraightRequirementsHook } from "./effects/ReduceFlushStraightRequirementsEffect";
-import { generateShortcutHook } from "./effects/ShortcutEffect";
-import { generateShowmanHook } from "./effects/ShowmanEffect";
-import { generateCombineRanksHook } from "./effects/CombineRanksEffect";
-import { generateCombineSuitsHook } from "./effects/CombineSuitsEffect";
+} from "../Libs/userVariableUtils";
 import {
   getRankId,
   getSuitByValue,
   getRankByValue,
+  slugify, 
+  RarityData
 } from "../../data/BalatroUtils";
-import { slugify } from "../../data/BalatroUtils";
-import { RarityData } from "../../data/BalatroUtils";
-import { generateUnlockFunction } from "./unlockUtils";
-import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "./gameVariableUtils";
-import { generateEffectReturnStatement } from "../effectUtils";
-import { generateConditionChain } from "../conditionUtils";
+import { generateUnlockJokerFunction } from "../Libs/unlockUtils";
+import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../Libs/gameVariableUtils";
+import { generateConditionChain } from "../Libs/conditionUtils";
 import { Rule } from "../../ruleBuilder";
-import { generateTriggerContext } from "../triggerUtils";
+import { generateTriggerContext } from "../Libs/triggerUtils";
+import { generateDiscountItemsHook } from "../Hooks/DiscountItemsHook";
+import { generateReduceFlushStraightRequirementsHook } from "../Hooks/ReduceFlushStraightRequirementsHook";
+import { generateShortcutHook } from "../Hooks/ShortcutHook";
+import { generateShowmanHook } from "../Hooks/ShowmanHook";
+import { generateCombineRanksHook } from "../Hooks/CombineRanksHook";
+import { generateCombineSuitsHook } from "../Hooks/CombineSuitsHook";
+
 
 
 interface CalculateFunctionResult {
@@ -86,11 +86,11 @@ export const convertRandomGroupsForCodegen = (
     ...group,
     chance_numerator:
       typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator)
+      ? generateGameVariableCode(group.chance_numerator, 'joker')
       : group.chance_numerator,
     chance_denominator:
       typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator)
+        ? generateGameVariableCode(group.chance_denominator, 'joker')
         : group.chance_denominator,
   }));
 };
@@ -106,7 +106,7 @@ export const convertLoopGroupsForCodegen = (
           const parsed = parseGameVariable(group.repetitions);
           const rangeParsed = parseRangeVariable(group.repetitions);
           if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions);
+            return generateGameVariableCode(group.repetitions, 'joker');
           } else if (rangeParsed.isRangeVariable) {
             const seedName = `repetitions_${group.id.substring(0, 8)}`;
             return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -435,7 +435,7 @@ const generateSingleJokerCode = (
   }
 
   if (joker.unlockTrigger) {
-    jokerCode += `${generateUnlockFunction(joker)}`;
+    jokerCode += `${generateUnlockJokerFunction(joker)}`;
   }
   jokerCode += `\n}`;
 
