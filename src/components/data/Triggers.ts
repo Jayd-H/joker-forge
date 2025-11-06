@@ -198,6 +198,17 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     objectUsers: ["joker"],
   },
   {
+    id: "joker_triggered",
+    label: {
+      joker: "When Another Joker is Triggered",
+    },
+    description: {
+      joker: "Triggers when another joker's effect Triggered",
+    },    
+    category: "Hand Scoring",
+    objectUsers: ["joker"],
+  },
+  {
     id: "after_hand_played",
     label: {
       joker: "When Hand Finishes Scoring",

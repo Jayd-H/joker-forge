@@ -50,6 +50,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "after_hand_played",
   "before_hand_played",
   "joker_evaluated",
+  "joker_triggered",
   "card_sold",
   "card_bought",
   "selling_self",

@@ -128,6 +128,13 @@ export const generateTriggerContext = (
           return `context.other_joker ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
       }
       break
+    
+    case "joker_triggered":
+      switch(objectType) {
+        case "joker":
+          return `context.post_trigger ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+      }
+      break
       
     case "after_hand_played":
       switch(objectType) {

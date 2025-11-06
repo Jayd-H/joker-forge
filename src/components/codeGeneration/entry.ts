@@ -16,7 +16,7 @@ import {
   SoundData,
 } from "../data/BalatroUtils";
 import { addAtlasToZip } from "./Libs/ImageProcessor";
-import { generateJokersCode, generateCustomRaritiesCode } from "./GameObjects/JokersIndex";
+import { generateJokersCode, generateCustomRaritiesCode, applyIndents } from "./GameObjects/JokersIndex";
 import { generateConsumablesCode } from "./GameObjects/ConsumablesIndex";
 import { generateVouchersCode } from "./GameObjects/VouchersIndex";
 import { generateDecksCode } from "./GameObjects/DecksIndex";
@@ -52,6 +52,27 @@ const sortGameObjectForExport = <GameObjectType extends GameObjectData> (
   return sortedItems;
 };
 
+const collectCustomSettings = (
+  jokers: JokerData[]
+): string[] => {
+  const customSettings: string[] = [`cardareas = {}`]
+
+  jokers.forEach(joker => {
+    joker.rules?.forEach(rule =>{
+      if (rule.trigger === "joker_triggered") {
+        if (!customSettings.includes(`post_trigger = true`)) {
+          customSettings.push(`post_trigger = true`)
+        }
+      }
+      // ADD MORE IN THE FUTURE
+      // --- Joker Retriggers
+      // --- Quantum Enhancements
+      // --- Deck & Discard Card Areas
+    })
+  })
+
+  return customSettings
+}
 
 const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
   const poolsMap: Record<string, string[]> = {};
@@ -209,6 +230,7 @@ export const exportModCode = async (
     const sortedVouchers = sortGameObjectForExport(validVouchers);
     const sortedDecks = sortGameObjectForExport(validDecks);
     const customShaders = collectCustomShaders(sortedEditions);
+    const customSettings = collectCustomSettings(validJokers);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
     const hasGameIcon = !!(metadata.hasUserUploadedGameIcon || metadata.gameImage);
@@ -226,7 +248,8 @@ export const exportModCode = async (
       sortedDecks,
       hasModIcon,
       hasGameIcon,
-      metadata
+      metadata,
+      customSettings,
     );
     zip.file(metadata.main_file, mainLuaCode);
 
@@ -457,7 +480,9 @@ const generateMainLuaCode = (
   decks: DeckData[],
   hasModIcon: boolean,
   hasGameIcon: boolean,
-  metadata: ModMetadata): string => {
+  metadata: ModMetadata,
+  customSettings: string[]
+): string => {
   let output = "";
 
   if (hasModIcon) {
@@ -827,6 +852,21 @@ load_boosters_file()
       output += objectTypesCode;
     }
   }
+
+  if (customSettings.length > 0) {
+    output += `
+      SMODS.current_mod.optional_features = {
+        ${customSettings.join(`,\n    `)} 
+      }
+
+      SMODS.current_mod.optional_features = function()
+        return {
+          ${customSettings.join(`,\n    `)} 
+      }
+    end`
+  }
+
+  output = applyIndents(output)
 
   return output.trim();
 };
