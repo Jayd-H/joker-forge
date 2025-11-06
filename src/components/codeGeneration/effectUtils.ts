@@ -65,8 +65,7 @@ import { generateEditCardEffectCode } from "./Effects/EditCardEffect";
 import { generateEditCardsEffectCode } from "./Effects/EditCardsEffect";
 import { generateAllowDebtPassiveEffectCode } from "./Effects/PassiveEffects/AllowDebtEffect";
 import { generateCopyJokerAbilityPassiveEffectCode } from "./Effects/PassiveEffects/CopyJokerAbilityEffect";
-import { generateEditDiscardsEffectCode, generateEditDiscardsPassiveEffectCode } from "./Effects/EditDiscardsEffect";
-import { generateEditHandsEffectCode, generateEditHandsPassiveEffectCode } from "./Effects/EditHandsEffect";
+import { generateEditItemCountEffectCode, generateEditItemCountPassiveEffectCode } from "./Effects/EditHandsOrDiscardsEffect";
 import { generateSplashPassiveEffectCode } from "./Effects/PassiveEffects/SplashEffect";
 import { generateFreeRerollsEffectCode, generateFreeRerollsPassiveEffectCode } from "./Effects/FreeRerollsEffect";
 import { generateEditConsumableSlotsEffectCode, generateEditConsumableSlotsPassiveEffectCode } from "./Effects/EditConsumableSlotsEffect";
@@ -859,10 +858,9 @@ export const generateSingleEffect = (
       return generateEditInterestCapEffectCode(effect, itemType, sameTypeCount)
     case "edit_reroll_price":
       return generateEditRerollPriceEffectCode(effect, itemType, sameTypeCount)
-    case "edit_hands":
-      return generateEditHandsEffectCode(effect, itemType, sameTypeCount)
-    case "edit_discards":
-      return generateEditDiscardsEffectCode(effect, itemType, sameTypeCount)
+    case "edit_hands": case "edit_discards":
+      const countItemType = effect.type.slice(5)
+      return generateEditItemCountEffectCode(effect, itemType, sameTypeCount, countItemType)
     case "edit_card_appearance":
       return generateEditCardAppearanceEffectCode(effect)
     case "edit_rarity_weight": case "edit_item_weight":
@@ -979,10 +977,9 @@ const generateSinglePassiveEffect = (
       return generateFreeRerollsPassiveEffectCode(effect)
     case "disable_boss_blind":
       return generateDisableBossBlindPassiveEffectCode(effect)
-    case "edit_discards":
-      return generateEditDiscardsPassiveEffectCode(effect)
-    case "edit_hands":
-      return generateEditHandsPassiveEffectCode(effect)
+    case "edit_discards": case "edit_hands":
+      const countItemType = effect.type.slice(5)
+      return generateEditItemCountPassiveEffectCode(effect, countItemType)
     case "splash_effect":
       return generateSplashPassiveEffectCode()
     case "edit_consumable_slots":
@@ -999,8 +996,8 @@ const generateSinglePassiveEffect = (
       return generateShowmanPassiveEffectCode(jokerKey)
     case "edit_voucher_slots": case "edit_booster_slots": case "edit_shop_slots":
     case "edit_hand_size": case "edit_play_size": case "edit_discard_size":
-      const type = effect.type.slice(5)
-      return generateEditItemSizePassiveEffectCode(effect, type)
+      const sizeItemType = effect.type.slice(5)
+      return generateEditItemSizePassiveEffectCode(effect, sizeItemType)
     default:
       return null
   }

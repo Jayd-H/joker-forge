@@ -433,7 +433,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Duration",
         options: [
           { value: "permanent", label: "Permanent" },
-          { value: "round", label: "This Round" },
+          { value: "round", label: "This Round", exempt: ["voucher", "deck"]},
         ],
         default: "permanent",
       },
@@ -471,7 +471,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Duration",
         options: [
           { value: "permanent", label: "Permanent" },
-          { value: "round", label: "This Round" },
+          { value: "round", label: "This Round", exempt: ["voucher", "deck"]},
         ],
         default: "permanent",
       },
@@ -1821,8 +1821,8 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
   },
   {
     id: "edit_joker_size",
-    label: "Edit Joker Size",
-    description: "Modify the number of joker Selected/Highlighted",
+    label: "Edit Joker Selectifon Size",
+    description: "Modify the number of Jokers that the player can Select/Highlight at once",
     applicableTriggers: [...GENERIC_TRIGGERS, "passive", "card_used"],
     objectUsers: ["joker", "consumable", "voucher", "deck"],
     params: [
