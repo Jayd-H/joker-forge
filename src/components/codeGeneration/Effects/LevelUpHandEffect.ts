@@ -1,11 +1,11 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { ConfigExtraVariable, EffectReturn } from "../effectUtils";
+import type { ConfigExtraVariable, EffectReturn } from "../Libs/effectUtils";
 import type { EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
-} from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
-import { parsePokerHandVariable } from "../Jokers/variableUtils";
+} from "../Libs/gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
+import { parsePokerHandVariable } from "../Libs/userVariableUtils";
 
 export const generateLevelUpHandEffectCode = (
   effect: Effect,
@@ -158,7 +158,7 @@ const generateConsumableCode = (
     "'Straight Flush'","'Five of a Kind'","'Flush Five'","'Flush House'"
   ]
 
-  const levelsCode = generateGameVariableCode(levels);
+  const levelsCode = generateGameVariableCode(levels, '');
 
   let levelUpCode = "";
 

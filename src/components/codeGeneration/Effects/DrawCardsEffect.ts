@@ -1,8 +1,8 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 import type { EditionData, EnhancementData, SealData } from "../../data/BalatroUtils";
-import { generateConfigVariables, } from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import { generateConfigVariables, } from "../Libs/gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
 
 export const generateDrawCardsEffectCode = (
   effect: Effect,
@@ -61,7 +61,7 @@ const generateConsumableCode = (
   const value = effect.params?.value || 1;
   const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value);
+  const valueCode = generateGameVariableCode(value, '');
 
   const defaultMessage = customMessage
   ? `"${customMessage}"`

@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
-import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../gameVariableUtils";
-import { generateGameVariableCode } from "../Consumables/gameVariableUtils";
+import type { EffectReturn, PassiveEffectResult } from "../Libs/effectUtils";
+import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../Libs/gameVariableUtils";
+import { generateGameVariableCode } from "../Libs/gameVariableUtils";
 
 export const generateEditJokerSlotsPassiveEffectCode = (
   effect: Effect
@@ -14,7 +14,7 @@ export const generateEditJokerSlotsPassiveEffectCode = (
   let valueCode: string;
 
   if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
-    valueCode = generateGameVariableCode(effectValue as string);
+    valueCode = generateGameVariableCode(effectValue as string, '');
   } else if (rangeParsed.isRangeVariable) {
     const seedName = `jokerslots_passive`;
     valueCode = `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;

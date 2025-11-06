@@ -1,5 +1,5 @@
 import type { Effect } from "../../../ruleBuilder/types";
-import type { EffectReturn } from "../../effectUtils";
+import type { EffectReturn } from "../../Libs/effectUtils";
 import { SUITS } from "../../../data/BalatroUtils"
 
 export const generateChangeSuitVariableEffectCode = (

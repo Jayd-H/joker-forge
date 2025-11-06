@@ -1,6 +1,6 @@
 import type { Effect } from "../../../ruleBuilder/types";
-import type { PassiveEffectResult } from "../../effectUtils";
-import { generateConfigVariables } from "../../gameVariableUtils";
+import type { PassiveEffectResult } from "../../Libs/effectUtils";
+import { generateConfigVariables } from "../../Libs/gameVariableUtils";
 
 export const generateAllowDebtPassiveEffectCode = (
   effect: Effect,

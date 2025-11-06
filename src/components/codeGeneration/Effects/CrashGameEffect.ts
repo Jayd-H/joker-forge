@@ -1,5 +1,5 @@
 import { Effect } from "../../ruleBuilder";
-import { EffectReturn } from "../effectUtils";
+import { EffectReturn } from "../Libs/effectUtils";
 
 export const generateCrashGameEffectCode = (
   effect: Effect,

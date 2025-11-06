@@ -1,6 +1,6 @@
 import type { Effect } from "../../../ruleBuilder/types";
-import type { EffectReturn } from "../../effectUtils";
-import { parseGameVariable, parseRangeVariable, generateGameVariableCode } from "../../gameVariableUtils";
+import type { EffectReturn } from "../../Libs/effectUtils";
+import { parseGameVariable, parseRangeVariable, generateGameVariableCode } from "../../Libs/gameVariableUtils";
 
 export const generateModifyInternalVariableEffectCode = (
   effect: Effect,

@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn, PassiveEffectResult } from "../effectUtils";
-import { generateConfigVariables } from "../gameVariableUtils";
+import type { EffectReturn, PassiveEffectResult } from "../Libs/effectUtils";
+import { generateConfigVariables } from "../Libs/gameVariableUtils";
 
 export const generateEditConsumableSlotsPassiveEffectCode = (
   effect: Effect

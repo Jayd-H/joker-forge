@@ -1,8 +1,8 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 import {
   generateConfigVariables,
-} from "../gameVariableUtils";
+} from "../Libs/gameVariableUtils";
 
 export const generateSetSellValueEffectCode = (
   effect: Effect,

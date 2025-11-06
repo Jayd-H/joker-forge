@@ -1,6 +1,6 @@
 import { TAG_TYPES } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 
 export const generateCreateTagEffectCode = (
   effect: Effect,

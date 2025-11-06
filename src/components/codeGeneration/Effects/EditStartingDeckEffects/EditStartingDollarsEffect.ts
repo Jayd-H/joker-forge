@@ -1,6 +1,6 @@
 import type { Effect } from "../../../ruleBuilder/types";
-import type { EffectReturn } from "../../effectUtils";
-import { generateGameVariableCode } from "../../gameVariableUtils";
+import type { EffectReturn } from "../../Libs/effectUtils";
+import { generateGameVariableCode } from "../../Libs/gameVariableUtils";
 
 export const generateEditStartingDollarsEffectCode = (
   effect: Effect,

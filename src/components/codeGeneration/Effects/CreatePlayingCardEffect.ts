@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 import { EDITIONS, SEALS, type JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../Jokers/variableUtils";
+import { parseRankVariable, parseSuitVariable } from "../Libs/userVariableUtils";
 
 export const generateCreatePlayingCardEffectCode = (
   effect: Effect,

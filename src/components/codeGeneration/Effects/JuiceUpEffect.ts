@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { ConfigExtraVariable, EffectReturn } from "../effectUtils";
-import { generateConfigVariables } from "../gameVariableUtils";
+import type { ConfigExtraVariable, EffectReturn } from "../Libs/effectUtils";
+import { generateConfigVariables } from "../Libs/gameVariableUtils";
 
 export const generateJuiceUpEffectCode = (
   effect: Effect,

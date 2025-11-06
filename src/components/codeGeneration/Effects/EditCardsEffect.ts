@@ -1,6 +1,6 @@
 import { EDITIONS, RANKS, SEALS, SUITS } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 
 export const generateEditCardsEffectCode = (
   effect: Effect,

@@ -1,5 +1,5 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../effectUtils";
+import type { EffectReturn } from "../Libs/effectUtils";
 import { PLANET_CARD_KEYS, SPECTRAL_CARD_KEYS, TAROT_CARD_KEYS } from "../../data/BalatroUtils";
 
 export const generateCopyConsumableEffectCode = (

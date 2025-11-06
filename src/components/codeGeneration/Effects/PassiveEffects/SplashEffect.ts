@@ -1,4 +1,4 @@
-import type { PassiveEffectResult } from "../../effectUtils";
+import type { PassiveEffectResult } from "../../Libs/effectUtils";
 
 export const generateSplashPassiveEffectCode = (
 ): PassiveEffectResult => {
