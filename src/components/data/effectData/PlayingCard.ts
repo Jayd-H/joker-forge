@@ -118,6 +118,109 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Card Effects",
   },
   {
+    id: "create_playing_cards",
+    label: "Create Playing Cards",
+    description: "Create and add new cards to hand with specified properties",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["card_used", "held_hand"],
+    params: [
+      {
+        id: "count",
+        type: "number",
+        label: "Number of Cards",
+        default: 1,
+        min: 1,
+        max: 8,
+      },
+      {
+        id: "rank",
+        type: "select",
+        label: "Rank",
+        options: [
+          { value: "random", label: "Random Rank" },
+          { value: "Face Cards", label: "Face Cards" },
+          { value: "Numbered Cards", label: "Numbered Cards" },
+          { value: "pool", label: "Random from pool" },
+          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+        ],
+        default: "random",
+      },
+      {
+        id: "rank_pool",
+        type: "checkbox",
+        label: "Possible Ranks",
+        checkboxOptions: [...RANKS],
+        showWhen: {
+          parameter: "rank",
+          values: ["pool"],
+        }
+      },
+      {
+        id: "suit",
+        type: "select",
+        label: "Suit",
+        options: [
+          { value: "none", label: "Random Suit" },
+          { value: "pool", label: "Random from pool" },
+          ...SUITS],
+        default: "none",
+      },
+      {
+        id: "suit_pool",
+        type: "checkbox",
+        label: "Possible Suits",
+        checkboxOptions: [...SUITS],
+        showWhen: {
+          parameter: "suit",
+          values: ["pool"],
+        }
+      },
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "No Enhancement" },
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "No Seal" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "No Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random Edition" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Card Modification",
+  },
+  {
     id: "create_copy_triggered_card",
     label: "Copy Triggered Card",
     description: "Copy the card that triggered this effect",
@@ -191,6 +294,67 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
       },
     ],
     category: "Card Effects",
+  },
+  {
+    id: "copy_selected_cards",
+    label: "Copy Selected Cards",
+    description: "Create copies of selected cards with customizable properties",
+    objectUsers: ["consumable"],
+    applicableTriggers: ["card_used"],
+    params: [
+      {
+        id: "copies",
+        type: "number",
+        label: "Number of Copies per Card",
+        default: 1,
+        min: 1,
+        max: 5,
+      },
+      {
+        id: "enhancement",
+        type: "select",
+        label: "Enhancement Type",
+        options: () => [
+          { value: "none", label: "Keep Original Enhancement" },
+          ...ENHANCEMENTS().map((enhancement) => ({
+            value: enhancement.key,
+            label: enhancement.label,
+          })),
+          { value: "random", label: "Random Enhancement" },
+        ],
+        default: "none",
+      },
+      {
+        id: "seal",
+        type: "select",
+        label: "Seal Type",
+        options: () => [
+          { value: "none", label: "Keep Original Seal" },
+          { value: "random", label: "Random Seal" },
+          ...SEALS().map((seal) => ({
+            value: seal.key,
+            label: seal.label,
+          })),
+        ],
+        default: "none",
+      },
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition Type",
+        options: [
+          { value: "none", label: "Keep Original Edition" },
+          { value: "remove", label: "Remove Edition" },
+          ...EDITIONS().map((edition) => ({
+            value: edition.key,
+            label: edition.label,
+          })),
+          { value: "random", label: "Random Edition" },
+        ],
+        default: "none",
+      },
+    ],
+    category: "Selected Cards",
   },
   {
     id: "edit_playing_card",

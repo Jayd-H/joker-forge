@@ -59,7 +59,7 @@ const updateTrigger = (
         return "card_used"
       else 
         return "consumable_used"
-    case "voucher_redeemed":
+    case "voucher_used":
     case "deck_selected":
       return "card_used"
     case "card_held":
@@ -93,6 +93,8 @@ const updateConditionId = (
       return "check_blind_requirements"
     case "poker_hand":
       return "hand_type"
+    case "destroy_selected_cards":
+      return "destroy_cards"
     default:
       return id
   }
@@ -189,6 +191,22 @@ const updateEffectId = (
       return "retrigger_cards"
     case "destroy_card":
       return "destroy_playing_card"
+    case "perma_bonus":
+      return "permanent_bonus"
+    case "double_dollars":
+      return "set_dollars"
+    case "edit_selected_joker":
+      return "edit_joker"
+    case "destroy_selected_cards":
+      return "destroy_cards"
+    case "add_cards_to_hand":
+      return "create_playing_cards"
+    case "edit_dollars_selected":
+      return "edit_starting_dollars"
+    case "edit_raity_weight":
+      return "edit_rarity_weight"
+    case "modify_base_blind_requirement":
+      return "modify_blind_requirement"
 
     default:
       return id
@@ -230,6 +248,10 @@ const updateEffectParams = (
       if (itemType === "joker") {
         params["selection_method"] = "self"
       }
+      break
+    case "double_dollars":
+      params["max_earnings"] = params["limit"]
+      params["limit_dollars"] = [false, true, false, false]
       break
   }
 
