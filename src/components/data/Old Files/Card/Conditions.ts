@@ -1,4 +1,4 @@
-import { ConditionTypeDefinition } from "../../ruleBuilder/types";
+import { ConditionTypeDefinition } from "../../../ruleBuilder/types";
 import {
   UserIcon,
   InformationCircleIcon,
@@ -19,7 +19,7 @@ import {
   RARITIES,
   VOUCHERS,
   CARD_SCOPES,
-} from "../../data/BalatroUtils";
+} from "../../../data/BalatroUtils";
 import { GENERIC_TRIGGERS } from "./Triggers";
 
 export const CARD_GENERIC_TRIGGERS: string[] = ["card_scored", "card_held"];

@@ -1,4 +1,4 @@
-import { EffectTypeDefinition } from "../../ruleBuilder/types";
+import { EffectTypeDefinition } from "../../../ruleBuilder/types";
 import {
   PencilSquareIcon,
   BanknotesIcon,
@@ -28,7 +28,7 @@ import {
   TAGS,
   VOUCHERS,
   STICKERS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 
 export const CONSUMABLE_EFFECT_CATEGORIES: CategoryDefinition[] = [
   {

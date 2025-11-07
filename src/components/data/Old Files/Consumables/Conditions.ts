@@ -1,4 +1,4 @@
-import { ConditionTypeDefinition } from "../../ruleBuilder/types";
+import { ConditionTypeDefinition } from "../../../ruleBuilder/types";
 import {
   RectangleStackIcon,
   UserIcon,
@@ -24,7 +24,7 @@ import {
   TAROT_CARDS,
   VOUCHERS,
   DECKS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 
 export const CONSUMABLE_GENERIC_TRIGGERS: string[] = [
   "consumable_used",

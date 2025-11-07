@@ -1,7 +1,7 @@
 import {
   ConditionParameterOption,
   ConditionTypeDefinition,
-} from "../../ruleBuilder/types";
+} from "../../../ruleBuilder/types";
 import {
   HandRaisedIcon,
   RectangleStackIcon,
@@ -34,7 +34,7 @@ import {
   BOSS_BLINDS,
   TAGS,
   DECKS,
-} from "../BalatroUtils";
+} from "../../BalatroUtils";
 
 export const GENERIC_TRIGGERS: string[] = [
   "blind_selected",
@@ -1998,7 +1998,7 @@ export const CONDITION_TYPES: ConditionTypeDefinition[] = [
         id: "joker_variable",
         type: "select",
         label: "Joker Variable",
-        variableTypes: ["joker"],
+        variableTypes: ["key"],
         showWhen: {
           parameter: "type",
           values: ["variable"]
