@@ -25,15 +25,15 @@ export const updateRuleBlocks = (
       })});
 
       (rule.effects|| []).forEach(effect => {
-        effect = updateEffect(effect)
+        effect = updateEffect(effect, item.objectType)
       });
 
       (rule.randomGroups || []).forEach(group => {group.effects.forEach(effect =>
-        effect = updateEffect(effect)
+        effect = updateEffect(effect, item.objectType)
       )});
 
       (rule.loops || []).forEach(group => {group.effects.forEach(effect =>
-        effect = updateEffect(effect)
+        effect = updateEffect(effect, item.objectType)
       )});
 
     })})
@@ -87,6 +87,12 @@ const updateConditionId = (
       return "hand_count"
     case "edit_dollars_selected":
       return "edit_starting_dollars"
+    case "deck_check":
+      return "check_deck"
+    case "blind_requirements":
+      return "check_blind_requirements"
+    case "poker_hand":
+      return "hand_type"
     default:
       return id
   }
@@ -116,25 +122,34 @@ const updateConditionParams = (
 }
 
 const updateEffect = (
-  effect: Effect
+  effect: Effect,
+  itemType: string,
 ) => {
   const oldEffectId = effect.type
-  effect.type = updateEffectId(oldEffectId)
-  effect.params = updateEffectParams(oldEffectId, effect.params)
+  effect.type = updateEffectId(oldEffectId, itemType)
+  effect.params = updateEffectParams(oldEffectId, itemType, effect.params)
   effect.params = updateMissingEffectParams(effect.type, effect.params)
 
   return effect
 }
 
 const updateEffectId = (
-  id: string
+  id: string,
+  itemType: string,
 ) => {
   switch(id) {
+    case "balance":
+      return "balance_chips_mult"
+    case "destroy_self":
+      if (itemType === "joker") {
+        return "destroy_joker"
+      }
+      return id
+    case "Win_blind":
+      return "beat_current_blind"
     case "add_dollars":
     case "edit_dollars":
       return "set_dollars"
-    case "destroy_card":
-      return "destroy_self"
     case "destroy_random_cards":
       return "destroy_cards"
     case "edit_Shop_Prices":
@@ -158,6 +173,22 @@ const updateEffectId = (
     case "add_card_to_deck":
     case "add_card_to_hand":
       return "create_playing_card"
+    case "add_x_mult":
+      return "apply_x_mult"
+    case "add_x_chips":
+      return "apply_x_chips"
+    case "add_exp_mult":
+      return "apply_exp_mult"
+    case "add_exp_chips":
+      return "apply_exp_chips"
+    case "add_hyper_mult":
+      return "apply_hyper_mult"
+    case "add_hyper_chips":
+      return "apply_hyper_chips"
+    case "retrigger_card":
+      return "retrigger_cards"
+    case "destroy_card":
+      return "destroy_playing_card"
 
     default:
       return id
@@ -167,6 +198,7 @@ const updateEffectId = (
 // For similar effects that are merged and have params defining their effect
 const updateEffectParams = (
   id: string, 
+  itemType: string,
   params: Record <string, unknown>
 ): Record <string, unknown> => {
 
@@ -193,6 +225,11 @@ const updateEffectParams = (
       break
     case "add_card_to_hand":
       params["location"] = "hand"
+      break
+    case "destroy_self":
+      if (itemType === "joker") {
+        params["selection_method"] = "self"
+      }
       break
   }
 
