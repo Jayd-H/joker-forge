@@ -139,7 +139,7 @@ export const SHOP_EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Shop",
   },
   {
-    id: "edit_rerolls",
+    id: "edit_reroll_price",
     label: "Edit Reroll Price",
     description: "Modify the price of the shop Reroll",
     objectUsers: ["voucher", "deck"],
@@ -189,7 +189,7 @@ export const SHOP_EFFECTS: GlobalEffectTypeDefinition[] = [
     applicableTriggers: ["card_used"],
     params: [
       {
-          id: "key_rarity",
+          id: "key",
           type: "text",
           label: "Joker Rarity Key (key)",
           default: "",
