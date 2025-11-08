@@ -145,8 +145,8 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_win_ante",
     label: "Set Winner Ante",
     description: "Set the Final Ante where the Player Win's the Game",
-    objectUsers: ["consumable", "voucher", "deck"],
-    applicableTriggers: ["card_used"],
+    objectUsers: ["joker", "consumable", "voucher", "deck"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     params: [
       {
         id: "operation",
