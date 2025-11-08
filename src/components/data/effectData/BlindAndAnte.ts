@@ -41,7 +41,7 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "modify_blind_requirement",
     label: "Modify Blind Requirement",
     description: "Changes the score requirement of a blind",
-    objectUsers: ["joker", "consumable", "deck"],
+    objectUsers: ["joker", "consumable"],
     applicableTriggers: [
       "blind_selected",
       "card_scored",
@@ -52,6 +52,35 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
       "card_used",
       "joker_evaluated",
     ],
+    params: [
+      {
+        id: "operation",
+        type: "select",
+        label: "Operation",
+        options: [
+          { value: "add", label: "Add" },
+          { value: "subtract", label: "Subtract" },
+          { value: "set", label: "Set to" },
+          { value: "multiply", label: "Multiply" },
+          { value: "divide", label: "Divide" },
+        ],
+        default: "multiply",
+      },
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 2,
+      },
+    ],
+    category: "Blind & Ante",
+  },
+  {
+    id: "modify_all_blinds_requirement",
+    label: "Modify All Blinds Requirement",
+    description: "Changes the score requirement of all blinds",
+    objectUsers: ["deck", "voucher"],
+    applicableTriggers: ["card_used"],
     params: [
       {
         id: "operation",

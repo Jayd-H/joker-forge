@@ -47,6 +47,7 @@ import { generateForceGameOverEffectCode } from "./../Effects/ForceGameOverEffec
 import { generateJuiceUpEffectCode } from "./../Effects/JuiceUpEffect";
 import { generateLevelUpHandEffectCode } from "./../Effects/LevelUpHandEffect";
 import { generateModifyBlindRequirementEffectCode } from "./../Effects/ModifyBlindRequirementEffect";
+import { generateModifyAllBlindsRequirementEffectCode } from "./../Effects/ModifyAllBlindsRequirementEffect";
 import { generateModifyInternalVariableEffectCode } from "./../Effects/Variables/ModifyInternalVariableEffect";
 import { generateFoolEffectCode } from "./../Effects/FoolEffect";
 import { generateIncrementRankEffectCode } from "./../Effects/IncrementRankEffect";
@@ -872,6 +873,8 @@ export const generateSingleEffect = (
       return generateIncrementRankEffectCode(effect, itemType)
     case "modify_blind_requirement":
       return generateModifyBlindRequirementEffectCode(effect, cleanItemType)
+    case "modify_all_blinds_requirement":
+      return generateModifyAllBlindsRequirementEffectCode(effect, cleanItemType)
     case "flip_joker":
       return generateFlipJokerEffectCode(effect)
     case "juice_up_joker":
@@ -914,7 +917,7 @@ export const generateSingleEffect = (
       return generateShowMessageEffectCode(effect)
 
 //////////DECK EXCLUSIVE EFFECTS\\\\\\\\\\\\
-    case "edit_starting_cards":
+    case "edit_all_starting_cards":
       return generateEditStartingCardsEffectCode(effect, modprefix)
     case "edit_starting_suits":
       return generateEditStartingSuitsEffectCode(effect, modprefix)

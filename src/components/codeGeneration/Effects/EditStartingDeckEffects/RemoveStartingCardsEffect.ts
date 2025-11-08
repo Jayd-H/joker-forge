@@ -52,6 +52,7 @@ G.E_MANAGER:add_event(Event({
      func = function()
             for i = 1, ${valueCode} do destroyed_cards[#destroyed_cards + 1] = temp_hand[i]:remove()
          end
+         G.GAME.starting_deck_size = #G.playing_cards
         return true
     end
 }))
@@ -59,7 +60,7 @@ G.E_MANAGER:add_event(Event({
   }
 
   const result: EffectReturn = {
-    statement: destroyCode,
+    statement: `__PRE_RETURN_CODE__${destroyCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.RED",
     configVariables,
   };

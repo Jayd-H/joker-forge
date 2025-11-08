@@ -1,5 +1,5 @@
 import { GlobalEffectTypeDefinition } from "../../ruleBuilder/types";
-import { ALL_OBJECTS, GENERIC_TRIGGERS } from "./../Conditions";
+import { GENERIC_TRIGGERS } from "./../Conditions";
 
   
 export const ECONOMY_EFFECTS: GlobalEffectTypeDefinition[] = [
@@ -8,7 +8,7 @@ export const ECONOMY_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Dollars",
     description: "Modify your money balance",
     applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
-    objectUsers: [...ALL_OBJECTS],
+    objectUsers: ["joker", "consumable", "voucher"],
     params: [
       {
         id: "operation",

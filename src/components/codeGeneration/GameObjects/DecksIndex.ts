@@ -273,7 +273,7 @@ const generateApplyFunction = (
 
   const globalEffectCounts = new Map<string, number>();
 
-  let applyFunction = ` apply = function(self, back)`;
+  let applyFunction = `apply = function(self, back)`;
 
   filtered_rules.forEach((rule) => {
 

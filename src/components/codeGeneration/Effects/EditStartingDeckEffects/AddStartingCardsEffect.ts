@@ -145,6 +145,7 @@ export const generateAddStartingCardsEffectCode = (
   }
 
   // Apply edition if specified
+  if (edition !== "none") {
     if (edition === "random") {
       const editionPool = EDITIONS().map(edition => `'${
         edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
@@ -160,10 +161,12 @@ export const generateAddStartingCardsEffectCode = (
                             cards[i]:set_edition( "${edition}", true, true, true)
                         end`;
     }
+  }
 
   addCardsCode += `
                     end
                     SMODS.calculate_context({ playing_card_added = true, cards = cards })
+                    G.GAME.starting_deck_size = #G.playing_cards
                     return true
                 end
             }))
