@@ -9,7 +9,7 @@ export const CONSUMABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Create Consumable",
     description:
       "Create consumable cards and add them to your consumables area",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable", "card", "deck"],
     params: [
       {
@@ -223,7 +223,7 @@ export const CONSUMABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "destroy_consumable",
     label: "Destroy Consumable",
     description: "Destroy a consumable card from your collection",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable", "card"],
     params: [
       {

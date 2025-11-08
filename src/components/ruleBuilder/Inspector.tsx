@@ -352,8 +352,8 @@ function hasShowWhen(param: ConditionParameter | EffectParameter | undefined): p
 ) & {
   showWhen: ShowWhenCondition;
 } {
-  if (!param) return false
-  else return "showWhen" in param && param.showWhen !== undefined;
+  if (!param || !param.showWhen) return false
+  else return "showWhen" in param;
 }
 
 const ParameterField: React.FC<ParameterFieldProps> = ({

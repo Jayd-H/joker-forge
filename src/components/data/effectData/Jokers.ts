@@ -8,7 +8,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Create Joker",
     description:
       "Create a random or specific joker card. For creating jokers from your own mod, it is [modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: [...ALL_OBJECTS],
     params: [
       {
@@ -96,7 +96,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Copy Joker",
     description:
       "Copy an existing joker from your collection. For copying jokers from your own mod, it is j_[modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable", "card"],
     params: [
       {
@@ -258,7 +258,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Destroy Joker",
     description:
       "Destroy an existing joker from your collection. For destroying jokers from your own mod, it is j_[modprefix]_[joker_name]. You can find your mod prefix in the mod metadata page.",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable", "card"],
     params: [
       {
@@ -356,7 +356,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "flip_joker",
     label: "Flip Joker",
     description: "Flip a joker",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable"],
     params: [
       {
@@ -406,7 +406,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "shuffle_jokers",
     label: "Shuffle Jokers",
     description: "Shuffle all jokers",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable"],
     params: [],
     category: "Jokers",

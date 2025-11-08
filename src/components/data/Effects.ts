@@ -88,7 +88,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "level_up_hand",
     label: "Level Up Hand",
     description: "Increase the level of a poker hand",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: ["joker", "consumable", "card"],
     params: [
       {
@@ -129,7 +129,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "create_tag",
     label: "Create Tag",
     description: "Create a specific or random tag",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
     objectUsers: [...ALL_OBJECTS],
     params: [
       {
@@ -186,6 +186,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           "card_held_in_hand_end_of_round",
         ].includes(trigger); // redeeming a voucher while in blind is buggy adding vouchers to other cards in play etc.
       }),
+      "card_used",
     ],
     objectUsers: ["joker", "consumable"],
     params: [

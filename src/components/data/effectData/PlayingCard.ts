@@ -218,7 +218,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         default: "none",
       },
     ],
-    category: "Card Modification",
+    category: "Card Effects",
   },
   {
     id: "create_copy_triggered_card",
@@ -354,7 +354,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         default: "none",
       },
     ],
-    category: "Selected Cards",
+    category: "Card Effects",
   },
   {
     id: "edit_playing_card",

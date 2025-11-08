@@ -352,14 +352,14 @@ const generateCalculateFunction = (
   consumable: ConsumableData,
 ): string => {
 
-  const filtered_rules = rules.filter((rule) => rule.trigger !== "consumable_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
   if (filtered_rules.length === 0) return "";
 
   const globalEffectCounts = new Map<string, number>();
 
   let calculateFunction = `
-  calculate = function(self, card, context)`;
+    calculate = function(self, card, context)`;
 
   filtered_rules.forEach((rule) => {
 
@@ -473,7 +473,7 @@ const generateUseFunction = (
   modPrefix: string,
   consumable?: ConsumableData,
 ): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "consumable_used")
+  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
 
   if (filtered_rules.length === 0) return "";
 

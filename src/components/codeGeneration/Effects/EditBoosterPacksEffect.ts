@@ -133,6 +133,11 @@ const generateJokerAndConsumableCode = (
   if (itemType === "consumable") {
     EditBoosterCode += `
       }))`
+      
+    EditBoosterCode = `
+    __PRE_RETURN_CODE__
+    ${EditBoosterCode}
+    __PRE_RETURN_CODE_END__`
   }
 
   return {
