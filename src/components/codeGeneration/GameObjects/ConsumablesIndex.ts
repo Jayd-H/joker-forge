@@ -550,7 +550,7 @@ const generateCanUseFunction = (
   const customCanUseConditions: string[] = [];
 
   rules.forEach((rule) => {
-    if (rule.trigger !== "consumable_used") return;
+    if (rule.trigger !== "card_used") return;
     const conditionCode = generateConditionChain(rule, "consumable");
     if (conditionCode) {
       ruleConditions.push(`(${conditionCode})`);
