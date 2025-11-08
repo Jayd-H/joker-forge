@@ -93,9 +93,11 @@ export const generateEditStartingSuitsEffectCode = (
                     end`
         } else if (replace_suit === "remove") {
           editCardsCode += `
-                    if v.base.suit == '${selected_suit}' then
-                    v:remove()
-                    end`
+                    for i=#G.playing_cards, 1, -1 do
+              if G.playing_cards[i]:is_suit('${selected_suit}') then
+               G.playing_cards[i]:remove()
+                end
+              end`
          } else {
             editCardsCode += `
                     if v.base.suit == '${selected_suit}' then
@@ -106,6 +108,7 @@ export const generateEditStartingSuitsEffectCode = (
 
   editCardsCode += `
                     end
+                    G.GAME.starting_deck_size = #G.playing_cards
                     return true
                 end
             }))         

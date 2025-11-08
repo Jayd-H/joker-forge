@@ -115,19 +115,22 @@ if (edition !== "none") {
                         end`
         } else if (specific_replace_Rank === "remove") {
           editCardsCode += `
-                    if v:get_id() == ${rankId} then
-                    v:remove()
-                    end`
+                    for i=#G.playing_cards, 1, -1 do
+              if G.playing_cards[i]:get_id() == ${rankId} then
+               G.playing_cards[i]:remove()
+                end
+              end`
         } else {  
         editCardsCode += `
                         if v:get_id() == ${rankId} then
                         assert(SMODS.change_base(v, nil, "${specific_replace_Rank}"))
-                        end                        `
+                        end`
         }
 }  
 
   editCardsCode += `
                     end
+                    G.GAME.starting_deck_size = #G.playing_cards
                     return true
                 end
             }))         

@@ -127,6 +127,7 @@ export const generateEditStartingCardsEffectCode = (
 
   editCardsCode += `
                     end
+                    G.GAME.starting_deck_size = #G.playing_cards
                     return true
                 end
             }))         
