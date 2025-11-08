@@ -194,8 +194,10 @@ const updateEffectId = (
     case "perma_bonus":
       return "permanent_bonus"
     case "double_dollars":
+    case "add_dollars_from_jokers":
       return "set_dollars"
     case "edit_selected_joker":
+    case "edition_random_joker":
       return "edit_joker"
     case "destroy_selected_cards":
       return "destroy_cards"
@@ -252,6 +254,12 @@ const updateEffectParams = (
     case "double_dollars":
       params["max_earnings"] = params["limit"]
       params["limit_dollars"] = [false, true, false, false]
+      break
+    case "edit_selected_joker":
+      params["target"] = "selected_joker"
+      break
+    case "add_dollars_from_jokers":
+      params["value"] = "GAMEVAR:all_jokers_sell_value"
       break
   }
 

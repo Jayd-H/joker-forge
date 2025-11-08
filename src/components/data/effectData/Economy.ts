@@ -8,7 +8,7 @@ export const ECONOMY_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Edit Dollars",
     description: "Modify your money balance",
     applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
-    objectUsers: ["joker", "consumable", "voucher"],
+    objectUsers: ["joker", "consumable", "card", "voucher"],
     params: [
       {
         id: "operation",
