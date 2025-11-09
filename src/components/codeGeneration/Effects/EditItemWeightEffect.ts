@@ -51,7 +51,7 @@ export const generateEditItemWeightEffectCode = (
     }
   } else {
     return {
-      statement: ItemWeightCode,
+      statement: `__PRE_RETURN_CODE__${ItemWeightCode}__PRE_RETURN_CODE_END__`,
       colour: "G.C.BLUE",
       configVariables,
     }

@@ -238,35 +238,35 @@ const generateDeckCode = (
     'deck'
   )
 
-  let statement = "";
+  let EditWinCode = "";
 
      if (operation === "add") {
-        statement += `
+        EditWinCode += `
         local ante = G.GAME.win_ante + ${valueCode}
         local int_part, frac_part = math.modf(ante)
         local rounded = int_part + (frac_part >= 0.5 and 1 or 0)
         G.GAME.win_ante = rounded
         `;
   } else if (operation === "subtract") {
-        statement += `
+        EditWinCode += `
         local ante = G.GAME.win_ante - ${valueCode}
         local int_part, frac_part = math.modf(ante)
         local rounded = int_part + (frac_part >= 0.5 and 1 or 0)
         G.GAME.win_ante = rounded
         `;
   } else if (operation === "set") {
-        statement += `
+        EditWinCode += `
         G.GAME.win_ante = ${valueCode}
             `;
   } else if (operation === "multiply") {
-        statement += `
+        EditWinCode += `
         local ante = G.GAME.win_ante * ${valueCode}
         local int_part, frac_part = math.modf(ante)
         local rounded = int_part + (frac_part >= 0.5 and 1 or 0)
         G.GAME.win_ante = rounded
             `;
   } else if (operation === "divide") {
-        statement += `
+        EditWinCode += `
         local ante = G.GAME.win_ante / ${valueCode}
         local int_part, frac_part = math.modf(ante)
         local rounded = int_part + (frac_part >= 0.5 and 1 or 0)
@@ -275,7 +275,7 @@ const generateDeckCode = (
   }
 
   return {
-    statement,
+    statement: `__PRE_RETURN_CODE__${EditWinCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.BLUE",
     configVariables,
   };

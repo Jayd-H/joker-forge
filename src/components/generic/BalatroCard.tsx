@@ -252,8 +252,8 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     }
     if (type === "voucher") {
       return {
-        bg: "bg-balatro-voucher_tag_shadow",
-        shadow: "bg-balatro-voucher_tag",
+        bg: "bg-balatro-voucher_badgetag_shadow",
+        shadow: "bg-balatro-voucher_badgetag",
       };
     }
     return {
