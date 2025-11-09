@@ -45,7 +45,7 @@ const generateVoucherAndDeckCode = (
   }
 
   return {
-    statement: DiscardMoneyCode,
+    statement: `__PRE_RETURN_CODE__${DiscardMoneyCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.MONEY",
     configVariables,
   };

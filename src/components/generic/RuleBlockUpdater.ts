@@ -209,6 +209,8 @@ const updateEffectId = (
       return "edit_rarity_weight"
     case "modify_base_blind_requirement":
       return "modify_all_blinds_requirement"
+    case "edit_rerolls":
+      return "edit_reroll_price"
 
     default:
       return id

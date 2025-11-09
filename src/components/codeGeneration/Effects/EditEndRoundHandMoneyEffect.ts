@@ -53,7 +53,7 @@ const generateVoucherAndDeckCode = (
   }
 
   return {
-    statement: HandMoneyCode,
+    statement: `__PRE_RETURN_CODE__${HandMoneyCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.MONEY",
     configVariables,
   };

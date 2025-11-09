@@ -310,7 +310,7 @@ local mod = -${valueCode}
   }
 
   return {
-    statement: anteCode,
+    statement: `__PRE_RETURN_CODE__${anteCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.YELLOW",
     configVariables,
   };

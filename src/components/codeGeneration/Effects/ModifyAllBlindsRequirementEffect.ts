@@ -18,36 +18,66 @@ export const generateModifyAllBlindsRequirementEffectCode = (
     itemType
   )
 
-  let statement = "";
+  let blindscoreCode = "";
 
   switch (operation) {
     case "add": {
-      statement = `G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling + ${valueCode}`;
+      blindscoreCode = `G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling + ${valueCode}
+                return true
+            end
+        }))`;
       break;
     }
     case "subtract": {
-      statement = `G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling - ${valueCode}`;
+      blindscoreCode = `G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling - ${valueCode}
+                return true
+            end
+        }))`;
       break;
     }
     case "multiply": {
-      statement = `G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling * ${valueCode}`;
+      blindscoreCode = `G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling * ${valueCode}
+                return true
+            end
+        }))`;
       break;
     }
     case "divide": {
-      statement = `G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling / ${valueCode}`;
+      blindscoreCode = `G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling / ${valueCode}
+                return true
+            end
+        }))`;
       break;
     }
     case "set": {
-      statement = `G.GAME.starting_params.ante_scaling = ${valueCode}`;
+      blindscoreCode = `G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.starting_params.ante_scaling = ${valueCode}
+                return true
+            end
+        }))`;
         break
     }
     default: {
-      statement = `G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling * ${valueCode}`;
+      blindscoreCode = `G.E_MANAGER:add_event(Event({
+            func = function()
+        G.GAME.starting_params.ante_scaling = G.GAME.starting_params.ante_scaling * ${valueCode}
+                return true
+            end
+        }))`;
     }
   }
 
   return {
-    statement,
+    statement: `__PRE_RETURN_CODE__${blindscoreCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.GREEN",
     configVariables: configVariables.length > 0 ? configVariables : undefined,
   };
