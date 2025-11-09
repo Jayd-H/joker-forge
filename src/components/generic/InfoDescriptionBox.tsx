@@ -10,7 +10,7 @@ import {
 import Button from "./Button";
 import InputField from "./InputField";
 import { ValidationResult } from "./validationUtils";
-import { getAllVariables } from "../codeGeneration/Libs/userVariableUtils";
+import { getAllVariables } from "../codeGeneration/lib/userVariableUtils";
 import {
   JokerData,
   ConsumableData,

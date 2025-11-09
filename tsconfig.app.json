@@ -24,7 +24,7 @@
   },
   "include": ["src"],
   "exclude": [
-    "src/components/codeGeneration/Old Files",
+    "src/components/codeGeneration/oldFiles",
     "src/components/data/Old Files",
   ],
 }

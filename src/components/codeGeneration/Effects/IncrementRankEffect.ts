@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../Libs/effectUtils";
-import { generateGameVariableCode } from "../Libs/gameVariableUtils";
+import type { EffectReturn } from "../lib/effectUtils";
+import { generateGameVariableCode } from "../lib/gameVariableUtils";
 
 export const generateIncrementRankEffectCode = (
   effect: Effect,

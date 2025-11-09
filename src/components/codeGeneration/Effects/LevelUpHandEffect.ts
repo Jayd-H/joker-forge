@@ -1,11 +1,11 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { ConfigExtraVariable, EffectReturn } from "../Libs/effectUtils";
+import type { ConfigExtraVariable, EffectReturn } from "../lib/effectUtils";
 import type { EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
-} from "../Libs/gameVariableUtils";
-import { generateGameVariableCode } from "../Libs/gameVariableUtils";
-import { parsePokerHandVariable } from "../Libs/userVariableUtils";
+} from "../lib/gameVariableUtils";
+import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { parsePokerHandVariable } from "../lib/userVariableUtils";
 
 export const generateLevelUpHandEffectCode = (
   effect: Effect,

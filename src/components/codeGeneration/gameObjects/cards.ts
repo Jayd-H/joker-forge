@@ -6,14 +6,14 @@ import {
   SealData,
   slugify,
 } from "../../data/BalatroUtils";
-import { generateConditionChain } from "../Libs/conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../Libs/effectUtils";
-import { generateGameVariableCode, parseGameVariable } from "../Libs/gameVariableUtils";
+import { generateConditionChain } from "../lib/conditionUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
+import { generateGameVariableCode, parseGameVariable } from "../lib/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
-import { parseRangeVariable } from "../Libs/gameVariableUtils";
-import { generateTriggerContext } from "../Libs/triggerUtils";
-import { applyIndents } from "./JokersIndex";
-import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
+import { parseRangeVariable } from "../lib/gameVariableUtils";
+import { generateTriggerContext } from "../lib/triggerUtils";
+import { applyIndents } from "./jokers";
+import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;

@@ -4,13 +4,13 @@ import {
   processPassiveEffects, 
   PassiveEffectResult, 
   generateEffectReturnStatement 
-} from "../Libs/effectUtils";
+} from "../lib/effectUtils";
 import {
   extractVariablesFromRules,
   generateVariableConfig,
   getAllVariables,
   extractGameVariablesFromRules,
-} from "../Libs/userVariableUtils";
+} from "../lib/userVariableUtils";
 import {
   getRankId,
   getSuitByValue,
@@ -18,17 +18,17 @@ import {
   slugify, 
   RarityData
 } from "../../data/BalatroUtils";
-import { generateUnlockJokerFunction } from "../Libs/unlockUtils";
-import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../Libs/gameVariableUtils";
-import { generateConditionChain } from "../Libs/conditionUtils";
+import { generateUnlockJokerFunction } from "../lib/unlockUtils";
+import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
+import { generateConditionChain } from "../lib/conditionUtils";
 import { Rule } from "../../ruleBuilder";
-import { generateTriggerContext } from "../Libs/triggerUtils";
-import { generateDiscountItemsHook } from "../Hooks/DiscountItemsHook";
-import { generateReduceFlushStraightRequirementsHook } from "../Hooks/ReduceFlushStraightRequirementsHook";
-import { generateShortcutHook } from "../Hooks/ShortcutHook";
-import { generateShowmanHook } from "../Hooks/ShowmanHook";
-import { generateCombineRanksHook } from "../Hooks/CombineRanksHook";
-import { generateCombineSuitsHook } from "../Hooks/CombineSuitsHook";
+import { generateTriggerContext } from "../lib/triggerUtils";
+import { generateDiscountItemsHook } from "../hooks/DiscountItemsHook";
+import { generateReduceFlushStraightRequirementsHook } from "../hooks/ReduceFlushStraightRequirementsHook";
+import { generateShortcutHook } from "../hooks/ShortcutHook";
+import { generateShowmanHook } from "../hooks/ShowmanHook";
+import { generateCombineRanksHook } from "../hooks/CombineRanksHook";
+import { generateCombineSuitsHook } from "../hooks/CombineSuitsHook";
 
 
 
@@ -241,7 +241,7 @@ const generateSingleJokerCode = (
 
   const configItems: string[] = [];
   const variableNameCounts = new Map<string, number>();
-
+  console.log(calculateResult?.configVariables)
   const resolveVariableName = (baseName: string): string => {
     const count = variableNameCounts.get(baseName) || 0;
     variableNameCounts.set(baseName, count + 1);
@@ -284,6 +284,7 @@ const generateSingleJokerCode = (
   if (calculateResult?.configVariables) {
     calculateResult.configVariables.forEach((configVar) => {
       const finalName = resolveVariableName(configVar.name);
+      console.log(finalName)
       const valueStr =
         typeof configVar.value === "string"
           ? `"${configVar.value}"`
@@ -300,11 +301,9 @@ const generateSingleJokerCode = (
     const userVariableNames = new Set(
       joker.userVariables?.map((v) => v.name) || []
     );
-
     const autoVariables = variables.filter(
       (v) => !userVariableNames.has(v.name)
     );
-
     if (autoVariables.length > 0) {
       const variableConfig = generateVariableConfig(autoVariables);
       if (variableConfig) {
@@ -312,6 +311,7 @@ const generateSingleJokerCode = (
       }
     }
   }
+  console.log(configItems)
   const effectsConfig = configItems.join(",\n            ");
 
   const jokersPerRow = 10;
@@ -1006,7 +1006,7 @@ const generateCalculateFunction = (
 
         if (regularDeleteEffects.length > 0) {
           calculateFunction += `
-                context.other_card.should_destroy = true`;
+            context.other_card.should_destroy = true`;
         }
 
         const allEffects = [
@@ -1518,7 +1518,8 @@ const generateCalculateFunction = (
 
   calculateFunction += `
     end`;
-  
+  console.log(allConfigVariables)
+
   return {
     code: calculateFunction,
     configVariables: allConfigVariables,
@@ -1602,7 +1603,6 @@ const generateSetAbilityFunction = (joker: JokerData): string | null => {
   }
 
   const allCode = [...forcedStickers, ...variableInits, ...forcedEditions];
-
   return `set_ability = function(self, card, initial)
         ${allCode.join("\n        ")}
     end`;

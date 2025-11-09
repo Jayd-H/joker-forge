@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn, PassiveEffectResult } from "../Libs/effectUtils";
-import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../Libs/gameVariableUtils";
-import { generateGameVariableCode } from "../Libs/gameVariableUtils";
+import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
+import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
+import { generateGameVariableCode } from "../lib/gameVariableUtils";
 
 export const generateEditJokerSlotsPassiveEffectCode = (
   effect: Effect

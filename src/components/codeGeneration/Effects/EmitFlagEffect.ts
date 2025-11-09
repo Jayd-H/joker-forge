@@ -1,5 +1,5 @@
 import { Effect } from "../../ruleBuilder";
-import { EffectReturn } from "../Libs/effectUtils";
+import { EffectReturn } from "../lib/effectUtils";
 
 export const generateEmitFlagEffectCode = (
   effect: Effect,

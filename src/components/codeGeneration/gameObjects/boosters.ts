@@ -1,5 +1,5 @@
 import { BoosterData, BoosterCardRule } from "../../data/BalatroUtils";
-import { applyIndents } from "./JokersIndex";
+import { applyIndents } from "./jokers";
 
 export const generateBoostersCode = (
   boosters: BoosterData[],

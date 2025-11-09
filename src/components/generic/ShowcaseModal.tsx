@@ -13,7 +13,7 @@ import {
   RarityData,
   UserVariable,
 } from "../data/BalatroUtils";
-import { getAllVariables } from "../codeGeneration/Libs/userVariableUtils";
+import { getAllVariables } from "../codeGeneration/lib/userVariableUtils";
 import { toPng } from "html-to-image";
 
 interface ShowcaseModalProps {

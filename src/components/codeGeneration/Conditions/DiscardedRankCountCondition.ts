@@ -1,7 +1,7 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getRankId, type JokerData } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../Libs/gameVariableUtils";
-import { parseRankVariable } from "../Libs/userVariableUtils";
+import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { parseRankVariable } from "../lib/userVariableUtils";
 
 export const generateDiscardedRankCountConditionCode = (
   rules: Rule[],

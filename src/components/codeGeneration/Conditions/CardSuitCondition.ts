@@ -1,7 +1,7 @@
 import type { Rule } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../Libs/gameVariableUtils";
-import { parseSuitVariable } from "../Libs/userVariableUtils";
+import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { parseSuitVariable } from "../lib/userVariableUtils";
 
 export const generateCardSuitConditionCode = (
   rules: Rule[],

@@ -640,14 +640,14 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
   return Array.from(variableMap.values());
 };
 
-export const generateVariableConfig = (variables: VariableInfo[]): string => {
-  if (variables.length === 0) return "";
+export const generateVariableConfig = (variables: VariableInfo[]): string[] => {
+  if (variables.length === 0) return [];
 
   const configItems = variables.map((variable) => {
     return `${variable.name} = ${variable.initialValue}`;
   });
 
-  return configItems.join(",\n            ");
+  return configItems;
 };
 
 export const getVariableNamesFromItem = (

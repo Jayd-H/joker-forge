@@ -33,7 +33,7 @@ import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import {
   vouchersUnlockOptions,
   unlockTriggerOptions,
-} from "../../codeGeneration/Libs/unlockUtils";
+} from "../../codeGeneration/lib/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
 import {
   updateGameObjectIds,

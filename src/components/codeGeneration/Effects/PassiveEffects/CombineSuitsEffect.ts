@@ -1,5 +1,5 @@
 import type { Effect } from "../../../ruleBuilder/types";
-import type { PassiveEffectResult } from "../../Libs/effectUtils";
+import type { PassiveEffectResult } from "../../lib/effectUtils";
 
 
 export const generateCombineSuitsPassiveEffectCode = (

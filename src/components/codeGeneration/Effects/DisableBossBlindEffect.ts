@@ -1,5 +1,5 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn, PassiveEffectResult } from "../Libs/effectUtils";
+import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
 
 export const generateDisableBossBlindPassiveEffectCode = (
   effect: Effect,

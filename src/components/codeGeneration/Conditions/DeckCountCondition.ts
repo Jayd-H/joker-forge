@@ -1,7 +1,7 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getRankId } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../Libs/gameVariableUtils";
-import { generateOperationCode } from "../Libs/operationUtils";
+import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateDeckCountConditionCode = (
   rules: Rule[],

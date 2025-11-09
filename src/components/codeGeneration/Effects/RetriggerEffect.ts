@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../Libs/effectUtils";
+import type { EffectReturn } from "../lib/effectUtils";
 import type { EditionData, EnhancementData, SealData } from "../../data/BalatroUtils";
-import { generateConfigVariables } from "../Libs/gameVariableUtils";
+import { generateConfigVariables } from "../lib/gameVariableUtils";
 
 export const generateRetriggerEffectCode = (
   effect: Effect,

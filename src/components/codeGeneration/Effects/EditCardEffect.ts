@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../Libs/effectUtils";
+import type { EffectReturn } from "../lib/effectUtils";
 import { EDITIONS, JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../Libs/userVariableUtils";
+import { parseRankVariable, parseSuitVariable } from "../lib/userVariableUtils";
 
 export const generateEditCardEffectCode = (
   effect: Effect,

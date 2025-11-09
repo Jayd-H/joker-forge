@@ -20,7 +20,7 @@ import {
   getNumberVariables,
   addKeyVariablesToOptions,
   addTextVariablesToOptions,
-} from "../codeGeneration/Libs/userVariableUtils";
+} from "../codeGeneration/lib/userVariableUtils";
 
 import { getTriggerById } from "../data/Triggers";
 import { getConditionTypeById } from "../data/Conditions";
@@ -51,7 +51,7 @@ import { GameVariable, getGameVariableById } from "../data/GameVars";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { SelectedItem } from "./types";
 import  Checkbox  from "../generic/Checkbox";
-import {  } from "../codeGeneration/Libs/userVariableUtils";
+import {  } from "../codeGeneration/lib/userVariableUtils";
 
 
 interface InspectorProps {

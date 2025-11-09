@@ -1,4 +1,4 @@
-import { jokerUnlockOptions, vouchersUnlockOptions } from "../codeGeneration/Libs/unlockUtils";
+import { jokerUnlockOptions, vouchersUnlockOptions } from "../codeGeneration/lib/unlockUtils";
 import { Rule } from "../ruleBuilder/types";
 
 export const slugify = (text: string): string => {

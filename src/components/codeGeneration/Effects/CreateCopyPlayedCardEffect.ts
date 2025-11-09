@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../Libs/effectUtils";
+import type { EffectReturn } from "../lib/effectUtils";
 import { getRankId, type JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../Libs/userVariableUtils";
+import { parseRankVariable, parseSuitVariable } from "../lib/userVariableUtils";
 
 export const generateCreateCopyPlayedCardEffectCode = (
   effect: Effect,

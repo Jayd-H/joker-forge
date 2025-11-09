@@ -1,6 +1,6 @@
 import { getRankId, JokerData } from "../../data/BalatroUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { parseRankVariable, parseSuitVariable } from "../Libs/userVariableUtils";
+import { parseRankVariable, parseSuitVariable } from "../lib/userVariableUtils";
 
 export const generateFirstLastScoredConditionCode = (
   rules: Rule[],

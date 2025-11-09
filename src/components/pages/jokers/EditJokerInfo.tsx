@@ -21,7 +21,7 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { getAllVariables } from "../../codeGeneration/Libs/userVariableUtils";
+import { getAllVariables } from "../../codeGeneration/lib/userVariableUtils";
 import { JokerData, UserVariable } from "../../data/BalatroUtils";
 import {
   validateJokerName,
@@ -45,7 +45,7 @@ import {
 import {
   jokerUnlockOptions,
   unlockTriggerOptions,
-} from "../../codeGeneration/Libs/unlockUtils";
+} from "../../codeGeneration/lib/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
 import {
   updateGameObjectIds,

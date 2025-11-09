@@ -1,6 +1,6 @@
 import { TAG_TYPES } from "../../data/BalatroUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { generateOperationCode } from "../Libs/operationUtils";
+import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateWhichTagConditionCode = (
   rules: Rule[],

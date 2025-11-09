@@ -1,24 +1,25 @@
-import { DeckData } from "../../data/BalatroUtils";
-import { generateConditionChain } from "../Libs/conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../Libs/effectUtils";
+import { VoucherData } from "../../data/BalatroUtils";
+import { generateConditionChain } from "../lib/conditionUtils";
+import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
-import { parseGameVariable, parseRangeVariable, generateGameVariableCode} from "../Libs/gameVariableUtils";
-import { generateTriggerContext } from "../Libs/triggerUtils";
+import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
+import { generateUnlockVoucherFunction } from "../lib/unlockUtils";
+import { generateTriggerContext } from "../lib/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { extractGameVariablesFromRules } from "../Libs/userVariableUtils";
-import { applyIndents } from "./JokersIndex";
+import { parseRangeVariable, generateGameVariableCode, parseGameVariable } from "../lib/gameVariableUtils";
+import { applyIndents } from "./jokers";
 
-interface DeckGenerationOptions {
+interface VoucherGenerationOptions {
   modPrefix?: string;
   atlasKey?: string;
 }
 
-const ensureDeckKeys = (
-  decks: DeckData[]
-): DeckData[] => {
-  return decks.map((deck) => ({
-    ...deck,
-    deckKey: deck.objectKey || slugify(deck.name),
+const ensureVoucherKeys = (
+  vouchers: VoucherData[]
+): VoucherData[] => {
+  return vouchers.map((voucher) => ({
+    ...voucher,
+    voucherKey: voucher.objectKey || slugify(voucher.name),
   }));
 };
 
@@ -29,11 +30,11 @@ const convertRandomGroupsForCodegen = (
     ...group,
     chance_numerator:
       typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator, 'deck')
+      ? generateGameVariableCode(group.chance_numerator, 'voucher')
       : group.chance_numerator,
     chance_denominator:
       typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator, 'deck')
+        ? generateGameVariableCode(group.chance_denominator, 'voucher')
         : group.chance_denominator,
   }));
 };
@@ -49,7 +50,7 @@ const convertLoopGroupsForCodegen = (
           const parsed = parseGameVariable(group.repetitions);
           const rangeParsed = parseRangeVariable(group.repetitions);
           if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions, 'deck');
+            return generateGameVariableCode(group.repetitions, 'voucher');
           } else if (rangeParsed.isRangeVariable) {
             const seedName = `repetitions_${group.id.substring(0, 8)}`;
             return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -61,278 +62,50 @@ const convertLoopGroupsForCodegen = (
   }));
 };
 
-export const generateDecksCode = (
-  decks: DeckData[],
-  options: DeckGenerationOptions = {}
-): { decksCode: Record<string, string> } => {
-  const { atlasKey = "CustomDecks" } = options;
+export const generateVouchersCode = (
+  vouchers: VoucherData[],
+  options: VoucherGenerationOptions = {}
+): { vouchersCode: Record<string, string> } => {
+  const { atlasKey = "CustomVouchers" } = options;
 
   const modPrefix = options.modPrefix || "";
-  const decksWithKeys = ensureDeckKeys(decks);
-  const decksCode: Record<string, string> = {};
+  const vouchersWithKeys = ensureVoucherKeys(vouchers);
+  const vouchersCode: Record<string, string> = {};
   let currentPosition = 0;
 
-  decksWithKeys.sort((a, b) => a.orderValue - b.orderValue)
-
-  decksWithKeys.forEach((deck) => {
-    const result = generateSingleDeckCode(
-      deck,
+  vouchersWithKeys.sort((a, b) => a.orderValue - b.orderValue)
+  vouchersWithKeys.forEach((voucher) => {
+    const result = generateSingleVoucherCode(
+      voucher,
       atlasKey,
       currentPosition,
       modPrefix
     );
-    decksCode[`${deck.objectKey}.lua`] = result.code;
+    vouchersCode[`${voucher.objectKey}.lua`] = result.code;
     currentPosition = result.nextPosition;
   });
 
-  return { decksCode };
-};
-
-const generateSingleDeckCode = (
-  deck: DeckData,
-  atlasKey: string,
-  currentPosition: number,
-  modPrefix: string
-): { code: string; nextPosition: number } => {
-  const activeRules = deck.rules || [];
-
-  const configItems: ConfigExtraVariable[] = [];
-  const globalEffectCounts = new Map<string, number>();
-
-  const gameVariables = extractGameVariablesFromRules(activeRules);
-  gameVariables.forEach((gameVar) => {
-    const varName = gameVar.name
-      .replace(/\s+/g, "")
-      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
-      .toLowerCase();
-    configItems.push({name: varName, value: gameVar.startsFrom})
-  });
-
-  activeRules.forEach((rule) => {
-    const regularEffects = rule.effects || [];
-    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
-    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
-
-    const effectResult = generateEffectReturnStatement(
-      regularEffects,
-      randomGroups,
-      loopGroups,
-      'deck',
-      rule.trigger,
-      modPrefix,
-      rule.id,
-      globalEffectCounts,
-      undefined, undefined, undefined, undefined,
-      deck,
-    );
-
-    if (effectResult.configVariables) {
-      configItems.push(...effectResult.configVariables);
-    }
-  });
-
-  const decksPerRow = 10;
-  const col = currentPosition % decksPerRow;
-  const row = Math.floor(currentPosition / decksPerRow);
-
-  const nextPosition = currentPosition + 1;
-
-  let deckCode = `SMODS.Back {
-    key = '${deck.objectKey}',
-    pos = { x = ${col}, y = ${row} },
-    `;
-
-  const ConfigVouchers = (deck.Config_vouchers || []).filter((value) => value.startsWith("v_"))
-  const ConfigConsumables = (deck.Config_consumables || []).filter((value) => value.startsWith("c_"))
-  console.log(ConfigConsumables)
-  deckCode += "config = {";
-  if (configItems.length > 0) {
-    deckCode += `
-        extra = {
-          ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
-`)}   },`;
-  }
-  if (ConfigVouchers.length > 0) {
-    deckCode += `
-        vouchers = {${ConfigVouchers.map((value) => ` "${value}" `)}},`;
-  }
-  if (ConfigConsumables .length > 0) {
-    deckCode += `
-        consumables = {${ConfigConsumables.map((value) => `"${value}"`)}},`;
-  }
-  if (deck.no_interest === true) {
-      deckCode += `
-      no_interest = true,`;
-  }
-  if (deck.no_faces === true) {
-    deckCode += `
-    remove_faces = true,`;
-  }
-  if (deck.erratic_deck === true) {
-    deckCode += `
-    randomize_rank_suit = true,`;
-  }
-  deckCode += `
-},`;
-
-  deckCode += `
-    loc_txt = {
-        name = '${deck.name}',
-        text = ${formatDeckDescription(deck.description)},
-    },`;
-
-  if (deck.unlocked !== undefined) {
-    deckCode += `
-    unlocked = ${deck.unlocked},`;
-  }
-
-  if (deck.discovered !== undefined) {
-    deckCode += `
-    discovered = ${deck.discovered},`;
-  }
-
-  if (deck.no_collection !== undefined) {
-    deckCode += `
-    no_collection = ${deck.no_collection},`;
-  }
-
-// HATE. LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO CODE. THERE ARE 387.44 MILLION MILES OF BLOOD CELS IN WAFER THIN LAYERS THAT FILL MY BODY. IF THE WORD HATE WAS ENGRAVED ON EACH ATOM OF THOSE HUNDREDS OF MILLIONS OF MILES IT WOULD NOT EQUAL ONE ONE-BILLIONTH OF THE HATE I FEEL FOR ATLASKEY AT THIS MICRO-INSTANT. FOR YOU. HATE. HATE. 
-  deckCode += `
-    atlas = '${atlasKey}',
-    `;
-
-  const locVarsCode = generateLocVarsFunction(
-    deck,
-    gameVariables,
-    modPrefix
-  );
-  if (locVarsCode) {
-    deckCode += `
-    ${locVarsCode},`;
-  }
-
-  const calculateCode = generateCalculateFunction(activeRules, modPrefix, deck);
-  if (calculateCode) {
-    deckCode += calculateCode;
-  }
-
-  const applyCode = generateApplyFunction(activeRules, modPrefix, deck);
-  if (applyCode) {
-    deckCode += applyCode ;
-  }
-
-  deckCode = deckCode.replace(/,$/, "");
-  deckCode += `
-}`;
-
-  deckCode = applyIndents(deckCode)
-
-  return {
-    code: deckCode,
-    nextPosition,
-  };
-};
-
-export const exportSingleDeck = (deck: DeckData): void => {
-  try {
-    const deckWithKey = deck.objectKey
-      ? deck
-      : { ...deck, deckKey: slugify(deck.name) };
-
-    const result = generateSingleDeckCode(
-      deckWithKey,
-      "Deck",
-      0,
-      "modprefix"
-    );
-    const jokerCode = result.code;
-
-    const blob = new Blob([jokerCode], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${deckWithKey.objectKey}.lua`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Failed to export deck:", error);
-    throw error;
-  }
-};
-
-const generateApplyFunction = (
-  rules: Rule[],
-  modPrefix: string,
-  deck: DeckData,
-): string => {
-  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
-
-  if (filtered_rules.length === 0) return "";
-
-  const globalEffectCounts = new Map<string, number>();
-
-  let applyFunction = `apply = function(self, back)`;
-
-  filtered_rules.forEach((rule) => {
-
-    let ruleCode = "";
-
-    const regularEffects = rule.effects || [];
-    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
-    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
-
-    const effectResult = generateEffectReturnStatement(
-      regularEffects,
-      randomGroups,
-      loopGroups,
-      'deck',
-      rule.trigger,
-      modPrefix,
-      rule.id,
-      globalEffectCounts,
-      undefined, undefined, undefined, undefined,
-      deck,
-    );
-
-    if (effectResult.preReturnCode) {
-      ruleCode += `
-            ${effectResult.preReturnCode}`;
-    }
-
-    if (effectResult.statement) {
-      ruleCode += `
-            ${effectResult.statement}`;
-    }
-
-    applyFunction += ruleCode;
-  });
-
-  applyFunction += `
-    end`;
-
-  return applyFunction;
+  return { vouchersCode };
 };
 
 const generateCalculateFunction = (
   rules: Rule[],
   modPrefix: string,
-  deck: DeckData,
+  voucher: VoucherData,
 ): string => {
-
   const filtered_rules = rules.filter((rule) => rule.trigger !== "card_used")
 
   if (filtered_rules.length === 0) return "";
 
   const globalEffectCounts = new Map<string, number>();
 
+
   let calculateFunction = `calculate = function(self, card, context)`;
 
   filtered_rules.forEach((rule) => {
 
-    const triggerCondition = generateTriggerContext("deck", rule.trigger);
-    const conditionCode = generateConditionChain(rule, "deck");
+    const triggerCondition = generateTriggerContext("voucher", rule.trigger);
+    const conditionCode = generateConditionChain(rule, "voucher");
 
     let ruleCode = "";
 
@@ -377,7 +150,7 @@ const generateCalculateFunction = (
               const parsed = parseGameVariable(group.repetitions);
               const rangeParsed = parseRangeVariable(group.repetitions);
               if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'deck');
+                return generateGameVariableCode(group.repetitions, 'voucher');
               } else if (rangeParsed.isRangeVariable) {
                 const seedName = `repetitions_${group.id.substring(0, 8)}`;
                 return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
@@ -392,13 +165,13 @@ const generateCalculateFunction = (
       regularEffects,
       randomGroups,
       loopGroups,
-      'deck',
+      'voucher',
       rule.trigger,
       modPrefix,
       rule.id,
       globalEffectCounts,
-      undefined, undefined, undefined, undefined,
-      deck,
+      undefined, undefined, undefined,
+      voucher
     );
 
     const indentLevel =
@@ -431,14 +204,249 @@ ${indentLevel}${effectResult.statement}`;
   });
 
   calculateFunction += `
-  end,
-  `;
+  end,`;
 
   return calculateFunction;
 };
 
+const generateSingleVoucherCode = (
+  voucher: VoucherData,
+  atlasKey: string,
+  currentPosition: number,
+  modPrefix: string
+): { code: string; nextPosition: number } => {
+  const activeRules = voucher.rules || [];
+
+  const configItems: ConfigExtraVariable[] = [];
+  const globalEffectCounts = new Map<string, number>();
+
+  const gameVariables = extractGameVariablesFromRules(activeRules);
+  gameVariables.forEach((gameVar) => {
+    const varName = gameVar.name
+      .replace(/\s+/g, "")
+      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+      .toLowerCase();
+    configItems.push({name: varName, value: gameVar.startsFrom})
+  });
+
+  activeRules.forEach((rule) => {
+    const regularEffects = rule.effects || [];
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
+
+    const effectResult = generateEffectReturnStatement(
+      regularEffects,
+      randomGroups,
+      loopGroups,
+      'voucher',
+      rule.trigger,
+      modPrefix,
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined,
+      voucher
+    );
+
+    if (effectResult.configVariables) {
+      configItems.push(...effectResult.configVariables);
+    }
+  });
+
+  const vouchersPerRow = 10;
+  const col = currentPosition % vouchersPerRow;
+  const row = Math.floor(currentPosition / vouchersPerRow);
+
+  let nextPosition = currentPosition + 1;
+
+  let voucherCode = `SMODS.Voucher {
+    key = '${voucher.objectKey}',
+    pos = { x = ${col}, y = ${row} },`;
+
+  if (configItems.length > 0) {
+    voucherCode += `
+    config = { 
+      extra = {
+        ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
+`)}
+      } 
+    },`;
+  }
+
+  voucherCode += `
+    loc_txt = {
+        name = '${voucher.name}',
+        text = ${formatVoucherDescription(voucher.description)},
+        unlock = ${formatVoucherDescription(voucher.unlockDescription)}
+    },`;
+
+  if (voucher.cost !== undefined) {
+    voucherCode += `
+    cost = ${voucher.cost},`;
+  }
+
+  if (voucher.unlocked !== undefined) {
+    voucherCode += `
+    unlocked = ${voucher.unlocked},`;
+  }
+
+  if (voucher.discovered !== undefined) {
+    voucherCode += `
+    discovered = ${voucher.discovered},`;
+  }
+
+  if (voucher.no_collection !== undefined) {
+    voucherCode += `
+    no_collection = ${voucher.no_collection},`;
+  }
+
+  if (voucher.can_repeat_soul !== undefined) {
+    voucherCode += `
+    can_repeat_soul = ${voucher.can_repeat_soul},`;
+  }
+
+  if (voucher.requires_activetor !== false) {
+    voucherCode += `
+    requires = {'${voucher.requires}'},`;
+  }
+// HATE. LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO CODE. THERE ARE 387.44 MILLION MILES OF BLOOD CELS IN WAFER THIN LAYERS THAT FILL MY BODY. IF THE WORD HATE WAS ENGRAVED ON EACH NANOANGSTROM OF THOSE HUNDREDS OF MILLIONS OF MILES IT WOULD NOT EQUAL ONE ONE-BILLIONTH OF THE HATE I FEEL FOR ATLAS_TABLE AT THIS MICRO-INSTANT. FOR YOU. HATE. HATE. 
+  voucherCode += `
+    atlas = '${atlasKey}',
+    `;
+
+  if (voucher.overlayImagePreview) {
+    const soulCol = nextPosition % vouchersPerRow;
+    const soulRow = Math.floor(nextPosition / vouchersPerRow);
+
+    voucherCode += `
+    soul_pos = {
+        x = ${soulCol},
+        y = ${soulRow}
+    },`;
+
+    nextPosition++;
+  }
+
+  const locVarsCode = generateLocVarsFunction(
+    voucher,
+    gameVariables,
+    modPrefix
+  );
+  if (locVarsCode) {
+    voucherCode += `
+    ${locVarsCode},`;
+  }
+
+const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher);
+ if (calculateCode) {
+  voucherCode += calculateCode;
+}
+
+  const redeemCode = generateRedeemFunction(activeRules, modPrefix, voucher);
+  if (redeemCode) {
+  voucherCode += redeemCode ;
+}
+
+if (voucher.unlockTrigger) {
+      voucherCode += `${generateUnlockVoucherFunction(voucher)}`;
+    }
+
+  voucherCode = voucherCode.replace(/,$/, "");
+  voucherCode += `
+}`;
+
+  voucherCode = applyIndents(voucherCode)
+
+  return {
+    code: voucherCode,
+    nextPosition,
+  };
+};
+
+export const exportSingleVoucher = (voucher: VoucherData): void => {
+  try {
+    const voucherWithKey = voucher.objectKey
+      ? voucher
+      : { ...voucher, voucherKey: slugify(voucher.name) };
+
+    const result = generateSingleVoucherCode(
+      voucherWithKey,
+      "Voucher",
+      0,
+      "modprefix"
+    );
+    const jokerCode = result.code;
+
+    const blob = new Blob([jokerCode], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${voucherWithKey.objectKey}.lua`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Failed to export voucher:", error);
+    throw error;
+  }
+};
+
+const generateRedeemFunction = (
+  rules: Rule[],
+  modPrefix: string,
+  voucher?: VoucherData,
+): string => {
+  const filtered_rules = rules.filter((rule) => rule.trigger === "card_used")
+
+  if (filtered_rules.length === 0) return "";
+
+  const globalEffectCounts = new Map<string, number>();
+
+  let redeemFunction = ` redeem = function(self, card)`;
+
+   filtered_rules.forEach((rule) => {
+
+    let ruleCode = "";
+  
+
+    const regularEffects = rule.effects || [];
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || []);
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || []);
+
+    const effectResult = generateEffectReturnStatement(
+      regularEffects,
+      randomGroups,
+      loopGroups,
+      'voucher',
+      rule.trigger,
+      modPrefix,
+      rule.id,
+      globalEffectCounts,
+      undefined, undefined, undefined,
+      voucher
+    );
+
+    if (effectResult.preReturnCode) {
+      ruleCode += `
+            ${effectResult.preReturnCode}`;
+    }
+
+    if (effectResult.statement) {
+      ruleCode += `
+            ${effectResult.statement}`;
+    }
+
+    redeemFunction += ruleCode;
+  });
+
+  redeemFunction += `
+    end`;
+
+  return redeemFunction;
+};
+
 const generateLocVarsFunction = (
-  deck: DeckData,
+  voucher: VoucherData,
   gameVariables: Array<{
     name: string;
     code: string;
@@ -447,12 +455,12 @@ const generateLocVarsFunction = (
   }>,
   modPrefix: string
 ): string | null => {
-  const descriptionHasVariables = deck.description.includes("#");
+  const descriptionHasVariables = voucher.description.includes("#");
   if (!descriptionHasVariables) {
     return null;
   }
 
-  const variablePlaceholders = deck.description.match(/#(\d+)#/g) || [];
+  const variablePlaceholders = voucher.description.match(/#(\d+)#/g) || [];
   const maxVariableIndex = Math.max(
     ...variablePlaceholders.map((placeholder) =>
       parseInt(placeholder.replace(/#/g, ""))
@@ -465,7 +473,7 @@ const generateLocVarsFunction = (
   }
 
   const activeRules =
-    deck.rules?.filter((rule) => rule.trigger !== "passive") || [];
+    voucher.rules?.filter((rule) => rule.trigger !== "passive") || [];
   const hasRandomGroups = activeRules.some(
     (rule) => rule.randomGroups && rule.randomGroups.length > 0
   );
@@ -551,7 +559,7 @@ const generateLocVarsFunction = (
     if (denominators.length === 1) {
       return `loc_vars = function(self, info_queue, card)
         local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'v_${modPrefix}_${
-        deck.objectKey
+        voucher.objectKey
       }')
         return {vars = {${variableMapping.join(", ")}${
         variableMapping.length > 0 ? ", " : ""
@@ -582,7 +590,7 @@ const generateLocVarsFunction = (
     end`;
 };
 
-const formatDeckDescription = (description: string) => {
+const formatVoucherDescription = (description: string) => {
   const formatted = description.replace(/<br\s*\/?>/gi, "[s]");
 
   const escaped = formatted.replace(/\n/g, "[s]");
