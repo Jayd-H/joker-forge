@@ -142,7 +142,7 @@ export const generateEditItemSizeEffectCode = (
       break
     case "set":
       value = `difference`
-      setCode = `                  
+      setCode = `
       local current_${itemData.varName} = (${itemData.differenceCheck} or 0)
       local target_${itemData.varName} = ${valueCode}
       local difference = target_${itemData.varName} - current_${itemData.varName}`
@@ -153,10 +153,13 @@ export const generateEditItemSizeEffectCode = (
       break
   }
 
-  const customMessage = effect.customMessage;
-  const addMessage = customMessage
-    ? `"${customMessage}"`
-    : `"+"..tostring(${valueCode}).." ${itemData.customMessage}"`;
+  const customMessage = 
+    effect.customMessage ? `"${effect.customMessage}"` : 
+    operation === "set" ? `"${itemData.customMessage} set to "..tostring(${valueCode})` :
+    operation === "add" ? `"+"..tostring(${valueCode}).." ${itemData.customMessage}"` : 
+    operation === "subtract" ? `"-"..tostring(${valueCode}).." ${itemData.customMessage}"` : ''
+
+
   let functionCode = ``
   
   if (itemType === "consumable") {
@@ -171,12 +174,14 @@ export const generateEditItemSizeEffectCode = (
   if (itemType === "consumable") {
     functionCode += `
       trigger = 'after',
-      delay = 0.4,
-      func = function()`
+      delay = 0.4,`
   }
+  const targetCard = 
+    itemType === "joker" ? `context.blueprint_card or card` : 
+    itemType === "consumable" ? `used_card` : ''
 
   const evalStatusText = itemType === "joker" || itemType === "consumable"
-    ? `card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.BLUE})`
+    ? `card_eval_status_text(${targetCard}, 'extra', nil, nil, nil, {message = ${customMessage}, colour = G.C.BLUE})`
     : ``
 
   functionCode += `
