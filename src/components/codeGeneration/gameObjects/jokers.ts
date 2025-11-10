@@ -545,7 +545,7 @@ const generateCalculateFunction = (
           ...(rule.effects || []),
           ...(rule.randomGroups?.flatMap((g) => g.effects) || []),
           ...(rule.loops?.flatMap((g) => g.effects) || []),
-        ].some((effect) => effect.type === "delete_triggered_card")
+        ].some((effect) => effect.type === "destroy_playing_Card" || effect.type === "destroy_playing_card")
       );
 
     const hasFixProbablityEffects = sortedRules.some((rule) =>
@@ -754,7 +754,7 @@ const generateCalculateFunction = (
           hasAnyConditions = true;
 
           const hasDeleteInRegularEffects = (rule.effects || []).some(
-            (effect) => effect.type === "delete_triggered_card"
+            (effect) => effect.type === "destroy_playing_card"
           );
 
           if (hasDeleteInRegularEffects) {
@@ -834,7 +834,7 @@ const generateCalculateFunction = (
             hasAnyConditions = true;
 
             const hasDeleteInRegularEffects = (rule.effects || []).some(
-              (effect) => effect.type === "delete_triggered_card"
+              (effect) => effect.type === "destroy_playing_card"
             );
 
             if (hasDeleteInRegularEffects) {
@@ -883,7 +883,7 @@ const generateCalculateFunction = (
               if (regularNonRetriggerEffects.length === 0) return;
 
               const hasDeleteInRegularEffects = (rule.effects || []).some(
-                (effect) => effect.type === "delete_triggered_card"
+                (effect) => effect.type === "destroy_playing_card"
               );
 
               if (hasDeleteInRegularEffects) {
@@ -958,23 +958,23 @@ const generateCalculateFunction = (
 
       rulesWithConditions.forEach((rule) => {
         const regularDeleteEffects = (rule.effects || []).filter(
-          (e) => e.type === "delete_triggered_card"
+          (e) => e.type === "destroy_playing_card"
         );
         const randomDeleteGroups = (rule.randomGroups || []).filter((group) =>
-          group.effects.some((e) => e.type === "delete_triggered_card")
+          group.effects.some((e) => e.type === "destroy_playing_card")
         );
         const loopDeleteGroups = (rule.loops || []).filter((group) =>
-          group.effects.some((e) => e.type === "delete_triggered_card")
+          group.effects.some((e) => e.type === "destroy_playing_card")
         );
 
         const regularNonDeleteEffects = (rule.effects || []).filter(
-          (e) => e.type !== "delete_triggered_card"
+          (e) => e.type !== "destroy_playing_card"
         );
         const randomNonDeleteGroups = (rule.randomGroups || [])
           .map((group) => ({
             ...group,
             effects: group.effects.filter(
-              (e) => e.type !== "delete_triggered_card"
+              (e) => e.type !== "destroy_playing_card"
             ),
           }))
           .filter((group) => group.effects.length > 0);
@@ -982,7 +982,7 @@ const generateCalculateFunction = (
           .map((group) => ({
             ...group,
             effects: group.effects.filter(
-              (e) => e.type !== "delete_triggered_card"
+              (e) => e.type !== "destroy_playing_card"
             ),
           }))
           .filter((group) => group.effects.length > 0);
@@ -1058,23 +1058,23 @@ const generateCalculateFunction = (
 
         rulesWithGroups.forEach((rule) => {
           const regularDeleteEffects = (rule.effects || []).filter(
-            (e) => e.type === "delete_triggered_card"
+            (e) => e.type === "destroy_playing_card"
           );
           const randomDeleteGroups = (rule.randomGroups || []).filter((group) =>
-            group.effects.some((e) => e.type === "delete_triggered_card")
+            group.effects.some((e) => e.type === "destroy_playing_card")
           );
           const loopDeleteGroups = (rule.loops || []).filter((group) =>
-            group.effects.some((e) => e.type === "delete_triggered_card")
+            group.effects.some((e) => e.type === "destroy_playing_card")
           );
 
           const regularNonDeleteEffects = (rule.effects || []).filter(
-            (e) => e.type !== "delete_triggered_card"
+            (e) => e.type !== "destroy_playing_card"
           );
           const randomNonDeleteGroups = (rule.randomGroups || [])
             .map((group) => ({
               ...group,
               effects: group.effects.filter(
-                (e) => e.type !== "delete_triggered_card"
+                (e) => e.type !== "destroy_playing_card"
               ),
             }))
             .filter((group) => group.effects.length > 0);
@@ -1082,7 +1082,7 @@ const generateCalculateFunction = (
             .map((group) => ({
               ...group,
               effects: group.effects.filter(
-                (e) => e.type !== "delete_triggered_card"
+                (e) => e.type !== "destroy_playing_card"
               ),
             }))
             .filter((group) => group.effects.length > 0);
@@ -1151,10 +1151,10 @@ const generateCalculateFunction = (
 
           rulesWithoutAnyGroups.forEach((rule) => {
             const regularDeleteEffects = (rule.effects || []).filter(
-              (e) => e.type === "delete_triggered_card"
+              (e) => e.type === "destroy_playing_card"
             );
             const regularNonDeleteEffects = (rule.effects || []).filter(
-              (e) => e.type !== "delete_triggered_card"
+              (e) => e.type !== "destroy_playing_card"
             );
 
             if (

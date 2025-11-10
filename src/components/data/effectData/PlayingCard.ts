@@ -633,20 +633,6 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Card Effects",
   },
   {
-    id: "delete_triggered_card",
-    label: "Destroy Triggered Card",
-    description: "Destroy the card that triggered this effect",
-    objectUsers: ["joker"],
-    applicableTriggers: [
-      "card_scored",
-      "card_discarded",
-      "card_held_in_hand",
-      "card_held_in_hand_end_of_round",
-    ],
-    params: [],
-    category: "Card Effects",
-  },
-  {
     id: "increment_rank",
     label: "Increment/Decrement Rank",
     description: "Increase or decrease the rank of selected cards by a specified amount",
@@ -717,7 +703,12 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "destroy_playing_card",
     label: "Destroy Card",
     description: "Destroy this Card",
-    applicableTriggers: [...GENERIC_TRIGGERS],
+    applicableTriggers: [
+      "card_scored",
+      "card_discarded",
+      "card_held_in_hand",
+      "card_held_in_hand_end_of_round",
+    ],
     objectUsers: ["joker", "card"],
     params: [
       {

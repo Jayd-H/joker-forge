@@ -211,6 +211,8 @@ const updateEffectId = (
       return "modify_all_blinds_requirement"
     case "edit_rerolls":
       return "edit_reroll_price"
+    case "delete_triggered_card":
+      return "destroy_playing_card"
 
     default:
       return id

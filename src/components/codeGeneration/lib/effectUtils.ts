@@ -369,7 +369,7 @@ export function generateEffectReturnStatement(
       let groupContent = "";
 
       const hasDeleteInGroup = group.effects.some(
-        (effect) => effect.type === "delete_triggered_card"
+        (effect) => effect.type === "destroy_playing_card"
       );
 
       if (
@@ -626,7 +626,7 @@ export function generateEffectReturnStatement(
       let groupContent = "";
 
       const hasDeleteInGroup = group.effects.some(
-        (effect) => effect.type === "delete_triggered_card"
+        (effect) => effect.type === "destroy_playing_card"
       );
 
       if (
@@ -833,7 +833,7 @@ export const generateSingleEffect = (
     case "free_rerolls":
       return generateFreeRerollsEffectCode(effect, itemType, sameTypeCount)
     case "edit_joker":
-      return generateEditJokerEffectCode(effect, itemType, modprefix) // NEED TO IMPLEMENT METHODS PROPERLY
+      return generateEditJokerEffectCode(effect, itemType, modprefix)
     case "edit_win_ante":
       return generateEditWinnerAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "edit_booster_packs":

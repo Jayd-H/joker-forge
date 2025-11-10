@@ -546,7 +546,7 @@ const generateSingleEnhancementCode = (
   };
 
   const allowsBaseConfigConversion = (trigger: string): boolean => {
-    return trigger === "card_scored" || trigger === "card_held";
+    return trigger === "card_scored" || trigger === "card_held_in_hand";
   };
 
   const isSimpleEffect = (effect: Effect): boolean => {
@@ -648,7 +648,7 @@ const generateSingleEnhancementCode = (
       case "add_chips":
         if (trigger === "card_scored") {
           baseConfig.bonus = (baseConfig.bonus || 0) + value;
-        } else if (trigger === "card_held") {
+        } else if (trigger === "card_held_in_hand") {
           baseConfig.h_chips = (baseConfig.h_chips || 0) + value;
         }
         break;
@@ -656,7 +656,7 @@ const generateSingleEnhancementCode = (
       case "add_mult":
         if (trigger === "card_scored") {
           baseConfig.mult = (baseConfig.mult || 0) + value;
-        } else if (trigger === "card_held") {
+        } else if (trigger === "card_held_in_hand") {
           baseConfig.h_mult = (baseConfig.h_mult || 0) + value;
         }
         break;
@@ -666,7 +666,7 @@ const generateSingleEnhancementCode = (
         if (operation === "add") {
           if (trigger === "card_scored") {
             baseConfig.p_dollars = (baseConfig.p_dollars || 0) + value;
-          } else if (trigger === "card_held") {
+          } else if (trigger === "card_held_in_hand") {
             baseConfig.h_dollars = (baseConfig.h_dollars || 0) + value;
           }
         }
