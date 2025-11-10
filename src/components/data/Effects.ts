@@ -654,6 +654,28 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+    id: "change_game_speed",
+    label: "Change Game Speed",
+    description: "Change the Game speed",
+    objectUsers: [...ALL_OBJECTS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
+    params: [
+      {
+        id: "speed",
+        type: "select",
+        label: "New Speed",
+        options: [
+        { value: "0.5", label: "X0.5" },
+        { value: "1", label: "X1" }, 
+        { value: "2", label: "X2" },
+        { value: "4", label: "X4" },          
+        ],
+        default: "1",
+      },
+    ],
+    category: "Special",
+  },
   ...SCORING_EFFECTS,
   ...ECONOMY_EFFECTS,
   ...JOKER_EFFECTS,

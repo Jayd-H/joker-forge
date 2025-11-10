@@ -53,6 +53,7 @@ import { generateCardSuitConditionCode } from "../conditions/CardSuitCondition";
 import { generateDiscardedSuitCountConditionCode } from "../conditions/DiscardedSuitCountCondition";
 import { generateCardRankConditionCode } from "../conditions/CardRankCondition";
 import { generateDiscardedRankCountConditionCode } from "../conditions/DiscardedRankCountCondition";
+import { generateGameSpeedConditionCode } from "../conditions/GameSpeed";
 
 
 export const generateConditionChain = (
@@ -260,6 +261,9 @@ export const generateSingleConditionCode = (
       return generateVoucherRedeemedConditionCode([singleConditionRule])
     case "which_tag":
       return generateWhichTagConditionCode([singleConditionRule])
+    case "game_speed":
+      return generateGameSpeedConditionCode([singleConditionRule])
+      
   }
   return null
 }

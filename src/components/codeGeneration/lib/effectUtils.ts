@@ -91,6 +91,7 @@ import { generateEditStartingDollarsEffectCode } from "../effects/EditStartingDe
 import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode } from "../effects/EditItemSizeEffect";
 import { generateChangeTextVariableEffectCode } from "../effects/Variables/ChangeTextVariableEffect";
 import { generateCreatePlayingCardEffectCode } from "../effects/CreatePlayingCardEffect";
+import { generateEditGameSpeedEffectCode } from "../effects/EditGameSpeed";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -915,6 +916,8 @@ export const generateSingleEffect = (
       return generateShuffleJokersEffectCode(effect)
     case "show_message":
       return generateShowMessageEffectCode(effect)
+    case "change_game_speed":
+      return generateEditGameSpeedEffectCode(effect)
 
 //////////DECK EXCLUSIVE EFFECTS\\\\\\\\\\\\
     case "edit_all_starting_cards":

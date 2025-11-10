@@ -2267,6 +2267,40 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     params: [],
     category: "Game State",
   },
+  {
+    id: "game_speed",
+    label: "Check Game Speed",
+    description: "Check the current game speed",
+    objectUsers: [...ALL_OBJECTS],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
+    params: [
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [
+          { value: "equals", label: "equals" },
+          { value: "not_equal", label: "does not equal" },
+          { value: "greater_than", label: "greater than" },
+          { value: "less_than", label: "less than" },
+        ],
+        default: "equals",
+      },
+      {
+        id: "speed",
+        type: "select",
+        label: "Speed to Check against",
+        options: [
+        { value: "0.5", label: "X0.5" },
+        { value: "1", label: "X1" }, 
+        { value: "2", label: "X2" },
+        { value: "4", label: "X4" },          
+        ],
+        default: "1",
+      },
+    ],
+    category: "Game State",
+  },
 ]
 
 export function getConditionTypeById(
