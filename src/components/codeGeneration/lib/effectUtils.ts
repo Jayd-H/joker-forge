@@ -1,26 +1,26 @@
 import type { Effect, LoopGroup, RandomGroup } from "../../ruleBuilder/types";
 import { JokerData, EnhancementData, SealData, EditionData, ConsumableData, VoucherData, DeckData } from "../../data/BalatroUtils";
-import { generateAddChipsEffectCode } from "../effects/ScoringEffects/AddChipsEffect";
-import { generateApplyXChipsEffectCode } from "../effects/ScoringEffects/ApplyXChipsEffect";
-import { generateApplyExpChipsEffectCode } from "../effects/ScoringEffects/ApplyExpChipsEffect";
-import { generateApplyHyperChipsEffectCode } from "../effects/ScoringEffects/ApplyHyperChipsEffect";
-import { generateAddMultEffectCode } from "../effects/ScoringEffects/AddMultEffect";
-import { generateApplyXMultEffectCode } from "../effects/ScoringEffects/ApplyXMultEffect";
-import { generateApplyExpMultEffectCode } from "../effects/ScoringEffects/ApplyExpMultEffect";
-import { generateApplyHyperMultEffectCode } from "../effects/ScoringEffects/ApplyHyperMultEffect";
+import { generateAddChipsEffectCode } from "../effects/scoringEffects/AddChipsEffect";
+import { generateApplyXChipsEffectCode } from "../effects/scoringEffects/ApplyXChipsEffect";
+import { generateApplyExpChipsEffectCode } from "../effects/scoringEffects/ApplyExpChipsEffect";
+import { generateApplyHyperChipsEffectCode } from "../effects/scoringEffects/ApplyHyperChipsEffect";
+import { generateAddMultEffectCode } from "../effects/scoringEffects/AddMultEffect";
+import { generateApplyXMultEffectCode } from "../effects/scoringEffects/ApplyXMultEffect";
+import { generateApplyExpMultEffectCode } from "../effects/scoringEffects/ApplyExpMultEffect";
+import { generateApplyHyperMultEffectCode } from "../effects/scoringEffects/ApplyHyperMultEffect";
 import { generateDrawCardsEffectCode } from "../effects/DrawCardsEffect";
-import { generateBalanceChipsAndMultEffectCode } from "../effects/ScoringEffects/BalanceChipsAndMultEffect";
-import { generateSwapChipsAndMultEffectCode } from "../effects/ScoringEffects/SwapChipsAndMultEffect";
+import { generateBalanceChipsAndMultEffectCode } from "../effects/scoringEffects/BalanceChipsAndMultEffect";
+import { generateSwapChipsAndMultEffectCode } from "../effects/scoringEffects/SwapChipsAndMultEffect";
 import { generateShowMessageEffectCode } from "../effects/ShowMessageEffect";
 import { generateDisableBossBlindEffectCode, generateDisableBossBlindPassiveEffectCode } from "../effects/DisableBossBlindEffect";
 import { generateEmitFlagEffectCode } from "../effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "../effects/PlaySoundEffect";
 import { generateWinBlindEffectCode } from "../effects/WinBlindEffect";
 import { generateEditCardAppearanceEffectCode } from "../effects/EditCardAppearanceEffect";
-import { generateChangeKeyVariableEffectCode } from "../effects/Variables/ChangeKeyVariableEffect";
-import { generateChangePokerHandVariableEffectCode } from "../effects/Variables/ChangePokerHandVariableEffect";
-import { generateChangeSuitVariableEffectCode } from "../effects/Variables/ChangeSuitVariableEffect";
-import { generateChangeRankVariableEffectCode } from "../effects/Variables/ChangeRankVariableEffect";
+import { generateChangeKeyVariableEffectCode } from "../effects/variableEffects/ChangeKeyVariableEffect";
+import { generateChangePokerHandVariableEffectCode } from "../effects/variableEffects/ChangePokerHandVariableEffect";
+import { generateChangeSuitVariableEffectCode } from "../effects/variableEffects/ChangeSuitVariableEffect";
+import { generateChangeRankVariableEffectCode } from "../effects/variableEffects/ChangeRankVariableEffect";
 import { generateConvertAllCardToRankEffectCode } from "../effects/ConvertAllCardsToRankEffect";
 import { generateConvertAllCardsToSuitEffectCode } from "../effects/ConvertAllCardsToSuitEffect";
 import { generateConvertLeftToRightEffectCode } from "../effects/ConvertLeftToRightEffect";
@@ -48,36 +48,36 @@ import { generateJuiceUpEffectCode } from "../effects/JuiceUpEffect";
 import { generateLevelUpHandEffectCode } from "../effects/LevelUpHandEffect";
 import { generateModifyBlindRequirementEffectCode } from "../effects/ModifyBlindRequirementEffect";
 import { generateModifyAllBlindsRequirementEffectCode } from "../effects/ModifyAllBlindsRequirementEffect";
-import { generateModifyInternalVariableEffectCode } from "../effects/Variables/ModifyInternalVariableEffect";
+import { generateModifyInternalVariableEffectCode } from "../effects/variableEffects/ModifyInternalVariableEffect";
 import { generateFoolEffectCode } from "../effects/FoolEffect";
 import { generateIncrementRankEffectCode } from "../effects/IncrementRankEffect";
 import { generateDestroyCardsEffectCode } from "../effects/DestroyCardsEffect";
 import { generateDestroyJokerEffectCode } from "../effects/DestroyJokerEffect";
 import { generateDestroyConsumableEffectCode } from "../effects/DestroyConsumableEffect";
-import { generateEditStartingCardsEffectCode } from "../effects/EditStartingDeckEffects/EditStartingCardsEffect";
-import { generateEditStartingSuitsEffectCode } from "../effects/EditStartingDeckEffects/EditStartingSuitsEffect";
-import { generateEditStartingRanksEffectCode } from "../effects/EditStartingDeckEffects/EditStartingRanksEffect";
+import { generateEditStartingCardsEffectCode } from "../effects/editStartingDeckEffects/EditStartingCardsEffect";
+import { generateEditStartingSuitsEffectCode } from "../effects/editStartingDeckEffects/EditStartingSuitsEffect";
+import { generateEditStartingRanksEffectCode } from "../effects/editStartingDeckEffects/EditStartingRanksEffect";
 import { generateEditJokerEffectCode } from "../effects/EditJokerEffect";
 import { generateEditWinnerAnteEffectCode } from "../effects/EditWinnerAnteEffect";
-import { generateAddStartingCardsEffectCode } from "../effects/EditStartingDeckEffects/AddStartingCardsEffect";
-import { generateRemoveStartingCardsEffectCode } from "../effects/EditStartingDeckEffects/RemoveStartingCardsEffect";
+import { generateAddStartingCardsEffectCode } from "../effects/editStartingDeckEffects/AddStartingCardsEffect";
+import { generateRemoveStartingCardsEffectCode } from "../effects/editStartingDeckEffects/RemoveStartingCardsEffect";
 import { generateDestroyCardEffectCode } from "../effects/DestroyCardEffect";
 import { generateEditCardEffectCode } from "../effects/EditCardEffect";
 import { generateEditCardsEffectCode } from "../effects/EditCardsEffect";
-import { generateAllowDebtPassiveEffectCode } from "../effects/PassiveEffects/AllowDebtEffect";
-import { generateCopyJokerAbilityPassiveEffectCode } from "../effects/PassiveEffects/CopyJokerAbilityEffect";
+import { generateAllowDebtPassiveEffectCode } from "../effects/passiveEffects/AllowDebtEffect";
+import { generateCopyJokerAbilityPassiveEffectCode } from "../effects/passiveEffects/CopyJokerAbilityEffect";
 import { generateEditItemCountEffectCode, generateEditItemCountPassiveEffectCode } from "../effects/EditHandsOrDiscardsEffect";
-import { generateSplashPassiveEffectCode } from "../effects/PassiveEffects/SplashEffect";
+import { generateSplashPassiveEffectCode } from "../effects/passiveEffects/SplashEffect";
 import { generateFreeRerollsEffectCode, generateFreeRerollsPassiveEffectCode } from "../effects/FreeRerollsEffect";
 import { generateEditConsumableSlotsEffectCode, generateEditConsumableSlotsPassiveEffectCode } from "../effects/EditConsumableSlotsEffect";
 import { generateEditJokerSlotsEffectCode, generateEditJokerSlotsPassiveEffectCode } from "../effects/EditJokerSlotsEffect";
 import { generateEditJokerSizeEffectCode, generateEditJokerSizePassiveEffectCode } from "../effects/EditJokerSizeEffect";
 import { generateDiscountItemsEffectCode, generateDiscountItemsPassiveEffectCode } from "../effects/DiscountItemsEffect";
-import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "../effects/PassiveEffects/ReduceFlushStraightRequirementEffect";
-import { generateShortcutPassiveEffectCode } from "../effects/PassiveEffects/ShortcutEffect";
-import { generateShowmanPassiveEffectCode } from "../effects/PassiveEffects/ShowmanEffect";
-import { generateCombineRanksPassiveEffectCode } from "../effects/PassiveEffects/CombineRanksEffect";
-import { generateCombineSuitsPassiveEffectCode } from "../effects/PassiveEffects/CombineSuitsEffect";
+import { generateReduceFlushStraightRequirementsPassiveEffectCode } from "../effects/passiveEffects/ReduceFlushStraightRequirementEffect";
+import { generateShortcutPassiveEffectCode } from "../effects/passiveEffects/ShortcutEffect";
+import { generateShowmanPassiveEffectCode } from "../effects/passiveEffects/ShowmanEffect";
+import { generateCombineRanksPassiveEffectCode } from "../effects/passiveEffects/CombineRanksEffect";
+import { generateCombineSuitsPassiveEffectCode } from "../effects/passiveEffects/CombineSuitsEffect";
 import { generateCreateCopyTriggeredCardEffectCode } from "../effects/CreateCopyTriggeredCardEffect";
 import { generateCreateCopyPlayedCardEffectCode } from "../effects/CreateCopyPlayedCardEffect";
 import { generateEditDiscardsMoneyEffectCode } from "../effects/EditEndRoundDiscardMoneyEffect";
@@ -87,9 +87,9 @@ import { generateEditRerollPriceEffectCode } from "../effects/EditRerollPriceEff
 import { generateEditBoosterPacksEffectCode } from "../effects/EditBoosterPacksEffect";
 import { generateEditItemWeightEffectCode } from "../effects/EditItemWeightEffect";
 import { coordinateVariableConflicts } from "./userVariableUtils";
-import { generateEditStartingDollarsEffectCode } from "../effects/EditStartingDeckEffects/EditStartingDollarsEffect";
+import { generateEditStartingDollarsEffectCode } from "../effects/editStartingDeckEffects/EditStartingDollarsEffect";
 import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode } from "../effects/EditItemSizeEffect";
-import { generateChangeTextVariableEffectCode } from "../effects/Variables/ChangeTextVariableEffect";
+import { generateChangeTextVariableEffectCode } from "../effects/variableEffects/ChangeTextVariableEffect";
 import { generateCreatePlayingCardEffectCode } from "../effects/CreatePlayingCardEffect";
 import { generateEditGameSpeedEffectCode } from "../effects/EditGameSpeed";
 
@@ -775,7 +775,7 @@ export const generateSingleEffect = (
     case "apply_hyper_mult":
       return generateApplyHyperMultEffectCode(effect, itemType, sameTypeCount)
     case "balance_chips_mult":
-      return generateBalanceChipsAndMultEffectCode(effect)
+      return generateBalanceChipsAndMultEffectCode(effect, itemType)
     case "swap_chips_mult":
       return generateSwapChipsAndMultEffectCode(effect)
     case "change_key_variable":

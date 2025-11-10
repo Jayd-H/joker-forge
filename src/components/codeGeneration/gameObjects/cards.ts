@@ -46,12 +46,12 @@ const hasRetriggerEffects = (rules: Rule[]): boolean => {
 const hasDestroyCardEffects = (rules: Rule[]): boolean => {
   return rules.some(
     (rule) =>
-      rule.effects?.some((effect) => effect.type === "destroy_card") ||
+      rule.effects?.some((effect) => effect.type === "destroy_playing_card") ||
       rule.randomGroups?.some((group) =>
-        group.effects.some((effect) => effect.type === "destroy_card")
+        group.effects.some((effect) => effect.type === "destroy_playing_card")
       ) ||
       rule.loops?.some((group) =>
-        group.effects.some((effect) => effect.type === "destroy_card")
+        group.effects.some((effect) => effect.type === "destroy_playing_card")
       )
   );
 };
@@ -60,12 +60,12 @@ const hasNonDiscardDestroyEffects = (rules: Rule[]): boolean => {
   return rules.some(
     (rule) =>
       rule.trigger !== "card_discarded" &&
-      (rule.effects?.some((effect) => effect.type === "destroy_card") ||
+      (rule.effects?.some((effect) => effect.type === "destroy_playing_card") ||
         rule.randomGroups?.some((group) =>
-          group.effects.some((effect) => effect.type === "destroy_card")
+          group.effects.some((effect) => effect.type === "destroy_playing_card")
         ) ||
         rule.loops?.some((group) =>
-          group.effects.some((effect) => effect.type === "destroy_card")
+          group.effects.some((effect) => effect.type === "destroy_playing_card")
         )
       )
   );
@@ -124,12 +124,12 @@ const generateCalculateFunction = (
     const conditionCode = generateConditionChain(rule, itemType);
 
     const ruleHasDestroyCardEffects =
-      rule.effects?.some((effect) => effect.type === "destroy_card") ||
+      rule.effects?.some((effect) => effect.type === "destroy_playing_card") ||
       rule.randomGroups?.some((group) =>
-        group.effects.some((effect) => effect.type === "destroy_card")
+        group.effects.some((effect) => effect.type === "destroy_playing_card")
       ) ||
       rule.loops?.some((group) =>
-        group.effects.some((effect) => effect.type === "destroy_card")
+        group.effects.some((effect) => effect.type === "destroy_playing_card")
       );
 
     const ruleHasRetriggerEffects =
