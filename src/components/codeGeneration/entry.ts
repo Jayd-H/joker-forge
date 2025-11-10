@@ -15,7 +15,7 @@ import {
   getCustomShaderFilepath,
   SoundData,
 } from "../data/BalatroUtils";
-import { addAtlasToZip } from "./lib/ImageProcessor";
+import { addAtlasToZip } from "./lib/imageProcessor";
 import { generateJokersCode, generateCustomRaritiesCode, applyIndents } from "./gameObjects/jokers";
 import { generateConsumablesCode } from "./gameObjects/consumables";
 import { generateVouchersCode } from "./gameObjects/vouchers";

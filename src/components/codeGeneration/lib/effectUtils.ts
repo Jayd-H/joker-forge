@@ -908,7 +908,7 @@ export const generateSingleEffect = (
     case "emit_flag":
       return generateEmitFlagEffectCode(effect, modprefix);
     case "win_blind":
-      return generateWinBlindEffectCode(effect, itemType)
+      return generateWinBlindEffectCode(effect)
     case "unlock_joker":
       return generateUnlockJokerEffectCode(effect)
     case "shuffle_jokers":
