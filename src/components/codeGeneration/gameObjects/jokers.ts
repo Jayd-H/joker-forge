@@ -370,6 +370,14 @@ const generateSingleJokerCode = (
     discovered = ${joker.discovered !== undefined ? joker.discovered : true},
     atlas = '${atlasKey}'`;
 
+  if (joker.card_dependencies && joker.card_dependencies.length > 0) {
+    const dependenciesObject = (joker.card_dependencies || []).filter((value) => value.startsWith(""))
+
+    jokerCode += `,
+    dependencies = {${dependenciesObject.map((value) => `"${value}"`)}}`;
+  }
+
+
   if (joker.pools && joker.pools.length > 0) {
     const poolsObject = joker.pools
       .map((poolName) => `["${modPrefix}_${poolName}"] = true`)

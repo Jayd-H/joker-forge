@@ -144,7 +144,6 @@ const generateSingleDeckCode = (
 
   const ConfigVouchers = (deck.Config_vouchers || []).filter((value) => value.startsWith("v_"))
   const ConfigConsumables = (deck.Config_consumables || []).filter((value) => value.startsWith("c_"))
-  console.log(ConfigConsumables)
   deckCode += "config = {";
   if (configItems.length > 0) {
     deckCode += `

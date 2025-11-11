@@ -40,7 +40,7 @@ const generateConsumableCode = (
     (param) => param !== "none"
   );
 
-  const target = (method === "random") ? "affected_cards" : "G.hand.highlighted"
+  const target = (method === "random") ? "affected_cards" : "G.hand.highlighted" // Butter, it doesn't put "G.hand.highlighted" if the method is "selected"
 
   if (!hasModifications) {
     return {

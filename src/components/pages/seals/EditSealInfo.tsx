@@ -841,12 +841,13 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                           <h5 className="text-white-light font-medium text-sm mb-3">
                             Sound Settings
                           </h5>
+                          <div className="space-y-2">
                           <div>
                             <label className="block text-xs font-medium text-white-darker mb-2">
                               Sound
                             </label>
                             <select
-                              value={formData.sound || "gold_seal"}
+                              value={formData.sound || "foil1"}
                               onChange={(e) =>
                                 setFormData((prev) => ({
                                   ...prev,
@@ -862,7 +863,36 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                               ))}
                             </select>
                           </div>
-                    </div>
+                          <div className="grid grid-cols-2 gap-4">
+                          <InputField
+                            label="Pitch"
+                            value={formData.pitch?.toString() || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                pitch: parseFloat(e.target.value),
+                              }))
+                            }
+                            placeholder="1.2"
+                            type="number"
+                            size="sm"
+                          />
+                          <InputField
+                            label="Volume"
+                            value={formData.volume?.toString() || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                volume: parseFloat(e.target.value),
+                              }))
+                            }
+                            placeholder="0.4"
+                            type="number"
+                            size="sm"
+                          />
+                          </div>
+                         </div>
+                        </div>
                 </div>
               )}
             </div>

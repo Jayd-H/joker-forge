@@ -1,7 +1,7 @@
 import { CategoryDefinition } from "./Triggers";
 import { ConditionParameterOption, GlobalConditionTypeDefinition } from "../ruleBuilder/types";
 import { BOSS_BLINDS, CARD_SCOPES, COMPARISON_OPERATORS, CONSUMABLE_SETS, CUSTOM_CONSUMABLES, DECKS, EDITIONS, ENHANCEMENTS, PLANET_CARDS, POKER_HANDS, RANK_GROUPS, RANKS, RARITIES, SEALS, SPECTRAL_CARDS, STICKERS, SUIT_GROUPS, SUITS, TAGS, TAROT_CARDS, VOUCHERS } from "./BalatroUtils";
-import { ArchiveBoxIcon, HandRaisedIcon, ReceiptPercentIcon, InformationCircleIcon, RectangleStackIcon, SparklesIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxIcon, HandRaisedIcon, ReceiptPercentIcon, InformationCircleIcon, RectangleStackIcon, SparklesIcon, UserIcon, UserGroupIcon, VariableIcon } from "@heroicons/react/24/outline";
 
 export const PROBABILITY_IDENTIFIERS: {
   jokers: ConditionParameterOption[];
@@ -87,6 +87,10 @@ export const CONDITION_CATEGORIES: CategoryDefinition[] = [
   {
     label: "Deck",
     icon: ArchiveBoxIcon,
+  },
+  {
+    label: "Variables",
+    icon: VariableIcon,
   },
   {
     label: "Probability",
@@ -1102,7 +1106,142 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         default: 0,
       },
     ],
-    category: "Special",
+    category: "Variables",
+  },
+  {
+    id: "suit_variable",
+    label: "Suit Variable",
+    description: "Check the suit of an Suit variable for this joker",
+    objectUsers: ["joker", "card"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Variable Name",
+        default: "suitvar",
+        variableTypes: ["suit"]
+      },
+      {
+        id: "specific_suit",
+        type: "select",
+        label: "Suit",
+        options: [...SUITS],
+        default: "Spades",
+      },
+    ],
+    category: "Variables",
+  },
+  {
+    id: "rank_variable",
+    label: "Rank Variable",
+    description: "Check the rank of an Rank variable for this joker",
+    objectUsers: ["joker", "card"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Variable Name",
+        default: "suitvar",
+        variableTypes: ["rank"]
+      },
+      {
+        id: "specific_rank",
+        type: "select",
+        label: "Rank",
+        options: [...RANKS],
+        default: "A",
+      },
+    ],
+    category: "Variables",
+  },
+  {
+    id: "pokerhand_variable",
+    label: "Poker Hand Variable",
+    description: "Check the hand of an Poker Hand variable for this joker",
+    objectUsers: ["joker", "card"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Variable Name",
+        default: "suitvar",
+        variableTypes: ["pokerhand"]
+      },
+      {
+        id: "check_type",
+        type: "select",
+        label: "Check Type",
+        options: [
+          { value: "specific", label: "Specific Poker Hand" },
+          { value: "most_played", label: "Most Played Hand" },
+          { value: "least_played", label: "Least Played Hand" },
+        ],
+        default: "specific",
+      },
+      {
+        id: "specific_pokerhand",
+        type: "select",
+        label: "Poker Hand",
+        options: [...POKER_HANDS],
+        default: "High Card",
+        showWhen: {
+          parameter: "check_type",
+          values: ["specific"],
+        },
+      },
+    ],
+    category: "Variables",
+  },
+  {
+    id: "text_variable",
+    label: "Text Variable",
+    description: "Check the text of an Text variable for this joker",
+    objectUsers: ["joker"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Variable Name",
+        default: "suitvar",
+        variableTypes: ["text"]
+      },
+      {
+        id: "check_type",
+        type: "select",
+        label: "Check Type",
+        options: [
+          { value: "custom_text", label: "Custom Text" },
+          { value: "key_var", label: "Name of a Key Variable" },
+        ],
+        default: "custom_text",
+      },
+      {
+        id: "text",
+        type: "text",
+        label: "Custom Text",
+        default: "Hello",
+        showWhen: {
+          parameter: "check_type",
+          values: ["custom_text"],
+        },
+      },
+      {
+        id: "key_variable",
+        type: "select",
+        label: "Key Variable",
+        options: [],
+        showWhen: {
+          parameter: "check_type",
+          values: ["key_var"],
+        },
+        variableTypes: ["key"]
+      },
+    ],
+    category: "Variables",
   },
   {
     id: "check_flag",
