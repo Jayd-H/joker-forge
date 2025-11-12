@@ -847,7 +847,7 @@ const EditSealInfo: React.FC<EditSealInfoProps> = ({
                               Sound
                             </label>
                             <select
-                              value={formData.sound || "foil1"}
+                              value={formData.sound || "gold_seal"}
                               onChange={(e) =>
                                 setFormData((prev) => ({
                                   ...prev,
