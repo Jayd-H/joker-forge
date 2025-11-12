@@ -28,7 +28,7 @@ const generateConsumableCode = (
   const edition = effect.params?.edition as string || "none";
   const suit = effect.params?.suit as string || "none";
   const rank = effect.params?.rank as string || "none";
-  const method = effect.params?.method as string || "random";
+  const method = effect.params?.selection_method as string || "random";
   const customMessage = effect.customMessage;
 
   const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
@@ -40,7 +40,7 @@ const generateConsumableCode = (
     (param) => param !== "none"
   );
 
-  const target = (method === "random") ? "affected_cards" : "G.hand.highlighted" // Butter, it doesn't put "G.hand.highlighted" if the method is "selected"
+  const target = (method === "random") ? "affected_cards" : "G.hand.highlighted"
 
   if (!hasModifications) {
     return {
