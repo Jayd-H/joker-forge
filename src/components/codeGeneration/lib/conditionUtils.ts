@@ -57,7 +57,7 @@ import { generateInternalVariableConditionCode } from "../conditions/variableCon
 import { generateSuitVariableConditionCode } from "../conditions/variableConditions/SuitVariableCondition";
 import { generateRankVariableConditionCode } from "../conditions/variableConditions/RankVariableCondition";
 import { generatePokerHandVariableConditionCode } from "../conditions/variableConditions/PokerHandVariableCondition";
-//import { generateKeyVariableConditionCode } from "../conditions/variableConditions/KeyVariableCondition";
+import { generateKeyVariableConditionCode } from "../conditions/variableConditions/KeyVariableCondition";
 import { generateTextVariableConditionCode } from "../conditions/variableConditions/TextVariableCondition";
 
 
@@ -226,8 +226,8 @@ export const generateSingleConditionCode = (
       return generateRankVariableConditionCode([singleConditionRule])
     case "pokerhand_variable":
       return generatePokerHandVariableConditionCode([singleConditionRule])
-    /*case "key_variable":
-      return generateKeyVariableConditionCode([singleConditionRule]) will be done later... butter. */
+    case "key_variable":
+      return generateKeyVariableConditionCode([singleConditionRule])
     case "text_variable":
       return generateTextVariableConditionCode([singleConditionRule])
     case "joker_count":
