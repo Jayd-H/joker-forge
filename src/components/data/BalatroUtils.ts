@@ -142,6 +142,7 @@ export interface JokerData extends GameObjectData {
   scale_h?: number;
   pools?: string[];
   info_queues?: string[];
+  card_dependencies?: string[];
 }
 
 export interface RarityData {
@@ -242,6 +243,8 @@ export interface SealData extends GameObjectData{
   unlocked?: boolean;
   no_collection?: boolean;
   sound?: string;
+  pitch?: number;
+  volume?: number;
   rules?: Rule[];
   userVariables?: UserVariable[];
   placeholderCreditIndex?: number;
@@ -258,6 +261,8 @@ export interface EditionData extends GameObjectData{
   apply_to_float?: boolean;
   badge_colour?: string;
   sound?: string;
+  pitch?: number;
+  volume?: number;
   disable_shadow?: boolean;
   disable_base_shader?: boolean;
   rules?: Rule[];

@@ -119,6 +119,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
 
   const [poolsInput, setPoolsInput] = useState("");
   const [infoQueueInput, setInfoQueueInput] = useState("");
+  const [dependenciesInput, setDependenciesInput] = useState("");
 
   const rarityOptions = getRarityDropdownOptions(customRarities);
 
@@ -295,6 +296,8 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
       setValidationResults({});
       setPoolsInput((joker.pools || []).join(", "));
       setInfoQueueInput((joker.info_queues || []).join(", "));
+      setDependenciesInput((joker.card_dependencies || []).join(","));
+
     }
   }, [isOpen, joker, jokers]);
 
@@ -1531,6 +1534,49 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                         Vouchers - `v_`;
                         <br/>
                         Enhancements - `m_`; Editions - `e_`; Packs - `p_`; Seals - None
+                      </p>
+                    </div>
+                     <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
+                      <PuzzlePieceIcon className="h-5 w-5 text-mint" />
+                      Mod Dependencies
+                    </h4>
+                    <div className="space-y-4">
+                      <InputField
+                        value={dependenciesInput}
+                        onChange={(e) => setDependenciesInput(e.target.value)}
+                        onBlur={() => {
+                          const dependencies = dependenciesInput
+                            .split(",")
+                            .map((dependencies) => dependencies.trim())
+                            .filter((dependencies) => dependencies.length > 0);
+
+                          setFormData({
+                            ...formData,
+                            card_dependencies: dependencies.length > 0 ? dependencies : undefined,
+                          });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            const dependencies = dependenciesInput
+                              .split(",")
+                              .map((dependencies) => dependencies.trim())
+                              .filter((dependencies) => dependencies.length > 0);
+
+                            setFormData({
+                              ...formData,
+                              card_dependencies: dependencies.length > 0 ? dependencies : undefined,
+                            });
+                            e.currentTarget.blur();
+                          }
+                        }}
+                        placeholder="Cryptid, Bunco, MoreFluff"
+                        separator={true}
+                        label="Card Dependencies"
+                        size="md"
+                      />
+                      <p className="text-xs text-white-darker -mt-2">
+                       Card Will only appear if required mods are installed,
+                       uses Mod id to Work
                       </p>
                     </div>
                   </div>

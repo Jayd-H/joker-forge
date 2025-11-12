@@ -1064,7 +1064,7 @@ const generateSingleSealCode = (
 
   if (seal.sound !== "gold_seal") {
     sealCode += `
-    sound = { sound = "${seal.sound}", per = 1.2, vol = 0.4 },`;
+    sound = { sound = "${seal.sound}", per = ${seal.pitch ?? 1.2}, vol = ${seal.volume ?? 0.4} },`;
   }
 
   const locVarsCode = generateLocVarsFunction(
@@ -1252,7 +1252,7 @@ export const generateSingleEditionCode = (
 
   if (edition.sound && edition.sound !== "foil1") {
     editionCode += `
-    sound = { sound = "${edition.sound}", per = 1.2, vol = 0.4 },`;
+    sound = { sound = "${edition.sound}", per = ${edition.pitch ?? 1.2}, vol = ${edition.volume ?? 0.4} },`;
   }
 
   if (edition.disable_shadow !== undefined) {

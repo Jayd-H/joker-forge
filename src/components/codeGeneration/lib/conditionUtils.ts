@@ -27,7 +27,6 @@ import { generateGlassCardDestroyedConditionCode } from "../conditions/GlassCard
 import { generateHandCountConditionCode } from "../conditions/HandCountCondition";
 import { generateHandLevelConditionCode } from "../conditions/HandLevelCondition";
 import { generateHandSizeConditionCode } from "../conditions/HandSizeCondition";
-import { generateInternalVariableConditionCode } from "../conditions/InternalVariableCondition";
 import { generatePokerHandConditionCode } from "../conditions/HandTypeCondition";
 import { generateJokerCountConditionCode } from "../conditions/JokerCountCondition";
 import { generateJokerFlippedConditionCode } from "../conditions/JokerFlippedCondition";
@@ -54,6 +53,12 @@ import { generateDiscardedSuitCountConditionCode } from "../conditions/Discarded
 import { generateCardRankConditionCode } from "../conditions/CardRankCondition";
 import { generateDiscardedRankCountConditionCode } from "../conditions/DiscardedRankCountCondition";
 import { generateGameSpeedConditionCode } from "../conditions/GameSpeed";
+import { generateInternalVariableConditionCode } from "../conditions/variableConditions/InternalVariableCondition";
+import { generateSuitVariableConditionCode } from "../conditions/variableConditions/SuitVariableCondition";
+import { generateRankVariableConditionCode } from "../conditions/variableConditions/RankVariableCondition";
+import { generatePokerHandVariableConditionCode } from "../conditions/variableConditions/PokerHandVariableCondition";
+//import { generateKeyVariableConditionCode } from "../conditions/variableConditions/KeyVariableCondition";
+import { generateTextVariableConditionCode } from "../conditions/variableConditions/TextVariableCondition";
 
 
 export const generateConditionChain = (
@@ -215,6 +220,16 @@ export const generateSingleConditionCode = (
       return generateHandSizeConditionCode([singleConditionRule])
     case "internal_variable":
       return generateInternalVariableConditionCode([singleConditionRule])
+    case "suit_variable":
+      return generateSuitVariableConditionCode([singleConditionRule])
+    case "rank_variable":
+      return generateRankVariableConditionCode([singleConditionRule])
+    case "pokerhand_variable":
+      return generatePokerHandVariableConditionCode([singleConditionRule])
+    /*case "key_variable":
+      return generateKeyVariableConditionCode([singleConditionRule]) will be done later... butter. */
+    case "text_variable":
+      return generateTextVariableConditionCode([singleConditionRule])
     case "joker_count":
       return generateJokerCountConditionCode([singleConditionRule])
     case "joker_flipped":
