@@ -1081,7 +1081,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   },
   {
     id: "internal_variable",
-    label: "Internal Variable",
+    label: "Check Number Variable",
     description: "Check the value of an internal variable for this joker",
     objectUsers: ["joker", "card"],
     applicableTriggers: [...GENERIC_TRIGGERS, "change_probability"],
@@ -1090,7 +1090,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "variable_name",
         type: "select",
         label: "Variable Name",
-        default: "var1",
         variableTypes: ["number"]
       },
       {
@@ -1110,7 +1109,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   },
   {
     id: "suit_variable",
-    label: "Suit Variable",
+    label: "Check Suit Variable",
     description: "Check the suit of an Suit variable for this joker",
     objectUsers: ["joker", "card"],
     applicableTriggers: [...GENERIC_TRIGGERS],
@@ -1119,7 +1118,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "variable_name",
         type: "select",
         label: "Variable Name",
-        default: "suitvar",
         variableTypes: ["suit"]
       },
       {
@@ -1134,7 +1132,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   },
   {
     id: "rank_variable",
-    label: "Rank Variable",
+    label: "Check Rank Variable",
     description: "Check the rank of an Rank variable for this joker",
     objectUsers: ["joker", "card"],
     applicableTriggers: [...GENERIC_TRIGGERS],
@@ -1143,7 +1141,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "variable_name",
         type: "select",
         label: "Variable Name",
-        default: "suitvar",
         variableTypes: ["rank"]
       },
       {
@@ -1158,7 +1155,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   },
   {
     id: "pokerhand_variable",
-    label: "Poker Hand Variable",
+    label: "Check Poker Hand Variable",
     description: "Check the hand of an Poker Hand variable for this joker",
     objectUsers: ["joker", "card"],
     applicableTriggers: [...GENERIC_TRIGGERS],
@@ -1167,7 +1164,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "variable_name",
         type: "select",
         label: "Variable Name",
-        default: "suitvar",
         variableTypes: ["pokerhand"]
       },
       {
@@ -1197,7 +1193,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
   },
   {
     id: "text_variable",
-    label: "Text Variable",
+    label: "Check Text Variable",
     description: "Check the text of an Text variable for this joker",
     objectUsers: ["joker"],
     applicableTriggers: [...GENERIC_TRIGGERS],
@@ -1206,7 +1202,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "variable_name",
         type: "select",
         label: "Variable Name",
-        default: "suitvar",
         variableTypes: ["text"]
       },
       {
@@ -1234,6 +1229,52 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Key Variable",
         options: [],
+        showWhen: {
+          parameter: "check_type",
+          values: ["key_var"],
+        },
+        variableTypes: ["key"]
+      },
+    ],
+    category: "Variables",
+  },
+  {
+    id: "key_variable",
+    label: "Check Key Variable",
+    description: "Check the value of a key variable for this joker",
+    objectUsers: ["joker"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "variable_name",
+        type: "select",
+        label: "Variable Name",
+        variableTypes: ["key"]
+      },
+      {
+        id: "check_type",
+        type: "select",
+        label: "Check Type",
+        options: [
+          { value: "custom_text", label: "Specific Key" },
+          { value: "key_var", label: "Key Variable" },
+        ],
+        default: "custom_text",
+      },
+      {
+        id: "specific_key",
+        type: "text",
+        label: "Specific Key",
+        default: "none",
+        showWhen: {
+          parameter: "check_type",
+          values: ["custom_text"],
+        },
+      },
+      {
+        id: "key_variable",
+        type: "select",
+        label: "Key Variable",
         showWhen: {
           parameter: "check_type",
           values: ["key_var"],

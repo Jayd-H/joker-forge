@@ -5,16 +5,14 @@ export const generateKeyVariableConditionCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const variableName = (condition.params.variable_name as string) || "keyvar";
-  const CheckType = (condition.params.check_type as string) || "specific";
+  const checkType = (condition.params.check_type as string) || "custom_text";
 
-switch (CheckType) {
-    case "specific":
-      return `G.GAME.current_round.${variableName}_hand == "${condition.params?.specific_pokerhand || "High Card"}"`;
-    case "most_played":
-      return `G.GAME.current_round.${variableName}_hand == G.GAME.hands.visible and G.GAME.hands.played > ${variableName}_tally`;
-    case "least_played":
-      return `G.GAME.current_round.${variableName}_hand == G.GAME.hands.visible and G.GAME.hands.played < ${variableName}_tally`;
+switch (checkType) {
+    case "custom_text":
+      return `card.ability.extra.${variableName} == "${condition.params?.specific_key || "none"}"`;
+    case "key_variable":
+      return `card.ability.extra.${variableName} == card.ability.extra.${condition.params?.key_variable || "keyvar"}`;
     default:
-      return `G.GAME.current_round.${variableName}_hand == "${condition.params?.specific_pokerhand || "High Card"}"`;
+      return `card.ability.extra.${variableName} == "${condition.params?.specific_key || "none"}"`;
   }
 };
