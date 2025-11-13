@@ -248,7 +248,7 @@ export const GAME_RULE_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "edit_booster_packs",
     label: "Edit Boosters Packs",
     description: "Modify the values the of booster packs available in shop",
-    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used", "passive"],
     objectUsers: ["joker", "consumable", "voucher", "decks"],
     params: [
       {

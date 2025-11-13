@@ -585,7 +585,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     id: "card_enhancement",
     label: "Card Enhancement",
     description: "Check if the card has a specific enhancement",
-    objectUsers: ["joker"],
+    objectUsers: ["joker", "card"],
     applicableTriggers: [
       "card_scored",
       "card_discarded",

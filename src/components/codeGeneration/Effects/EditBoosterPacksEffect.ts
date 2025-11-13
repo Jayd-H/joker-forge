@@ -1,6 +1,90 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
+import { generateConfigVariables, generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
+
+export const generateEditBoosterPacksPassiveEffectCode = (
+  effect: Effect,
+): PassiveEffectResult => {
+  const operation = effect.params?.operation || "add";
+  const effectValue = effect.params.value;
+  const parsed = parseGameVariable(effectValue);
+  const rangeParsed = parseRangeVariable(effectValue);
+  const selectedType = effect.params?.selected_type || "size";
+
+  let valueCode: string;
+
+  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
+    valueCode = generateGameVariableCode(effectValue as string, '');
+  } else if (rangeParsed.isRangeVariable) {
+    valueCode = `pseudorandom('change_size', ${rangeParsed.min}, ${rangeParsed.max})`;
+  } else if (typeof effectValue === "string") {
+    valueCode = `card.ability.extra.${effectValue}`;
+  } else {
+    valueCode = (effectValue as number | boolean).toString();
+  }
+
+  let addToDeckValueCode = "";
+  let removeFromDeckValueCode = "";
+
+  switch (operation) {
+    case "subtract":
+      addToDeckValueCode = `-${valueCode}`;
+      removeFromDeckValueCode = `+${valueCode}`;
+      break;
+    case "set":
+      addToDeckValueCode = `difference`;
+      removeFromDeckValueCode = `difference`;
+      break;
+    case "add":
+    default:
+      addToDeckValueCode = `+${valueCode}`;
+      removeFromDeckValueCode = `-${valueCode}`;
+      break;
+  }
+
+  let addToDeck = ''
+  let removeFromDeck = ''
+
+  if (selectedType === "size") {
+    if (operation !== 'set') {
+      addToDeck = `G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) ${addToDeckValueCode}`
+      removeFromDeck = `G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) ${removeFromDeckValueCode}`
+    } else {
+      addToDeck = `
+        local card.ability.extra.original_booster_size = G.GAME.modifiers.booster_size_mod or 0
+        local difference = ${addToDeckValueCode} - G.GAME.modifiers.booster_size_mod
+        G.GAME.modifiers.booster_size_mod = G.GAME.modifiers.booster_size_mod + difference`
+      removeFromDeck = `
+        if card.ability.extra.original_booster_size then
+          local difference = card.ability.extra.original_booster_size - G.GAME.modifiers.booster_size_mod
+          G.GAME.modifiers.booster_size_mod = G.GAME.modifiers.booster_size_mod + difference
+        end`    
+    }
+  }
+  if (selectedType === "choice") {
+    if (operation !== 'set') {
+      addToDeck = `G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) ${addToDeckValueCode}`
+      removeFromDeck = `G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) ${removeFromDeckValueCode}`
+    } else {
+      addToDeck = `
+        local card.ability.extra.original_booster_choices = G.GAME.modifiers.booster_choice_mod or 0
+        local difference = ${addToDeckValueCode} - G.GAME.modifiers.booster_choice_mod
+        G.GAME.modifiers.booster_choice_mod = G.GAME.modifiers.booster_choice_mod + difference`
+      removeFromDeck = `
+        if card.ability.extra.original_booster_choices then
+          local difference = card.ability.extra.original_booster_choices - G.GAME.modifiers.booster_choice_mod
+          G.GAME.modifiers.booster_choice_mod = G.GAME.modifiers.booster_choice_mod + difference
+        end`    
+    }
+  }
+
+  return {
+    addToDeck,
+    removeFromDeck,
+    configVariables: [],
+    locVars: [],
+  };
+};
 
 export const generateEditBoosterPacksEffectCode = (
   effect: Effect,
