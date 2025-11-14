@@ -92,6 +92,7 @@ import { generateEditItemSizeEffectCode, generateEditItemSizePassiveEffectCode }
 import { generateChangeTextVariableEffectCode } from "../effects/variableEffects/ChangeTextVariableEffect";
 import { generateCreatePlayingCardEffectCode } from "../effects/CreatePlayingCardEffect";
 import { generateEditGameSpeedEffectCode } from "../effects/EditGameSpeed";
+import { generateAddBoosterToShopEffectCode } from "../effects/AddBoosterIntoShopEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -918,6 +919,8 @@ export const generateSingleEffect = (
       return generateShowMessageEffectCode(effect)
     case "change_game_speed":
       return generateEditGameSpeedEffectCode(effect)
+    case "add_booster_shop":
+      return generateAddBoosterToShopEffectCode(effect, itemType)
 
 //////////DECK EXCLUSIVE EFFECTS\\\\\\\\\\\\
     case "edit_all_starting_cards":

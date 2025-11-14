@@ -253,4 +253,37 @@ export const SHOP_EFFECTS: GlobalEffectTypeDefinition[] = [
       ],
     category: "Shop",
   },
+  {
+    id: "add_booster_shop",
+    label: "Add Booster Pack Into Shop",
+    description: "Add a Booster Pack into the current Shop",
+    objectUsers: ["joker"],
+    applicableTriggers: ["shop_entered", "shop_reroll", "card_bought", ],
+    params: [
+      {
+        id: "method_type",
+        type: "select",
+        label: "Selection Method",
+        options: [
+          { value: "random", label: "Random Booster Pack"},
+          { value: "specific", label: "Specific Booster Key"},
+          { value: "key_var", label: "Key Variable"},
+        ],
+        default: "random"
+      },
+      {
+        id: "key_variable",
+        type: "select",
+        label: "Key Variable",
+        variableTypes: ["key"]
+      },
+      {
+        id: "specific_key",
+        type: "text",
+        label: "Booster Key",
+        default: "",
+      },
+    ],
+    category: "Shop",
+  },
 ]
