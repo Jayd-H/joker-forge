@@ -26,7 +26,6 @@ const generateJokerCode = (
   sameTypeCount: number = 0,
 ): EffectReturn => {
   const bonusType = effect.params.bonus_type as string;
-
   const uniqueId = effect.id.substring(0, 8);
   const variableName = `pb_${bonusType.replace("perma_", "")}_${uniqueId}`;
 

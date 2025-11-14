@@ -665,7 +665,14 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Add Permanent Bonus",
     description:
       "Add permanent bonuses to the triggered card (like Hiker joker)",
-    applicableTriggers: ["card_scored"],
+    applicableTriggers: [
+      "card_scored", 
+      "card_held_in_hand", 
+      "card_held_in_hand_end_of_round", 
+      "playing_card_added", 
+      "card_discarded",
+      "card_used"
+    ],
     objectUsers: ["joker", "consumable"],
     params: [
       {
