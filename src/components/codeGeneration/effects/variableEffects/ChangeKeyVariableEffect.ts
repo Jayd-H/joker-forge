@@ -528,7 +528,7 @@ const generateBoosterKeyCode = (
 
   if (changeType === "opened_booster") {
     valueCode = `context.card.key`
-  } else if (changeType === "skipped_booster") {
+  } else if (changeType === "skipped_booster" || changeType === "exited_booster") {
     valueCode = `context.booster.key`
   } else if (changeType === "specific") {
     valueCode = `'${specificBooster}`

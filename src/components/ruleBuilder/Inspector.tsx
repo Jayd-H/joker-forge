@@ -552,6 +552,9 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         if (trigger === "booster_skipped") {
           options.push({value: "skipped_booster", label: `Skipped Booster Pack`})
         }
+        if (trigger === "booster_exited") {
+          options.push({value: "exited_booster", label: `Exited Booster Pack`})
+        }
       }
       
       if (param.variableTypes?.includes("tag_context")) {

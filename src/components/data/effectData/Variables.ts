@@ -324,7 +324,7 @@ export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "enhancement", label: "Enhancement" },
           { value: "seal", label: "Seal" },
           { value: "edition", label: "Edition" },
-          // { value: "booster", label: "Booster" }, --- TEMP DISABLED
+          { value: "booster", label: "Booster" },
           { value: "voucher", label: "Voucher" },
           { value: "tag", label: "Tag" },
         ],

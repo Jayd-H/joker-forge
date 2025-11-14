@@ -2486,7 +2486,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     label: "Booster Type",
     description: "Check the type of booster pack",
     objectUsers: ["joker"],
-    applicableTriggers: ["booster_opened", "booster_skipped"],
+    applicableTriggers: ["booster_opened", "booster_skipped", "booster_exited"],
     params: [
       {
         id: "operator",
