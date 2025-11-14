@@ -23,7 +23,12 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { VoucherData, slugify } from "../../data/BalatroUtils";
+import { 
+  VoucherData,
+  slugify,
+  VANILLA_SHADERS,
+  CUSTOM_SHADERS
+ } from "../../data/BalatroUtils";
 import {
   validateJokerName,
   validateDescription,
@@ -76,6 +81,18 @@ interface PropertyRuleProps {
 }
 
 type UnlockTrigger = keyof typeof vouchersUnlockOptions;
+
+const shaderOptions = [
+  { value: "", label: "None" },
+  ...VANILLA_SHADERS.map((shader) => ({
+    value: shader.key,
+    label: shader.label,
+  })),
+  ...CUSTOM_SHADERS.map((shader) => ({
+    value: shader.key,
+    label: shader.label,
+  })),
+];
 
 const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
   isOpen,
@@ -437,6 +454,13 @@ const addPropertyHidden =
     setFormData((prevFormData) => ({
       ...prevFormData,
       unlockProperties: [...(prevFormData.unlockProperties ?? []), newProperty],
+    }));
+  };
+
+  const handleShaderChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      draw_shader_sprite: value === "" ? false : value,
     }));
   };
 
@@ -1118,6 +1142,29 @@ const addPropertyHidden =
                       </p>
                     )}
                   </div>
+                  <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
+                    <PuzzlePieceIcon className="h-5 w-5 text-mint" />
+                    Custom Shader
+                  </h4>
+                  <div className="space-y-4">
+                  <InputDropdown
+                label="Shader"
+                  value={
+                    formData.draw_shader_sprite === false
+                      ? ""
+                      : formData.draw_shader_sprite || ""
+                      }
+                    onChange={handleShaderChange}
+                  options={shaderOptions}
+                placeholder="Select a shader"
+              size="md"
+            />
+            <p className="text-xs text-white-darker -mt-2">
+            Will Apply the Selected Shader to the card,
+            <br/>
+            Shader and Editions are 2 diffirent things.
+            </p>
+            </div>
                 </div>
               )}
              </div> 

@@ -295,6 +295,7 @@ export interface VoucherData extends GameObjectData {
   rules?: Rule[];
   placeholderCreditIndex?: number;
   hasUserUploadedImage?: boolean;
+  draw_shader_sprite?: string | false;
 }
 
 export interface DeckData extends GameObjectData{
@@ -390,7 +391,6 @@ const VANILLA_VOUCHERS = [
   {key: "v_paint_brush", value: "v_paint_brush", label: "Paint Brush" },
   {key: "v_palette", value: "v_palette", label: "Palette" },
 ];
-
 
 const VANILLA_DECKS = [
   {key: "Red Deck", value: "Red Deck", label: "Red Deck" },
@@ -1745,6 +1745,45 @@ export const ALL_CONSUMABLE_KEYS = ALL_CONSUMABLES.map((card) => card.key);
 export const ALL_CONSUMABLE_VALUES = ALL_CONSUMABLES.map((card) => card.value);
 export const ALL_CONSUMABLE_LABELS = ALL_CONSUMABLES.map((card) => card.label);
 
+// Vanilla Booster Packs
+export const VANILLA_BOOSTERS = [
+  {value: "p_arcana_normal_1", label: "Arcana Pack 1" },
+  {value: "p_arcana_normal_2", label: "Arcana Pack 2" },
+  {value: "p_arcana_normal_3", label: "Arcana Pack 3" },
+  {value: "p_arcana_normal_4", label: "Arcana Pack 4" },
+  {value: "p_arcana_jumbo_1", label: "Jumbo Arcana Pack 1" },
+  {value: "p_arcana_jumbo_2", label: "Jumbo Arcana Pack 2" },
+  {value: "p_arcana_mega_1", label: "Mega Arcana Pack 1" },
+  {value: "p_arcana_mega_2", label: "Mega Arcana Pack 2" },
+  {value: "p_celestial_normal_1", label: "Celestial Pack 1" },
+  {value: "p_celestial_normal_2", label: "Celestial Pack 2" },
+  {value: "p_celestial_normal_3", label: "Celestial Pack 3" },
+  {value: "p_celestial_normal_4", label: "Celestial Pack 4" },
+  {value: "p_celestial_jumbo_1", label: "Jumbo Celestial Pack 1" },
+  {value: "p_celestial_jumbo_2", label: "Jumbo Celestial Pack 2" },
+  {value: "p_celestial_mega_1", label: "Mega Celestial Pack 1" },
+  {value: "p_celestial_mega_2", label: "Mega Celestial Pack 2" },
+  {value: "p_spectral_normal_1", label: "Spectral Pack 1" },
+  {value: "p_spectral_normal_2", label: "Spectral Pack 2" },
+  {value: "p_spectral_jumbo_1", label: "Jumbo Spectral Pack" },
+  {value: "p_spectral_mega_1", label: "Mega Spectral Pack" },
+  {value: "p_standard_normal_1", label: "Standard Pack 1" },
+  {value: "p_standard_normal_2", label: "Standard Pack 2" },
+  {value: "p_standard_normal_3", label: "Standard Pack 3" },
+  {value: "p_standard_normal_4", label: "Standard Pack 4" },
+  {value: "p_standard_jumbo_1", label: "Jumbo Standard Pack 1" },
+  {value: "p_standard_jumbo_2", label: "Jumbo Standard Pack 2" },
+  {value: "p_standard_mega_1", label: "Mega Standard Pack 1" },
+  {value: "p_standard_mega_2", label: "Mega Standard Pack 2" },
+  {value: "p_buffoon_normal_1", label: "Buffoon Pack 1" },
+  {value: "p_buffoon_normal_2", label: "Buffoon Pack 2" },
+  {value: "p_buffoon_jumbo_1", label: "Jumbo Buffoon Pack" },
+  {value: "p_buffoon_mega_1", label: "Mega Buffoon Pack" },
+];
+
+export const VANILLA_BOOSTERS_VALUES = VANILLA_BOOSTERS.map((booster) => booster.value);
+export const VANILLA_BOOSTERS_LABELS = VANILLA_BOOSTERS.map((booster) => booster.label);
+
 // Blind Types
 export const BLIND_TYPES = [
   { value: "small", label: "Small Blind" },
@@ -1888,6 +1927,22 @@ export const CONSUMABLE_TYPE_VALUES = CONSUMABLE_TYPES.map(
 export const CONSUMABLE_TYPE_LABELS = CONSUMABLE_TYPES.map(
   (type) => type.label
 );
+
+export const VANILLA_MISCS = [
+  {key: "common", label: "Common Rarity" },
+  {key: "uncommon", label: "Uncommon Rarity" },
+  {key: "rare", label: "Rare Rarity" },
+  {key: "legendary", label: "Legendary Rarity" },
+  {key: "Playing Card", label: "Playing Card Booster Type" },
+  {key: "Joker", label: "Joker Booster Type" },
+  {key: "Tarot", label: "Tarot Booster Type" },
+  {key: "Planet", label: "Planet Booster Type" },
+  {key: "Spectral", label: "Spectral Booster Type" },
+  {key: "Voucher", label: "Voucher Booster Type" },
+];
+
+export const MISCS_KEYS = VANILLA_MISCS.map((misc) => misc.key);
+export const MISCS_LABELS = VANILLA_MISCS.map((misc) => misc.label);
 
 // Comparison Operators
 export const COMPARISON_OPERATORS = [
