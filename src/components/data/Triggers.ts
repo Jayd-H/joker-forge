@@ -310,6 +310,17 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     objectUsers: ["joker", "voucher", "deck"],
   },
   {
+    id: "booster_exited",
+    label: {
+      joker: "When a Booster Pack is Exited",
+    },
+    description: {
+      joker: "Triggers when the player chooses exits a booster pack",   
+    },    
+    category: "Packs & Consumables",
+    objectUsers: ["joker"],
+  },
+  {
     id: "shop_entered",
     label: {
       joker: "When Shop is Entered",

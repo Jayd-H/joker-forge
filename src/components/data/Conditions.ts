@@ -2481,6 +2481,32 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     ],
     category: "Game State",
   },
+  {
+    id: "booster_type",
+    label: "Booster Type",
+    description: "Check the type of booster pack",
+    objectUsers: ["joker"],
+    applicableTriggers: ["booster_opened", "booster_skipped"],
+    params: [
+      {
+        id: "operator",
+        type: "select",
+        label: "Operator",
+        options: [
+          { value: "equals", label: "equals" },
+          { value: "not_equal", label: "does not equal" },
+        ],
+        default: "equals",
+      },
+      {
+        id: "booster_key",
+        type: "text",
+        label: "Booster Key",
+        default: ""
+      }
+    ],
+    category: "Game State",
+  },
 ]
 
 export function getConditionTypeById(

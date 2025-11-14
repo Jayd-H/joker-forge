@@ -59,6 +59,7 @@ import { generateRankVariableConditionCode } from "../conditions/variableConditi
 import { generatePokerHandVariableConditionCode } from "../conditions/variableConditions/PokerHandVariableCondition";
 import { generateKeyVariableConditionCode } from "../conditions/variableConditions/KeyVariableCondition";
 import { generateTextVariableConditionCode } from "../conditions/variableConditions/TextVariableCondition";
+import { generateBoosterPackTypeConditionCode } from "../conditions/BoosterPackTypeCondition";
 
 
 export const generateConditionChain = (
@@ -278,6 +279,8 @@ export const generateSingleConditionCode = (
       return generateWhichTagConditionCode([singleConditionRule])
     case "game_speed":
       return generateGameSpeedConditionCode([singleConditionRule])
+    case "booster_type":
+      return generateBoosterPackTypeConditionCode([singleConditionRule], itemType, rule.trigger)
       
   }
   return null
