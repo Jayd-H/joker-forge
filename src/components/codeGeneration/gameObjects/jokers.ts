@@ -298,7 +298,7 @@ const generateSingleJokerCode = (
         )
         blindRewards.push({
           condition: generateConditionChain(rule, 'joker', joker),
-          effect: valueCode,
+          effect: valueCode.replace('ability', 'config'),
         })
         configVars.push(...configVariables)
       }

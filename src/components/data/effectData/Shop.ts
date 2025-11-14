@@ -275,13 +275,21 @@ export const SHOP_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "key_variable",
         type: "select",
         label: "Key Variable",
-        variableTypes: ["key"]
+        variableTypes: ["key"],
+        showWhen: {
+          parameter: "method_type",
+          values: ["key_var"]
+        }
       },
       {
         id: "specific_key",
         type: "text",
         label: "Booster Key",
         default: "",
+        showWhen: {
+          parameter: "method_type",
+          values: ["specific"]
+        }
       },
     ],
     category: "Shop",

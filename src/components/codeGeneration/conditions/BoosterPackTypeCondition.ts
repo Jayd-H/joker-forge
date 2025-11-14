@@ -22,12 +22,12 @@ const generateJokerCode = (
   const operator = condition.params.operator as string || "equals"
 
   const target = 
-    (triggerType === 'booster_opened') ? 'other_card' : 'booster'
+    (triggerType === 'booster_opened') ? 'card.config.center' : 'booster'
 
   return generateOperationCode(
     operator,
     "equals",
-    `context.${target}`,
+    `context.${target}.key`,
     value,
   )
 }

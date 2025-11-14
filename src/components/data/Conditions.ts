@@ -36,6 +36,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "boss_defeated",
   "booster_opened",
   "booster_skipped",
+  "booster_exited",
   "consumable_used",
   "hand_drawn",
   "first_hand_drawn",

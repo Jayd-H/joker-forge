@@ -191,7 +191,7 @@ export const generateTriggerContext = (
           return `context.skipping_booster`
       }
     
-    case "booster_skipped":
+    case "booster_exited":
       switch(objectType) {
         case "joker":
           return `context.ending_booster ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
