@@ -19,7 +19,7 @@ import {
   RarityData
 } from "../../data/BalatroUtils";
 import { generateUnlockJokerFunction } from "../lib/unlockUtils";
-import { generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { Rule } from "../../ruleBuilder";
 import { generateTriggerContext } from "../lib/triggerUtils";
@@ -281,10 +281,35 @@ const generateSingleJokerCode = (
     configItems.push(`${varName} = ${gameVar.startsFrom}`);
   });
 
+  const configVars = calculateResult?.configVariables || []
+
+  const blindRewards: {condition: string, effect: string}[] = []
+  const endRoundRules = joker.rules?.filter(rule => rule.trigger === 'round_end')
+  endRoundRules?.forEach(rule => {
+    rule.effects.forEach(effect => {
+      if (effect.type === 'blind_reward') {
+        const variableName =
+          blindRewards.length === 0 ? "blind_reward" : `blind_reward${blindRewards.length}`;        
+        const { valueCode, configVariables } = generateConfigVariables(
+            effect.params.value,
+            effect.type,
+            variableName,
+            'joker'
+        )
+        blindRewards.push({
+          condition: generateConditionChain(rule, 'joker', joker),
+          effect: valueCode,
+        })
+        configVars.push(...configVariables)
+      }
+    })
+    // NEED TO IMPLEMENT LOOPS & RANDOM GROUPS 
+  })
+
+
   if (calculateResult?.configVariables) {
     calculateResult.configVariables.forEach((configVar) => {
       const finalName = resolveVariableName(configVar.name);
-      console.log(finalName)
       const valueStr =
         typeof configVar.value === "string"
           ? `"${configVar.value}"`
@@ -311,7 +336,7 @@ const generateSingleJokerCode = (
       }
     }
   }
-  console.log(configItems)
+
   const effectsConfig = configItems.join(",\n            ");
 
   const jokersPerRow = 10;
@@ -377,7 +402,6 @@ const generateSingleJokerCode = (
     dependencies = {${dependenciesObject.map((value) => `"${value}"`)}}`;
   }
 
-
   if (joker.pools && joker.pools.length > 0) {
     const poolsObject = joker.pools
       .map((poolName) => `["${modPrefix}_${poolName}"] = true`)
@@ -414,6 +438,28 @@ const generateSingleJokerCode = (
   const setStickerCode = generateSetAbilityFunction(joker);
   if (setStickerCode) {
     jokerCode += `,\n\n    ${setStickerCode}`;
+  }
+
+  if (blindRewards.length > 0) {
+    let blindRewardCode = `
+    calc_dollar_bonus = function(card)
+      local blind_reward = 0`
+    blindRewards.forEach(value => {
+      if (value.condition) {
+        blindRewardCode += `
+          if ${value.condition} then`
+      }
+      blindRewardCode += `
+        blind_reward = blind_reward + math.max(${value.effect}, 0)`
+      if (value.condition) {
+        blindRewardCode += `
+          end`
+      }
+    })
+    blindRewardCode += `
+      return blind_reward
+    end`
+    jokerCode += `, \n ${blindRewardCode}`
   }
 
   if (calculateResult) {

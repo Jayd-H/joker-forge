@@ -74,6 +74,23 @@ export const ECONOMY_EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Economy",
   },
   {
+    id: "blind_reward",
+    label: "Earn Blind Reward Payout",
+    description: "Earn money as a part of the blind reward payout",
+    objectUsers: ["joker"],
+    applicableTriggers: ["round_end"],
+    params: [
+      {
+        id: "value",
+        type: "number",
+        label: "Amount",
+        default: 1,
+        min: 0,
+      },
+    ],
+    category: "Economy",
+  },
+  {
     id: "set_sell_value",
     label: "Edit Sell Value",
     description: "Modify the sell value of jokers/consumables",
