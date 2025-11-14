@@ -10,7 +10,6 @@ export const generateBlindNameConditionCode = (
 
   return generateOperationCode(
     operator, 
-    'equals',
     `G.GAME.blind.name`,
     `"${value}"`
   )

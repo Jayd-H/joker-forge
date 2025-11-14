@@ -13,7 +13,6 @@ export const generateJokerCountConditionCode = (
  
   const comparison = generateOperationCode(
     operator,
-    'equals',
     '',
     value,
   )

@@ -13,7 +13,6 @@ export const generateConsumableCountConditionCode = (
  
    const comparison = generateOperationCode(
     operator,
-    'equals',
     '',
     value
    )

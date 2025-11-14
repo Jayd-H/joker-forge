@@ -26,7 +26,6 @@ const generateJokerCode = (
 
   return generateOperationCode(
     operator,
-    "equals",
     `context.${target}.key`,
     value,
   )

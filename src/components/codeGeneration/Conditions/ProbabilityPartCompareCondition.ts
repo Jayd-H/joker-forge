@@ -12,7 +12,6 @@ export const generateProbabilityPartCompareConditionCode = (
   
   return generateOperationCode(
     operator,
-    'equals',
     `context.${part}`,
     value,
   )

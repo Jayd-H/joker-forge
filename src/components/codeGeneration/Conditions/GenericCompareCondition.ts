@@ -12,7 +12,6 @@ export const generateGenericCompareConditionCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     value1,
     value2
   )

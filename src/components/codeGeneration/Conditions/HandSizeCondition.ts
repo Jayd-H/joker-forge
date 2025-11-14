@@ -11,7 +11,6 @@ export const generateHandSizeConditionCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     'G.hand.config.card_limit',
     value,
   )

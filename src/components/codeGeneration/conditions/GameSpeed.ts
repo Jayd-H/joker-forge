@@ -8,5 +8,9 @@ export const generateGameSpeedConditionCode = (
   const operation = condition.params?.operation as string || "equals"
   const valueCode = condition.params?.speed as string || "1"
 
-  return generateOperationCode(operation, "equals", `G.SETTINGS.GAMESPEED`, valueCode);
+  return generateOperationCode(
+    operation, 
+    `G.SETTINGS.GAMESPEED`, 
+    valueCode
+  );
 }

@@ -18,7 +18,6 @@ export const generateJokerSelectedConditionCode = (
 
   return generateOperationCode(
     operator,
-    'greater_than',
     `#G.jokers.highlighted`,
     valueCode,
   )

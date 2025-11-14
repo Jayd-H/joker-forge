@@ -12,7 +12,6 @@ export const generateDeckSizeConditionCode = (
 
   const comparison = generateOperationCode(
     operator,
-    'equals',
     '',
     value
    )

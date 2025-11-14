@@ -11,7 +11,6 @@ export const generateHandLevelConditionCode = (
 
   const comparison = generateOperationCode(
     operator,
-    'equals',
     '',
     value
   )

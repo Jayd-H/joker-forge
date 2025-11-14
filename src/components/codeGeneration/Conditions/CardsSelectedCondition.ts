@@ -29,7 +29,6 @@ const generateConsumableCode = (
 
   return generateOperationCode(
     operator,
-    'greater_than',
     `#G.hand.highlighted`,
     valueCode
   )

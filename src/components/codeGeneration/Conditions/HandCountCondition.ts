@@ -25,7 +25,6 @@ export const generateHandCountConditionCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     cardsToCheck,
     value
   )
