@@ -4,8 +4,6 @@ export const generateOperationCode = (
   valueCode: string
 ) => {
   switch (operation) {
-    case "equals":
-      return `to_big(${comparisonValue}) == to_big(${valueCode})`
     case "greater_than": 
       return `to_big(${comparisonValue}) > to_big(${valueCode})`
     case "greater_than_or_equal": case "greater_equals":
@@ -16,7 +14,8 @@ export const generateOperationCode = (
       return `to_big(${comparisonValue}) <= to_big(${valueCode})`
     case "not_equals": case "not_equal":
       return `to_big(${comparisonValue}) ~= to_big(${valueCode})`
+    case "equals":
     default:
-      return null
+      return `to_big(${comparisonValue}) == to_big(${valueCode})`
   }
 }

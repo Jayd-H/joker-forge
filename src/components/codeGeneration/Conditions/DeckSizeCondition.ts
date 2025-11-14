@@ -10,14 +10,12 @@ export const generateDeckSizeConditionCode = (
   const operator = (condition.params.operator as string) || "equals";
   const value = generateGameVariableCode(condition.params.value, '') || "52";
 
-  const comparison = generateOperationCode(
-    operator,
-    '',
-    value
-   )
-
   const deckSizeRef =
     sizeType === "remaining" ? "#G.deck.cards" : "#G.playing_cards";
 
-  return `${deckSizeRef} ${comparison}`;
+  return generateOperationCode(
+    operator,
+    deckSizeRef,
+    value
+   )
 };

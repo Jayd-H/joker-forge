@@ -33,7 +33,7 @@ const generateJokerCode = (
     
   const comparison = generateOperationCode(
     operator,
-    '',
+    'count',
     value
   )
 
@@ -47,6 +47,6 @@ const generateJokerCode = (
             count = count + 1
         end
     end
-    return count ${comparison}
+    return ${comparison}
 end)()`;
 };
