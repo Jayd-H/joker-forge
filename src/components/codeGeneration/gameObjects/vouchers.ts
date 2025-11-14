@@ -1,4 +1,4 @@
-import { VoucherData } from "../../data/BalatroUtils";
+import { VOUCHERS, VoucherData, isCustomShader, } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
@@ -346,15 +346,26 @@ const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher)
   voucherCode += redeemCode ;
 }
 
-if (voucher.unlockTrigger) {
-      voucherCode += `${generateUnlockVoucherFunction(voucher)}`;
-    }
+if (typeof voucher.draw_shader_sprite === "string" && voucher.draw_shader_sprite !== "false") {
+    voucherCode += `
+    draw = function(self, card, layer)
+        if (layer == 'card' or layer == 'both') and card.sprite_facing == 'front' and (card.config.center.discovered or card.bypass_discovery_center) then
+            card.children.center:draw_shader('${voucher.draw_shader_sprite}', nil, card.ARGS.send_to_shader)
+        end
+    end,`;
+  }
 
   voucherCode = voucherCode.replace(/,$/, "");
   voucherCode += `
 }`;
 
   voucherCode = applyIndents(voucherCode)
+
+  if (typeof voucher.draw_shader_sprite === "string" && isCustomShader(voucher.draw_shader_sprite)) {
+      voucherCode += `
+      
+      SMODS.Shader({ key = '${voucher.draw_shader_sprite}', path = '${voucher.draw_shader_sprite}.fs' })`;
+  }
 
   return {
     code: voucherCode,

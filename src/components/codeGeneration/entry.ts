@@ -139,12 +139,18 @@ const generateObjectTypes = (
   return output;
 };
 
-const collectCustomShaders = (editions: EditionData[]): string[] => {
+const collectCustomShaders = (editions: EditionData[], vouchers: VoucherData[]): string[] => {
   const usedShaders = new Set<string>();
 
   editions.forEach((edition) => {
     if (typeof edition.shader === "string" && isCustomShader(edition.shader)) {
       usedShaders.add(edition.shader);
+    }
+  });
+
+  vouchers.forEach((voucher) => {
+    if (typeof voucher.draw_shader_sprite === "string" && isCustomShader(voucher.draw_shader_sprite)) {
+      usedShaders.add(voucher.draw_shader_sprite);
     }
   });
 
@@ -229,7 +235,7 @@ export const exportModCode = async (
     const sortedEditions = sortGameObjectForExport(validEditions);
     const sortedVouchers = sortGameObjectForExport(validVouchers);
     const sortedDecks = sortGameObjectForExport(validDecks);
-    const customShaders = collectCustomShaders(sortedEditions);
+    const customShaders = collectCustomShaders(sortedEditions,sortedVouchers);
     const customSettings = collectCustomSettings(validJokers);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);

@@ -321,6 +321,7 @@ const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
     rules: voucher.rules || [],
     placeholderCreditIndex: voucher.placeholderCreditIndex,
     hasUserUploadedImage: voucher.hasUserUploadedImage || false,
+    draw_shader_sprite: voucher.draw_shader_sprite || false,
     orderValue: voucher.orderValue || 1,
   };
 };

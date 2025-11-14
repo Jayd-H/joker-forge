@@ -125,6 +125,25 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
 
   const [nameValidationError, setNameValidationError] = useState<string>("");
 
+const getShaderDisplayName = (shader?: string | false) => {
+    if (!shader) return "";
+
+    const shaderNames: Record<string, string> = {
+      foil: "Foil",
+      holo: "Holographic",
+      polychrome: "Polychrome",
+      booster: "Booster",
+      debuff: "Debuff",
+      voucher: "Voucher",
+      negative: "Negative",
+      negative_shine: "Negative Shine",
+    };
+
+    return (
+      shaderNames[shader] || shader.charAt(0).toUpperCase() + shader.slice(1)
+    );
+  };
+  
   const handleEditRules = () => {
     onEditRules();
   };
@@ -276,6 +295,8 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
     },
   ];
 
+    const shaderName = getShaderDisplayName(voucher.draw_shader_sprite);
+  
   return (
     <div className="flex gap-4 relative">
       <div className="relative flex flex-col items-center">
@@ -306,6 +327,13 @@ const VoucherCard: React.FC<VoucherCardProps> = ({
               ${voucher.cost || 10}
             </span>
           )}
+          {shaderName && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-black/80 text-white px-3 py-1 rounded-lg text-sm font-bold border-2 border-white/50">
+                  {shaderName}
+                </div>
+              </div>
+            )}
         </div>
 
         <div className="w-42 z-10 relative group">
