@@ -11,7 +11,6 @@ export const generateRemainingDiscardsConditionCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     `G.GAME.current_round.discards_left`,
     value,
   )

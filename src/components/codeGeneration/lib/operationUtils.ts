@@ -1,12 +1,8 @@
 export const generateOperationCode = (
   operation: string,
-  defaultValue: string,
   comparisonValue: string,
   valueCode: string
 ) => {
-  if (!operation) {
-    operation = defaultValue
-  }
   switch (operation) {
     case "greater_than": 
       return `to_big(${comparisonValue}) > to_big(${valueCode})`

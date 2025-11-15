@@ -12,7 +12,6 @@ export const generateWhichTagConditionCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     `context.tag_added.key`,
     `"${tag}"`,
   )

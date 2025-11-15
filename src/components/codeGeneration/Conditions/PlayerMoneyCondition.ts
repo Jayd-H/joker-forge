@@ -18,7 +18,6 @@ export const generatePlayerMoneyConditionCode = (
 
   return generateOperationCode(
     operator,
-    'greater_than',
     `G.GAME.dollars`,
     valueCode,
   )

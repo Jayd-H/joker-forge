@@ -18,7 +18,6 @@ export const generateRemainingHandsConditionCode = (
 
   return generateOperationCode(
     operator,
-    'greater_than',
     `G.GAME.current_round.hands_left`,
     valueCode,
   )

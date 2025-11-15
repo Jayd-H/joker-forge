@@ -9,7 +9,7 @@ export const generateDeckCountConditionCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const propertyType =
     (condition.params.property_type as string) || "enhancement";
-  const operator = (condition.params.operator as string) || "equals";
+  const operator = (condition.params.operator as string);
   const value = generateGameVariableCode(condition.params.value, '');
 
   let propertyCheck = "";
@@ -80,12 +80,11 @@ export const generateDeckCountConditionCode = (
       propertyCheck = "true";
   }
 
-   const comparison = generateOperationCode(
+  const comparison = generateOperationCode(
     operator,
-    'equals',
-    '',
+    'count',
     value
-   )
+  )
 
   return `(function()
     local count = 0
@@ -94,6 +93,6 @@ export const generateDeckCountConditionCode = (
             count = count + 1
         end
     end
-    return count ${comparison}
+    return ${comparison}
 end)()`;
 };

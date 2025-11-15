@@ -13,14 +13,16 @@ export const generateJokerCountConditionCode = (
  
   const comparison = generateOperationCode(
     operator,
-    'equals',
-    '',
+    'count',
     value,
   )
  
   if (rarity === "any") {
-    return `#G.jokers.cards ${comparison}`;
-  }
+    return generateOperationCode(
+      operator,
+      '#G.jokers.cards',
+      value,
+  )}
 
   const rarityData = getAllRarities().find((r) => r.key === rarity);
   const modPrefix = getModPrefix();
@@ -33,6 +35,6 @@ export const generateJokerCountConditionCode = (
             count = count + 1
         end
     end
-    return count ${comparison}
+    return ${comparison}
 end)()`
 };

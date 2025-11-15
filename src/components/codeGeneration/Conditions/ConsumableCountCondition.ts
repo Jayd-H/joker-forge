@@ -13,8 +13,7 @@ export const generateConsumableCountConditionCode = (
  
    const comparison = generateOperationCode(
     operator,
-    'equals',
-    '',
+    'count',
     value
    )
  
@@ -32,7 +31,7 @@ export const generateConsumableCountConditionCode = (
              count = count + 1
          end
      end
-     return count ${comparison}
+     return ${comparison}
  end)()`;
      } else {
        const normalizedCardKey = specificCard.startsWith("c_")
@@ -46,7 +45,7 @@ export const generateConsumableCountConditionCode = (
              count = count + 1
          end
      end
-     return count ${comparison}
+     return ${comparison}
  end)()`;
      }
    }
@@ -64,7 +63,7 @@ export const generateConsumableCountConditionCode = (
              count = count + 1
          end
      end
-     return count ${comparison}
+     return ${comparison}
  end)()`;
    } else {
      const normalizedCardKey = specificCard.startsWith("c_")
@@ -78,7 +77,7 @@ export const generateConsumableCountConditionCode = (
              count = count + 1
          end
      end
-     return count ${comparison}
+     return ${comparison}
  end)()`;
    }
  };

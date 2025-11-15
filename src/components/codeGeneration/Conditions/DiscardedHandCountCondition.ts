@@ -22,7 +22,6 @@ const generateJokerCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     '#context.full_hand',
     value
    )

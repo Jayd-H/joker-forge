@@ -10,7 +10,6 @@ export const generateBossBlindTypeConditionCode = (
 
   return generateOperationCode(
     operator,
-    "equals",
     `G.GAME.blind.config.blind.key`,
     `"${value}"`
   )

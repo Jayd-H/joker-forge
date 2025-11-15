@@ -11,8 +11,7 @@ export const generateHandLevelConditionCode = (
 
   const comparison = generateOperationCode(
     operator,
-    'equals',
-    '',
+    'data.level',
     value
   )
 
@@ -36,7 +35,7 @@ export const generateHandLevelConditionCode = (
 
   return `(function()
     for hand, data in pairs(G.GAME.hands) do
-        if ${handDeterminationCode} and data.level ${comparison} then
+        if ${handDeterminationCode} and ${comparison} then
             return true
         end
     end

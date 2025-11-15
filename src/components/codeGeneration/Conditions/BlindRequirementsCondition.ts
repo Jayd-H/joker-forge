@@ -14,8 +14,7 @@ export const generateBlindRequirementsConditionCode = (
 
   return generateOperationCode(
     operator,
-    'greater_equals',
     `G.GAME.chips / G.GAME.blind.chips`,
-    `to_big(${decimal})`,
+    `${decimal}`,
   )
 };

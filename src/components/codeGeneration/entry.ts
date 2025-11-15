@@ -863,15 +863,11 @@ load_boosters_file()
 
   if (customSettings.length > 0) {
     output += `
-      SMODS.current_mod.optional_features = {
-        ${customSettings.join(`,\n    `)} 
-      }
-
       SMODS.current_mod.optional_features = function()
         return {
           ${customSettings.join(`,\n    `)} 
-      }
-    end`
+        }
+      end`
   }
 
   output = applyIndents(output)

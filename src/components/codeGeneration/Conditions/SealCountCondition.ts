@@ -1,5 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateSealCountConditionCode = (
   rules: Rule[],
@@ -29,30 +30,12 @@ const generateJokerCode = (
   } else {
     propertyCheck = `playing_card.seal == "${seal}"`;
   }
-    
-  let comparison = "";
-  switch (operator) {
-    case "equals":
-      comparison = `== ${value}`;
-      break;
-    case "not_equals":
-      comparison = `~= ${value}`;
-      break;
-    case "greater_than":
-      comparison = `> ${value}`;
-      break;
-    case "less_than":
-      comparison = `< ${value}`;
-      break;
-    case "greater_equals":
-      comparison = `>= ${value}`;
-      break;
-    case "less_equals":
-      comparison = `<= ${value}`;
-      break;
-    default:
-      comparison = `== ${value}`;
-  }
+
+  const comparison = generateOperationCode(
+    operator, 
+    'count', 
+    value
+  )
 
   const cardsToCheck =
     scope === "scoring" ? "context.scoring_hand" : "context.full_hand";
@@ -64,6 +47,6 @@ const generateJokerCode = (
             count = count + 1
         end
     end
-    return count ${comparison}
+    return ${comparison}
 end)()`;
 }

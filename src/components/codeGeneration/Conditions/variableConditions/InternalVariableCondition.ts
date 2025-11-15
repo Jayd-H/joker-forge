@@ -12,7 +12,6 @@ export const generateInternalVariableConditionCode = (
 
   return generateOperationCode(
     operator,
-    'equals',
     `(card.ability.extra.${variableName} or 0)`,
     value,
   )
