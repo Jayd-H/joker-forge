@@ -428,6 +428,17 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     objectUsers: ["joker"],
   },
   {
+    id: "player_action",
+    label: {
+      joker: "When the Player Does Any Action",
+    },
+    description: {
+      joker: "Activates whenever the player performs any ingame action",
+    },    
+    category: "Special",
+    objectUsers: ["joker"],
+  },
+  {
     id: "game_over",
     label: {
       joker: "When Game Over",

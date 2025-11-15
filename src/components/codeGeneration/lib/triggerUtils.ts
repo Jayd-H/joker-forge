@@ -16,14 +16,8 @@ export const generateTriggerContext = (
 
   switch (triggerType) {
     case "consumable_used":
-      switch (objectType) {
-        case "consumable":
-          return `context.joker_main`
-        case "joker":
-          return `context.using_consumeable ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
-        default:
-          return ""
-      }
+      case "joker":
+        return `context.using_consumeable ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
 
     case "hand_played":
       switch (objectType) {
@@ -277,7 +271,17 @@ export const generateTriggerContext = (
           return `context.pseudorandom_result ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
       }
       break
-      
+    
+    case "player_action":
+      switch(objectType) {
+        case "joker":
+          return `(context.end_of_round or context.reroll_shop or context.buying_card or
+            context.selling_card or context.ending_shop or context.starting_shop or 
+            context.ending_booster or context.skipping_booster or context.open_booster or
+            context.skip_blind or context.before or context.pre_discard or context.setting_blind or
+            context.using_consumeable) ${isBlueprintCompatible ? '' : ' and not context.blueprint'} `
+      }
+      break      
   }
   return ``
 }

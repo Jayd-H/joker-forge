@@ -62,6 +62,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "probability_result",
   "tag_added",
   "ante_start",
+  "player_action",
 ];
 
 export const ALL_OBJECTS = [
