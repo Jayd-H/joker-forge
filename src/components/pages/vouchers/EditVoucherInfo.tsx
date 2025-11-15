@@ -23,7 +23,12 @@ import Checkbox from "../../generic/Checkbox";
 import Button from "../../generic/Button";
 import BalatroCard from "../../generic/BalatroCard";
 import InfoDescriptionBox from "../../generic/InfoDescriptionBox";
-import { VoucherData, slugify } from "../../data/BalatroUtils";
+import { 
+  VoucherData,
+  slugify,
+  VANILLA_SHADERS,
+  CUSTOM_SHADERS
+ } from "../../data/BalatroUtils";
 import {
   validateJokerName,
   validateDescription,
@@ -31,9 +36,9 @@ import {
 } from "../../generic/validationUtils";
 import { applyAutoFormatting } from "../../generic/balatroTextFormatter";
 import {
-  vouchersunlockOptions,
+  vouchersUnlockOptions,
   unlockTriggerOptions,
-} from "../../codeGeneration/Vouchers/unlockUtils";
+} from "../../codeGeneration/lib/unlockUtils";
 import { UserConfigContext } from "../../Contexts";
 import {
   updateGameObjectIds,
@@ -75,7 +80,19 @@ interface PropertyRuleProps {
   index: number;
 }
 
-type UnlockTrigger = keyof typeof vouchersunlockOptions;
+type UnlockTrigger = keyof typeof vouchersUnlockOptions;
+
+const shaderOptions = [
+  { value: "", label: "None" },
+  ...VANILLA_SHADERS.map((shader) => ({
+    value: shader.key,
+    label: shader.label,
+  })),
+  ...CUSTOM_SHADERS.map((shader) => ({
+    value: shader.key,
+    label: shader.label,
+  })),
+];
 
 const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
   isOpen,
@@ -124,14 +141,14 @@ const EditVoucherInfo: React.FC<EditVoucherInfoProps> = ({
 const PropertyRule: React.FC<PropertyRuleProps> = ({ formData, index }) => {
     const propertyCategoryOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
-      return vouchersunlockOptions[formData.unlockTrigger]?.categories ?? [];
+      return vouchersUnlockOptions[formData.unlockTrigger]?.categories ?? [];
     }, [formData.unlockTrigger]);
 
     const selectedPropertyCategory =
       formData.unlockProperties?.[index]?.category;
     const propertyOptions = useMemo(() => {
       if (!formData.unlockTrigger) return [];
-      const category = vouchersunlockOptions[formData.unlockTrigger]?.categories?.find(
+      const category = vouchersUnlockOptions[formData.unlockTrigger]?.categories?.find(
         (c) => c.value === selectedPropertyCategory
       );
 
@@ -437,6 +454,13 @@ const addPropertyHidden =
     setFormData((prevFormData) => ({
       ...prevFormData,
       unlockProperties: [...(prevFormData.unlockProperties ?? []), newProperty],
+    }));
+  };
+
+  const handleShaderChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      draw_shader_sprite: value === "" ? false : value,
     }));
   };
 
@@ -1033,7 +1057,7 @@ const addPropertyHidden =
                             <div className="grid grid-cols-4 gap-4">
                               <div className="col-span-2">
                                 <InputDropdown
-                                  value={formData.unlockTrigger || ""}
+                                  value={formData.unlockTrigger as string || ""}
                                   onChange={handleUnlockTrigger}
                                   options={unlockTriggerOptions}
                                   separator={true}
@@ -1118,6 +1142,29 @@ const addPropertyHidden =
                       </p>
                     )}
                   </div>
+                  <h4 className="text-white-light font-medium text-base mb-4 flex items-center gap-2">
+                    <PuzzlePieceIcon className="h-5 w-5 text-mint" />
+                    Custom Shader
+                  </h4>
+                  <div className="space-y-4">
+                  <InputDropdown
+                label="Shader"
+                  value={
+                    formData.draw_shader_sprite === false
+                      ? ""
+                      : formData.draw_shader_sprite || ""
+                      }
+                    onChange={handleShaderChange}
+                  options={shaderOptions}
+                placeholder="Select a shader"
+              size="md"
+            />
+            <p className="text-xs text-white-darker -mt-2">
+            Will Apply the Selected Shader to the card,
+            <br/>
+            Shader and Editions are 2 diffirent things.
+            </p>
+            </div>
                 </div>
               )}
              </div> 

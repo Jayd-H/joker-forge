@@ -3,9 +3,9 @@ import { useDraggable } from "@dnd-kit/core";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Rule,
-  TriggerDefinition,
-  ConditionTypeDefinition,
-  EffectTypeDefinition,
+  GlobalEffectTypeDefinition,
+  GlobalTriggerDefinition,
+  GlobalConditionTypeDefinition,
 } from "./types";
 import BlockComponent from "./BlockComponent";
 import {
@@ -24,61 +24,21 @@ import {
 } from "@heroicons/react/16/solid";
 
 import {
-  TRIGGERS,
   TRIGGER_CATEGORIES,
-  type CategoryDefinition,
-} from "../data/Jokers/Triggers";
-import {
-  getConditionsForTrigger,
-  CONDITION_CATEGORIES,
-} from "../data/Jokers/Conditions";
-import {
-  getEffectsForTrigger,
-  EFFECT_CATEGORIES,
-} from "../data/Jokers/Effects";
+  getTriggers,
+  CategoryDefinition
+} from "../data/Triggers"
 
 import {
-  CONSUMABLE_TRIGGERS,
-  CONSUMABLE_TRIGGER_CATEGORIES,
-} from "../data/Consumables/Triggers";
+  CONDITION_CATEGORIES,
+  getConditionsForTrigger,
+} from "../data/Conditions"
+
 import {
-  getConsumableConditionsForTrigger,
-  CONSUMABLE_CONDITION_CATEGORIES,
-} from "../data/Consumables/Conditions";
-import {
-  getConsumableEffectsForTrigger,
-  CONSUMABLE_EFFECT_CATEGORIES,
-} from "../data/Consumables/Effects";
-import { CARD_TRIGGERS, CARD_TRIGGER_CATEGORIES } from "../data/Card/Triggers";
-import {
-  VOUCHER_TRIGGERS,
-  VOUCHER_TRIGGER_CATEGORIES,
-} from "../data/Vouchers/Triggers";
-import { DECK_TRIGGERS, DECK_TRIGGER_CATEGORIES } from "../data/Decks/Triggers";
-import {
-  CARD_CONDITION_CATEGORIES,
-  getCardConditionsForTrigger,
-} from "../data/Card/Conditions";
-import {
-  CARD_EFFECT_CATEGORIES,
-  getCardEffectsForTrigger,
-} from "../data/Card/Effects";
-import {
-  VOUCHER_CONDITION_CATEGORIES,
-  getVoucherConditionsForTrigger,
-} from "../data/Vouchers/Conditions";
-import {
-  VOUCHER_EFFECT_CATEGORIES,
-  getVoucherEffectsForTrigger,
-} from "../data/Vouchers/Effects";
-import {
-  DECK_CONDITION_CATEGORIES,
-  getDeckConditionsForTrigger,
-} from "../data/Decks/Conditions";
-import {
-  DECK_EFFECT_CATEGORIES,
-  getDeckEffectsForTrigger,
-} from "../data/Decks/Effects";
+  EFFECT_CATEGORIES,
+  getEffectsForTrigger,
+} from "../data/Effects"
+
 import { logSelectedTrigger } from "../generic/FileLog";
 
 interface BlockPaletteProps {
@@ -118,71 +78,14 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     id: "panel-blockPalette",
   });
 
-  const triggers =
-    itemType === "joker"
-      ? TRIGGERS
-      : itemType === "consumable"
-      ? CONSUMABLE_TRIGGERS
-      : itemType === "card"
-      ? CARD_TRIGGERS
-      : itemType === "voucher"
-      ? VOUCHER_TRIGGERS
-      : DECK_TRIGGERS;
+  const triggers = getTriggers(itemType)
 
-  const triggerCategories =
-    itemType === "joker"
-      ? TRIGGER_CATEGORIES
-      : itemType === "consumable"
-      ? CONSUMABLE_TRIGGER_CATEGORIES
-      : itemType === "card"
-      ? CARD_TRIGGER_CATEGORIES
-      : itemType === "voucher"
-      ? VOUCHER_TRIGGER_CATEGORIES
-      : DECK_TRIGGER_CATEGORIES;
+  const triggerCategories = TRIGGER_CATEGORIES
+  const conditionCategories = CONDITION_CATEGORIES
+  const effectCategories = EFFECT_CATEGORIES
 
-  const conditionCategories =
-    itemType === "joker"
-      ? CONDITION_CATEGORIES
-      : itemType === "consumable"
-      ? CONSUMABLE_CONDITION_CATEGORIES
-      : itemType === "card"
-      ? CARD_CONDITION_CATEGORIES
-      : itemType === "voucher"
-      ? VOUCHER_CONDITION_CATEGORIES
-      : DECK_CONDITION_CATEGORIES;
-
-  const effectCategories =
-    itemType === "joker"
-      ? EFFECT_CATEGORIES
-      : itemType === "consumable"
-      ? CONSUMABLE_EFFECT_CATEGORIES
-      : itemType === "card"
-      ? CARD_EFFECT_CATEGORIES
-      : itemType === "voucher"
-      ? VOUCHER_EFFECT_CATEGORIES
-      : DECK_EFFECT_CATEGORIES;
-
-  const getConditionsForTriggerFn =
-    itemType === "joker"
-      ? getConditionsForTrigger
-      : itemType === "consumable"
-      ? getConsumableConditionsForTrigger
-      : itemType === "card"
-      ? getCardConditionsForTrigger
-      : itemType === "voucher"
-      ? getVoucherConditionsForTrigger
-      : getDeckConditionsForTrigger;
-
-  const getEffectsForTriggerFn =
-    itemType === "joker"
-      ? getEffectsForTrigger
-      : itemType === "consumable"
-      ? getConsumableEffectsForTrigger
-      : itemType === "card"
-      ? getCardEffectsForTrigger
-      : itemType === "voucher"
-      ? getVoucherEffectsForTrigger
-      : getDeckEffectsForTrigger;
+  const getConditionsForTriggerFn = getConditionsForTrigger
+  const getEffectsForTriggerFn = getEffectsForTrigger
 
   const style = transform
     ? {
@@ -216,11 +119,11 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
   }, [selectedRule])
 
   const availableConditions = useMemo(() => {
-    return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger) : [];
+    return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger, itemType) : [];
   }, [selectedRule, getConditionsForTriggerFn]);
 
   const availableEffects = useMemo(() => {
-    return selectedRule ? getEffectsForTriggerFn(selectedRule.trigger) : [];
+    return selectedRule ? getEffectsForTriggerFn(selectedRule.trigger, itemType) : [];
   }, [selectedRule, getEffectsForTriggerFn]);
 
   const categorizedItems = useMemo(() => {
@@ -228,13 +131,13 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     const filteredTriggers = triggers.filter(
       (trigger) =>
-        trigger.label.toLowerCase().includes(normalizedSearch) ||
-        trigger.description.toLowerCase().includes(normalizedSearch)
+        trigger.label[itemType].toLowerCase().includes(normalizedSearch) ||
+        trigger.description[itemType].toLowerCase().includes(normalizedSearch)
     );
 
     const triggersByCategory: Record<
       string,
-      { category: CategoryDefinition; items: TriggerDefinition[] }
+      { category: CategoryDefinition; items: GlobalTriggerDefinition[] }
     > = {};
 
     triggerCategories.forEach((category) => {
@@ -255,9 +158,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     filteredTriggers.forEach((trigger) => {
       const categoryLabel = trigger.category || "Other";
-      if (triggersByCategory[categoryLabel]) {
+      if (triggersByCategory[categoryLabel] && trigger.objectUsers.includes(itemType)) {
         triggersByCategory[categoryLabel].items.push(trigger);
-      } else {
+      } else if (trigger.objectUsers.includes(itemType)) {
         triggersByCategory["Other"].items.push(trigger);
       }
     });
@@ -276,7 +179,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     const conditionsByCategory: Record<
       string,
-      { category: CategoryDefinition; items: ConditionTypeDefinition[] }
+      { category: CategoryDefinition; items: GlobalConditionTypeDefinition[] }
     > = {};
 
     conditionCategories.forEach((category) => {
@@ -314,7 +217,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
     const effectsByCategory: Record<
       string,
-      { category: CategoryDefinition; items: EffectTypeDefinition[] }
+      { category: CategoryDefinition; items: GlobalEffectTypeDefinition[] }
     > = {};
 
     effectCategories.forEach((category) => {
@@ -378,7 +281,8 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       );
       setExpandedCategories(new Set(allLabels));
     }
-  }, [activeFilter, categorizedItems, searchTerm]);
+
+  }, [activeFilter, searchTerm]);
 
   const shouldShowSection = (sectionType: FilterType) => {
     if (!selectedRule && sectionType !== "triggers") {
@@ -408,9 +312,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     categoryData: {
       category: CategoryDefinition;
       items:
-        | TriggerDefinition[]
-        | ConditionTypeDefinition[]
-        | EffectTypeDefinition[];
+        | GlobalTriggerDefinition[]
+        | GlobalConditionTypeDefinition[]
+        | GlobalEffectTypeDefinition[];
     },
     type: "trigger" | "condition" | "effect",
     onAdd: (id: string) => void
@@ -418,6 +322,19 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     const { category, items } = categoryData;
     const isExpanded = expandedCategories.has(category.label);
     const IconComponent = category.icon;
+
+    const getItemName = (
+      item: GlobalTriggerDefinition | GlobalConditionTypeDefinition | GlobalEffectTypeDefinition
+    ): string => {
+      const label = item.label
+      if (typeof label === "string") {
+        return label
+      } 
+      if (typeof label[itemType] === "string"){
+        return label[itemType]
+      }
+      return ""
+    }
 
     return (
       <div key={category.label} className="mb-3">
@@ -464,7 +381,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
                     className="px-2"
                   >
                     <BlockComponent
-                      label={item.label}
+                      label={getItemName(item)}
                       type={type}
                       onClick={() => onAdd(item.id)}
                       variant="palette"
@@ -485,9 +402,9 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       {
         category: CategoryDefinition;
         items:
-          | TriggerDefinition[]
-          | ConditionTypeDefinition[]
-          | EffectTypeDefinition[];
+          | GlobalTriggerDefinition[]
+          | GlobalConditionTypeDefinition[]
+          | GlobalEffectTypeDefinition[];
       }
     >,
     type: "trigger" | "condition" | "effect",

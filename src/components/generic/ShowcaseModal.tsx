@@ -13,7 +13,7 @@ import {
   RarityData,
   UserVariable,
 } from "../data/BalatroUtils";
-import { getAllVariables } from "../codeGeneration/Jokers/variableUtils";
+import { getAllVariables } from "../codeGeneration/lib/userVariableUtils";
 import { toPng } from "html-to-image";
 
 interface ShowcaseModalProps {
@@ -26,7 +26,8 @@ interface ShowcaseModalProps {
 const VariableDisplay = (variable: UserVariable) => {
   if (variable.type === "suit") return variable.initialSuit || "Spades";
   if (variable.type === "rank") return variable.initialRank || "Ace";
-  if (variable.type === "joker") return variable.initialJoker || "j_joker";
+  if (variable.type === "key") return variable.initialKey || "none";
+  if (variable.type === "text") return variable.initialText || "Hello";
   if (variable.type === "pokerhand")
     return variable.initialPokerHand || "High Card";
   return variable.initialValue?.toString() || "0";
@@ -119,7 +120,7 @@ const ShowcaseModal: React.FC<ShowcaseModalProps> = ({
   const VariableDisplay = (variable: UserVariable) => {
     if (variable.type === "suit") return variable.initialSuit || "Spades";
     if (variable.type === "rank") return variable.initialRank || "Ace";
-    if (variable.type === "joker") return variable.initialJoker || "j_joker";
+    if (variable.type === "key") return variable.initialKey || "none";
     if (variable.type === "pokerhand")
       return variable.initialPokerHand || "High Card";
     return variable.initialValue?.toString() || "0";

@@ -108,6 +108,7 @@ import SkeletonPage from "./components/pages/SkeletonPage";
 import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
 import { scanGameObjectIds, scanGameObjectKeys } from "./components/generic/GameObjectOrdering";
+import { updateRuleBlocks } from "./components/generic/RuleBlockUpdater";
 
 interface AlertState {
   isVisible: boolean;
@@ -600,6 +601,16 @@ function AppContent() {
 
       const data: AutoSaveData = JSON.parse(savedData);
 
+      const updatedData = updateRuleBlocks(
+          data.jokers,
+          data.consumables,
+          data.enhancements,
+          data.seals,
+          data.editions,
+          data.vouchers,
+          data.decks,
+        )
+
       if (!data.modMetadata || !Array.isArray(data.jokers)) {
         console.warn("Invalid auto-save data structure");
         localStorage.removeItem(AUTO_SAVE_KEY);
@@ -609,17 +620,17 @@ function AppContent() {
       console.log("Loaded auto-saved project state");
       return {
         modMetadata: data.modMetadata,
-        jokers: scanGameObjectKeys(scanGameObjectIds(data.jokers)),
+        jokers: scanGameObjectKeys(scanGameObjectIds(updatedData.jokers)),
         sounds: data.sounds,
-        consumables: scanGameObjectKeys(scanGameObjectIds(data.consumables || [])),
+        consumables: scanGameObjectKeys(scanGameObjectIds(updatedData.consumables || [])),
         customRarities: data.customRarities || [],
         consumableSets: data.consumableSets || [],
         boosters: scanGameObjectKeys(scanGameObjectIds(data.boosters || [])),
-        enhancements: scanGameObjectKeys(scanGameObjectIds(data.enhancements || [])),
-        editions: scanGameObjectKeys(scanGameObjectIds(data.editions || [])),
-        seals: scanGameObjectKeys(scanGameObjectIds(data.seals || [])),
-        vouchers: scanGameObjectKeys(scanGameObjectIds(data.vouchers || [])),
-        decks: scanGameObjectKeys(scanGameObjectIds(data.decks || [])),
+        enhancements: scanGameObjectKeys(scanGameObjectIds(updatedData.enhancements || [])),
+        editions: scanGameObjectKeys(scanGameObjectIds(updatedData.editions || [])),
+        seals: scanGameObjectKeys(scanGameObjectIds(updatedData.seals || [])),
+        vouchers: scanGameObjectKeys(scanGameObjectIds(updatedData.vouchers || [])),
+        decks: scanGameObjectKeys(scanGameObjectIds(updatedData.decks || [])),
       };
     } catch (error) {
       console.warn("Failed to load auto-save:", error);
@@ -936,18 +947,28 @@ function AppContent() {
           decks: scanGameObjectKeys(scanGameObjectIds(savedData.decks)),
         });
 
+        const updatedData = updateRuleBlocks(
+          normalizedData.jokers,
+          normalizedData.consumables,
+          normalizedData.enhancements,
+          normalizedData.seals,
+          normalizedData.editions,
+          normalizedData.vouchers,
+          normalizedData.decks,
+        )
+
         setModMetadata(normalizedData.metadata);
-        setJokers(normalizedData.jokers);
+        setJokers(updatedData.jokers);
         setSounds(normalizedData.sounds);
-        setConsumables(normalizedData.consumables);
+        setConsumables(updatedData.consumables);
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
-        setBoosters((normalizedData.boosters));
-        setEnhancements(normalizedData.enhancements);
-        setSeals(normalizedData.seals);
-        setEditions(normalizedData.editions);
-        setVouchers(normalizedData.vouchers);
-        setDecks(normalizedData.decks);
+        setBoosters(normalizedData.boosters);
+        setEnhancements(updatedData.enhancements);
+        setSeals(updatedData.seals);
+        setEditions(updatedData.editions);
+        setVouchers(updatedData.vouchers);
+        setDecks(updatedData.decks);
 
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
@@ -1198,17 +1219,27 @@ const handleDiscardAndStartFresh = () => {
       if (importedData) {
         const normalizedData = normalizeImportedModData(importedData);
 
+        const updatedData = updateRuleBlocks(
+          normalizedData.jokers,
+          normalizedData.consumables,
+          normalizedData.enhancements,
+          normalizedData.seals,
+          normalizedData.editions,
+          normalizedData.vouchers,
+          normalizedData.decks,
+        )
+
         setModMetadata(normalizedData.metadata);
-        setJokers(normalizedData.jokers);
-        setConsumables((normalizedData.consumables));
+        setJokers(updatedData.jokers);
+        setConsumables(updatedData.consumables);
         setCustomRarities(normalizedData.customRarities);
         setConsumableSets(normalizedData.consumableSets);
         setBoosters(normalizedData.boosters);
-        setEnhancements(normalizedData.enhancements || []);
-        setSeals(normalizedData.seals || []);
-        setEditions(normalizedData.editions || []);
-        setVouchers(normalizedData.vouchers || []);
-        setDecks(normalizedData.decks || []);
+        setEnhancements(updatedData.enhancements || []);
+        setSeals(updatedData.seals || []);
+        setEditions(updatedData.editions || []);
+        setVouchers(updatedData.vouchers || []);
+        setDecks(updatedData.decks || []);
         setSounds(normalizedData.sounds);
         setSelectedJokerId(null);
         setSelectedConsumableId(null);
@@ -1221,17 +1252,17 @@ const handleDiscardAndStartFresh = () => {
 
         prevDataRef.current = {
           modMetadata: normalizedData.metadata,
-          jokers: scanGameObjectKeys(scanGameObjectIds(normalizedData.jokers)),
+          jokers: scanGameObjectKeys(scanGameObjectIds(updatedData.jokers)),
           sounds: normalizedData.sounds,
-          consumables: scanGameObjectKeys(scanGameObjectIds(normalizedData.consumables)),
+          consumables: scanGameObjectKeys(scanGameObjectIds(updatedData.consumables)),
           customRarities: normalizedData.customRarities,
           consumableSets: normalizedData.consumableSets,
           boosters: scanGameObjectKeys(scanGameObjectIds(normalizedData.boosters)),
-          enhancements: scanGameObjectKeys(scanGameObjectIds(normalizedData.enhancements || [])),
-          seals: scanGameObjectKeys(scanGameObjectIds(normalizedData.seals || [])),
-          editions: scanGameObjectKeys(scanGameObjectIds(normalizedData.editions || [])),
-          vouchers: scanGameObjectKeys(scanGameObjectIds(normalizedData.vouchers || [])),
-          decks: scanGameObjectKeys(scanGameObjectIds(normalizedData.decks || [])),
+          enhancements: scanGameObjectKeys(scanGameObjectIds(updatedData.enhancements || [])),
+          seals: scanGameObjectKeys(scanGameObjectIds(updatedData.seals || [])),
+          editions: scanGameObjectKeys(scanGameObjectIds(updatedData.editions || [])),
+          vouchers: scanGameObjectKeys(scanGameObjectIds(updatedData.vouchers || [])),
+          decks: scanGameObjectKeys(scanGameObjectIds(updatedData.decks || [])),
         };
         showAlert(
           "success",

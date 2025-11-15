@@ -12,7 +12,7 @@ import { Suspense, lazy } from "react";
 const RuleBuilder = lazy(() => import("../ruleBuilder/RuleBuilder"));
 import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
-import { exportSingleJoker } from "../codeGeneration/Jokers/index";
+import { exportSingleJoker } from "../codeGeneration/gameObjects/jokers";
 import type { Rule } from "../ruleBuilder/types";
 import { RarityData, JokerData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";

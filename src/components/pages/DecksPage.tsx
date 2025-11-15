@@ -12,7 +12,7 @@ import { Suspense, lazy } from "react";
 const RuleBuilder = lazy(() => import("../ruleBuilder/RuleBuilder"));
 import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
-import { exportSingleDeck } from "../codeGeneration/Decks/index";
+import { exportSingleDeck } from "../codeGeneration/gameObjects/decks";
 import type { Rule } from "../ruleBuilder/types";
 import { DeckData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
@@ -598,7 +598,7 @@ const handleSortDirectionToggle = () => {
               onSave={handleSaveRules}
               existingRules={currentDeckForRules.rules || []}
               item={currentDeckForRules}
-              onUpdateItem={handleUpdateDeckFromRuleBuilder as (updates: Partial<any>) => void}
+              onUpdateItem={handleUpdateDeckFromRuleBuilder as (updates: Partial<DeckData>) => void}
               itemType="deck"
             />
           </Suspense>
