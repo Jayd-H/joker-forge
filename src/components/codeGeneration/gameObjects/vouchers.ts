@@ -1,4 +1,4 @@
-import { VOUCHERS, VoucherData, isCustomShader, } from "../../data/BalatroUtils";
+import { VOUCHERS, VoucherData, getModPrefix, isCustomShader, isVanillaShader, } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
@@ -346,26 +346,21 @@ const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher)
   voucherCode += redeemCode ;
 }
 
+const drawCode = generateDrawFunction(voucher, modPrefix);
 if (typeof voucher.draw_shader_sprite === "string" && voucher.draw_shader_sprite !== "false") {
-    voucherCode += `
-    draw = function(self, card, layer)
-        if (layer == 'card' or layer == 'both') and card.sprite_facing == 'front' and (card.config.center.discovered or card.bypass_discovery_center) then
-            card.children.center:draw_shader('${voucher.draw_shader_sprite}', nil, card.ARGS.send_to_shader)
-        end
-    end,`;
+    voucherCode += ` ${drawCode},`;
   }
 
   voucherCode = voucherCode.replace(/,$/, "");
   voucherCode += `
 }`;
 
-  voucherCode = applyIndents(voucherCode)
-
   if (typeof voucher.draw_shader_sprite === "string" && isCustomShader(voucher.draw_shader_sprite)) {
       voucherCode += `
-      
       SMODS.Shader({ key = '${voucher.draw_shader_sprite}', path = '${voucher.draw_shader_sprite}.fs' })`;
   }
+
+voucherCode = applyIndents(voucherCode)
 
   return {
     code: voucherCode,
@@ -599,6 +594,39 @@ const generateLocVarsFunction = (
   return `loc_vars = function(self, info_queue, card)
         return {vars = {${finalVars.join(", ")}}}
     end`;
+};
+
+const generateDrawFunction = (
+  voucher: VoucherData,
+  modPrefix: string
+): string | null => {
+
+  let drawFunction = `
+  draw = function(self, card, layer)`;
+
+  drawFunction += `
+if (layer == 'card' or layer == 'both') and card.sprite_facing == 'front' and (card.config.center.discovered or card.bypass_discovery_center) then`;
+
+const getmodprefix = getModPrefix();
+if (typeof voucher.draw_shader_sprite === "string" && isCustomShader(voucher.draw_shader_sprite)) {
+    drawFunction += `
+ card.children.center:draw_shader('${getmodprefix}_${voucher.draw_shader_sprite}', nil, card.ARGS.send_to_shader)
+  end`;
+} else if (typeof voucher.draw_shader_sprite === "string" && isVanillaShader(voucher.draw_shader_sprite) && voucher.draw_shader_sprite !== 'negative' && voucher.draw_shader_sprite !== 'negative_shine') {
+  drawFunction += `
+card.children.center:draw_shader('${voucher.draw_shader_sprite}', nil, card.ARGS.send_to_shader)
+ end`;
+} else if (voucher.draw_shader_sprite === 'negative') {
+  drawFunction += `
+ card.children.center:draw_shader('negative', nil, card.ARGS.send_to_shader)
+ card.children.center:draw_shader('negative_shine', nil, card.ARGS.send_to_shader)
+ end`;
+}      
+
+  drawFunction += `
+    end,`;
+
+  return drawFunction;
 };
 
 const formatVoucherDescription = (description: string) => {
