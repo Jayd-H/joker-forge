@@ -12,7 +12,7 @@ import { Suspense, lazy } from "react";
 const RuleBuilder = lazy(() => import("../ruleBuilder/RuleBuilder"));
 import RuleBuilderLoading from "../generic/RuleBuilderLoading";
 import Button from "../generic/Button";
-import { exportSingleVoucher } from "../codeGeneration/Vouchers/index";
+import { exportSingleVoucher } from "../codeGeneration/gameObjects/vouchers";
 import type { Rule } from "../ruleBuilder/types";
 import { VoucherData, slugify } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
@@ -604,7 +604,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({
               onSave={handleSaveRules}
               existingRules={currentVoucherForRules.rules || []}
               item={currentVoucherForRules}
-              onUpdateItem={handleUpdateVoucherFromRuleBuilder as (updates: Partial<any>) => void}
+              onUpdateItem={handleUpdateVoucherFromRuleBuilder as (updates: Partial<VoucherData>) => void}
               itemType="voucher"
             />
           </Suspense>

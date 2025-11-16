@@ -28,7 +28,7 @@ import {
   slugify,
   ConsumableData,
 } from "../data/BalatroUtils";
-import { exportSingleConsumable } from "../codeGeneration/Consumables";
+import { exportSingleConsumable } from "../codeGeneration/gameObjects/consumables";
 import { UserConfigContext } from "../Contexts";
 import { updateGameObjectIds, getObjectName } from "../generic/GameObjectOrdering";
 

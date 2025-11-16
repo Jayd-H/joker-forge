@@ -15,19 +15,16 @@ import {
   getCustomShaderFilepath,
   SoundData,
 } from "../data/BalatroUtils";
-import { addAtlasToZip } from "./ImageProcessor";
-import { generateJokersCode, generateCustomRaritiesCode } from "./Jokers/index";
-import { generateConsumablesCode } from "./Consumables/index";
-import { generateVouchersCode } from "./Vouchers/index";
-import { generateDecksCode } from "./Decks/index";
-import { generateBoostersCode } from "./boosters";
+import { addAtlasToZip } from "./lib/ImageProcessor";
+import { generateJokersCode, generateCustomRaritiesCode, applyIndents } from "./gameObjects/jokers";
+import { generateConsumablesCode } from "./gameObjects/consumables";
+import { generateVouchersCode } from "./gameObjects/vouchers";
+import { generateDecksCode } from "./gameObjects/decks";
+import { generateEnhancementsCode, generateSealsCode, generateEditionsCode } from "./gameObjects/cards";
+import { generateBoostersCode } from "./gameObjects/boosters";
 import { ConsumableSetData, slugify, getModPrefix } from "../data/BalatroUtils";
 import { modToJson } from "../JSONImportExport";
-import {
-  generateEnhancementsCode,
-  generateSealsCode,
-  generateEditionsCode,
-} from "./Card/index";
+
 
 // Old Export Method
 //
@@ -55,6 +52,27 @@ const sortGameObjectForExport = <GameObjectType extends GameObjectData> (
   return sortedItems;
 };
 
+const collectCustomSettings = (
+  jokers: JokerData[]
+): string[] => {
+  const customSettings: string[] = [`cardareas = {}`]
+
+  jokers.forEach(joker => {
+    joker.rules?.forEach(rule =>{
+      if (rule.trigger === "joker_triggered") {
+        if (!customSettings.includes(`post_trigger = true`)) {
+          customSettings.push(`post_trigger = true`)
+        }
+      }
+      // ADD MORE IN THE FUTURE
+      // --- Joker Retriggers
+      // --- Quantum Enhancements
+      // --- Deck & Discard Card Areas
+    })
+  })
+
+  return customSettings
+}
 
 const collectJokerPools = (jokers: JokerData[]): Record<string, string[]> => {
   const poolsMap: Record<string, string[]> = {};
@@ -121,12 +139,18 @@ const generateObjectTypes = (
   return output;
 };
 
-const collectCustomShaders = (editions: EditionData[]): string[] => {
+const collectCustomShaders = (editions: EditionData[], vouchers: VoucherData[]): string[] => {
   const usedShaders = new Set<string>();
 
   editions.forEach((edition) => {
     if (typeof edition.shader === "string" && isCustomShader(edition.shader)) {
       usedShaders.add(edition.shader);
+    }
+  });
+
+  vouchers.forEach((voucher) => {
+    if (typeof voucher.draw_shader_sprite === "string" && isCustomShader(voucher.draw_shader_sprite)) {
+      usedShaders.add(voucher.draw_shader_sprite);
     }
   });
 
@@ -211,7 +235,8 @@ export const exportModCode = async (
     const sortedEditions = sortGameObjectForExport(validEditions);
     const sortedVouchers = sortGameObjectForExport(validVouchers);
     const sortedDecks = sortGameObjectForExport(validDecks);
-    const customShaders = collectCustomShaders(sortedEditions);
+    const customShaders = collectCustomShaders(sortedEditions,sortedVouchers);
+    const customSettings = collectCustomSettings(validJokers);
 
     const hasModIcon = !!(metadata.hasUserUploadedIcon || metadata.iconImage);
     const hasGameIcon = !!(metadata.hasUserUploadedGameIcon || metadata.gameImage);
@@ -229,7 +254,8 @@ export const exportModCode = async (
       sortedDecks,
       hasModIcon,
       hasGameIcon,
-      metadata
+      metadata,
+      customSettings,
     );
     zip.file(metadata.main_file, mainLuaCode);
 
@@ -273,9 +299,11 @@ export const exportModCode = async (
       let soundsCode = ""
       sounds.forEach((sound) => {
         soundsCode += `SMODS.Sound{
-    key="${sound.key}",
-    path="${sound.key}.ogg",
-    pitch=${sound.pitch ?? 0.7},
+    key="${sound.key}",\n`
+    if ( sound.soundString !== "") {
+    soundsCode += `    path="${sound.key}",\n`
+  }
+   soundsCode += `     pitch=${sound.pitch ?? 0.7},
     volume=${sound.volume ?? 0.6},\n`
   if (sound.replace !== undefined && sound.replace !== "") {
     soundsCode += `    replace="${sound.replace}"\n`
@@ -460,7 +488,9 @@ const generateMainLuaCode = (
   decks: DeckData[],
   hasModIcon: boolean,
   hasGameIcon: boolean,
-  metadata: ModMetadata): string => {
+  metadata: ModMetadata,
+  customSettings: string[]
+): string => {
   let output = "";
 
   if (hasModIcon) {
@@ -830,6 +860,17 @@ load_boosters_file()
       output += objectTypesCode;
     }
   }
+
+  if (customSettings.length > 0) {
+    output += `
+      SMODS.current_mod.optional_features = function()
+        return {
+          ${customSettings.join(`,\n    `)} 
+        }
+      end`
+  }
+
+  output = applyIndents(output)
 
   return output.trim();
 };

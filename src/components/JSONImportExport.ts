@@ -143,6 +143,7 @@ const normalizeJokerData = (joker: Partial<JokerData>): JokerData => {
     orderValue: joker.orderValue || 1,
     objectType: "joker",
     info_queues: joker.info_queues || [],
+    card_dependencies: joker.card_dependencies || [],
   };
 };
 
@@ -258,6 +259,8 @@ const normalizeSealData = (seal: SealData): SealData => {
     discovered: seal.discovered,
     no_collection: seal.no_collection,
     sound: seal.sound || "gold_seal",
+    volume: seal.volume || 0.4,
+    pitch: seal.pitch || 1.2,
     rules: seal.rules || [],
     userVariables: seal.userVariables || [],
     placeholderCreditIndex: seal.placeholderCreditIndex,
@@ -284,6 +287,8 @@ const normalizeEditionData = (edition: EditionData): EditionData => {
     apply_to_float: edition.apply_to_float,
     badge_colour: edition.badge_colour || "#FFAA00",
     sound: edition.sound || "foil1",
+    volume: edition.volume || 0.4,
+    pitch: edition.pitch || 1.2,
     disable_shadow: edition.disable_shadow,
     disable_base_shader: edition.disable_base_shader,
     rules: edition.rules || [],
@@ -316,6 +321,7 @@ const normalizeVoucherData = (voucher: VoucherData): VoucherData => {
     rules: voucher.rules || [],
     placeholderCreditIndex: voucher.placeholderCreditIndex,
     hasUserUploadedImage: voucher.hasUserUploadedImage || false,
+    draw_shader_sprite: voucher.draw_shader_sprite || false,
     orderValue: voucher.orderValue || 1,
   };
 };

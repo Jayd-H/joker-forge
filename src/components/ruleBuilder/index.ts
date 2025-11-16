@@ -7,7 +7,7 @@ export type {
   Condition,
   Effect,
   RandomGroup,
-  TriggerDefinition,
+  GlobalTriggerDefinition,
   ConditionTypeDefinition,
   EffectTypeDefinition,
   ConditionParameter,
@@ -15,13 +15,8 @@ export type {
 } from "./types";
 
 // Export constants and helpers
-export { TRIGGERS, getTriggerById } from "../data/Jokers/Triggers";
-
-export {
-  CONDITION_TYPES,
-  getConditionTypeById,
-} from "../data/Jokers/Conditions";
-
-export { EFFECT_TYPES, getEffectTypeById } from "../data/Jokers/Effects";
+export { TRIGGERS, getTriggerById } from "../data/Triggers";
+export { CONDITIONS, getConditionTypeById } from "../data/Conditions";
+export { EFFECTS, getEffectTypeById } from "../data/Effects";
 
 export { LOGICAL_OPERATORS } from "./types";
