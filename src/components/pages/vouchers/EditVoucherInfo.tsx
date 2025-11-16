@@ -65,7 +65,7 @@ interface EditVoucherInfoProps {
   }) => void;
 }
 
-export const generateKeyFromName = (name: string): string => {
+const generateKeyFromName = (name: string): string => {
     return (
       name
         .toLowerCase()
