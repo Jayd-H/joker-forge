@@ -989,9 +989,10 @@ const generateSinglePassiveEffect = (
       return generateFreeRerollsPassiveEffectCode(effect)
     case "disable_boss_blind":
       return generateDisableBossBlindPassiveEffectCode(effect)
-    case "edit_discards": case "edit_hands":
+    case "edit_discards": case "edit_hands": {
       const countItemType = effect.type.slice(5)
       return generateEditItemCountPassiveEffectCode(effect, countItemType)
+    }
     case "splash_effect":
       return generateSplashPassiveEffectCode()
     case "edit_consumable_slots":
@@ -1007,9 +1008,10 @@ const generateSinglePassiveEffect = (
     case "showman":
       return generateShowmanPassiveEffectCode(jokerKey)
     case "edit_voucher_slots": case "edit_booster_slots": case "edit_shop_slots":
-    case "edit_hand_size": case "edit_play_size": case "edit_discard_size":
+    case "edit_hand_size": case "edit_play_size": case "edit_discard_size": {
       const sizeItemType = effect.type.slice(5)
       return generateEditItemSizePassiveEffectCode(effect, sizeItemType)
+    }
     default:
       return null
   }
