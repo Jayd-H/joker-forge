@@ -20,20 +20,20 @@ export const updateRuleBlocks = (
 
       rule.trigger = updateTrigger(rule, item.objectType);
 
-      (rule.conditionGroups || []).forEach(group => {group.conditions.forEach(condition => {
-        condition = updateCondition(condition)
-      })});
-
-      (rule.effects|| []).forEach(effect => {
-        effect = updateEffect(effect, item.objectType)
-      });
-
-      (rule.randomGroups || []).forEach(group => {group.effects.forEach(effect =>
-        effect = updateEffect(effect, item.objectType)
+      (rule.conditionGroups || []).forEach(group => {group.conditions.map(condition => 
+        updateCondition(condition)
       )});
 
-      (rule.loops || []).forEach(group => {group.effects.forEach(effect =>
-        effect = updateEffect(effect, item.objectType)
+      (rule.effects|| []).map(effect => 
+        updateEffect(effect, item.objectType)
+      );
+
+      (rule.randomGroups || []).forEach(group => {group.effects.map(effect =>
+        updateEffect(effect, item.objectType)
+      )});
+
+      (rule.loops || []).forEach(group => {group.effects.map(effect =>
+        updateEffect(effect, item.objectType)
       )});
 
     })})
