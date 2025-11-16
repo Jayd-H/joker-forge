@@ -23,12 +23,12 @@ import { generateConfigVariables, generateGameVariableCode, parseGameVariable, p
 import { generateConditionChain } from "../lib/conditionUtils";
 import { Rule } from "../../ruleBuilder";
 import { generateTriggerContext } from "../lib/triggerUtils";
-import { generateDiscountItemsHook } from "../hooks/DiscountItemsHook";
-import { generateReduceFlushStraightRequirementsHook } from "../hooks/ReduceFlushStraightRequirementsHook";
-import { generateShortcutHook } from "../hooks/ShortcutHook";
-import { generateShowmanHook } from "../hooks/ShowmanHook";
-import { generateCombineRanksHook } from "../hooks/CombineRanksHook";
-import { generateCombineSuitsHook } from "../hooks/CombineSuitsHook";
+import { generateDiscountItemsHook } from "../Hooks/DiscountItemsHook";
+import { generateReduceFlushStraightRequirementsHook } from "../Hooks/ReduceFlushStraightRequirementsHook";
+import { generateShortcutHook } from "../Hooks/ShortcutHook";
+import { generateShowmanHook } from "../Hooks/ShowmanHook";
+import { generateCombineRanksHook } from "../Hooks/CombineRanksHook";
+import { generateCombineSuitsHook } from "../Hooks/CombineSuitsHook";
 
 
 

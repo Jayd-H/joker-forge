@@ -1,9 +1,9 @@
-import { VOUCHERS, VoucherData, getModPrefix, isCustomShader, isVanillaShader, } from "../../data/BalatroUtils";
+import { /*VOUCHERS,*/ VoucherData, getModPrefix, isCustomShader, isVanillaShader, } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
-import { generateUnlockVoucherFunction } from "../lib/unlockUtils";
+// import { generateUnlockVoucherFunction } from "../lib/unlockUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { parseRangeVariable, generateGameVariableCode, parseGameVariable } from "../lib/gameVariableUtils";
@@ -346,7 +346,7 @@ const calculateCode = generateCalculateFunction(activeRules, modPrefix, voucher)
   voucherCode += redeemCode ;
 }
 
-const drawCode = generateDrawFunction(voucher, modPrefix);
+const drawCode = generateDrawFunction(voucher /*, modPrefix*/ );
 if (typeof voucher.draw_shader_sprite === "string" && voucher.draw_shader_sprite !== "false") {
     voucherCode += ` ${drawCode},`;
   }
@@ -598,7 +598,7 @@ const generateLocVarsFunction = (
 
 const generateDrawFunction = (
   voucher: VoucherData,
-  modPrefix: string
+  // modPrefix: string
 ): string | null => {
 
   let drawFunction = `
