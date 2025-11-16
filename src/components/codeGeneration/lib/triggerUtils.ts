@@ -16,8 +16,11 @@ export const generateTriggerContext = (
 
   switch (triggerType) {
     case "consumable_used":
-      case "joker":
-        return `context.using_consumeable ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+      switch (objectType) {
+        case "joker":
+          return `context.using_consumeable ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+      }
+      break
 
     case "hand_played":
       switch (objectType) {
