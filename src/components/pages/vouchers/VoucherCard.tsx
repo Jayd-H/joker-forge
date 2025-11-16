@@ -23,7 +23,16 @@ import {
   getObjectName,
 } from "../../generic/GameObjectOrdering";
 import PlaceholderPickerModal from "../../generic/PlaceholderPickerModal";
-import { generateKeyFromName } from "./EditVoucherInfo";
+
+const generateKeyFromName = (name: string): string => {
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .replace(/\s+/g, "_")
+      .replace(/^[0-9]+/, "") || "custom_voucher"
+  );
+};
 
 interface VoucherCardProps {
   voucher: VoucherData;

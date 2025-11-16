@@ -130,7 +130,7 @@ export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["pool"],
         },
-        default: SUITS.map(_ => false)
+        default: SUITS.map(() => false)
       },
       {
         id: "specific_suit",
@@ -182,7 +182,7 @@ export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["pool"],
         },
-        default: RANKS.map(_ => false)
+        default: RANKS.map(() => false)
       },
       {
         id: "specific_rank",
@@ -235,7 +235,7 @@ export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["pool"],
         },
-        default: POKER_HANDS.map(_ => false)
+        default: POKER_HANDS.map(() => false)
       },
       {
         id: "specific_pokerhand",

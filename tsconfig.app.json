@@ -26,5 +26,6 @@
   "exclude": [
     "src/components/codeGeneration/oldFiles",
     "src/components/data/Old Files",
+    "src/components/codeGeneration/Skeletons",
   ],
 }
