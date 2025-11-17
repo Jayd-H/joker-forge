@@ -1288,7 +1288,6 @@ const Inspector: React.FC<InspectorProps> = ({
   const renderConditionEditor = () => {
     if (!selectedCondition || !selectedRule) return null;
     const conditionType = getConditionType(selectedCondition.type);
-    console.log(conditionType)
     if (!conditionType) return null;
     const paramsToRender = conditionType.params.filter((param) => {
       let showing = true

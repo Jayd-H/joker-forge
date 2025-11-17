@@ -2472,7 +2472,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
 export function getConditionTypeById(
   id: string
 ): GlobalConditionTypeDefinition | undefined {
-  console.log(CONDITIONS.find((conditionType) => conditionType.id === id))
   return CONDITIONS.find((conditionType) => conditionType.id === id);
 }
 
@@ -2485,7 +2484,6 @@ export function getConditionsForTrigger(
   }
 
   if ((itemType === "voucher" || itemType === "deck") && triggerId === "card_used") {
-    console.log(itemType)
     return []
   }
 
