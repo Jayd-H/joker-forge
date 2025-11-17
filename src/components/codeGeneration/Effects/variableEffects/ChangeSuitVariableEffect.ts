@@ -1,6 +1,7 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../lib/effectUtils";
 import { SUITS } from "../../../data/BalatroUtils"
+import { generateObjectContextCode } from "../../lib/codeGenUtils";
 
 export const generateChangeSuitVariableEffectCode = (
   effect: Effect,
@@ -39,17 +40,16 @@ export const generateChangeSuitVariableEffectCode = (
                 local suit_pool = {${suitPool}}
                 G.GAME.current_round.${variableName}_card.suit = pseudorandom_element(suit_pool, pseudoseed('randomSuit'))
                 __PRE_RETURN_CODE_END__`;
-  } else if (
-    changeType === "scored_card" || changeType === "destroyed_card" || changeType === "added_card" || 
-    changeType === "card_held_in_hand" || changeType === "discarded_card"
-  ) {
+  } else if (changeType === 'specific') {
     statement = `__PRE_RETURN_CODE__
-                G.GAME.current_round.${variableName}_card.suit = context.other_card.base.suit
-                __PRE_RETURN_CODE_END__`
+      G.GAME.current_round.${variableName}_card.suit = '${specificSuit}'
+      __PRE_RETURN_CODE_END__`;
   } else {
+    const valueCode = generateObjectContextCode(changeType)
+
     statement = `__PRE_RETURN_CODE__
-                G.GAME.current_round.${variableName}_card.suit = '${specificSuit}'
-                __PRE_RETURN_CODE_END__`;
+      G.GAME.current_round.${variableName}_card.suit = ${valueCode}
+      __PRE_RETURN_CODE_END__`
   }
 
   const result: EffectReturn = {

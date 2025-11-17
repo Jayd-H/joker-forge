@@ -493,43 +493,44 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
       const cardContexts: Array<{
         context: "rank_context" | "suit_context" | "enhancement_context" | "seal_context" | "edition_context", 
-        label: string
+        value: string,
+        label: string,
       }> = [
-        { context: "rank_context", label: "Rank" },
-        { context: "suit_context", label: "Suit" },
-        { context: "enhancement_context", label: "Enhancement" },
-        { context: "seal_context", label: "Seal" },
-        { context: "edition_context", label: "Edition" },
+        { context: "rank_context", value: "rank", label: "Rank" },
+        { context: "suit_context", value: "suit", label: "Suit" },
+        { context: "enhancement_context", value: "enhancement", label: "Enhancement" },
+        { context: "seal_context", value: "seal", label: "Seal" },
+        { context: "edition_context", value: "edition", label: "Edition" },
       ]
 
       cardContexts.forEach(item => {
         if (param.variableTypes?.includes(item.context)) {
           if (trigger === "card_scored") {
-            options.push({value: "scored_card", label: `Scored Card ${item.label}`})
+            options.push({value: `scored_card_${item.value}`, label: `Scored Card ${item.label}`})
           }
           if (trigger === "card_destroyed") {
-            options.push({value: "destroyed_card", label: `Destroyed Card ${item.label}`})
+            options.push({value: `destroyed_card_${item.value}`, label: `Destroyed Card ${item.label}`})
           }
           if (trigger === "card_discarded") {
-            options.push({value: "discarded_card", label: `Discarded Card ${item.label}`})
+            options.push({value: `discarded_card_${item.value}`, label: `Discarded Card ${item.label}`})
           }
           if (trigger === "card_held_in_hand" || trigger === "card_held_in_hand_end_of_round") {
-            options.push({value: "held_card", label: `Card Held in Hand ${item.label}`})
+            options.push({value: `held_card_${item.value}`, label: `Card Held in Hand ${item.label}`})
           }
           if (trigger === "card_added") {
-            options.push({value: "added_card", label: `Added Card ${item.label}`})
+            options.push({value: `added_card_${item.value}`, label: `Added Card ${item.label}`})
           } 
         }
       })
 
       if (param.variableTypes?.includes("edition_context")) {
         if (trigger === "joker_evaluated") {
-          options.push({value: "evaled_joker", label: `Evaluated Joker Edition`})
+          options.push({value: "evaled_joker_edition", label: `Evaluated Joker Edition`})
         }
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
           condition => condition.type === "joker_selected" && condition.negate === false
         ))) {
-          options.push({value: "selected_joker", label: "Selected Joker Edition", exempt: ["joker", "card", "voucher", "deck"] })
+          options.push({value: "selected_joker_edition", label: "Selected Joker Edition", exempt: ["joker", "card", "voucher", "deck"] })
         }
       }
 

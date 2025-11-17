@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateOperationCode } from "../lib/operationUtils";
+import { generateOperationCode } from "../lib/codeGenUtils";
 
 export const generateBoosterPackTypeConditionCode = (
   rules: Rule[],

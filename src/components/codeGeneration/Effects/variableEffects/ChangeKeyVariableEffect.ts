@@ -1,4 +1,5 @@
 import type { Effect } from "../../../ruleBuilder/types";
+import { generateObjectContextCode } from "../../lib/codeGenUtils";
 import type { EffectReturn } from "../../lib/effectUtils";
 import { generateConfigVariables } from "../../lib/gameVariableUtils";
 
@@ -118,11 +119,7 @@ const generateJokerKeyCode = (
   let valueCode = 'j_joker'
   let statement = '__PRE_RETURN_CODE__'
 
-  if (changeType === "evaled_joker") {
-    valueCode = "context.other_joker.config.center.key"
-  } else if (changeType === "selected_joker") {
-    valueCode = "G.jokers.highlighted[1].config.center.key"
-  } else if (changeType === "specific") {
+  if (changeType === "specific") {
     valueCode = `'${specificJoker}'`
   } else if (changeType === "random") {
 
@@ -195,7 +192,7 @@ const generateJokerKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `
@@ -217,9 +214,7 @@ const generateConsumableKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "used_consumable") {
-    valueCode = `context.consumeable.config.center.key`
-  } else if (changeType === "specific") {
+  if (changeType === "specific") {
     valueCode = `'${specificConsumable}'`
   } else if (changeType === "random") {
     valueCode = "random_consumable_result"
@@ -263,7 +258,7 @@ const generateConsumableKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
   
   statement += `
@@ -285,13 +280,7 @@ const generateEnhancementKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card") {
-    valueCode = `context.other_card.config.center.key`
-  } else if (changeType === "destroyed_card") {
-    valueCode = `context.removed_card.config.center.key`
-  } else if (changeType === "added_card") {
-    valueCode = `context.added_card.config.center.key`
-  } else if (changeType === "random") {
+  if (changeType === "random") {
     valueCode = "random_enhancement_result"
     statement += `local possible_enhancements = {}`
 
@@ -322,7 +311,7 @@ const generateEnhancementKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `
@@ -343,13 +332,7 @@ const generateSealKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card") {
-    valueCode = `context.other_card.seal`
-  } else if (changeType === "destroyed_card") {
-    valueCode = `context.removed_card.seal`
-  } else if (changeType === "added_card") {
-    valueCode = `context.added_card.seal`
-  } else if (changeType === "random") {
+  if (changeType === "random") {
     valueCode = "random_seal_result"
     statement += `local possible_seals = {}`
 
@@ -380,7 +363,7 @@ const generateSealKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `
@@ -401,17 +384,7 @@ const generateEditionKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "scored_card" || changeType === "discarded_card" || changeType === "held_card") {
-    valueCode = `context.other_card.edition.key`
-  } else if (changeType === "destroyed_card") {
-    valueCode = `context.removed_card.edition.key`
-  } else if (changeType === "added_card") {
-    valueCode = `context.added_card.edition.key`
-  } else if (changeType === "evaled_joker") {
-    valueCode = "context.other_joker.config.edition.key"
-  } else if (changeType === "selected_joker") {
-    valueCode = "G.jokers.highlighted[1].edition.key"
-  } else if (changeType === "random") {
+  if (changeType === "random") {
     valueCode = "random_edition_result"
     statement += `local possible_editions = {}`
 
@@ -442,7 +415,7 @@ const generateEditionKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `
@@ -502,7 +475,7 @@ const generateVoucherKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `
@@ -526,11 +499,7 @@ const generateBoosterKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "opened_booster") {
-    valueCode = `context.card.key`
-  } else if (changeType === "skipped_booster" || changeType === "exited_booster") {
-    valueCode = `context.booster.key`
-  } else if (changeType === "specific") {
+  if (changeType === "specific") {
     valueCode = `'${specificBooster}`
   } else if (changeType === "random") {
     valueCode = 'random_booster_result'
@@ -575,7 +544,7 @@ const generateBoosterKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `
@@ -595,9 +564,7 @@ const generateTagKeyCode = (
   let statement = ''
   let valueCode = ''
 
-  if (changeType === "added_tag") {
-    valueCode = `context.tag_added.key`
-  } else if (changeType === "blind_tag") {
+  if (changeType === "blind_tag") {
     valueCode = `currentTag`
     statement += `	
       local currentTag = 'none'		
@@ -637,7 +604,7 @@ const generateTagKeyCode = (
         end
       end`
   } else {
-    valueCode = `card.ability.extra.${changeType}`
+    valueCode = generateObjectContextCode(changeType)
   }
 
   statement += `

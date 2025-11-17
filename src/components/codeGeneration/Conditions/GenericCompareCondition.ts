@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { generateGameVariableCode } from "../lib/gameVariableUtils";
-import { generateOperationCode } from "../lib/operationUtils";
+import { generateOperationCode } from "../lib/codeGenUtils";
 
 export const generateGenericCompareConditionCode = (
   rules: Rule[],

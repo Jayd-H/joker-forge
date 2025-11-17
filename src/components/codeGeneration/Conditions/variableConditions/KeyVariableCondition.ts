@@ -1,4 +1,5 @@
 import type { Rule } from "../../../ruleBuilder/types";
+import { generateObjectContextCode } from "../../lib/codeGenUtils";
 
 export const generateKeyVariableConditionCode = (
   rules: Rule[],
@@ -7,12 +8,11 @@ export const generateKeyVariableConditionCode = (
   const variableName = (condition.params.variable_name as string) || "keyvar";
   const checkType = (condition.params.check_type as string) || "custom_text";
 
-switch (checkType) {
-    case "custom_text":
-      return `card.ability.extra.${variableName} == "${condition.params?.specific_key || "none"}"`;
-    case "key_variable":
-      return `card.ability.extra.${variableName} == card.ability.extra.${condition.params?.key_variable || "keyvar"}`;
-    default:
-      return `card.ability.extra.${variableName} == "${condition.params?.specific_key || "none"}"`;
+  const valueCode = generateObjectContextCode(checkType)
+
+  if (checkType === 'custom_text') {
+    return `card.ability.extra.${variableName} == "${condition.params?.specific_key || "none"}"`;
+  } else {
+    return `card.ability.extra.${variableName} == ${valueCode}`;
   }
-};
+}
