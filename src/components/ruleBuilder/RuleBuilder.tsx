@@ -23,12 +23,12 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { sortableKeyboardCoordinates, arrayMove } from "@dnd-kit/sortable";
 import type {
-  EffectTypeDefinition,
+  GlobalEffectTypeDefinition,
   Rule,
   Condition,
   Effect,
   RandomGroup,
-  ConditionTypeDefinition,
+  GlobalConditionTypeDefinition,
   LoopGroup,
   SelectedItem,
 } from "./types";
@@ -487,7 +487,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
   const generateAutoTitle = (
     item: Condition | Effect,
-    typeDefinition: ConditionTypeDefinition | EffectTypeDefinition,
+    typeDefinition: GlobalConditionTypeDefinition | GlobalEffectTypeDefinition,
     isCondition: boolean
   ): string => {
     const baseLabel = typeDefinition.label;

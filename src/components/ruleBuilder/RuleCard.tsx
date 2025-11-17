@@ -100,8 +100,7 @@ const SortableCondition: React.FC<{
   parameterCount,
   dynamicTitle,
 }) => {
-  const getConditionType = getConditionTypeById
-  const conditionType = getConditionType(condition.type);
+  const conditionType = getConditionTypeById(condition.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: condition.id });
@@ -159,8 +158,7 @@ const SortableEffect: React.FC<{
   parameterCount,
   dynamicTitle,
 }) => {
-  const getEffectType = getEffectTypeById
-  const effectType = getEffectType(effect.type);
+  const effectType = getEffectTypeById(effect.type);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: effect.id });
@@ -305,8 +303,6 @@ const RuleCard: React.FC<RuleCardProps> = ({
   itemType,
   onRuleDoubleClick,
 }) => {
-  const getTrigger = getTriggerById
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [groupOperators, setGroupOperators] = useState<Record<string, string>>(
     {}
@@ -369,7 +365,7 @@ const RuleCard: React.FC<RuleCardProps> = ({
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  const trigger = getTrigger(rule.trigger);
+  const trigger = getTriggerById(rule.trigger);
   const allConditions = rule.conditionGroups.flatMap(
     (group) => group.conditions
   );
