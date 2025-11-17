@@ -152,7 +152,7 @@ export const generateModifyInternalVariableEffectCode = (
             end
           end`
           break
-        case "selected_joker_key":
+        case "selected_joker":
           operationCode = `
           for i = 1, #G.jokers.cards do
             if G.jokers.cards[i] == G.jokers.highlighted[1] then
@@ -161,7 +161,7 @@ export const generateModifyInternalVariableEffectCode = (
             end
         end`
           break
-        case "evaled_joker_key":
+        case "evaled_joker":
           operationCode = `
           for i = 1, #G.jokers.cards do
             if G.jokers.cards[i] == context.other_joker then
