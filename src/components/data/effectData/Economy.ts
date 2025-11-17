@@ -78,7 +78,7 @@ export const ECONOMY_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Earn Blind Reward Payout",
     description: "Earn money as a part of the blind reward payout",
     objectUsers: ["joker"],
-    applicableTriggers: ["round_end"],
+    applicableTriggers: ["round_end", "boss_defeated"],
     params: [
       {
         id: "value",
