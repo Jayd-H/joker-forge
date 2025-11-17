@@ -27,6 +27,10 @@ export const CONSUMABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
         type: "select",
         label: "Key Variable",
         options: [],
+        showWhen: {
+          parameter: "set",
+          values: ["keyvar"],
+        },
         variableTypes: ["key"]
       },{
         id: "specific_card",
