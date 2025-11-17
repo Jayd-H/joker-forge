@@ -284,6 +284,7 @@ const generateSingleJokerCode = (
   const configVars = calculateResult?.configVariables || []
 
   const blindRewards: {condition: string, effect: string}[] = []
+  const bossBlindRewards: {condition: string, effect: string}[] = []
   const endRoundRules = joker.rules?.filter(rule => rule.trigger === 'round_end')
   endRoundRules?.forEach(rule => {
     rule.effects.forEach(effect => {
@@ -296,10 +297,18 @@ const generateSingleJokerCode = (
             variableName,
             'joker'
         )
-        blindRewards.push({
-          condition: generateConditionChain(rule, 'joker', joker),
-          effect: valueCode.replace('ability', 'config'),
-        })
+
+        if (rule.trigger === 'round_end') {
+          blindRewards.push({
+            condition: generateConditionChain(rule, 'joker', joker),
+            effect: valueCode.replace('ability', 'config'),
+          })
+        } else if (rule.trigger === 'boss_defeated') {
+          bossBlindRewards.push({
+            condition: generateConditionChain(rule, 'joker', joker),
+            effect: valueCode.replace('ability', 'config'),
+          })
+        }
         configVars.push(...configVariables)
       }
     })
@@ -440,10 +449,33 @@ const generateSingleJokerCode = (
     jokerCode += `,\n\n    ${setStickerCode}`;
   }
 
-  if (blindRewards.length > 0) {
+  if (blindRewards.length > 0 || bossBlindRewards.length > 0) {
     let blindRewardCode = `
     calc_dollar_bonus = function(card)
       local blind_reward = 0`
+
+    if (bossBlindRewards.length > 0) {
+      blindRewardCode += `
+        if G.GAME.blind and G.GAME.blind.boss then`
+
+      bossBlindRewards.forEach(value => {
+        if (value.condition) {
+          blindRewardCode += `
+            if ${value.condition} then`
+        }
+
+        blindRewardCode += `
+          blind_reward = blind_reward + math.max(${value.effect}, 0)`
+
+        if (value.condition) {
+          blindRewardCode += `
+            end`
+        }
+
+        blindRewardCode += `
+        end`
+      }) 
+    }
     blindRewards.forEach(value => {
       if (value.condition) {
         blindRewardCode += `
