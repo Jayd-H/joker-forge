@@ -439,7 +439,6 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
     while (showing && currentParam && hasShowWhen(currentParam)) {
       const { parameter, values }: ShowWhenCondition = currentParam.showWhen;
       const parentValue = parentValues[parameter];
-      console.log(`Has show when? ${hasShowWhen(currentParam)}`)
 
       if (Array.isArray(parentValue) && typeof parentValue[0] === "boolean") {
         if (!values.some(value => parentValue[parseFloat(value)])) {
@@ -473,9 +472,9 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         options = param.options.map((option) => ({
           value: option.value,
           label: option.label,
-          exempt: option.exempt
+          exempt: option.exempt ?? undefined
         }));
-      }
+      } 
 
       const trigger = selectedRule.trigger
       const triggerDef = getTriggerById(trigger)
@@ -1290,11 +1289,9 @@ const Inspector: React.FC<InspectorProps> = ({
     if (!selectedCondition || !selectedRule) return null;
     const conditionType = getConditionType(selectedCondition.type);
     if (!conditionType) return null;
-
     const paramsToRender = conditionType.params.filter((param) => {
       let showing = true
       let currentParam: ConditionParameter | undefined = param
-      const currentEffect = getConditionTypeById(selectedCondition.type)
 
       while (showing && currentParam && hasShowWhen(currentParam)) {
         const { parameter, values }: ShowWhenCondition = currentParam.showWhen;
@@ -1310,7 +1307,7 @@ const Inspector: React.FC<InspectorProps> = ({
           }
         }
 
-        currentParam = currentEffect?.params.find(param => param.id === parameter)
+        currentParam = conditionType?.params.find(param => param.id === parameter)
       }
       return showing
     })

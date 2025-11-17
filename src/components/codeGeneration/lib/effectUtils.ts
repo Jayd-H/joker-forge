@@ -84,7 +84,7 @@ import { generateEditDiscardsMoneyEffectCode } from "../Effects/EditEndRoundDisc
 import { generateEditHandsMoneyEffectCode } from "../Effects/EditEndRoundHandMoneyEffect";
 import { generateEditInterestCapEffectCode } from "../Effects/EditInterestCapEffect";
 import { generateEditRerollPriceEffectCode } from "../Effects/EditRerollPriceEffect";
-import { generateEditBoosterPacksEffectCode } from "../Effects/EditBoosterPacksEffect";
+import { generateEditBoosterPacksEffectCode, generateEditBoosterPacksPassiveEffectCode } from "../Effects/EditBoosterPacksEffect";
 import { generateEditItemWeightEffectCode } from "../Effects/EditItemWeightEffect";
 import { coordinateVariableConflicts } from "./userVariableUtils";
 import { generateEditStartingDollarsEffectCode } from "../Effects/EditStartingDeckEffects/EditStartingDollarsEffect";
@@ -1001,6 +1001,8 @@ const generateSinglePassiveEffect = (
       return generateEditJokerSlotsPassiveEffectCode(effect)
     case "edit_joker_size":
       return generateEditJokerSizePassiveEffectCode(effect)
+    case "edit_booster_packs":
+      return generateEditBoosterPacksPassiveEffectCode(effect)
     case "shortcut":
       return generateShortcutPassiveEffectCode(jokerKey)
     case "reduce_flush_straight_requirements":

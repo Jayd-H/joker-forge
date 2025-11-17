@@ -63,10 +63,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition",
         options: [
           { value: "none", label: "No Edition" }, 
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
+          ...EDITIONS()
         ],
         default: "none",
         variableTypes: ["key"],
@@ -143,10 +140,7 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition for Copy",
         options: [
           { value: "none", label: "No Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
+          ...EDITIONS()
           ],
         default: "none",
       },
@@ -192,13 +186,10 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
         type: "select",
         label: "Edition to Apply",
         options: [
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "none", label: "No Change" },
           { value: "random", label: "Random Edition" },
           { value: "remove", label: "Remove Edition" },
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -207,13 +198,9 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
         type: "select",
         label: "Sticker",
         options: [
-          ...STICKERS.map((sticker) => ({
-            key: sticker.key,
-            value: sticker.value,
-            label: sticker.label,
-          })),
         { value: "none", label: "No Change" },
         { value: "remove", label: "Remove Sticker" },
+        ...STICKERS,
         ],
         default: "none",
       },

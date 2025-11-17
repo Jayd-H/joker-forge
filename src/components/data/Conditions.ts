@@ -602,7 +602,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Enhancement Type",
         options: [
           { value: "any", label: "Any Enhancement" },
-          ...ENHANCEMENTS().map(e => {return {value: e.value, label: e.label}}),
+          ...ENHANCEMENTS(),
         ],
       },
     ],
@@ -628,7 +628,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
-          ...EDITIONS().map(e => {return {value: e.value, label: e.label}}),
+          ...EDITIONS(),
         ],
       },
     ],
@@ -653,7 +653,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Seal Type",
         options: [
           { value: "any", label: "Any Seal" }, 
-          ...SEALS().map(s => {return {value: s.value, label: s.label}}),
+          ...SEALS(),
         ]
       },
     ],
@@ -744,7 +744,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Enhancement Type",
         options: [
           { value: "any", label: "Any Enhancement" },
-          ...ENHANCEMENTS().map(e => {return {value: e.value, label: e.label}}),
+          ...ENHANCEMENTS(),
         ],
       },
       {
@@ -787,7 +787,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "any", label: "Any Edition" }, 
-          ...EDITIONS().map(e => {return {value: e.value, label: e.label}})
+          ...EDITIONS()
         ],
       },
       {
@@ -830,7 +830,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Seal Type",
         options: [
           { value: "any", label: "Any Seal" }, 
-          ...SEALS().map(s => {return {value: s.value, label: s.label}})
+          ...SEALS()
         ],
       },
       {
@@ -974,7 +974,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Rarity",
         options: [
           { value: "any", label: "Any Rarity" }, 
-          ...RARITIES().map(r => {return {value: r.value, label: r.label}})
+          ...RARITIES()
         ],
         default: "any",
       },
@@ -1342,7 +1342,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Consumable Type",
         options: [
           { value: "any", label: "Any Consumable" },
-          ...CONSUMABLE_SETS().map(cs => {return {value: cs.value, label: cs.label}}),
+          ...CONSUMABLE_SETS(),
         ],
         default: "any",
       },
@@ -1359,17 +1359,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
 
           // Handle vanilla sets
           if (selectedSet === "Tarot") {
-            const vanillaCards = TAROT_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = TAROT_CARDS
 
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Tarot")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
 
             return [
               { value: "any", label: "Any from Set" },
@@ -1379,17 +1372,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
           }
 
           if (selectedSet === "Planet") {
-            const vanillaCards = PLANET_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = PLANET_CARDS
 
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Planet")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
 
             return [
               { value: "any", label: "Any from Set" },
@@ -1399,17 +1385,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
           }
 
           if (selectedSet === "Spectral") {
-            const vanillaCards = SPECTRAL_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = SPECTRAL_CARDS
 
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Spectral")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
 
             return [
               { value: "any", label: "Any from Set" },
@@ -1465,7 +1444,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Consumable Type",
         options: [
           { value: "any", label: "Any Consumable" },
-          ...CONSUMABLE_SETS().map(cs => {return {value: cs.value, label: cs.label}}),
+          ...CONSUMABLE_SETS(),
         ],
         default: "any",
       },
@@ -1482,17 +1461,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
 
           // Handle vanilla sets
           if (selectedSet === "Tarot") {
-            const vanillaCards = TAROT_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = TAROT_CARDS
 
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Tarot")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
 
             return [
               { value: "any", label: "Any from Set" },
@@ -1502,17 +1474,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
           }
 
           if (selectedSet === "Planet") {
-            const vanillaCards = PLANET_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = PLANET_CARDS
 
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Planet")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
 
             return [
               { value: "any", label: "Any from Set" },
@@ -1522,17 +1487,10 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
           }
 
           if (selectedSet === "Spectral") {
-            const vanillaCards = SPECTRAL_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = SPECTRAL_CARDS
 
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Spectral")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
 
             return [
               { value: "any", label: "Any from Set" },
@@ -1784,7 +1742,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Rarity",
         options: [
           {value: "any", label: "Any"},
-          ...RARITIES().map(r => {return {value: r.value, label: r.label}}),
+          ...RARITIES(),
         ],
         showWhen: {
           parameter: "check_key",
@@ -1828,7 +1786,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Voucher",
         options: [
-          ...VOUCHERS().map(v => {return {value: v.value, label: v.label}})
+          ...VOUCHERS(),
         ],
         default: "v_overstock_norm",
       },
@@ -1927,7 +1885,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Deck",
         options: [
-        ...DECKS().map(d => {return {value: d.value, label: d.label}}),
+        ...DECKS(),
         ],
         default: "Red Deck",
       },
@@ -2044,7 +2002,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Enhancement" },
           { value: "none", label: "No Enhancement" },
-          ...ENHANCEMENTS().map(e => {return {value: e.value, label: e.label}}),
+          ...ENHANCEMENTS(),
         ],
         showWhen: {
           parameter: "property_type",
@@ -2058,7 +2016,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Seal" },
           { value: "none", label: "No Seal" },
-          ...SEALS().map(s => {return {value: s.value, label: s.label}}),
+          ...SEALS(),
         ],
         showWhen: {
           parameter: "property_type",
@@ -2072,7 +2030,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         options: [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
-          ...EDITIONS().map(e => {return {value: e.value, label: e.label}}),
+          ...EDITIONS(),
         ],
         showWhen: {
           parameter: "property_type",
@@ -2266,7 +2224,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Rarity",
         options: [
-          ...RARITIES().map(r => {return {value: r.value, label: r.label}})
+          ...RARITIES(),
         ],
         default: "common",
       },
@@ -2347,7 +2305,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Sticker",
         options: [
-          ...STICKERS.map(s => {return {value: s.value, label: s.label}})
+          ...STICKERS
         ],
         default: "eternal",
       },
@@ -2366,7 +2324,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Sticker",
         options: [
-          ...STICKERS.map(s => {return {value: s.value, label: s.label}})
+          ...STICKERS
         ],
         default: "eternal",
       },
@@ -2526,7 +2484,6 @@ export function getConditionsForTrigger(
   }
 
   if ((itemType === "voucher" || itemType === "deck") && triggerId === "card_used") {
-    console.log(itemType)
     return []
   }
 

@@ -440,7 +440,7 @@ export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
         type: "select",
         label: "Consumable Set",
         options: [
-          ...CONSUMABLE_SETS().map(set => {return { value: set.value, label: set.label }})
+          ...CONSUMABLE_SETS(),
         ],
         default: "all",
         showWhen: {

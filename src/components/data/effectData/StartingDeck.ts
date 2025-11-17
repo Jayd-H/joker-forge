@@ -26,7 +26,7 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "Face Cards", label: "Face Cards" },
           { value: "Numbered Cards", label: "Numbered Cards" },
           { value: "pool", label: "Random from pool" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          ...RANKS,
         ],
         default: "random",
       },
@@ -89,10 +89,7 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
+          ...EDITIONS(),
           { value: "random", label: "Random" },
         ],
         default: "none",
@@ -163,11 +160,8 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Change" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "random", label: "Random" },
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -188,8 +182,8 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Rank",
         options: [
           { value: "none", label: "No Change" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
           { value: "random", label: "Random Rank" },
+          ...RANKS
         ],
         default: "none",
       },
@@ -238,11 +232,8 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Change" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "random", label: "Random" },
+          ...EDITIONS()
         ],
         default: "none",
       },
@@ -272,9 +263,7 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "specific_selected_Rank",
         type: "select",
         label: "Rank",
-        options: [
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
-        ],
+        options: [...RANKS],
         default: "King",
       },
       {
@@ -283,8 +272,8 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "No Change" },
-          ...ENHANCEMENTS(),
           { value: "random", label: "Random Enhancement" },
+          ...ENHANCEMENTS(),
         ],
         default: "none",
       },
@@ -305,11 +294,8 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Change" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "random", label: "Random" },
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -319,9 +305,9 @@ export const STARTING_DECK_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Rank Replacer/Deleter",
         options: [
           { value: "none", label: "No Change" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
           { value: "random", label: "Random Rank" },
           { value: "remove", label: "Remove Rank" },
+          ...RANKS,
         ],
         default: "none",
       },
