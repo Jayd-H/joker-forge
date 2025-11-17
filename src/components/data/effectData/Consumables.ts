@@ -43,48 +43,31 @@ export const CONSUMABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
           }
           // Handle vanilla sets
           if (selectedSet === "Tarot") {
-            const vanillaCards = TAROT_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = TAROT_CARDS
+
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Tarot")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
+
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];}
           if (selectedSet === "Planet") {
-            const vanillaCards = PLANET_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = PLANET_CARDS
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Planet")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
+
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,
               ...customCards,
             ];}
           if (selectedSet === "Spectral") {
-            const vanillaCards = SPECTRAL_CARDS.map((card) => ({
-              value: card.key,
-              label: card.label,
-            }));
+            const vanillaCards = SPECTRAL_CARDS
             const customCards = CUSTOM_CONSUMABLES()
               .filter((consumable) => consumable.set === "Spectral")
-              .map((consumable) => ({
-                value: consumable.value,
-                label: consumable.label,
-              }));
+
             return [
               { value: "random", label: "Random from Set" },
               ...vanillaCards,

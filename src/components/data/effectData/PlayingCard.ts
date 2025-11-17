@@ -76,10 +76,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...ENHANCEMENTS().map((enhancement) => ({
-            value: enhancement.key,
-            label: enhancement.label,
-          })),
+          ...ENHANCEMENTS()
         ],
         default: "none",
         variableTypes: ["key"],
@@ -91,10 +88,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...SEALS().map((seal) => ({
-            value: seal.key,
-            label: seal.label,
-          })),
+          ...SEALS()
         ],
         default: "none",
         variableTypes: ["key"],
@@ -106,10 +100,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
+          ...EDITIONS()
         ],
         default: "none",
         variableTypes: ["key"],
@@ -141,7 +132,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "Face Cards", label: "Face Cards" },
           { value: "Numbered Cards", label: "Numbered Cards" },
           { value: "pool", label: "Random from pool" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          ...RANKS,
         ],
         default: "random",
       },
@@ -181,11 +172,8 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "No Enhancement" },
-          ...ENHANCEMENTS().map((enhancement) => ({
-            value: enhancement.key,
-            label: enhancement.label,
-          })),
           { value: "random", label: "Random Enhancement" },
+          ...ENHANCEMENTS()
         ],
         default: "none",
       },
@@ -196,10 +184,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "No Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS().map((seal) => ({
-            value: seal.key,
-            label: seal.label,
-          })),
+          ...SEALS(),
         ],
         default: "none",
       },
@@ -209,11 +194,8 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Edition Type",
         options: [
           { value: "none", label: "No Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "random", label: "Random Edition" },
+          ...EDITIONS()
         ],
         default: "none",
       },
@@ -316,11 +298,8 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Enhancement Type",
         options: () => [
           { value: "none", label: "Keep Original Enhancement" },
-          ...ENHANCEMENTS().map((enhancement) => ({
-            value: enhancement.key,
-            label: enhancement.label,
-          })),
           { value: "random", label: "Random Enhancement" },
+          ...ENHANCEMENTS()
         ],
         default: "none",
       },
@@ -331,10 +310,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: () => [
           { value: "none", label: "Keep Original Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS().map((seal) => ({
-            value: seal.key,
-            label: seal.label,
-          })),
+          ...SEALS(),
         ],
         default: "none",
       },
@@ -345,11 +321,8 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "none", label: "Keep Original Edition" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "random", label: "Random Edition" },
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -375,7 +348,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "none", label: "Don't Change" },
           { value: "random", label: "Random" },
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
+          ...RANKS,
         ],
         default: "none",
         variableTypes: ["rank"],
@@ -412,10 +385,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Enhancement" },
           { value: "random", label: "Random" },
-          ...ENHANCEMENTS().map((enhancement) => ({
-            value: enhancement.key,
-            label: enhancement.label,
-          })),
+          ...ENHANCEMENTS(),
         ],
         default: "none",
         variableTypes: ["key"],
@@ -428,10 +398,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Seal" },
           { value: "random", label: "Random" },
-          ...SEALS().map((seal) => ({
-            value: seal.key,
-            label: seal.label,
-          })),
+          ...SEALS(),
         ],
         default: "none",
         variableTypes: ["key"],
@@ -444,10 +411,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Edition" },
           { value: "random", label: "Random" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
+          ...EDITIONS(),
         ],
         default: "none",
         variableTypes: ["key"],
@@ -479,8 +443,8 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Enhancement" },
-          ...ENHANCEMENTS().map((enhancement) => ({value: enhancement.key, label: enhancement.label})),
           { value: "random", label: "Random Enhancement" },
+          ...ENHANCEMENTS(),
         ],
         default: "none",
       },
@@ -492,10 +456,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Seal" },
           { value: "random", label: "Random Seal" },
-          ...SEALS().map((seal) => ({
-            value: seal.key,
-            label: seal.label,
-          })),
+          ...SEALS(),
         ],
         default: "none",
       },
@@ -506,11 +467,8 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Edition" },
-          ...EDITIONS().map((edition) => ({
-            value: edition.key,
-            label: edition.label,
-          })),
           { value: "random", label: "Random Edition" },
+          ...EDITIONS(),
         ],
         default: "none",
       },
@@ -542,9 +500,9 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         label: "Rank",
         options: [
           { value: "none", label: "No Change" },
-          ...RANKS.map((rank) => ({ value: rank.value, label: rank.label })),
           { value: "random", label: "Random Rank" },
           { value: "pool", label: "Random from Pool" },
+          ...RANKS,
         ],
         default: "none",
       },
@@ -604,9 +562,9 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         type: "select",
         label: "Target Rank",
         options: [
-          ...RANKS.map((rank) => ({ value: rank.label, label: rank.label })),
           { value: "random", label: "Random Rank" },
           { value: "pool", label: "Random from Pool" },
+          ...RANKS,
         ],
         default: "Ace",
       },
