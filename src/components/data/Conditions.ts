@@ -600,7 +600,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "enhancement",
         type: "select",
         label: "Enhancement Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Enhancement" },
           ...ENHANCEMENTS(),
         ],
@@ -625,7 +625,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
           ...EDITIONS(),
@@ -651,7 +651,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "seal",
         type: "select",
         label: "Seal Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Seal" }, 
           ...SEALS(),
         ]
@@ -742,7 +742,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "enhancement",
         type: "select",
         label: "Enhancement Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Enhancement" },
           ...ENHANCEMENTS(),
         ],
@@ -785,7 +785,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Edition" }, 
           ...EDITIONS()
         ],
@@ -828,7 +828,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "seal",
         type: "select",
         label: "Seal Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Seal" }, 
           ...SEALS()
         ],
@@ -972,7 +972,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "rarity",
         type: "select",
         label: "Rarity",
-        options: [
+        options: () => [
           { value: "any", label: "Any Rarity" }, 
           ...RARITIES()
         ],
@@ -1340,7 +1340,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "consumable_type",
         type: "select",
         label: "Consumable Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Consumable" },
           ...CONSUMABLE_SETS(),
         ],
@@ -1442,7 +1442,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "consumable_type",
         type: "select",
         label: "Consumable Type",
-        options: [
+        options: () => [
           { value: "any", label: "Any Consumable" },
           ...CONSUMABLE_SETS(),
         ],
@@ -1740,7 +1740,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "rarity",
         type: "select",
         label: "Rarity",
-        options: [
+        options: () => [
           {value: "any", label: "Any"},
           ...RARITIES(),
         ],
@@ -1785,7 +1785,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "voucher",
         type: "select",
         label: "Voucher",
-        options: [
+        options: () => [
           ...VOUCHERS(),
         ],
         default: "v_overstock_norm",
@@ -1884,7 +1884,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "decks",
         type: "select",
         label: "Deck",
-        options: [
+        options: () => [
         ...DECKS(),
         ],
         default: "Red Deck",
@@ -1999,7 +1999,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "enhancement",
         type: "select",
         label: "Enhancement",
-        options: [
+        options: () => [
           { value: "any", label: "Any Enhancement" },
           { value: "none", label: "No Enhancement" },
           ...ENHANCEMENTS(),
@@ -2013,7 +2013,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "seal",
         type: "select",
         label: "Seal",
-        options: [
+        options: () => [
           { value: "any", label: "Any Seal" },
           { value: "none", label: "No Seal" },
           ...SEALS(),
@@ -2027,7 +2027,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [
+        options: () => [
           { value: "any", label: "Any Edition" },
           { value: "none", label: "No Edition" },
           ...EDITIONS(),
@@ -2223,7 +2223,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "rarity",
         type: "select",
         label: "Rarity",
-        options: [
+        options: () => [
           ...RARITIES(),
         ],
         default: "common",
