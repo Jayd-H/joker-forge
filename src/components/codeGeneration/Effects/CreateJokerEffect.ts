@@ -1,5 +1,6 @@
 import { EDITIONS, getModPrefix } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
+import { generateObjectContextCode } from "../lib/codeGenUtils";
 import type { EffectReturn } from "../lib/effectUtils";
 
 export const generateCreateJokerEffectCode = (
@@ -60,16 +61,12 @@ const generateJokerCode = (
     cardParams.push(`set = 'Joker'`);
   }
 
- if (jokerType !== "random" && jokerType !== "pool") {
+  if (jokerType !== "random" && jokerType !== "pool") {
     if ((jokerType === "specific" && normalizedJokerKey)) {
       cardParams.push(`key = '${normalizedJokerKey}'`);
-    } else if (jokerType === "selected_joker") {
-      cardParams.push(`key =  G.jokers.highlighted[1].key`);
-    }
-    else if (jokerType === "evaled_joker") {
-      cardParams.push(`key = context.other_joker.config.center.key`);
     } else {
-      cardParams.push(`key = card.ability.extra.${jokerType}`);
+      const valueCode = generateObjectContextCode(jokerType)
+      cardParams.push(`key =  ${valueCode}`);
     }
   } else if (rarity !== "random" && (!pool || !pool.trim())) {
     const rarityMap: Record<string, string> = {

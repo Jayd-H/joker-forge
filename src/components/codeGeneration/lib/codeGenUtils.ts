@@ -22,11 +22,29 @@ export const generateOperationCode = (
 
 export const generateObjectContextCode = (
   context: string,
+  getCard?: boolean,
 ) => {
+  if (getCard) {
+    switch (context) {
+      case "evaled_joker":
+        return "context.other_joker"
+      case "selected_joker":
+        return "G.jokers.highlighted[1]" 
+      case "scored_card": case "discarded_card": case "held_card":
+        return "context.other_card"
+      case "destroyed_card":
+        return "context.removed_card"
+      case "added_card":
+        return "context.added_card"
+      default:
+        return ""
+    }
+  }
+
   switch (context) {
-    case "evaled_joker":
+    case "evaled_joker_key":
       return "context.other_joker.config.center.key"
-    case "selected_joker":
+    case "selected_joker_key":
       return "G.jokers.highlighted[1].config.center.key"
 
     case "used_consumable":

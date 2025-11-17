@@ -1,4 +1,5 @@
 import type { Effect } from "../../ruleBuilder/types";
+import { generateObjectContextCode } from "../lib/codeGenUtils";
 import type { EffectReturn } from "../lib/effectUtils";
 import {
   generateConfigVariables,
@@ -60,6 +61,9 @@ const generateJokerCode = (
             end
         end
         local `}
+
+    const contextTarget = generateObjectContextCode(target, true)
+
     switch (specificTarget) {
       case "right":
         targetJokerLogic += `target_card = (my_pos and my_pos < #G.jokers.cards) and G.jokers.cards[my_pos + 1] or nil`;
@@ -80,6 +84,9 @@ const generateJokerCode = (
         targetJokerLogic += `chosenTarget = pseudorandom(${effect.id.substring(0,8)}, 1, #G.jokers.cards) or nil
         target_card = G.jokers.cards[chosenTarget]`;
         break;
+      default:
+        targetJokerLogic += `target_card = ${contextTarget}`;
+        break
     }
     sellValueCode += `${targetJokerLogic}`
   }

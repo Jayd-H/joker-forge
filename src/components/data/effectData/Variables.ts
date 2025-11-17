@@ -246,7 +246,7 @@ export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "change_type",
           values: ["specific"],
         },
-        variableTypes: ["pokerhand", "joker_context"]
+        variableTypes: ["pokerhand"]
       },
     ],
     category: "Variables",
