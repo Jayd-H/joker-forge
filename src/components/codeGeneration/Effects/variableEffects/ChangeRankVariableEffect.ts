@@ -1,6 +1,5 @@
 import { getRankId, RANKS } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
-import { generateObjectContextCode } from "../../lib/codeGenUtils";
 import type { EffectReturn } from "../../lib/effectUtils";
 
 export const generateChangeRankVariableEffectCode = (
@@ -40,17 +39,19 @@ export const generateChangeRankVariableEffectCode = (
                 local rank_pool = {${rank_pool}}
                 G.GAME.current_round.${variableName}_card.rank = pseudorandom_element(rank_pool, pseudoseed('randomRank'))
                 __PRE_RETURN_CODE_END__`;
-  } else if (changeType === 'specific') {
+  } else if (
+    changeType === "scored_card" || changeType === "destroyed_card" || changeType === "added_card" || 
+    changeType === "card_held_in_hand" || changeType === "discarded_card"
+  ) {
+    statement = `__PRE_RETURN_CODE__
+                G.GAME.current_round.${variableName}_card.rank = context.other_card.base.id
+                __PRE_RETURN_CODE_END__`
+  } else {
     const rankId = getRankId(specificRank);
     statement = `__PRE_RETURN_CODE__
-      G.GAME.current_round.${variableName}_card.rank = '${specificRank}'
-      G.GAME.current_round.${variableName}_card.id = ${rankId}
-      __PRE_RETURN_CODE_END__`;
-  } else {
-    const valueCode = generateObjectContextCode(changeType)
-    statement = `__PRE_RETURN_CODE__
-      G.GAME.current_round.${variableName}_card.rank = ${valueCode}
-      __PRE_RETURN_CODE_END__`
+                    G.GAME.current_round.${variableName}_card.rank = '${specificRank}'
+                    G.GAME.current_round.${variableName}_card.id = ${rankId}
+                    __PRE_RETURN_CODE_END__`;
   }
 
   const result: EffectReturn = {

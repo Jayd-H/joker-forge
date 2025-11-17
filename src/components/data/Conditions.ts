@@ -1128,7 +1128,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Suit",
         options: [...SUITS],
         default: "Spades",
-        variableTypes: ["suit_context"]
       },
     ],
     category: "Variables",
@@ -1152,7 +1151,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         label: "Rank",
         options: [...RANKS],
         default: "A",
-        variableTypes: ["rank_context"]
       },
     ],
     category: "Variables",
@@ -1264,10 +1262,6 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
           { value: "key_var", label: "Key Variable" },
         ],
         default: "custom_text",
-        variableTypes: [
-          "joker_context", "consumable_context", "enhancement_context",
-          "booster_context", "edition_context", "seal_context", "tag_context"
-        ]
       },
       {
         id: "specific_key",
