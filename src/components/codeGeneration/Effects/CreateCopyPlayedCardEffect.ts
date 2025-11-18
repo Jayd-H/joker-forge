@@ -66,7 +66,8 @@ const generateJokerCode = (
             copied_card:start_materialize()
             return true
         end
-    }))` 
+    }))
+  end` 
   
   if (isScoring) {
     return {
