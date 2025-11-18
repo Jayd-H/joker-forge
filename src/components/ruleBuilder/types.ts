@@ -50,15 +50,6 @@ export interface Effect {
   customMessage?: string;
 }
 
-// Interface for trigger definitions
-export interface TriggerDefinition {
-  id: string;
-  label: string;
-  description: string;
-  category: string;
-  objectUsers?: (string)[]
-}
-
 export interface GlobalTriggerDefinition {
   id: string;
   label: Record <string, string>;
@@ -102,16 +93,6 @@ export interface ConditionParameter {
   exemptObjects?: string[]
 }
 
-// Interface for condition type definitions
-export interface ConditionTypeDefinition {
-  id: string;
-  label: string;
-  description: string;
-  params: ConditionParameter[];
-  applicableTriggers?: string[];
-  category: string;
-}
-
 export interface GlobalConditionTypeDefinition {
   id: string;
   label: string;
@@ -151,16 +132,6 @@ export interface EffectParameter {
   "edition_context" | "consumable_context" | "tag_context" | "booster_context" | "voucher_context"
   >;  
   exemptObjects?: string[]
-}
-
-// Interface for effect type definitions
-export interface EffectTypeDefinition {
-  id: string;
-  label: string;
-  description: string;
-  params: EffectParameter[];
-  applicableTriggers?: string[];
-  category: string;
 }
 
 export interface GlobalEffectTypeDefinition {

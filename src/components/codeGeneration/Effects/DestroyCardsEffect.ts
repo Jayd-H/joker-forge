@@ -66,7 +66,7 @@ const generateConsumableCode = (
   case "random":  
   default:      
     return {
-      statement: `
+      statement: `__PRE_RETURN_CODE__
         local destroyed_cards = {}
         local temp_hand = {}
 
@@ -92,7 +92,8 @@ const generateConsumableCode = (
         }))
         SMODS.destroy_cards(destroyed_cards)
 
-        delay(0.5)`,
+        delay(0.5)
+        __PRE_RETURN_CODE_END__`,
       colour: "G.C.RED",
       configVariables,
       message: customMessage ? `"${customMessage}"` : undefined   

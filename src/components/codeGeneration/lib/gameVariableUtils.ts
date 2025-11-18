@@ -125,7 +125,6 @@ export const generateConfigVariables = (
 
   let valueCode: string;
   const configVariables: ConfigExtraVariable[] = [];
-
   if (parsed.isGameVariable) {
     valueCode = generateGameVariableCode(effectValue, itemType);
   } else if (rangeParsed.isRangeVariable) {
@@ -151,14 +150,6 @@ export const generateConfigVariables = (
       name: variableName,
       value: Number(effectValue ?? 1),
     });
-  }
-
-  if (itemType === "deck" || itemType === "voucher" || itemType === "consumable") {
-    return { 
-      valueCode: effectValue as string, 
-      configVariables: [], 
-      isXVariable: { isGameVariable: false, isRangeVariable: false} 
-    }
   }
   
   return {
