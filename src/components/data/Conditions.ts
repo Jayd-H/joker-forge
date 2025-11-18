@@ -2174,11 +2174,11 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
     category: "Probability",
   },
   {
-    id: "joker_specific",
-    label: "Specific Joker",
+    id: "joker_key",
+    label: "Joker Key",
     description: "Check the key of the evaluated joker",
     objectUsers: ["joker"],
-    applicableTriggers: ["joker_evaluated"],
+    applicableTriggers: ["joker_evaluated", "joker_triggered"],
     params: [
       {
         id: "type",

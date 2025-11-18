@@ -60,6 +60,7 @@ import { generatePokerHandVariableConditionCode } from "../Conditions/variableCo
 import { generateKeyVariableConditionCode } from "../Conditions/variableConditions/KeyVariableCondition";
 import { generateTextVariableConditionCode } from "../Conditions/variableConditions/TextVariableCondition";
 import { generateBoosterPackTypeConditionCode } from "../Conditions/BoosterPackTypeCondition";
+import { generateOwnedJokerConditionCode } from "../Conditions/OwnedJokerCondition";
 
 
 export const generateConditionChain = (
@@ -231,13 +232,15 @@ export const generateSingleConditionCode = (
       return generateKeyVariableConditionCode([singleConditionRule])
     case "text_variable":
       return generateTextVariableConditionCode([singleConditionRule])
+    case "specific_joker":
+      return generateOwnedJokerConditionCode([singleConditionRule], itemType)
     case "joker_count":
       return generateJokerCountConditionCode([singleConditionRule])
     case "joker_flipped":
       return generateJokerFlippedConditionCode(itemType, "other")
     case "this_joker_flipped":
       return generateJokerFlippedConditionCode(itemType, "self")
-    case "joker_specific":
+    case "joker_key":
       return generateJokerKeyConditionCode([singleConditionRule], itemType)
     case "joker_index":
       return generateJokerPositionConditionCode([singleConditionRule], itemType, "other")

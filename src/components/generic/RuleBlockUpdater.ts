@@ -95,6 +95,8 @@ const updateConditionId = (
       return "hand_type"
     case "destroy_selected_cards":
       return "destroy_cards"
+    case "joker_specific":
+      return "joker_key"
     default:
       return id
   }
