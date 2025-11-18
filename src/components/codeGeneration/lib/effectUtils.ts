@@ -93,6 +93,7 @@ import { generateChangeTextVariableEffectCode } from "../Effects/variableEffects
 import { generateCreatePlayingCardEffectCode } from "../Effects/CreatePlayingCardEffect";
 import { generateEditGameSpeedEffectCode } from "../Effects/EditGameSpeed";
 import { generateAddBoosterToShopEffectCode } from "../Effects/AddBoosterIntoShopEffect";
+import { generateCreatePlayingCardsEffectCode } from "../Effects/CreatePlayingCardsEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -799,6 +800,8 @@ export const generateSingleEffect = (
       return generateConvertLeftToRightEffectCode(effect, itemType)
     case "create_playing_card":
       return generateCreatePlayingCardEffectCode(effect, itemType, triggerType, modprefix, joker)
+    case "create_playing_cards":
+      return generateCreatePlayingCardsEffectCode(effect, itemType, modprefix)
     case "create_copy_triggered_card":
       return generateCreateCopyTriggeredCardEffectCode(effect, itemType, triggerType)
     case "create_copy_played_card":
