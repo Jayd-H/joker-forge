@@ -2213,6 +2213,12 @@ const checkForKeyWord = (
   word: string,
   line: string,
 ) => {
+  if (line.includes(`'`)) {
+    line = `${line.slice(0, line.indexOf(`'`))}${line.slice(line.lastIndexOf(`'`, line.length))}`
+  }
+  if (line.includes(`"`)) {
+    line = `${line.slice(0, line.indexOf(`"`))}${line.slice(line.lastIndexOf(`"`, line.length))}`
+  }
   const regex = new RegExp(`\\b${word}\\b`, 'i');
 
   return regex.test(line)
@@ -2221,7 +2227,7 @@ const checkForKeyWord = (
 const checkPreIndent = (
   line: string,
 ) => {
-  const keyWords: string[] = ["for", "if", "while", "else", "function", "do", "then"]
+  const keyWords: string[] = ["for", "if", "while", "else", "function", "do", "then", "elseif"]
   const openBrackets: string[] = ["(", "[", "{"]  
   const closeBrackets: string[] = [")", "]", "}"]  
   
@@ -2245,7 +2251,7 @@ const checkPreIndent = (
 const checkPostIndent = (
   line: string,
 ) => {
-  const keyWords: string[] = ["else", "end"]
+  const keyWords: string[] = ["else", "end", "elseif"]
   const openBrackets: string[] = ["(", "[", "{"]  
   const closeBrackets: string[] = [")", "]", "}"]
   let returnValue = false
