@@ -1,6 +1,6 @@
 import { DeckData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
+import { generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { parseGameVariable, parseRangeVariable, generateGameVariableCode} from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
@@ -96,7 +96,7 @@ const generateSingleDeckCode = (
 ): { code: string; nextPosition: number } => {
   const activeRules = deck.rules || [];
 
-  const configItems: ConfigExtraVariable[] = [];
+  const configItems: string[] = [];
   const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
@@ -105,7 +105,7 @@ const generateSingleDeckCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push({name: varName, value: gameVar.startsFrom})
+    configItems.push(`${varName} = ${gameVar.startsFrom}`)
   });
 
   activeRules.forEach((rule) => {
@@ -127,7 +127,7 @@ const generateSingleDeckCode = (
     );
 
     if (effectResult.configVariables) {
-      configItems.push(...effectResult.configVariables);
+      configItems.push(...effectResult.configVariables.map(item => `${item.name} = ${item.value}`));
     }
   });
 
@@ -145,11 +145,12 @@ const generateSingleDeckCode = (
   const ConfigVouchers = (deck.Config_vouchers || []).filter((value) => value.startsWith("v_"))
   const ConfigConsumables = (deck.Config_consumables || []).filter((value) => value.startsWith("c_"))
   deckCode += "config = {";
+  
   if (configItems.length > 0) {
     deckCode += `
-        extra = {
-          ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
-`)}   },`;
+      extra = {
+        ${configItems.join(`,\n`)}
+      },`;
   }
   if (ConfigVouchers.length > 0) {
     deckCode += `

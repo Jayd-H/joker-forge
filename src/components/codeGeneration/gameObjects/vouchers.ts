@@ -1,6 +1,6 @@
 import { /*VOUCHERS,*/ VoucherData, getModPrefix, isCustomShader, isVanillaShader, } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
+import { generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
 // import { generateUnlockVoucherFunction } from "../lib/unlockUtils";
@@ -217,7 +217,7 @@ const generateSingleVoucherCode = (
 ): { code: string; nextPosition: number } => {
   const activeRules = voucher.rules || [];
 
-  const configItems: ConfigExtraVariable[] = [];
+  const configItems: string[] = [];
   const globalEffectCounts = new Map<string, number>();
 
   const gameVariables = extractGameVariablesFromRules(activeRules);
@@ -226,7 +226,7 @@ const generateSingleVoucherCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push({name: varName, value: gameVar.startsFrom})
+    configItems.push(`${varName} = ${gameVar.startsFrom}`)
   });
 
   activeRules.forEach((rule) => {
@@ -248,7 +248,7 @@ const generateSingleVoucherCode = (
     );
 
     if (effectResult.configVariables) {
-      configItems.push(...effectResult.configVariables);
+      configItems.push(...effectResult.configVariables.map(item => `${item.name} = ${item.value}`));
     }
   });
 
@@ -266,8 +266,7 @@ const generateSingleVoucherCode = (
     voucherCode += `
     config = { 
       extra = {
-        ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
-`)}
+        ${configItems.join(`,\n`)}
       } 
     },`;
   }
