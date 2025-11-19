@@ -114,7 +114,9 @@ const generateConsumableCode = (
             end`;
 
   const result: EffectReturn = {
-    statement: disableCode,
+    statement: `__PRE_RETURN_CODE__
+                   ${disableCode}
+                    __PRE_RETURN_CODE_END__`,
     colour: "G.C.SECONDARY_SET.Tarot",
   };
 
