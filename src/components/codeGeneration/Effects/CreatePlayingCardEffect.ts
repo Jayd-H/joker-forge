@@ -55,7 +55,7 @@ const generateJokerCode = (
     const suitCode = suitVar.isSuitVariable ? suitVar.code : `'${suit.charAt(0)}'`
     const rankCode = rankVar.isRankVariable ? rankVar.code : `'${rank.charAt(0)}'`
 
-    if (suitCode === 'r') { 
+    if (suitCode === `'r'`) { 
       cardSelectionCode += `
         suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")`
     } else {
@@ -63,7 +63,7 @@ const generateJokerCode = (
         suit_prefix = ${suitCode}`
     }
 
-    if (rankCode === 'r') { 
+    if (rankCode === `'r'`) { 
       cardSelectionCode += `
         rank_suffix = pseudorandom_element({'2','3','4','5','6','7','8','9','T','J','Q','K','A'}, "random_rank")`
     } else {

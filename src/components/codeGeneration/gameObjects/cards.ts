@@ -1,6 +1,8 @@
 import {
   EditionData,
   EnhancementData,
+  getRankByValue,
+  getSuitByValue,
   isCustomShader,
   isVanillaShader,
   SealData,
@@ -13,7 +15,7 @@ import type { Rule, Effect } from "../../ruleBuilder/types";
 import { parseRangeVariable } from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import { applyIndents } from "./jokers";
-import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
+import { extractGameVariablesFromRules, getAllVariables } from "../lib/userVariableUtils";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;
@@ -265,18 +267,11 @@ ${indentLevel} ${effectResult.statement}`;
 
 const generateLocVarsFunction = (
   item: EnhancementData | SealData | EditionData,
-  gameVariables: Array<{
-    name: string;
-    code: string;
-    startsFrom: number;
-    multiplier: number;
-  }>,
-  modPrefix: string,
   itemType: "enhancement" | "seal" | "edition",
   unconditionalEffects: UnconditionalEffect[] = []
 ): string | null => {
   const descriptionHasVariables = item.description.includes("#");
-  if (!descriptionHasVariables) {
+  if (!descriptionHasVariables && getAllVariables(item).length === 0) {
     return null;
   }
 
@@ -285,12 +280,25 @@ const generateLocVarsFunction = (
     ...variablePlaceholders.map((placeholder) =>
       parseInt(placeholder.replace(/#/g, ""))
     ),
-    0
+    0, 
+    getAllVariables(item).length
   );
 
   if (maxVariableIndex === 0) {
     return null;
   }
+
+  const allVariables = getAllVariables(item);
+  const gameVariables = extractGameVariablesFromRules(item.rules || []);
+  const suitVariables = (item.userVariables || []).filter(
+    (v) => v.type === "suit"
+  );
+  const rankVariables = (item.userVariables || []).filter(
+    (v) => v.type === "rank"
+  );
+  const pokerHandVariables = (item.userVariables || []).filter(
+    (v) => v.type === "pokerhand"
+  );
 
   const activeRules = item.rules || [];
   const hasRandomGroups = activeRules.some(
@@ -344,6 +352,7 @@ const generateLocVarsFunction = (
   };
 
   const variableMapping: string[] = [];
+  const colorVariables: string[] = [];
 
   if (itemType === "enhancement") {
     const getDefaultEffectValue = (effectType: string): number => {
@@ -369,68 +378,162 @@ const generateLocVarsFunction = (
     });
   }
 
-  gameVariables.forEach((gameVar) => {
-    if (variableMapping.length >= maxVariableIndex) return;
+  if (hasRandomGroups) {
+    const gameVarNames = new Set(
+      gameVariables.map((gv) => gv.name.replace(/\s+/g, "").toLowerCase())
+    );
+    const remainingVars = allVariables.filter(
+      (v) =>
+        v.name !== "numerator" &&
+        v.name !== "denominator" &&
+        !v.name.startsWith("numerator") &&
+        !v.name.startsWith("denominator") &&
+        v.type !== "suit" &&
+        v.type !== "rank" &&
+        v.type !== "pokerhand" &&
+        !v.id.startsWith("auto_gamevar_") &&
+        !gameVarNames.has(v.name)
+    );
+    const remainingGameVars = gameVariables.filter(
+      (gv) =>
+        !gv.name.toLowerCase().includes("numerator") &&
+        !gv.name.toLowerCase().includes("denominator")
+    );
 
-    let gameVarCode: string;
-    const varName = gameVar.name
-      .replace(/\s+/g, "")
-      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
-      .toLowerCase();
-    if (gameVar.multiplier === 1 && gameVar.startsFrom === 0) {
-      gameVarCode = wrapGameVariableCode(gameVar.code);
-    } else if (gameVar.startsFrom === 0) {
-      gameVarCode = `(${wrapGameVariableCode(gameVar.code)}) * ${
-        gameVar.multiplier
-      }`;
-    } else if (gameVar.multiplier === 1) {
-      gameVarCode = `${abilityPath}.${varName} + (${wrapGameVariableCode(
-        gameVar.code
-      )})`;
-    } else {
-      gameVarCode = `${abilityPath}.${varName} + (${wrapGameVariableCode(
-        gameVar.code
-      )}) * ${gameVar.multiplier}`;
+    let currentIndex = 0;
+    for (const variable of remainingVars) {
+      if (currentIndex >= maxVariableIndex) break;
+      variableMapping.push(`card.ability.extra.${variable.name}`);
+      currentIndex++;
     }
 
-    variableMapping.push(gameVarCode);
-  });
+    for (const gameVar of remainingGameVars) {
+      if (currentIndex >= maxVariableIndex) break;
+      const varName = gameVar.name
+        .replace(/\s+/g, "")
+        .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+        .toLowerCase();
+      let gameVarCode: string;
 
-  if (hasRandomGroups) {
-    const randomGroups = activeRules.flatMap((rule) => rule.randomGroups || []);
-    const denominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator)),
-    ];
+      if (gameVar.multiplier === 1 && gameVar.startsFrom === 0) {
+        gameVarCode = wrapGameVariableCode(gameVar.code);
+      } else if (gameVar.startsFrom === 0) {
+        gameVarCode = `(${wrapGameVariableCode(gameVar.code)}) * ${
+          gameVar.multiplier
+        }`;
+      } else if (gameVar.multiplier === 1) {
+        gameVarCode = `${abilityPath}.${varName} + (${wrapGameVariableCode(
+          gameVar.code
+        )})`;
+      } else {
+        gameVarCode = `${abilityPath}.${varName} + (${wrapGameVariableCode(
+          gameVar.code
+        )}) * ${gameVar.multiplier}`;
+      }
 
-    if (denominators.length === 1) {
-      const keyPrefix =
-        itemType === "enhancement" ? `m_${modPrefix}` : modPrefix;
-      const itemKey =
-        itemType === "enhancement"
-          ? (item as EnhancementData).objectKey
-          : (item as SealData).objectKey;
+      variableMapping.push(gameVarCode);
+      currentIndex++;
+    }
 
-      return `loc_vars = function(self, info_queue, card)
-        local numerator, denominator = SMODS.get_probability_vars(card, 1, ${abilityPath}.odds, '${keyPrefix}_${itemKey}')
-        return {vars = {${variableMapping.join(", ")}${
-        variableMapping.length > 0 ? ", " : ""
-      }numerator, denominator}}
-    end`;
-    } else {
-      const probabilityVars: string[] = [];
-      denominators.forEach((index) => {
-        const varName =
-          index === 0
-            ? `${abilityPath}.odds`
-            : `${abilityPath}.odds${Number(index) + 1}`;
-        probabilityVars.push(varName);
-      });
+    for (const suitVar of suitVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      const defaultSuit = getSuitByValue("Spades")?.value || "Spades";
+      variableMapping.push(
+        `localize((G.GAME.current_round.${suitVar.name}_card or {}).suit or '${defaultSuit}', 'suits_singular')`
+      );
+      colorVariables.push(
+        `G.C.SUITS[(G.GAME.current_round.${suitVar.name}_card or {}).suit or '${defaultSuit}']`
+      );
+      currentIndex++;
+    }
 
-      return `loc_vars = function(self, info_queue, card)
-        return {vars = {${[...variableMapping, ...probabilityVars]
-          .slice(0, maxVariableIndex)
-          .join(", ")}}}
-    end`;
+    for (const rankVar of rankVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      const defaultRank = getRankByValue("A")?.label || "Ace";
+      variableMapping.push(
+        `localize((G.GAME.current_round.${rankVar.name}_card or {}).rank or '${defaultRank}', 'ranks')`
+      );
+      currentIndex++;
+    }
+
+    for (const pokerHandVar of pokerHandVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      variableMapping.push(
+        `localize((G.GAME.current_round.${pokerHandVar.name}_hand or 'High Card'), 'poker_hands')`
+      );
+      currentIndex++;
+    }
+  } else {
+    let currentIndex = 0;
+    for (const variable of allVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+
+      if (
+        !variable.id.startsWith("auto_gamevar_") &&
+        variable.type !== "suit" &&
+        variable.type !== "rank" &&
+        variable.type !== "pokerhand"
+      ) {
+        variableMapping.push(`${abilityPath}.${variable.name}`);
+        currentIndex++;
+      }
+    }
+
+    for (const suitVar of suitVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      const defaultSuit = getSuitByValue("Spades")?.value || "Spades";
+      variableMapping.push(
+        `localize((G.GAME.current_round.${suitVar.name}_card or {}).suit or '${defaultSuit}', 'suits_singular')`
+      );
+      colorVariables.push(
+        `G.C.SUITS[(G.GAME.current_round.${suitVar.name}_card or {}).suit or '${defaultSuit}']`
+      );
+      currentIndex++;
+    }
+
+    for (const rankVar of rankVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      const defaultRank = getRankByValue("A")?.label || "Ace";
+      variableMapping.push(
+        `localize((G.GAME.current_round.${rankVar.name}_card or {}).rank or '${defaultRank}', 'ranks')`
+      );
+      currentIndex++;
+    }
+
+    for (const pokerHandVar of pokerHandVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      variableMapping.push(
+        `localize((G.GAME.current_round.${pokerHandVar.name}_hand or 'High Card'), 'poker_hands')`
+      );
+      currentIndex++;
+    }
+
+    for (const gameVar of gameVariables) {
+      if (currentIndex >= maxVariableIndex) break;
+      const varName = gameVar.name
+        .replace(/\s+/g, "")
+        .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
+        .toLowerCase();
+      let gameVarCode: string;
+
+      if (gameVar.multiplier === 1 && gameVar.startsFrom === 0) {
+        gameVarCode = wrapGameVariableCode(gameVar.code);
+      } else if (gameVar.startsFrom === 0) {
+        gameVarCode = `(${wrapGameVariableCode(gameVar.code)}) * ${
+          gameVar.multiplier
+        }`;
+      } else if (gameVar.multiplier === 1) {
+        gameVarCode = `${abilityPath}.${varName} + (${wrapGameVariableCode(
+          gameVar.code
+        )})`;
+      } else {
+        gameVarCode = `${abilityPath}.${varName} + (${wrapGameVariableCode(
+          gameVar.code
+        )}) * ${gameVar.multiplier}`;
+      }
+
+      variableMapping.push(gameVarCode);
+      currentIndex++;
     }
   }
 
@@ -894,8 +997,6 @@ const generateSingleEnhancementCode = (
 
   const locVarsCode = generateLocVarsFunction(
     enhancement,
-    gameVariables,
-    modPrefix,
     "enhancement",
     unconditionalEffects
   );
@@ -1069,8 +1170,6 @@ const generateSingleSealCode = (
 
   const locVarsCode = generateLocVarsFunction(
     seal,
-    gameVariables,
-    modPrefix,
     "seal"
   );
   if (locVarsCode) {
@@ -1289,8 +1388,6 @@ export const generateSingleEditionCode = (
 
   const locVarsCode = generateLocVarsFunction(
     edition,
-    gameVariables,
-    modPrefix,
     "edition"
   );
   if (locVarsCode) {

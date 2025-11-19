@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 
-export const generateJokerKeyConditionCode = (
+export const generateOwnedJokerConditionCode = (
   rules: Rule[],
   itemType: string,
 ): string | null => {
@@ -22,10 +22,21 @@ const generateJokerCode = (
   const normalizedJokerKey = jokerKey.startsWith("j_") 
   ? jokerKey 
   : `j_${jokerKey}`
-
+  
+  let conditionCode = ''
   if (selectionMethod === "key") {
-    return `context.other_joker.config.center.key == "${normalizedJokerKey}"`
+    conditionCode = `v.config.center.key == "${normalizedJokerKey}"`
   } else {
-    return `context.other_joker.config.center.key == card.ability.extra.${keyVar}`
+    conditionCode =  `v.config.center.key == card.ability.extra.${keyVar}`
   }
+
+  conditionCode = `(function()
+    for i, v in pairs(G.jokers.cards) do
+      if ${conditionCode} then 
+        return true
+      end
+    end
+  end)()`
+
+  return conditionCode
 }
