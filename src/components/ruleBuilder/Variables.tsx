@@ -19,6 +19,9 @@ import {
   CubeIcon,
   RectangleStackIcon,
   HandRaisedIcon,
+  KeyIcon,
+  BoldIcon,
+  VariableIcon
 } from "@heroicons/react/24/outline";
 import { PlusIcon, TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import InputField from "../generic/InputField";
@@ -325,12 +328,18 @@ const Variables: React.FC<VariablesProps> = ({
     type: "number" | "suit" | "rank" | "pokerhand" | "key" | "text" | undefined
   ) => {
     switch (type) {
+      case "number":
+        return VariableIcon;
       case "suit":
         return SparklesIcon;
       case "rank":
         return CubeIcon;
       case "pokerhand":
         return RectangleStackIcon;
+      case "key":
+        return KeyIcon;
+      case "text":
+        return BoldIcon;
       default:
         return HashtagIcon;
     }
@@ -346,6 +355,10 @@ const Variables: React.FC<VariablesProps> = ({
         return "text-blue-400";
       case "pokerhand":
         return "text-green-400";
+      case "key":
+        return "text-orange-400";
+      case "text":
+        return "text-white-light";
       default:
         return "text-mint";
     }

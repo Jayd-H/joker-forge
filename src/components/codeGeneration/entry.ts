@@ -299,11 +299,9 @@ export const exportModCode = async (
       let soundsCode = ""
       sounds.forEach((sound) => {
         soundsCode += `SMODS.Sound{
-    key="${sound.key}",\n`
-    if ( sound.soundString !== "") {
-    soundsCode += `    path="${sound.key}",\n`
-  }
-   soundsCode += `     pitch=${sound.pitch ?? 0.7},
+    key="${sound.key}",
+    path="${sound.key},"
+    pitch=${sound.pitch ?? 0.7},
     volume=${sound.volume ?? 0.6},\n`
   if (sound.replace !== undefined && sound.replace !== "") {
     soundsCode += `    replace="${sound.replace}"\n`

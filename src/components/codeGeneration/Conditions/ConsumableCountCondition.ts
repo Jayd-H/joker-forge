@@ -13,12 +13,12 @@ export const generateConsumableCountConditionCode = (
  
    const comparison = generateOperationCode(
     operator,
-    'count',
+    '#G.consumeables.cards',
     value
    )
  
    if (consumableType === "any") {
-     return `#G.consumeables.cards ${comparison}`;
+     return `${comparison}`;
    }
  
    // Handle vanilla sets
