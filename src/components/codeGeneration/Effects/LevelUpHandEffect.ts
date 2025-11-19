@@ -78,8 +78,7 @@ const generateJokerCode = (
             table.insert(available_hands, hand)
           end
         end
-        local ${targetHandVar} = #available_hands > 0 and pseudorandom_element(available_hands, pseudoseed('level_up_hand')) or "High Card"
-        `;
+        local ${targetHandVar} = #available_hands > 0 and pseudorandom_element(available_hands, pseudoseed('level_up_hand')) or "High Card"`;
       
     } else if (handSelection === "most") {
       handDeterminationCode = `
@@ -135,12 +134,11 @@ const generateJokerCode = (
     statement: `
       __PRE_RETURN_CODE__
       ${handDeterminationCode}
-      __PRE_RETURN_CODE_END__
-      level_up = ${valueCode},
-      level_up_hand = ${targetHandVar}`,
+      level_up_hand(card, ${targetHandVar}, true, ${valueCode})
+      __PRE_RETURN_CODE_END__`,
     message: customMessage ? `"${customMessage}"` : `localize('k_level_up_ex')`,
     colour: "G.C.RED",
-    configVariables: configVariables.length > 0 ? configVariables : undefined
+    configVariables,
   }
 }
 

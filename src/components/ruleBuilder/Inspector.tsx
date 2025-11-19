@@ -1068,12 +1068,6 @@ const Inspector: React.FC<InspectorProps> = ({
         top: position.y,
       };
 
-  const getTrigger = getTriggerById
-
-  const getConditionType = getConditionTypeById
-
-  const getEffectType = getEffectTypeById
-
   const availableVariables = getNumberVariables(joker).map(
     (variable: { name: string }) => ({
       value: variable.name,
@@ -1220,7 +1214,7 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderTriggerInfo = () => {
     if (!selectedRule) return null;
-    const trigger = getTrigger(selectedRule.trigger);
+    const trigger = getTriggerById(selectedRule.trigger);
     if (!trigger) return null;
 
     return (
@@ -1287,7 +1281,9 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderConditionEditor = () => {
     if (!selectedCondition || !selectedRule) return null;
-    const conditionType = getConditionType(selectedCondition.type);
+    const conditionType = getConditionTypeById(selectedCondition.type);
+    console.log(conditionType)
+
     if (!conditionType) return null;
     const paramsToRender = conditionType.params.filter((param) => {
       let showing = true
@@ -1623,8 +1619,9 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderEffectEditor = () => {
     if (!selectedEffect || !selectedRule) return null;
-    const effectType = getEffectType(selectedEffect.type);
+    const effectType = getEffectTypeById(selectedEffect.type);
     if (!effectType) return null;
+    console.log(effectType)
 
     const paramsToRender = effectType.params.filter((param) => {
       if (param.type == "checkbox") {
@@ -1639,7 +1636,6 @@ const Inspector: React.FC<InspectorProps> = ({
 
       let showing = true
       let currentParam: EffectParameter | undefined = param
-      const currentEffect = getEffectTypeById(selectedEffect.type || "")
 
       while (showing && currentParam && hasShowWhen(currentParam)) {
         const { parameter, values }: ShowWhenCondition = currentParam.showWhen;
@@ -1655,7 +1651,7 @@ const Inspector: React.FC<InspectorProps> = ({
           }
         }
 
-        currentParam = currentEffect?.params.find(param => param.id === parameter)
+        currentParam = effectType?.params.find(param => param.id === parameter)
       }
       return showing
     })

@@ -8,8 +8,8 @@ export type {
   Effect,
   RandomGroup,
   GlobalTriggerDefinition,
-  ConditionTypeDefinition,
-  EffectTypeDefinition,
+  GlobalConditionTypeDefinition,
+  GlobalEffectTypeDefinition,
   ConditionParameter,
   EffectParameter,
 } from "./types";

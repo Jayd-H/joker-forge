@@ -1,7 +1,7 @@
 import { ConsumableData } from "../../data/BalatroUtils";
 import { ConsumableSetData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
-import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
+import { generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
 import { parseGameVariable, generateGameVariableCode, parseRangeVariable } from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
@@ -176,7 +176,7 @@ const generateSingleConsumableCode = (
   const activeRules =
     consumable.rules?.filter((rule) => rule.trigger !== "passive") || [];
 
-  const configItems: ConfigExtraVariable[] = [];
+  const configItems: string[] = [];
 
   const globalEffectCounts = new Map<string, number>();
 
@@ -186,8 +186,8 @@ const generateSingleConsumableCode = (
       .replace(/\s+/g, "")
       .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
       .toLowerCase();
-    configItems.push({name: varName, value: gameVar.startsFrom})
-  });
+    configItems.push(`${varName} = ${gameVar.startsFrom}`)
+  })
 
   activeRules.forEach((rule) => {
     const regularEffects = rule.effects || [];
@@ -207,8 +207,8 @@ const generateSingleConsumableCode = (
       consumable,
     );
 
-    if (effectResult.configVariables) {
-      configItems.push(...effectResult.configVariables);
+    if (effectResult.configVariables) {   
+      configItems.push(...effectResult.configVariables.map(item => `${item.name} = ${item.value}`));
     }
   });
 
@@ -227,8 +227,8 @@ const generateSingleConsumableCode = (
     consumableCode += `
     config = { 
       extra = {
-        ${configItems.map(item => `${item.name} = ${item.value}`).join(`,
-`)}   } 
+        ${configItems.join(`,\n`)}   
+      } 
     },`;
   }
 
