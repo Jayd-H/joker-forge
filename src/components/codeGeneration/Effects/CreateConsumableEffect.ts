@@ -253,7 +253,8 @@ const generateConsumableCode = (
     }
 
   return {
-      statement: `${createCode}
+      statement: `__PRE_RETURN_CODE__
+      ${createCode}
                       if created_consumable then
                         card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
                           customMessage
@@ -261,7 +262,8 @@ const generateConsumableCode = (
                             : `localize('${localizeKey}')`
                         }, colour = ${colour}})
                     end
-                    return true`,
+                    return true
+                    __PRE_RETURN_CODE_END__`,
       colour: colour,
 
   }
@@ -457,8 +459,6 @@ const generateDeckCode = (
   return {
       statement: `__PRE_RETURN_CODE__
                    ${createCode}
-                    end
-                    return true
                     __PRE_RETURN_CODE_END__`,
       colour: colour,
 

@@ -6,8 +6,8 @@ import { GENERIC_TRIGGERS } from "./../Conditions";
 export const VARIABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
   {
     id: "modify_internal_variable",
-    label: "Modify Internal Variable",
-    description: "Change an internal variable value for this joker",
+    label: "Change Number Variable",
+    description: "Change an number variable value for this joker",
     applicableTriggers: [...GENERIC_TRIGGERS],
     objectUsers: ["joker", "card"],
     params: [
