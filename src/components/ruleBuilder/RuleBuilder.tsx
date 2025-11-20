@@ -770,13 +770,16 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     (conditionType: string) => {
       if (!selectedItem) return;
       const conditionTypeData = getConditionType(conditionType);
-      const defaultParams: Record<string, {value: unknown, valueType: string}> = {};
+      const defaultParams: Record<string, {value: unknown, valueType?: string}> = {};
       if (conditionTypeData) {
         conditionTypeData.params.forEach((param) => {
           if (param.default !== undefined) {
-            defaultParams[param.id].value = param.default;
-            defaultParams[param.id].valueType = 
-              param.type === "number" ? 'number' : 'text'
+            defaultParams[param.id] = {
+              value: param.default,
+              valueType:
+                defaultParams[param.id].valueType = 
+                param.type === "number" ? 'number' : 'text'
+            }
           }
         });
       }
@@ -1162,15 +1165,17 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     if (!selectedItem) return;
 
     const effectTypeData = getEffectType(effectType);
-    const defaultParams: Record<string, {value: unknown, valueType: string}> = {};
+    const defaultParams: Record<string, {value: unknown, valueType?: string}> = {};
     if (effectTypeData) {
       effectTypeData.params.forEach((param) => {
         if (param.default !== undefined) {
-          defaultParams[param.id].value = param.default;
-          defaultParams[param.id].valueType = 
-            param.type === "number" ? 'number' : 
-            param.type === "checkbox" ? 'checkbox' : 
-            'text'
+          defaultParams[param.id] = {
+            value: param.default, 
+            valueType: 
+              param.type === "number" ? 'number' : 
+              param.type === "checkbox" ? 'checkbox' : 
+              'text'
+          }
         }
       });
     }
@@ -1433,7 +1438,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     );
   };
 
-  const getParameterCount = (params: Record<string, unknown>) => {
+  const getParameterCount = (params: Record<string, {value: unknown, valueType?: string}>): number => {
     return Object.keys(params).length;
   };
 

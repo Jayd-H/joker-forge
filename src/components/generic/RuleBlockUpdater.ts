@@ -74,6 +74,9 @@ const updateCondition = (
 ) => {
 
   condition.type = updateConditionId(condition.type)
+  if (typeof Object.entries(condition.params) !== "object") {
+    condition.params = convertParamsToObjects(condition.params)
+  }
   condition.params = updateConditionParams(condition.type, condition.params)
 
   return condition
@@ -131,6 +134,9 @@ const updateEffect = (
 ) => {
   const oldEffectId = effect.type
   effect.type = updateEffectId(oldEffectId, itemType)
+  if (typeof Object.entries(effect.params) !== "object") {
+    effect.params = convertParamsToObjects(effect.params)
+  }
   effect.params = updateEffectParams(oldEffectId, itemType, effect.params)
   effect.params = updateMissingEffectParams(effect.type, effect.params)
 
@@ -295,4 +301,33 @@ const updateMissingEffectParams = (
   })
 
   return params
+}
+
+
+const convertParamsToObjects = (
+  params: Record<string, unknown>
+): Record<string, {value: unknown, valueType?: string}> => {
+  const newRecord: Record<string, {value: unknown, valueType?: string}> = {}
+  Object.entries(params).forEach(([key, item]) => {
+    newRecord[key].value = item
+    newRecord[key].valueType = detectValueType(item)
+  })
+
+  return newRecord
+}
+
+const detectValueType = (item: unknown) => {
+  if (Array.isArray(item) && typeof item[0] === "boolean") {
+    return "checkbox"
+  } else if (typeof item === "string") {
+    if (item.startsWith("GAMEVAR")) {
+      return "game_var"
+    } else if (item.startsWith("RANGE")) {
+      return "range_var"
+    } // check user vars
+  } else if (typeof item === "number") {
+    return "number"
+  }
+
+  return undefined
 }
