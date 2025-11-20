@@ -10,9 +10,8 @@ import {
 } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
-import { generateGameVariableCode, parseGameVariable } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
-import { parseRangeVariable } from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import { applyIndents } from "./jokers";
 import { extractGameVariablesFromRules, getAllVariables } from "../lib/userVariableUtils";
@@ -193,21 +192,7 @@ const generateCalculateFunction = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, itemType);
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown")
     }));
 
   const globalEffectCounts = new Map<string, number>();
@@ -861,21 +846,7 @@ const generateSingleEnhancementCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'enhancement');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown"),
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -1066,21 +1037,7 @@ const generateSingleSealCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'seal');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown")
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -1234,21 +1191,7 @@ export const generateSingleEditionCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'edition');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown")
     }));
 
     const effectResult = generateEffectReturnStatement(

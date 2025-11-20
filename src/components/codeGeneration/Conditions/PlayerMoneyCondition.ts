@@ -12,7 +12,7 @@ export const generatePlayerMoneyConditionCode = (
   if (!condition || condition.type !== "player_money") return "";
 
   const operator = condition.params?.operator.value as string || "greater_than";
-  const value = condition.params?.value.value || 0;
+  const value = condition.params?.value || 0;
 
   const valueCode = generateGameVariableCode(value, '');
 
