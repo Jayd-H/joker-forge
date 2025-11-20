@@ -74,8 +74,6 @@ const updateCondition = (
   condition: Condition,
   object: JokerData | EnhancementData | SealData | EditionData
 ) => {
-  console.log(condition)
-  console.log(Object.values(condition.params))
   if (Object.values(condition.params).some(value => typeof value !== "object")) {
     condition.params = convertParamsToObjects(condition.params, object)
   }

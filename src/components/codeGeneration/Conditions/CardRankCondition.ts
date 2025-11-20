@@ -1,6 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getRankId } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
 
 export const generateCardRankConditionCode = (
   rules: Rule[],
@@ -24,9 +23,6 @@ const generateJokerCode = (
   const rankType = condition.params.rank_type
   const specificRank = condition.params.specific_rank
   const rankGroup = condition.params.rank_group || null;
-  const quantifier = condition.params.quantifier
-  const count = generateGameVariableCode(condition.params.count, 'joker');
-  const scope = condition.params.card_scope
 
   const getRanksCheckLogic = (
     ranks: string[],
@@ -87,133 +83,14 @@ const generateJokerCode = (
 end)()`;
   }
 
-  if (
-    (triggerType === "card_scored" ||
-      triggerType === "card_held_in_hand" ||
-      triggerType === "card_held_in_hand_end_of_round") &&
-    condition.type === "card_rank"
-  ) {
-    const checkLogic = getRanksCheckLogic(
-      ranks,
-      rankGroupType,
-      useVariable,
-      variableCode,
-      "context.other_card"
-    );
-    return checkLogic;
-  }
-
-  const cardsToCheck =
-    scope.value === "scoring" && !(triggerType === "card_discarded")
-      ? "context.scoring_hand"
-      : "context.full_hand";
-
-  switch (quantifier.value) {
-    case "all":
-      return `(function()
-    local allMatchRank = true
-    for i, c in ipairs(${cardsToCheck}) do
-        if not (${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )}) then
-            allMatchRank = false
-            break
-        end
-    end
-    
-    return allMatchRank and #${cardsToCheck} > 0
-end)()`;
-
-    case "none":
-      return `(function()
-    local rankFound = true
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankFound = false
-            break
-        end
-    end
-    
-    return rankFound
-end)()`;
-
-    case "exactly":
-      return `(function()
-    local rankCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankCount = rankCount + 1
-        end
-    end
-    
-    return rankCount == ${count}
-end)()`;
-
-    case "at_least":
-      return `(function()
-    local rankCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankCount = rankCount + 1
-        end
-    end
-    
-    return rankCount >= ${count}
-end)()`;
-
-    case "at_most":
-      return `(function()
-    local rankCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankCount = rankCount + 1
-        end
-    end
-    
-    return rankCount <= ${count} and rankCount > 0
-end)()`;
-
-    default:
-      return `(function()
-    local rankFound = false
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankFound = true
-            break
-        end
-    end
-    
-    return rankFound
-end)()`;
-  }
+  const checkLogic = getRanksCheckLogic(
+    ranks,
+    rankGroupType,
+    useVariable,
+    variableCode,
+    "context.other_card"
+  );
+  return checkLogic;
 };
 
 const generateCardCode = (

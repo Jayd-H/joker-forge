@@ -59,6 +59,7 @@ import {
   DeckData,
 } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import { detectValueType } from "../generic/RuleBlockUpdater";
 
 export type ItemData =
   | JokerData
@@ -778,11 +779,10 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
       if (conditionTypeData) {
         conditionTypeData.params.forEach((param) => {
-          if (param.default !== undefined) {
-            defaultParams[param.id] = {
-              value: param.default,
-              valueType: param.type === "number" ? 'number' : 'text'
-            }
+          const defaultValue = param.default ?? undefined
+          defaultParams[param.id] = {
+            value: defaultValue,
+            valueType: detectValueType(defaultValue)
           }
         });
       }
@@ -1172,14 +1172,10 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
     if (effectTypeData) {
       effectTypeData.params.forEach((param) => {
-        if (param.default !== undefined) {
-          defaultParams[param.id] = {
-            value: param.default, 
-            valueType: 
-              param.type === "number" ? 'number' : 
-              param.type === "checkbox" ? 'checkbox' : 
-              'text'
-          }
+        const defaultValue = param.default ?? undefined
+        defaultParams[param.id] = {
+          value: defaultValue,
+          valueType: detectValueType(defaultValue)
         }
       });
     }
