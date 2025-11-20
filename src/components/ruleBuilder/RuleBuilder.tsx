@@ -492,7 +492,10 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     isCondition: boolean
   ): string => {
     const baseLabel = typeDefinition.label;
-    const params = item.params;
+    const params: Record <string, unknown> = {}
+    Object.entries(item.params).map(([key, object]) => {
+      params[key] = object.value
+    });
     if (item.type.includes('variable')) {
       return baseLabel
     }
@@ -514,7 +517,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
     let title = "";
 
-    if (params.operator && params.value !== undefined) {
+    if (params.operator && params !== undefined) {
       const operatorMap: Record<string, string> = {
         equals: "=",
         not_equals: "≠",
@@ -527,17 +530,17 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         params.operator &&
         Object.prototype.hasOwnProperty.call(
           operatorMap,
-          params.operator.value as string
+          params.operator as string
         )
-          ? operatorMap[params.operator.value as string]
-          : params.operator.value;
+          ? operatorMap[params.operator as string]
+          : params.operator;
 
-      let valueDisplay = params.value.value;
+      let valueDisplay = params.value;
       if (
         typeDefinition.id === "player_money" ||
         typeDefinition.id === "add_dollars"
       ) {
-        valueDisplay = `$${params.value.value}`;
+        valueDisplay = `$${params.value}`;
       }
 
       title = `${prefix}${baseLabel
@@ -546,15 +549,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       processedParams.add("operator");
       processedParams.add("value");
     } else if (params.value !== undefined && !params.operator) {
-      title = `${prefix}${baseLabel} = ${params.value.value}`;
+      title = `${prefix}${baseLabel} = ${params.value}`;
       processedParams.add("value");
     } else if (params.specific_rank || params.rank_group) {
       const rank = params.specific_rank || params.rank_group;
-      title = `${prefix}Card Rank = ${rank.value}`;
+      title = `${prefix}Card Rank = ${rank}`;
       processedParams.add("specific_rank");
       processedParams.add("rank_group");
     } else if (params.specific_suit || params.suit_group) {
-      const suit = params.specific_suit?.value || params.suit_group?.value;
+      const suit = params.specific_suit || params.suit_group;
       title = `${prefix}Card Suit = ${suit}`;
       processedParams.add("specific_suit");
       processedParams.add("suit_group");
@@ -564,35 +567,35 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         subtract: "-",
         set: "Set to",
       };
-      const op = operationMap[params.operation.value as string] || params.operation;
+      const op = operationMap[params.operation as string] || params.operation;
       const target = baseLabel
         .replace("Edit ", "")
         .replace("Add ", "")
         .replace("Apply ", "");
-      title = `${op} ${params.value.value} ${target}`;
+      title = `${op} ${params.value} ${target}`;
       processedParams.add("operation");
       processedParams.add("value");
     } else if (!isCondition) {
       if (params.value !== undefined && baseLabel.startsWith("Add")) {
-        let valueDisplay = params.value.value;
+        let valueDisplay = params.value;
         if (typeDefinition.id === "add_dollars") {
-          valueDisplay = `$${params.value.value}`;
+          valueDisplay = `$${params.value}`;
         }
         title = `Add ${valueDisplay} ${baseLabel.replace("Add ", "")}`;
         processedParams.add("value");
       } else if (params.value !== undefined && baseLabel.startsWith("Apply")) {
-        title = `Apply ${params.value.value}x ${baseLabel
+        title = `Apply ${params.value}x ${baseLabel
           .replace("Apply x", "")
           .replace("Apply ", "")}`;
         processedParams.add("value");
       } else if (params.repetitions !== undefined) {
-        title = `Retrigger ${params.repetitions.value}x`;
+        title = `Retrigger ${params.repetitions}x`;
         processedParams.add("repetitions");
       } else if (
         typeDefinition.id === "level_up_hand" &&
         params.value !== undefined
       ) {
-        title = `Level Up Hand ${params.value.value}x`;
+        title = `Level Up Hand ${params.value}x`;
         processedParams.add("value");
       } else {
         title = baseLabel;
@@ -606,13 +609,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     Object.entries(params).forEach(([key, value]) => {
       if (
         processedParams.has(key) ||
-        !value.value ||
-        skipValues.includes(value.value as string)
+        !value ||
+        skipValues.includes(value as string)
       ) {
         return;
       }
 
-      const stringValue = value.value as string;
+      const stringValue = value as string;
 
       if (
         key === "suit" ||
