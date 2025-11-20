@@ -1070,7 +1070,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         }
       },
       {
-        id: "joker_variable",
+        id: "key_variable",
         type: "select",
         label: "Joker Variable",
         showWhen: {
