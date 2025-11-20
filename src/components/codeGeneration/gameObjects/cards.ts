@@ -372,7 +372,7 @@ const generateLocVarsFunction = (
       if (variableMapping.length >= maxVariableIndex) return;
 
       const value =
-        (unconditionalEffect.effect.params?.value as number) ||
+        (unconditionalEffect.effect.params?.value.value as number) ||
         getDefaultEffectValue(unconditionalEffect.effect.type);
       variableMapping.push(value.toString());
     });
@@ -659,13 +659,13 @@ const generateSingleEnhancementCode = (
     }
 
     if (effect.type === "edit_dollars") {
-      const operation = (effect.params?.operation as string) || "add";
+      const operation = (effect.params?.operation.value as string) || "add";
       if (operation !== "add") {
         return false;
       }
     }
 
-    const value = effect.params?.value;
+    const value = effect.params?.value.value;
 
     if (value === undefined || value === null) {
       return true;
@@ -765,7 +765,7 @@ const generateSingleEnhancementCode = (
         break;
 
       case "edit_dollars": {
-        const operation = (effect.params?.operation as string) || "add";
+        const operation = (effect.params?.operation.value as string) || "add";
         if (operation === "add") {
           if (trigger === "card_scored") {
             baseConfig.p_dollars = (baseConfig.p_dollars || 0) + value;

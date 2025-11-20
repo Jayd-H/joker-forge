@@ -292,8 +292,8 @@ const generateSingleJokerCode = (
         const variableName =
           blindRewards.length === 0 ? "blind_reward" : `blind_reward${blindRewards.length}`;        
         const { valueCode, configVariables } = generateConfigVariables(
-            effect.params.value,
-            effect.type,
+            effect,
+            'value',
             variableName,
             'joker'
         )
