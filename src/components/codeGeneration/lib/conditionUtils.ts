@@ -160,7 +160,7 @@ export const generateSingleConditionCode = (
       return generateAnteLevelConditionCode([singleConditionRule])
     case "blind_name":
       return generateBlindNameConditionCode([singleConditionRule])
-    case "blind_requirement":
+    case "check_blind_requirements":
       return generateBlindRequirementsConditionCode([singleConditionRule])
     case "blind_type":
       return generateBlindTypeConditionCode([singleConditionRule])
