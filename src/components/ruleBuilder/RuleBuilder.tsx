@@ -771,10 +771,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       if (!selectedItem) return;
       const conditionTypeData = getConditionType(conditionType);
       const defaultParams: Record<string, unknown> = {};
+      const defaultParamTypes: Record<string, string> = {}
       if (conditionTypeData) {
         conditionTypeData.params.forEach((param) => {
           if (param.default !== undefined) {
             defaultParams[param.id] = param.default;
+            defaultParamTypes[param.id] = 
+              param.type === "number" ? 'number' : 'text'
           }
         });
       }
@@ -783,6 +786,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         type: conditionType,
         negate: false,
         params: defaultParams,
+        paramValueTypes: defaultParamTypes,
       };
 
       let targetGroupId = selectedItem.groupId;
@@ -1161,10 +1165,14 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
     const effectTypeData = getEffectType(effectType);
     const defaultParams: Record<string, unknown> = {};
+    const defaultParamTypes: Record<string, string> = {};
     if (effectTypeData) {
       effectTypeData.params.forEach((param) => {
         if (param.default !== undefined) {
           defaultParams[param.id] = param.default;
+          defaultParamTypes[param.id] = 
+            param.type === "number" ? 'number' :
+            param.type === "checkbox" ? 'checkbox' : 'text'
         }
       });
     }
@@ -1173,6 +1181,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       id: crypto.randomUUID(),
       type: effectType,
       params: defaultParams,
+      paramValueTypes: defaultParamTypes,
     };
 
     setRules((prev) =>

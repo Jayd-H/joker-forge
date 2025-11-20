@@ -42,22 +42,25 @@ interface VariablesProps {
 const SUIT_OPTIONS = SUITS.map((suit) => ({
   value: suit.value,
   label: `${suit.label}`,
+  type: 'text'
 }));
 
 const RANK_OPTIONS = RANKS.map((rank) => ({
   value: rank.label,
   label: rank.label,
+  type: 'text'
 }));
 
 const POKER_HAND_OPTIONS = POKER_HANDS.map((hand) => ({
   value: hand.value,
   label: hand.label,
+  type: 'text'
 }));
 
 const VARIABLE_TYPE_OPTIONS = [
-  { value: "number", label: "Number Variable", icon: HashtagIcon },
-  { value: "suit", label: "Suit Variable", icon: SparklesIcon },
-  { value: "rank", label: "Rank Variable", icon: CubeIcon },
+  { value: "number", label: "Number Variable", icon: HashtagIcon},
+  { value: "suit", label: "Suit Variable", icon: SparklesIcon},
+  { value: "rank", label: "Rank Variable", icon: CubeIcon},
   {
     value: "pokerhand",
     label: "Poker Hand Variable",
@@ -68,7 +71,7 @@ const VARIABLE_TYPE_OPTIONS = [
     label: "Key Variable",
     icon: RectangleStackIcon,
   },
-  { value: "text", label: "Text Variable", icon: SlashIcon },
+  { value: "text", label: "Text Variable", icon: SlashIcon},
 ];
 
 type SuitValue = (typeof SUIT_VALUES)[number];
@@ -448,10 +451,8 @@ const Variables: React.FC<VariablesProps> = ({
                       <InputDropdown
                         label="Type"
                         value={editingType}
-                        onChange={(value) =>
-                          setEditingType(
-                            value as "number" | "suit" | "rank" | "pokerhand" | "key" | "text"
-                          )
+                        onChange={(item) =>
+                          setEditingType(item.value as "number" | "suit" | "rank" | "pokerhand" | "key" | "text")
                         }
                         options={VARIABLE_TYPE_OPTIONS}
                         size="sm"
@@ -487,8 +488,8 @@ const Variables: React.FC<VariablesProps> = ({
                         <InputDropdown
                           label="Initial Suit"
                           value={editingSuit}
-                          onChange={(value) =>
-                            setEditingSuit(value as SuitValue)
+                          onChange={(item) =>
+                            setEditingSuit(item.value as SuitValue)
                           }
                           options={SUIT_OPTIONS}
                           size="sm"
@@ -499,8 +500,8 @@ const Variables: React.FC<VariablesProps> = ({
                         <InputDropdown
                           label="Initial Rank"
                           value={editingRank}
-                          onChange={(value) =>
-                            setEditingRank(value as RankLabel)
+                          onChange={(item) =>
+                            setEditingRank(item.value as RankLabel)
                           }
                           options={RANK_OPTIONS}
                           size="sm"
@@ -511,8 +512,8 @@ const Variables: React.FC<VariablesProps> = ({
                         <InputDropdown
                           label="Initial Poker Hand"
                           value={editingPokerHand}
-                          onChange={(value) =>
-                            setEditingPokerHand(value as PokerHandValue)
+                          onChange={(item) =>
+                            setEditingPokerHand(item.value as PokerHandValue)
                           }
                           options={POKER_HAND_OPTIONS}
                           size="sm"
@@ -637,9 +638,9 @@ const Variables: React.FC<VariablesProps> = ({
                 <InputDropdown
                   label="Type"
                   value={newVariableType}
-                  onChange={(value) =>
+                  onChange={(item) =>
                     setNewVariableType(
-                      value as "number" | "suit" | "rank" | "pokerhand" | "key" | "text"
+                      item.value as "number" | "suit" | "rank" | "pokerhand" | "key" | "text"
                     )
                   }
                   options={VARIABLE_TYPE_OPTIONS}
@@ -683,7 +684,7 @@ const Variables: React.FC<VariablesProps> = ({
                   <InputDropdown
                     label="Initial Suit"
                     value={newVariableSuit}
-                    onChange={(value) => setNewVariableSuit(value as SuitValue)}
+                    onChange={(item) => setNewVariableSuit(item.value as SuitValue)}
                     options={SUIT_OPTIONS}
                     size="sm"
                   />
@@ -693,7 +694,7 @@ const Variables: React.FC<VariablesProps> = ({
                   <InputDropdown
                     label="Initial Rank"
                     value={newVariableRank}
-                    onChange={(value) => setNewVariableRank(value as RankLabel)}
+                    onChange={(item) => setNewVariableRank(item.value as RankLabel)}
                     options={RANK_OPTIONS}
                     size="sm"
                   />
@@ -703,8 +704,8 @@ const Variables: React.FC<VariablesProps> = ({
                   <InputDropdown
                     label="Initial Poker Hand"
                     value={newVariablePokerHand}
-                    onChange={(value) =>
-                      setNewVariablePokerHand(value as PokerHandValue)
+                    onChange={(item) =>
+                      setNewVariablePokerHand(item.value as PokerHandValue)
                     }
                     options={POKER_HAND_OPTIONS}
                     size="sm"
