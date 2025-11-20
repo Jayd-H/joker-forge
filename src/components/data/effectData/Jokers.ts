@@ -319,10 +319,10 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
       },
       {
         id: "variable_name",
-        type: "text",
+        type: "select",
         label: "Variable to Add Sell Value To",
-        default: "var1",
-        exemptObjects: ["consumable", "card"]
+        exemptObjects: ["consumable", "card"],
+        variableTypes: ["number"],
       },
       {
         id: "animation",
