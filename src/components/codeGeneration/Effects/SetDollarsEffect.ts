@@ -7,12 +7,12 @@ export const generateSetDollarsEffectCode = (
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation as string || "add";
-  const limitTypes = effect.params?.limit_dollars as boolean[] || [false, false, false, false]
-  const minEarnings = effect.params?.min_earnings as number || 0
-  const maxEarnings = effect.params?.max_earnings as number || 0
-  const minTotal = effect.params?.min_total as number || 0
-  const maxTotal = effect.params?.max_total as number || 0
+  const operation = effect.params?.operation.value as string || "add";
+  const limitTypes = effect.params?.limit_dollars.value as boolean[] || [false, false, false, false]
+  const minEarnings = effect.params?.min_earnings.value as number || 0
+  const maxEarnings = effect.params?.max_earnings.value as number || 0
+  const minTotal = effect.params?.min_total.value as number || 0
+  const maxTotal = effect.params?.max_total.value as number || 0
 
   const customMessage = effect.customMessage;
 

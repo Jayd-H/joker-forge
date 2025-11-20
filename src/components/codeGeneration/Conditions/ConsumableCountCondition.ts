@@ -6,9 +6,9 @@ export const generateConsumableCountConditionCode = (
   rules: Rule[],
 ): string | null => {
    const condition = rules[0].conditionGroups[0].conditions[0];
-   const consumableType = (condition.params?.consumable_type as string) || "any";
-   const specificCard = (condition.params?.specific_card as string) || "any";
-   const operator = (condition.params?.operator as string) || "equals";
+   const consumableType = (condition.params?.consumable_type.value as string) || "any";
+   const specificCard = (condition.params?.specific_card.value as string) || "any";
+   const operator = (condition.params?.operator.value as string) || "equals";
    const value = generateGameVariableCode(condition.params.value, '');
  
    const comparison = generateOperationCode(

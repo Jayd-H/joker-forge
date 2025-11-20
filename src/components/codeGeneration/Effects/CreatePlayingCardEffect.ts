@@ -27,14 +27,14 @@ const generateJokerCode = (
   modprefix: string,
   joker?: JokerData,
 ): EffectReturn => {
-  const suit = (effect.params?.suit as string) || "random";
-  const rank = (effect.params?.rank as string) || "random";
-  const enhancement = (effect.params?.enhancement as string) || "none";
-  const seal = (effect.params?.seal as string) || "none";
-  const edition = (effect.params?.edition as string) || "none";
-  const location = (effect.params?.location as string) || "deck";
+  const suit = (effect.params?.suit.value as string) || "random";
+  const rank = (effect.params?.rank.value as string) || "random";
+  const enhancement = (effect.params?.enhancement.value as string) || "none";
+  const seal = (effect.params?.seal.value as string) || "none";
+  const edition = (effect.params?.edition.value as string) || "none";
+  const location = (effect.params?.location.value as string) || "deck";
 
-  const variables = (effect.params?.variables as string) || [false, false, false]
+  const variables = (effect.params?.variables.value as string) || [false, false, false]
 
   const customMessage = effect.customMessage;
 
@@ -44,8 +44,8 @@ const generateJokerCode = (
   const isScoring = scoringTriggers.includes(triggerType);
   const isHeldInHand = heldInHandTriggers.includes(triggerType);
 
-  const rankVar = parseRankVariable((effect.params?.rank as string) || "", joker);
-  const suitVar = parseSuitVariable((effect.params?.suit as string) || "", joker);
+  const rankVar = parseRankVariable((effect.params?.rank.value as string) || "", joker);
+  const suitVar = parseSuitVariable((effect.params?.suit.value as string) || "", joker);
 
   let cardSelectionCode = "";
 

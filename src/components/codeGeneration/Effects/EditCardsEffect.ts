@@ -23,17 +23,17 @@ const generateConsumableCode = (
   effect: Effect,
   modPrefix: string,
 ): EffectReturn => {
-  const enhancement = effect.params?.enhancement as string || "none";
-  const seal = effect.params?.seal as string || "none";
-  const edition = effect.params?.edition as string || "none";
-  const suit = effect.params?.suit as string || "none";
-  const rank = effect.params?.rank as string || "none";
-  const method = effect.params?.selection_method as string || "random";
+  const enhancement = effect.params?.enhancement.value as string || "none";
+  const seal = effect.params?.seal.value as string || "none";
+  const edition = effect.params?.edition.value as string || "none";
+  const suit = effect.params?.suit.value as string || "none";
+  const rank = effect.params?.rank.value as string || "none";
+  const method = effect.params?.selection_method.value as string || "random";
   const customMessage = effect.customMessage;
 
-  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolActive = (effect.params.suit_pool.value as Array<boolean>) || [];
   const suitPoolSuits = SUITS.map(suit => `'${suit.value}'`)
-  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolActive = (effect.params.rank_pool.value as Array<boolean>) || [];
   const rankPoolRanks = RANKS.map(rank => `'${rank.value}'`)
   
   const hasModifications = [enhancement, seal, edition, suit, rank].some(

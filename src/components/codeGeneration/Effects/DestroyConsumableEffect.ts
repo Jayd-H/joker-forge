@@ -87,8 +87,8 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const consumableType = (effect.params?.consumable_type as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
+  const consumableType = (effect.params?.consumable_type.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];
@@ -205,8 +205,8 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
   const customMessage = effect.customMessage;
 
   let destroyCode = "";
@@ -281,8 +281,8 @@ const generateCardCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];

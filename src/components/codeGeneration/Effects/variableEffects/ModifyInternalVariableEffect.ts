@@ -6,12 +6,12 @@ export const generateModifyInternalVariableEffectCode = (
   effect: Effect,
   triggerType: string, 
 ): EffectReturn => {
-  const variableName = (effect.params?.variable_name as string) || "var1";
-  const operation = (effect.params?.operation as string) || "increment";
+  const variableName = (effect.params?.variable_name.value as string) || "var1";
+  const operation = (effect.params?.operation.value as string) || "increment";
   const effectValue = effect.params?.value;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
-  const indexMethod = effect.params?.index_method || "self"
+  const indexMethod = effect.params?.index_method.value || "self"
 
   let valueCode: string;
 
@@ -28,8 +28,8 @@ export const generateModifyInternalVariableEffectCode = (
 
   const customMessage = effect.customMessage;
 
-  const searchKey = (effect.params?.joker_key as string) || "j_joker"
-  const searchVar = (effect.params?.joker_variable) || "jokerVar"
+  const searchKey = (effect.params?.joker_key.value as string) || "j_joker"
+  const searchVar = (effect.params?.joker_variable.value) || "jokerVar"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);

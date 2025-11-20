@@ -7,7 +7,7 @@ export const generateGenericCompareConditionCode = (
 ):string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const value1 = generateGameVariableCode(condition.params.value1, '') || "0";
-  const operator = (condition.params.operator as string) || "equals";
+  const operator = (condition.params.operator.value as string) || "equals";
   const value2 = generateGameVariableCode(condition.params.value2, '') || "0";
 
   return generateOperationCode(

@@ -20,9 +20,9 @@ export const generateConvertAllCardsToSuitEffectCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const suit = effect.params?.suit || "Hearts";
+  const suit = effect.params?.suit.value || "Hearts";
   const customMessage = effect.customMessage;
-  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const suitPoolActive = (effect.params.suit_pool.value as Array<boolean>) || [];
   const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
 
     let suitCode = "";

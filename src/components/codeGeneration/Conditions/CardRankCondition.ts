@@ -24,12 +24,12 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
 
-  const rankType = (condition.params.rank_type as string) || "specific";
-  const specificRank = condition.params.specific_rank;
-  const rankGroup = (condition.params.rank_group as string) || null;
-  const quantifier = (condition.params.quantifier as string) || "at_least_one";
+  const rankType = (condition.params.rank_type.value as string) || "specific";
+  const specificRank = condition.params.specific_rank.value;
+  const rankGroup = (condition.params.rank_group.value as string) || null;
+  const quantifier = (condition.params.quantifier.value as string) || "at_least_one";
   const count = generateGameVariableCode(condition.params.count, 'joker');
-  const scope = (condition.params.card_scope as string) || "scoring";
+  const scope = (condition.params.card_scope.value as string) || "scoring";
 
   const rankVarInfo = parseRankVariable(specificRank, joker);
 
@@ -230,9 +230,9 @@ const generateCardCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "card_rank") return "";
 
-  const rankType = (condition.params?.rank_type as string) || "specific";
-  const specificRank = condition.params?.specific_rank as string;
-  const rankGroup = condition.params?.rank_group as string;
+  const rankType = (condition.params?.rank_type.value as string) || "specific";
+  const specificRank = condition.params?.specific_rank.value as string;
+  const rankGroup = condition.params?.rank_group.value as string;
 
   if (rankType === "specific" && specificRank) {
     const rankId = getRankId(specificRank);

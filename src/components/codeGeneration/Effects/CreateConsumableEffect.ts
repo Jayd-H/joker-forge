@@ -28,14 +28,14 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === 'y';
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
+  const isNegative = (effect.params?.is_negative.value as string) === 'y';
   const customMessage = effect.customMessage as string;
-  const isSoulable = (effect.params?.soulable as string) === 'y';
+  const isSoulable = (effect.params?.soulable.value as string) === 'y';
   const countCode = String(effect.params?.count) || '1'
-  const ignoreSlots = (effect.params?.ignore_slots as string) === 'y';
-  const keyVar = (effect.params?.variable as string)
+  const ignoreSlots = (effect.params?.ignore_slots.value as string) === 'y';
+  const keyVar = (effect.params?.variable.value as string)
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -157,13 +157,13 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === 'y';
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
+  const isNegative = (effect.params?.is_negative.value as string) === 'y';
   const customMessage = effect.customMessage as string;
-  const isSoulable = (effect.params?.soulable as string) === 'y';
+  const isSoulable = (effect.params?.soulable.value as string) === 'y';
   const countCode = String(effect.params?.count) || '1'
-  const ignoreSlots = (effect.params?.ignore_slots as string) === 'y';
+  const ignoreSlots = (effect.params?.ignore_slots.value as string) === 'y';
 
 
   let createCode = ``;
@@ -272,13 +272,13 @@ const generateConsumableCode = (
 const generateCardCode = (
   effect: Effect,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === 'y';
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
+  const isNegative = (effect.params?.is_negativ.value as string) === 'y';
   const customMessage = effect.customMessage;
-  const isSoulable = effect.params?.soulable as string === 'y';
+  const isSoulable = effect.params?.soulable.value as string === 'y';
   const countCode = String(effect.params?.count) || '1'
-  const ignoreSlots = effect.params?.ignore_slots as string === 'y';
+  const ignoreSlots = effect.params?.ignore_slots.value as string === 'y';
 
 
   let createCode = ``;
@@ -387,12 +387,12 @@ const generateCardCode = (
 const generateDeckCode = (
   effect: Effect,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === 'y';
-  const isSoulable = (effect.params?.soulable as string) === 'y';
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
+  const isNegative = (effect.params?.is_negative.value as string) === 'y';
+  const isSoulable = (effect.params?.soulable.value as string) === 'y';
   const countCode = String(effect.params?.count) || '1'
-  const ignoreSlots = (effect.params?.ignore_slots as string) === 'y';
+  const ignoreSlots = (effect.params?.ignore_slots.value as string) === 'y';
 
 
   let createCode = ``;

@@ -6,7 +6,7 @@ export const generateFixProbabilityEffectCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const part = effect.params?.part || "numerator";
+  const part = effect.params?.part.value || "numerator";
 
   const variableName =
     sameTypeCount === 0 ? "set_probability" : `set_probability${sameTypeCount + 1}`;

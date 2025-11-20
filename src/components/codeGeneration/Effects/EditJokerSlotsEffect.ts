@@ -6,8 +6,8 @@ import { generateGameVariableCode } from "../lib/gameVariableUtils";
 export const generateEditJokerSlotsPassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
-  const effectValue = effect.params.value;
+  const operation = effect.params?.operation.value || "add";
+  const effectValue = effect.params.value.value;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
 
@@ -85,7 +85,7 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
 
   const variableName =
     sameTypeCount === 0 ? "joker_slots" : `joker_slots${sameTypeCount + 1}`;
@@ -157,7 +157,7 @@ const generateConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
   const customMessage = effect.customMessage;
 
   const variableName =
@@ -261,7 +261,7 @@ const generateVoucherCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
   const variableName =
     sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
 
@@ -314,7 +314,7 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
   const variableName =
     sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
 

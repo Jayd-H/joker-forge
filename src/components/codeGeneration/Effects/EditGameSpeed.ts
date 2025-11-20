@@ -4,7 +4,7 @@ import type { EffectReturn } from "../lib/effectUtils";
 export const generateEditGameSpeedEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const valueCode = effect.params?.speed as string || "0.5"
+  const valueCode = effect.params?.speed.value as string || "0.5"
   const message = effect.customMessage
 
   return {

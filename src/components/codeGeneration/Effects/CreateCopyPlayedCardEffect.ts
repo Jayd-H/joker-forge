@@ -26,10 +26,10 @@ const generateJokerCode = (
   triggerType: string,
   joker?: JokerData
 ): EffectReturn => {
-  const addTo = (effect.params?.add_to as string) || "deck"
-  const cardIndex = (effect.params?.card_index as string) || "any";
-  const cardRank = (effect.params?.card_rank as string) || "any";
-  const cardSuit = (effect.params?.card_suit as string) || "any";
+  const addTo = (effect.params?.add_to.value as string) || "deck"
+  const cardIndex = (effect.params?.card_index.value as string) || "any";
+  const cardRank = (effect.params?.card_rank.value as string) || "any";
+  const cardSuit = (effect.params?.card_suit.value as string) || "any";
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);

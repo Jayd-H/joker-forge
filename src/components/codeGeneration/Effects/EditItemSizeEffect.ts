@@ -63,8 +63,8 @@ export const generateEditItemSizePassiveEffectCode = (
   effect: Effect,
   type: string,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
-  const effectValue = effect.params.value;
+  const operation = effect.params?.operation.value || "add";
+  const effectValue = effect.params.value.value;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
 
@@ -122,7 +122,7 @@ export const generateEditItemSizeEffectCode = (
   sameTypeCount: number = 0,
   type: string
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
   const itemData = generateTypeData(type)
   const variableName =
     sameTypeCount === 0 ? `${itemData.varName}` : `${itemData.varName}${sameTypeCount + 1}`;

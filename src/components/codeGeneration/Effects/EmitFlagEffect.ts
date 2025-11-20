@@ -5,8 +5,8 @@ export const generateEmitFlagEffectCode = (
   effect: Effect,
   modprefix: string
 ): EffectReturn => {
-  const flagName = (effect.params?.flag_name as string) || "custom_flag";
-  const change = (effect.params?.change as string) || "true";
+  const flagName = (effect.params?.flag_name.value as string) || "custom_flag";
+  const change = (effect.params?.change.value as string) || "true";
   const customMessage = effect.customMessage;
 
   const safeFlagName = flagName.trim().replace(/[^a-zA-Z0-9_]/g, '_'); // replace non-alphanumeric charactes with underscore

@@ -8,14 +8,14 @@ export const generateAddStartingCardsEffectCode = (
   sameTypeCount: number = 0,
   modPrefix: string,
 ): EffectReturn => {
-  const enhancement = effect.params?.enhancement || "none";
-  const seal = effect.params?.seal || "none";
-  const edition = effect.params?.edition || "none";
-  const suit = effect.params?.suit || "none";
-  const rank = effect.params?.rank || "random";
-  const suitPoolActive = (effect.params.suit_pool as Array<boolean>) || [];
+  const enhancement = effect.params?.enhancement.value || "none";
+  const seal = effect.params?.seal.value || "none";
+  const edition = effect.params?.edition.value || "none";
+  const suit = effect.params?.suit.value || "none";
+  const rank = effect.params?.rank.value || "random";
+  const suitPoolActive = (effect.params.suit_pool.value as Array<boolean>) || [];
   const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
-  const rankPoolActive = (effect.params.rank_pool as Array<boolean>) || [];
+  const rankPoolActive = (effect.params.rank_pool.value as Array<boolean>) || [];
   const rankPoolRanks = [
     "'A'","'2'","'3'","'4'","'5'",
     "'6'","'7'","'8'","'9'","'10'",

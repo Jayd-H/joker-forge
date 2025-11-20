@@ -4,8 +4,8 @@ export const generateKeyVariableConditionCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const variableName = (condition.params.variable_name as string) || "keyvar";
-  const checkType = (condition.params.check_type as string) || "custom_text";
+  const variableName = (condition.params.variable_name.value as string) || "keyvar";
+  const checkType = (condition.params.check_type.value as string) || "custom_text";
 
 switch (checkType) {
     case "custom_text":

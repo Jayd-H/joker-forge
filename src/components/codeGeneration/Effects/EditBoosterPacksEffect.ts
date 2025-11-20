@@ -5,11 +5,11 @@ import { generateConfigVariables, generateGameVariableCode, parseGameVariable, p
 export const generateEditBoosterPacksPassiveEffectCode = (
   effect: Effect,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
-  const effectValue = effect.params.value;
+  const operation = effect.params?.operation.value || "add";
+  const effectValue = effect.params.value.value;
   const parsed = parseGameVariable(effectValue);
   const rangeParsed = parseRangeVariable(effectValue);
-  const selectedType = effect.params?.selected_type || "size";
+  const selectedType = effect.params?.selected_type.value || "size";
 
   let valueCode: string;
 
@@ -113,8 +113,8 @@ const generateJokerAndConsumableCode = (
   sameTypeCount: number = 0,
   itemType: string
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
-  const selected_type = effect.params?.selected_type || "size";
+  const operation = effect.params?.operation.value || "add";
+  const selected_type = effect.params?.selected_type.value || "size";
   const customMessage = effect.customMessage;
 
   const variableName =
@@ -242,8 +242,8 @@ const generateVoucherAndDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
-  const selected_type = effect.params?.selected_type || "size";
+  const operation = effect.params?.operation.value || "add";
+  const selected_type = effect.params?.selected_type.value || "size";
   const variableName =
     sameTypeCount === 0 ? "edited_booster" : `edited_booster${sameTypeCount + 1}`;
 

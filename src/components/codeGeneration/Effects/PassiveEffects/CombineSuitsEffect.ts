@@ -6,8 +6,8 @@ export const generateCombineSuitsPassiveEffectCode = (
   effect: Effect,
   jokerKey: string,
 ): PassiveEffectResult => {
-  const suit1 = (effect.params?.suit_1 as string) || "Spades";
-  const suit2 = (effect.params?.suit_2 as string) || "Hearts";
+  const suit1 = (effect.params?.suit_1.value as string) || "Spades";
+  const suit2 = (effect.params?.suit_2.value as string) || "Hearts";
 
   return {
     addToDeck: `-- Combine suits effect enabled`,

@@ -6,7 +6,7 @@ export const generateEditItemCountPassiveEffectCode = (
   effect: Effect,
   effectType: string
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
 
   const variableName = "hand_change";
   
@@ -101,8 +101,8 @@ const generateJokerConsumableVoucherCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
-  const duration = effect.params?.duration || "permanent";
+  const operation = effect.params?.operation.value || "add";
+  const duration = effect.params?.duration.value || "permanent";
 
   const typeData = generateEffectTypeData(effectType)
 
@@ -218,7 +218,7 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
   const variableName =
     sameTypeCount === 0 ? "hands_value" : `hands_value${sameTypeCount + 1}`;
 

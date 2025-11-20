@@ -17,12 +17,12 @@ const generateJokerCode = (
   rules: Rule[],
 ): string | null => {
  const condition = rules[0].conditionGroups[0].conditions[0];
-  const operator = (condition.params.operator as string) || "equals";
+  const operator = (condition.params.operator.value as string) || "equals";
   const value = generateGameVariableCode(condition.params.value, 'joker');
-  const scope = (condition.params.card_scope as string) || "scoring";
+  const scope = (condition.params.card_scope.value as string) || "scoring";
 
   let propertyCheck = "";
-  const enhancement = condition.params.enhancement as string;
+  const enhancement = condition.params.enhancement.value as string;
   if (enhancement === "any") {
       propertyCheck = "next(SMODS.get_enhancements(playing_card))";
   } else if (enhancement === "none") {

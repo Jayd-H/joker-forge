@@ -4,7 +4,7 @@ export const generateProbabilitySucceededConditionCode = (
   rules: Rule[],
 ):string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const status = (condition.params.status as string) || "succeeded";
+  const status = (condition.params.status.value as string) || "succeeded";
 
   return `${status === "succeeded" ? "" : "not "}context.result`;
 };

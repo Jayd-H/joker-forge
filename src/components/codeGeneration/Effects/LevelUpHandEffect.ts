@@ -63,8 +63,8 @@ const generateJokerCode = (
   const customVar = parsePokerHandVariable(effect?.params?.hand_selection || "", joker)
   const targetHandVar = sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`
 
-  const handSelection = (effect?.params?.hand_selection as string) || "current";
-  const specificHand = (effect?.params?.specific_hand as string) || "High Card";
+  const handSelection = (effect?.params?.hand_selection.value as string) || "current";
+  const specificHand = (effect?.params?.specific_hand.value as string) || "High Card";
   
   let handDeterminationCode = "";
    if (handSelection === "specific") {
@@ -146,10 +146,10 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const handType = effect.params?.hand_type || "Pair";
-  const levels = effect.params?.levels || 1;
+  const handType = effect.params?.hand_type.value || "Pair";
+  const levels = effect.params?.levels.value || 1;
   const customMessage = effect.customMessage;
-  const pokerHandPoolActive = (effect.params.pokerhand_pool as Array<boolean>) || [];
+  const pokerHandPoolActive = (effect.params.pokerhand_pool.value as Array<boolean>) || [];
   const pokerHandPoolPokerHands = [
     "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
     "'Straight'","'Flush'","'Full House'","'Four of a Kind'",
@@ -310,8 +310,8 @@ const generateCardCode = (
   const targetHandVar =
     sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`;
 
-  const handSelection = (effect?.params?.hand_selection as string) || "current";
-  const specificHand = (effect?.params?.specific_hand as string) || "High Card";
+  const handSelection = (effect?.params?.hand_selection.value as string) || "current";
+  const specificHand = (effect?.params?.specific_hand.value as string) || "High Card";
 
   let handDeterminationCode = "";
   switch (handSelection) {

@@ -4,11 +4,11 @@ import type { EffectReturn } from "../lib/effectUtils";
 export const generateUnlockJokerEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const selectionMethod = (effect.params?.selection_method as string) || "key"
-  const jokerKey = (effect.params?.joker_key as string) || "j_joker";
-  const discover = (effect.params?.discover as string) === "true" ? true : false
+  const selectionMethod = (effect.params?.selection_method.value as string) || "key"
+  const jokerKey = (effect.params?.joker_key.value as string) || "j_joker";
+  const discover = (effect.params?.discover.value as string) === "true" ? true : false
   const customMessage = effect.customMessage;
-  const keyVariable = (effect.params?.key_variable as string) || "none";
+  const keyVariable = (effect.params?.key_variable.value as string) || "none";
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 
   ? jokerKey 

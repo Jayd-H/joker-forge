@@ -24,7 +24,7 @@ const generateVoucherAndDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation.value || "add";
   
   const variableName =
     sameTypeCount === 0 ? "reroll_price_value" : `reroll_price_value${sameTypeCount + 1}`;

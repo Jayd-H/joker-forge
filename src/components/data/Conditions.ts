@@ -2110,7 +2110,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         type: "select",
         label: "Specific Card",
         options: (parentValues) => {
-          switch (parentValues?.property_type) {
+          switch (parentValues?.property_type.value) {
             case "jokers":
               return [...PROBABILITY_IDENTIFIERS.jokers];
             case "consumables":

@@ -15,9 +15,9 @@ const generateJokerCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const jokerKey = (condition.params?.joker_key as string) || "";
-  const selectionMethod = (condition.params?.selection_method as string) || "key"
-  const keyVar = (condition.params?.key_variable as string) || "none"
+  const jokerKey = (condition.params?.joker_key.value as string) || "";
+  const selectionMethod = (condition.params?.selection_method.value as string) || "key"
+  const keyVar = (condition.params?.key_variable.value as string) || "none"
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 
   ? jokerKey 

@@ -7,7 +7,7 @@ export const generateJuiceUpEffectCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const mode = effect.params?.mode || "onetime";
+  const mode = effect.params?.mode.value || "onetime";
 
   const configVariables: ConfigExtraVariable[] = [];
 

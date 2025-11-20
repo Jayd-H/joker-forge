@@ -20,7 +20,7 @@ export const generateCreateLastPlayedPlanetEffectCode = (
 const generateCardCode = (
   effect: Effect,
 ): EffectReturn => {
-  const isNegative = (effect.params?.is_negative as string) === "negative";
+  const isNegative = (effect.params?.is_negative.value as string) === "negative";
   const customMessage = effect.customMessage;
 
   const slotCheck = isNegative

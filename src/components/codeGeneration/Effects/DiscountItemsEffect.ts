@@ -6,9 +6,9 @@ export const generateDiscountItemsPassiveEffectCode = (
   effect: Effect,
   jokerKey: string
 ): PassiveEffectResult => {
-  const discountType = (effect.params?.discount_type as string) || "planet";
+  const discountType = (effect.params?.discount_type.value as string) || "planet";
   const discountMethod =
-    (effect.params?.discount_method as string) || "make_free";
+    (effect.params?.discount_method.value as string) || "make_free";
 
   const variableName = "discount_amount";
 
@@ -75,7 +75,7 @@ const generateVoucherCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation as string|| "add";
+  const operation = effect.params?.operation.value as string|| "add";
 
   const variableName =
     sameTypeCount === 0 ? "item_prices" : `item_prices${sameTypeCount + 1}`;

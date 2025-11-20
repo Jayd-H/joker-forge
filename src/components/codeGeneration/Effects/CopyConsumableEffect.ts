@@ -25,9 +25,9 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const consumableType = (effect.params?.consumable_type as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === "negative";
+  const consumableType = (effect.params?.consumable_type.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
+  const isNegative = (effect.params?.is_negative.value as string) === "negative";
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];
@@ -180,9 +180,9 @@ const generateConsumableCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
-  const isNegative = (effect.params?.is_negative as string) === "negative";
+  const set = (effect.params?.set.value as string) || "random";
+  const specificCard = (effect.params?.specific_card.value as string) || "random";
+  const isNegative = (effect.params?.is_negative.value as string) === "negative";
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];

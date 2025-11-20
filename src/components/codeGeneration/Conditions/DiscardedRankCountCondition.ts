@@ -22,10 +22,10 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_discarded";
 
-  const rankType = (condition.params.rank_type as string) || "specific";
+  const rankType = (condition.params.rank_type.value as string) || "specific";
   const specificRank = condition.params.specific_rank;
-  const rankGroup = (condition.params.rank_group as string) || null;
-  const quantifier = (condition.params.quantifier as string) || "at_least_one";
+  const rankGroup = (condition.params.rank_group.value as string) || null;
+  const quantifier = (condition.params.quantifier.value as string) || "at_least_one";
   const count = generateGameVariableCode(condition.params.count, 'joker');
 
   const rankVarInfo = parseRankVariable(specificRank, joker);

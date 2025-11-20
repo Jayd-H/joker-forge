@@ -18,7 +18,7 @@ const generateJokerCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
-  const editionType = (condition.params.edition as string) || "any";
+  const editionType = (condition.params.edition.value as string) || "any";
 
   if (triggerType === "card_destroyed") {
     if (editionType === "any") {
@@ -69,7 +69,7 @@ const generateCardCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "card_edition") return "";
 
-  const editionType = (condition.params?.edition as string) || "any";
+  const editionType = (condition.params?.edition.value as string) || "any";
 
   if (editionType === "any") {
     return `card.edition ~= nil`;

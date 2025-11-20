@@ -24,12 +24,12 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
 
-  const suitType = (condition.params.suit_type as string) || "specific";
+  const suitType = (condition.params.suit_type.value as string) || "specific";
   const specificSuit = condition.params.specific_suit;
-  const suitGroup = (condition.params.suit_group as string) || null;
-  const quantifier = (condition.params.quantifier as string) || "at_least_one";
+  const suitGroup = (condition.params.suit_group.value as string) || null;
+  const quantifier = (condition.params.quantifier.value as string) || "at_least_one";
   const count = generateGameVariableCode(condition.params.count, 'joker');
-  const scope = (condition.params.card_scope as string) || "scoring";
+  const scope = (condition.params.card_scope.value as string) || "scoring";
 
   const suitVarInfo = parseSuitVariable(specificSuit, joker);
 
@@ -191,9 +191,9 @@ const generateCardCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "card_suit") return "";
 
-  const suitType = (condition.params?.suit_type as string) || "specific";
-  const specificSuit = condition.params?.specific_suit as string;
-  const suitGroup = condition.params?.suit_group as string;
+  const suitType = (condition.params?.suit_type.value as string) || "specific";
+  const specificSuit = condition.params?.specific_suit.value as string;
+  const suitGroup = condition.params?.suit_group.value as string;
 
   if (suitType === "specific" && specificSuit) {
     return `card:is_suit("${specificSuit}")`;

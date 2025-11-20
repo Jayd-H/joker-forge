@@ -5,8 +5,8 @@ export const generateCopyJokerAbilityPassiveEffectCode = (
   effect: Effect,
 ): PassiveEffectResult => {
   const selectionMethod =
-    (effect.params?.selection_method as string) || "right";
-  const specificIndex = (effect.params?.specific_index as number) || 1;
+    (effect.params?.selection_method.value as string) || "right";
+  const specificIndex = (effect.params?.specific_index.value as number) || 1;
 
   let targetJokerLogic = "";
 

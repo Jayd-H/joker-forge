@@ -8,8 +8,8 @@ export const generateEditItemWeightEffectCode = (
   sameTypeCount: number = 0,
   type: string
 ): EffectReturn => {
-  const operation = effect.params?.operation as string || "add";
-  const key = effect.params?.key as string || "";
+  const operation = effect.params?.operation.value as string || "add";
+  const key = effect.params?.key.value as string || "";
 
   const variableName =
     sameTypeCount === 0 ? "item_rate" : `item${sameTypeCount + 1}`;

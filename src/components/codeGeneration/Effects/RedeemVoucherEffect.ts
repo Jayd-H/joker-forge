@@ -4,9 +4,9 @@ import type { EffectReturn } from "../lib/effectUtils";
 export const generateRedeemVoucherEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const voucherType = (effect.params?.voucher_type as string) || "random";
-  const voucherKey = (effect.params?.specific_voucher as string) || "v_overstock_norm";
-  const keyVar = (effect.params?.variable as string) || "keyVar";
+  const voucherType = (effect.params?.voucher_type.value as string) || "random";
+  const voucherKey = (effect.params?.specific_voucher.value as string) || "v_overstock_norm";
+  const keyVar = (effect.params?.variable.value as string) || "keyVar";
   const customMessage = effect.customMessage;
 
   let voucherCode: string;

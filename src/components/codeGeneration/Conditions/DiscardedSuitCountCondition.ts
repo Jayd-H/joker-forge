@@ -22,10 +22,10 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_discarded";
 
-  const suitType = (condition.params.suit_type as string) || "specific";
+  const suitType = (condition.params.suit_type.value as string) || "specific";
   const specificSuit = condition.params.specific_suit;
-  const suitGroup = (condition.params.suit_group as string) || null;
-  const quantifier = (condition.params.quantifier as string) || "at_least_one";
+  const suitGroup = (condition.params.suit_group.value as string) || null;
+  const quantifier = (condition.params.quantifier.value as string) || "at_least_one";
   const count = generateGameVariableCode(condition.params.count, 'joker');
 
   const suitVarInfo = parseSuitVariable(specificSuit, joker);
