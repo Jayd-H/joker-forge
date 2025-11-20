@@ -523,12 +523,12 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         params.operator &&
         Object.prototype.hasOwnProperty.call(
           operatorMap,
-          params.operator as string
+          params.operator.value as string
         )
-          ? operatorMap[params.operator as string]
+          ? operatorMap[params.operator.value as string]
           : params.operator;
 
-      let valueDisplay = params.value;
+      let valueDisplay = params.value.value;
       if (
         typeDefinition.id === "player_money" ||
         typeDefinition.id === "add_dollars"
@@ -560,7 +560,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         subtract: "-",
         set: "Set to",
       };
-      const op = operationMap[params.operation as string] || params.operation;
+      const op = operationMap[params.operation.value as string] || params.operation;
       const target = baseLabel
         .replace("Edit ", "")
         .replace("Add ", "")
@@ -570,7 +570,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       processedParams.add("value");
     } else if (!isCondition) {
       if (params.value !== undefined && baseLabel.startsWith("Add")) {
-        let valueDisplay = params.value;
+        let valueDisplay = params.value.value;
         if (typeDefinition.id === "add_dollars") {
           valueDisplay = `$${params.value}`;
         }
@@ -603,12 +603,12 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       if (
         processedParams.has(key) ||
         !value ||
-        skipValues.includes(value as string)
+        skipValues.includes(value.value as string)
       ) {
         return;
       }
 
-      const stringValue = value as string;
+      const stringValue = value.value as string;
 
       if (
         key === "suit" ||
@@ -770,13 +770,12 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     (conditionType: string) => {
       if (!selectedItem) return;
       const conditionTypeData = getConditionType(conditionType);
-      const defaultParams: Record<string, unknown> = {};
-      const defaultParamTypes: Record<string, string> = {}
+      const defaultParams: Record<string, {value: unknown, valueType: string}> = {};
       if (conditionTypeData) {
         conditionTypeData.params.forEach((param) => {
           if (param.default !== undefined) {
-            defaultParams[param.id] = param.default;
-            defaultParamTypes[param.id] = 
+            defaultParams[param.id].value = param.default;
+            defaultParams[param.id].valueType = 
               param.type === "number" ? 'number' : 'text'
           }
         });
@@ -786,7 +785,6 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         type: conditionType,
         negate: false,
         params: defaultParams,
-        paramValueTypes: defaultParamTypes,
       };
 
       let targetGroupId = selectedItem.groupId;
@@ -1164,15 +1162,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     if (!selectedItem) return;
 
     const effectTypeData = getEffectType(effectType);
-    const defaultParams: Record<string, unknown> = {};
-    const defaultParamTypes: Record<string, string> = {};
+    const defaultParams: Record<string, {value: unknown, valueType: string}> = {};
     if (effectTypeData) {
       effectTypeData.params.forEach((param) => {
         if (param.default !== undefined) {
-          defaultParams[param.id] = param.default;
-          defaultParamTypes[param.id] = 
-            param.type === "number" ? 'number' :
-            param.type === "checkbox" ? 'checkbox' : 'text'
+          defaultParams[param.id].value = param.default;
+          defaultParams[param.id].valueType = 
+            param.type === "number" ? 'number' : 
+            param.type === "checkbox" ? 'checkbox' : 
+            'text'
         }
       });
     }
@@ -1181,7 +1179,6 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       id: crypto.randomUUID(),
       type: effectType,
       params: defaultParams,
-      paramValueTypes: defaultParamTypes,
     };
 
     setRules((prev) =>

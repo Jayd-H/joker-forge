@@ -104,21 +104,21 @@ const updateConditionId = (
 
 const updateConditionParams = (
   id: string, 
-  params: Record <string, unknown>
-): Record <string, unknown> => {
+  params: Record <string, {value: unknown, valueType?: string}>
+): Record <string, {value: unknown, valueType?: string}> => {
   const condition = getConditionTypeById(id)
   for (const key in params) {
-    if (!params[key]) {
+    if (!params[key].value) {
       const param = condition?.params.find(param => param.id === key)
-      params[key] = param?.default
+      params[key].value = param?.default
     }
   }
 
   condition?.params.forEach(param => {
     const key = param.id
-    if (!params[key]) {
+    if (!params[key].value) {
       const param = condition?.params.find(param => param.id === key)
-      params[key] = param?.default
+      params[key].value = param?.default
     }
   })
 
@@ -225,47 +225,47 @@ const updateEffectId = (
 const updateEffectParams = (
   id: string, 
   itemType: string,
-  params: Record <string, unknown>
-): Record <string, unknown> => {
+  params: Record <string, {value: unknown, valueType?: string}>
+): Record <string, {value: unknown, valueType?: string}> => {
 
   switch (id) {
     case "destroy_random_cards":
-      params["method"] = 'random'
+      params["method"].value = 'random'
       break
     case "destroy_selected_cards":
-      params["method"] = 'selected'
+      params["method"].value = 'selected'
       break
     case "copy_triggered_card_to_hand":
     case "copy_played_card_to_hand":
-      params["add_to"] = "hand"
+      params["add_to"].value = "hand"
       break
     case "copy_triggered_card":
     case "copy_played_card":
-      params["add_to"] = "deck"
+      params["add_to"].value = "deck"
       break   
     case "edit_cards_in_hand":
-      params["selection_method"] = "selected" 
+      params["selection_method"].value = "selected" 
       break
     case "add_card_to_deck":
-      params["location"] = "deck"
+      params["location"].value = "deck"
       break
     case "add_card_to_hand":
-      params["location"] = "hand"
+      params["location"].value = "hand"
       break
     case "destroy_self":
       if (itemType === "joker") {
-        params["selection_method"] = "self"
+        params["selection_method"].value = "self"
       }
       break
     case "double_dollars":
       params["max_earnings"] = params["limit"]
-      params["limit_dollars"] = [false, true, false, false]
+      params["limit_dollars"].value = [false, true, false, false]
       break
     case "edit_selected_joker":
-      params["target"] = "selected_joker"
+      params["target"].value = "selected_joker"
       break
     case "add_dollars_from_jokers":
-      params["value"] = "GAMEVAR:all_jokers_sell_value"
+      params["value"].value = "GAMEVAR:all_jokers_sell_value"
       break
   }
 
@@ -275,22 +275,22 @@ const updateEffectParams = (
 // For filling in any newly added params with blank values on prior effects
 const updateMissingEffectParams = (
   id: string, 
-  params: Record <string, unknown>
-): Record <string, unknown> => {
+  params: Record <string, {value: unknown, valueType?: string}>
+): Record <string, {value: unknown, valueType?: string}> => {
   const effect = getEffectTypeById(id)
 
   for (const key in params) {
-    if (!params[key]) {
+    if (!params[key].value) {
       const param = effect?.params.find(param => param.id === key)
-      params[key] = param?.default
+      params[key].value = param?.default
     }
   }
 
   effect?.params.forEach(param => {
     const key = param.id
-    if (!params[key]) {
+    if (!params[key].value) {
       const param = effect?.params.find(param => param.id === key)
-      params[key] = param?.default
+      params[key].value = param?.default
     }
   })
 

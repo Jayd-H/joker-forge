@@ -111,8 +111,8 @@ export const generateConfigVariables = (
   variableName: string,
   itemType: string
 ): ConfigVariablesReturn => {
-  const effectValue: unknown = effect.params[valueIndex] ?? 1
-  const effectValueType: string = effect.paramValueTypes[valueIndex]
+  const effectValue: unknown = effect.params[valueIndex].value ?? 1
+  const effectValueType: string = effect.params[valueIndex].valueType ?? "text"
   const effectId: string = effect.id
   
   let abilityPath: string;

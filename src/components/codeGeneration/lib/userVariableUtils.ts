@@ -77,7 +77,7 @@ export const coordinateVariableConflicts = (
 
   effects.forEach((effect, index) => {
     if (effect.type === "modify_internal_variable") {
-      const varName = effect.params.variable_name as string;
+      const varName = effect.params.variable_name.value as string;
       if (varName) {
         variableOperations.push({
           varName,
@@ -146,8 +146,8 @@ export const coordinateVariableConflicts = (
     explicitVariables.forEach((varName) => {
       if (conflictedVars.includes(varName)) {
         Object.entries(effect.params).forEach(([key, value]) => {
-          if (value === varName) {
-            modifiedParams[key] = `${varName}_value`;
+          if (value.value === varName) {
+            modifiedParams[key].value = `${varName}_value`;
           }
         });
       }
@@ -180,11 +180,11 @@ const extractExplicitVariablesFromEffect = (effect: Effect): string[] => {
     "specific_hand",
   ]);
 
-  Object.entries(effect.params).forEach(([paramName, value]) => {
+  Object.entries(effect.params).forEach(([paramName, item]) => {
     if (keyParameterNames.has(paramName)) {
       return;
     }
-
+    const value = item.value
     if (
       typeof value === "string" &&
       (value.startsWith("j_") ||
@@ -329,9 +329,9 @@ export const parseRankVariable = (
 };
 
 export const addSuitVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string, valueType: string }>,
+  baseOptions: Array<{ value: string; label: string, valueType?: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string, valueType: string }> => {
+): Array<{ value: string; label: string, valueType?: string }> => {
   const suitVariables = getSuitVariables(item);
   const variableOptions = suitVariables.map((variable) => ({
     value: variable.name,
@@ -343,9 +343,9 @@ export const addSuitVariablesToOptions = (
 };
 
 export const addNumberVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string, valueType: string }>,
+  baseOptions: Array<{ value: string; label: string, valueType?: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string, valueType: string }> => {
+): Array<{ value: string; label: string, valueType?: string }> => {
   const numberVariables = getNumberVariables(item);
   const variableOptions = numberVariables.map((variable) => ({
     value: variable.name,
@@ -357,9 +357,9 @@ export const addNumberVariablesToOptions = (
 };
 
 export const addKeyVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string, valueType: string }>,
+  baseOptions: Array<{ value: string; label: string, valueType?: string}>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string, valueType: string }> => {
+): Array<{ value: string; label: string, valueType?: string }> => {
   const keyVariables = getKeyVariables(item);
   const variableOptions = keyVariables.map((variable) => ({
     value: variable.name,
@@ -372,9 +372,9 @@ export const addKeyVariablesToOptions = (
 
 
 export const addTextVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string, valueType: string }>,
+  baseOptions: Array<{ value: string; label: string, valueType?: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string, valueType: string }> => {
+): Array<{ value: string; label: string, valueType?: string }> => {
   const textVariables = getTextVariables(item);
   const variableOptions = textVariables.map((variable) => ({
     value: variable.name,
@@ -387,9 +387,9 @@ export const addTextVariablesToOptions = (
 
 
 export const addRankVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string, valueType: string }>,
+  baseOptions: Array<{ value: string; label: string, valueType?: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string, valueType: string }> => {
+): Array<{ value: string; label: string, valueType?: string }> => {
   const rankVariables = getRankVariables(item);
   const variableOptions = rankVariables.map((variable) => ({
     value: variable.name,
@@ -438,9 +438,9 @@ export const parsePokerHandVariable = (
 };
 
 export const addPokerHandVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string, valueType: string }>,
+  baseOptions: Array<{ value: string; label: string, valueType?: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string, valueType: string }> => {
+): Array<{ value: string; label: string, valueType?: string }> => {
   const pokerHandVariables = getPokerHandVariables(item);
   const variableOptions = pokerHandVariables.map((variable) => ({
     value: variable.name,
@@ -576,7 +576,7 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
     rule.conditionGroups.forEach((group) => {
       group.conditions.forEach((condition) => {
         if (condition.type === "internal_variable") {
-          const varName = (condition.params.variable_name as string) || "var1";
+          const varName = (condition.params.variable_name.value as string) || "var1";
           if (!variableMap.has(varName)) {
             variableMap.set(varName, {
               name: varName,
@@ -590,7 +590,7 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
 
     (rule.effects || []).forEach((effect) => {
       if (effect.type === "modify_internal_variable") {
-        const varName = (effect.params.variable_name as string) || "var1";
+        const varName = (effect.params.variable_name.value as string) || "var1";
         if (!variableMap.has(varName)) {
           variableMap.set(varName, {
             name: varName,
@@ -617,7 +617,7 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
     (rule.randomGroups || []).forEach((group) => {
       group.effects.forEach((effect) => {
         if (effect.type === "modify_internal_variable") {
-          const varName = (effect.params.variable_name as string) || "var1";
+          const varName = (effect.params.variable_name.value as string) || "var1";
           if (!variableMap.has(varName)) {
             variableMap.set(varName, {
               name: varName,
@@ -666,7 +666,7 @@ export const getVariableNamesFromItem = (
   item.rules.forEach((rule) => {
     (rule.effects || []).forEach((effect) => {
       if (effect.type === "modify_internal_variable") {
-        const varName = (effect.params.variable_name as string) || "var1";
+        const varName = (effect.params.variable_name.value as string) || "var1";
         variableNames.add(varName);
       }
     });
@@ -674,7 +674,7 @@ export const getVariableNamesFromItem = (
     (rule.randomGroups || []).forEach((group) => {
       group.effects.forEach((effect) => {
         if (effect.type === "modify_internal_variable") {
-          const varName = (effect.params.variable_name as string) || "var1";
+          const varName = (effect.params.variable_name.value as string) || "var1";
           variableNames.add(varName);
         }
       });
@@ -683,7 +683,7 @@ export const getVariableNamesFromItem = (
     rule.conditionGroups.forEach((group) => {
       group.conditions.forEach((condition) => {
         if (condition.type === "internal_variable") {
-          const varName = (condition.params.variable_name as string) || "var1";
+          const varName = (condition.params.variable_name.value as string) || "var1";
           variableNames.add(varName);
         }
       });
@@ -704,7 +704,7 @@ export const getVariableUsageDetails = (
   item.rules.forEach((rule, ruleIndex) => {
     (rule.effects || []).forEach((effect) => {
       if (effect.type === "modify_internal_variable") {
-        const varName = (effect.params.variable_name as string) || "var1";
+        const varName = (effect.params.variable_name.value as string) || "var1";
         const currentCount = usageCount.get(varName) || 0;
         usageCount.set(varName, currentCount + 1);
 
@@ -737,7 +737,7 @@ export const getVariableUsageDetails = (
     (rule.randomGroups || []).forEach((group) => {
       group.effects.forEach((effect) => {
         if (effect.type === "modify_internal_variable") {
-          const varName = (effect.params.variable_name as string) || "var1";
+          const varName = (effect.params.variable_name.value as string) || "var1";
           const currentCount = usageCount.get(varName) || 0;
           usageCount.set(varName, currentCount + 1);
 
@@ -771,7 +771,7 @@ export const getVariableUsageDetails = (
     rule.conditionGroups.forEach((group) => {
       group.conditions.forEach((condition) => {
         if (condition.type === "internal_variable") {
-          const varName = (condition.params.variable_name as string) || "var1";
+          const varName = (condition.params.variable_name.value as string) || "var1";
           const currentCount = usageCount.get(varName) || 0;
           usageCount.set(varName, currentCount + 1);
 

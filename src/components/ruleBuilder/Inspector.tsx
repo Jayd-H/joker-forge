@@ -99,11 +99,11 @@ interface ParameterFieldProps {
   param: ConditionParameter | EffectParameter;
   value: unknown;
   selectedRule: Rule;
-  onChange: (param: {value: unknown, valueType: string}) => void;
+  onChange: (param: {value: unknown, valueType?: string}) => void;
   selectedCondition?: Condition;
   selectedEffect?: Effect;
-  parentValues?: Record<string, unknown>;
-  availableVariables?: Array<{ value: string; label: string, valueType: string }>;
+  parentValues?: Record<string, {value: unknown, valueType?: string}>;
+  availableVariables?: Array<{ value: string; label: string, valueType?: string }>;
   onCreateVariable?: (name: string, initialValue: number) => void;
   onOpenVariablesPanel?: () => void;
   onOpenGameVariablesPanel?: () => void;
@@ -118,7 +118,7 @@ interface ChanceInputProps {
   label: string;
   value: string | number | undefined;
   onChange: (value: string | number) => void;
-  availableVariables: Array<{ value: string; label: string, valueType: string }>;
+  availableVariables: Array<{ value: string; label: string, valueType?: string }>;
   onCreateVariable: (name: string, initialValue: number) => void;
   onOpenVariablesPanel: () => void;
   onOpenGameVariablesPanel: () => void;
@@ -457,7 +457,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
   switch (param.type) {
     case "select": {
-      let options: Array<{ value: string; label: string; valueType: string, exempt?: string[] }> = [];
+      let options: Array<{ value: string; label: string; valueType?: string, exempt?: string[] }> = [];
 
       if (typeof param.options === "function") {
         // Check if the function expects parentValues parameter
@@ -1120,10 +1120,8 @@ const Inspector: React.FC<InspectorProps> = ({
         if (selectedCondition.id == "Generic Compare") {
           const valueParam = selectedCondition.params.value;
           if (valueParam !== undefined) {
-            const currentValue = valueParam;
-            const isAlreadyGameVar =
-              typeof currentValue === "string" &&
-              currentValue.startsWith("GAMEVAR:");
+            const currentValue = valueParam.value as string
+            const isAlreadyGameVar = valueParam.valueType === "game_var"
             const multiplier = isAlreadyGameVar
               ? parseFloat(currentValue.split("|")[1] || "1")
               : 1;
@@ -1134,18 +1132,21 @@ const Inspector: React.FC<InspectorProps> = ({
             onUpdateCondition(selectedRule?.id || "", selectedCondition.id, {
               params: {
                 ...selectedCondition.params,
-                value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+                value: {
+                  value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+                  valueType: 'game_var'
+                }
               },
             });
           }
           onGameVariableApplied();
         } else {
           let valueParam, item;
-          if (selectedCondition.params.value1 === 0) {
-            valueParam = selectedCondition.params.value1;
+          if (selectedCondition.params.value1.value === 0) {
+            valueParam = selectedCondition.params.value1.value;
             item = "value1";
           } else {
-            valueParam = selectedCondition.params.value2;
+            valueParam = selectedCondition.params.value2.value;
             item = "value2";
           }
           if (valueParam !== undefined) {
@@ -1163,7 +1164,10 @@ const Inspector: React.FC<InspectorProps> = ({
             onUpdateCondition(selectedRule?.id || "", selectedCondition.id, {
               params: {
                 ...selectedCondition.params,
-                [item]: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+                [item]: {
+                  value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+                  valueType: 'game_var'
+                }
               },
             });
           }
@@ -1173,10 +1177,8 @@ const Inspector: React.FC<InspectorProps> = ({
         const valueParam =
           selectedEffect.params.value || selectedEffect.params.repetitions;
         if (valueParam !== undefined) {
-          const currentValue = valueParam;
-          const isAlreadyGameVar =
-            typeof currentValue === "string" &&
-            currentValue.startsWith("GAMEVAR:");
+          const currentValue = valueParam.value as string
+          const isAlreadyGameVar = valueParam.valueType === "game_var"
           const multiplier = isAlreadyGameVar
             ? parseFloat(currentValue.split("|")[1] || "1")
             : 1;
@@ -1189,8 +1191,11 @@ const Inspector: React.FC<InspectorProps> = ({
           onUpdateEffect(selectedRule?.id || "", selectedEffect.id, {
             params: {
               ...selectedEffect.params,
-              [paramKey]: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
-            }
+              [paramKey]: {
+                value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+                valueType: 'game_Var'
+              }
+            },
           });
           onGameVariableApplied();
         }
@@ -1376,15 +1381,10 @@ const Inspector: React.FC<InspectorProps> = ({
                   onChange={(item) => {
                     const newParams = {
                       ...selectedCondition.params,
-                      [param.id]: item.value,
-                    };
-                    const newValueTypes = {
-                      ...selectedCondition.paramValueTypes,
-                      [param.id]: item.valueType,
+                      [param.id]: item,
                     };
                     onUpdateCondition(selectedRule.id, selectedCondition.id, {
                       params: newParams,
-                      paramValueTypes: newValueTypes,
                     });
                   }}
                   parentValues={selectedCondition.params}
@@ -1641,7 +1641,7 @@ const Inspector: React.FC<InspectorProps> = ({
       if (param.type == "checkbox") {
         let index = 0
         param.checkboxOptions?.map(box => {
-          const checklist = selectedEffect.params[param.id] as Array<boolean>
+          const checklist = selectedEffect.params[param.id].value as Array<boolean>
           if (checklist) {
           box.checked = !checklist[index] ? false : true
           index += 1
@@ -1782,15 +1782,10 @@ const Inspector: React.FC<InspectorProps> = ({
                     }
                     const newParams = {
                       ...selectedEffect.params,
-                      [param.id]: item.value,
-                    };
-                    const newValueTypes = {
-                      ...selectedEffect.paramValueTypes,
-                      [param.id]: item.valueType,
+                      [param.id]: item,
                     };
                     onUpdateEffect(selectedRule.id, selectedEffect.id, {
                       params: newParams,
-                      paramValueTypes: newValueTypes,
                     });
                 }}
                   selectedCondition={selectedCondition ?? undefined}

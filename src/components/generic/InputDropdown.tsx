@@ -17,7 +17,7 @@ interface InputDropdownProps {
   className?: string;
   placeholder?: string;
   value: string;
-  onChange: (item: {value: string, valueType: string}) => void;
+  onChange: (item: {value: string, valueType?: string}) => void
   options: DropdownOption[];
   size?: "sm" | "md" | "lg";
   labelPosition?: "left" | "center" | "right";
@@ -247,7 +247,7 @@ useEffect(() => {
                 `}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onChange({value: option.value, valueType: option.valueType || 'text'});
+                    onChange({value: option.value, valueType: option.valueType || 'text'})
                     setIsOpen(false);
                   }}
                 >
