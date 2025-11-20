@@ -240,9 +240,9 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
         default: "",
       },
       {
-        id: "card_apperance",
+        id: "card_appearance",
         type: "select",
-        label: "Card Apperance",
+        label: "Card Appearance",
         options: [
         { value: "appear", label: "Can Appear" },
         { value: "disapper", label: "Can't Appear" },
