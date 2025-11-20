@@ -13,8 +13,8 @@ export const generateDiscountItemsPassiveEffectCode = (
   const variableName = "discount_amount";
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.discount_amount,
-    effect.id,
+    effect,
+    'discount_amount',
     variableName,
     "hook"
   );
@@ -81,8 +81,8 @@ const generateVoucherCode = (
     sameTypeCount === 0 ? "item_prices" : `item_prices${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );

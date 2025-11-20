@@ -30,8 +30,8 @@ const generateJokerCode = (
   const variableName = `pb_${bonusType.replace("perma_", "")}_${uniqueId}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -78,8 +78,8 @@ const generateConsumableCode = (
   const variableName = `pb_${bonusType.replace("perma_", "")}_${uniqueId}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'consumable'
   )

@@ -36,8 +36,8 @@ const generateJokerAndVoucherCode = (
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  
    const { valueCode, configVariables } = generateConfigVariables(
-     effect.params?.value,
-     effect.id,
+    effect,
+    'value',
      variableName,
      'joker'
    )
@@ -124,8 +124,8 @@ const generateConsumableCode = (
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'consumable'
   )
@@ -232,8 +232,8 @@ const generateDeckCode = (
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   )

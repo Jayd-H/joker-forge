@@ -12,8 +12,8 @@ export const generateModProbabilityEffectCode = (
     sameTypeCount === 0 ? "mod_probability" : `mod_probability${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )

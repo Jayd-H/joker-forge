@@ -15,8 +15,8 @@ export const generateEditItemWeightEffectCode = (
     sameTypeCount === 0 ? "item_rate" : `item${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   );

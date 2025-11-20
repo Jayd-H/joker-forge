@@ -20,8 +20,8 @@ export const generateSetDollarsEffectCode = (
     sameTypeCount === 0 ? "dollars" : `dollars${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

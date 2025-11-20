@@ -36,8 +36,8 @@ const generateConsumableCode = (
 
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.count,
-    effect.id,
+    effect,
+    'count',
     'count',
     'consumable'
   );

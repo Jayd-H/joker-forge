@@ -215,8 +215,8 @@ const generateConsumableCode = (
     sameTypeCount === 0 ? "destroy_count" : `destroy_count${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.amount ?? 1,
-    effect.id,
+    effect,
+    'amount',
     variableName,
     'consumable',
   )      

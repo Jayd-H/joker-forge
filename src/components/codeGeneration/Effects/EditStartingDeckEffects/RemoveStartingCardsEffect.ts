@@ -12,8 +12,8 @@ export const generateRemoveStartingCardsEffectCode = (
     sameTypeCount !== 1 ? `add_starting_cards_count${sameTypeCount}` : `add_starting_cards_count`)
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.count,
-    effect.id, 
+    effect, 
+    'count',
     variableName,
     'deck'
   )

@@ -121,8 +121,8 @@ const generateJokerAndConsumableCode = (
     sameTypeCount === 0 ? "booster_packs_edit" : `booster_packs_edit${sameTypeCount + 1}`;
   
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -248,8 +248,8 @@ const generateVoucherAndDeckCode = (
     sameTypeCount === 0 ? "edited_booster" : `edited_booster${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );

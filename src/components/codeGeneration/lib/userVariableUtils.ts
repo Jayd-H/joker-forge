@@ -329,39 +329,42 @@ export const parseRankVariable = (
 };
 
 export const addSuitVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string }>,
+  baseOptions: Array<{ value: string; label: string, type: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string }> => {
+): Array<{ value: string; label: string, type: string }> => {
   const suitVariables = getSuitVariables(item);
   const variableOptions = suitVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (suit variable)`,
+    type: 'user_var'
   }));
 
   return [...baseOptions, ...variableOptions];
 };
 
 export const addNumberVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string }>,
+  baseOptions: Array<{ value: string; label: string, type: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string }> => {
+): Array<{ value: string; label: string, type: string }> => {
   const numberVariables = getNumberVariables(item);
   const variableOptions = numberVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (number variable)`,
+    type: 'user_var',
   }));
 
   return [...baseOptions, ...variableOptions];
 };
 
 export const addKeyVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string }>,
+  baseOptions: Array<{ value: string; label: string, type: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string }> => {
+): Array<{ value: string; label: string, type: string }> => {
   const keyVariables = getKeyVariables(item);
   const variableOptions = keyVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (key variable)`,
+    type: 'user_var',
   }));
 
   return [...baseOptions, ...variableOptions];
@@ -369,13 +372,14 @@ export const addKeyVariablesToOptions = (
 
 
 export const addTextVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string }>,
+  baseOptions: Array<{ value: string; label: string, type: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string }> => {
+): Array<{ value: string; label: string, type: string }> => {
   const textVariables = getTextVariables(item);
   const variableOptions = textVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (text variable)`,
+    type: 'user_var',
   }));
 
   return [...baseOptions, ...variableOptions];
@@ -383,13 +387,14 @@ export const addTextVariablesToOptions = (
 
 
 export const addRankVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string }>,
+  baseOptions: Array<{ value: string; label: string, type: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string }> => {
+): Array<{ value: string; label: string, type: string }> => {
   const rankVariables = getRankVariables(item);
   const variableOptions = rankVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (rank variable)`,
+    type: 'user_var',
   }));
 
   return [...baseOptions, ...variableOptions];
@@ -433,13 +438,14 @@ export const parsePokerHandVariable = (
 };
 
 export const addPokerHandVariablesToOptions = (
-  baseOptions: Array<{ value: string; label: string }>,
+  baseOptions: Array<{ value: string; label: string, type: string }>,
   item: JokerData | EnhancementData
-): Array<{ value: string; label: string }> => {
+): Array<{ value: string; label: string, type: string }> => {
   const pokerHandVariables = getPokerHandVariables(item);
   const variableOptions = pokerHandVariables.map((variable) => ({
     value: variable.name,
     label: `${variable.name} (poker hand variable)`,
+    type: 'user_var'
   }));
 
   return [...baseOptions, ...variableOptions];

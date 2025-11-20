@@ -99,11 +99,11 @@ interface ParameterFieldProps {
   param: ConditionParameter | EffectParameter;
   value: unknown;
   selectedRule: Rule;
-  onChange: (value: unknown) => void;
+  onChange: (param: {value: unknown, type: string}) => void;
   selectedCondition?: Condition;
   selectedEffect?: Effect;
   parentValues?: Record<string, unknown>;
-  availableVariables?: Array<{ value: string; label: string }>;
+  availableVariables?: Array<{ value: string; label: string, type: string }>;
   onCreateVariable?: (name: string, initialValue: number) => void;
   onOpenVariablesPanel?: () => void;
   onOpenGameVariablesPanel?: () => void;
@@ -118,7 +118,7 @@ interface ChanceInputProps {
   label: string;
   value: string | number | undefined;
   onChange: (value: string | number) => void;
-  availableVariables: Array<{ value: string; label: string }>;
+  availableVariables: Array<{ value: string; label: string, type: string }>;
   onCreateVariable: (name: string, initialValue: number) => void;
   onOpenVariablesPanel: () => void;
   onOpenGameVariablesPanel: () => void;
@@ -311,7 +311,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
             {availableVariables.length > 0 ? (
               <InputDropdown
                 value={(actualValue as string) || ""}
-                onChange={(newValue) => onChange(newValue)}
+                onChange={(newValue) => onChange(newValue.value)}
                 options={availableVariables}
                 placeholder="Select variable"
                 className="bg-black-dark"
@@ -418,7 +418,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         : 0;
 
       onChange(
-        `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`
+        {value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`, type: "game_var"}
       );
       onGameVariableApplied?.();
     }
@@ -457,7 +457,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
   switch (param.type) {
     case "select": {
-      let options: Array<{ value: string; label: string; exempt?: string[] }> = [];
+      let options: Array<{ value: string; label: string; type: string, exempt?: string[] }> = [];
 
       if (typeof param.options === "function") {
         // Check if the function expects parentValues parameter
@@ -472,6 +472,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         options = param.options.map((option) => ({
           value: option.value,
           label: option.label,
+          type: option.type ?? 'number',
           exempt: option.exempt ?? undefined
         }));
       } 
@@ -481,12 +482,12 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
       if (param.variableTypes?.includes("joker_context")) {
         if (trigger === "joker_evaluated") {
-            options.push({value: "evaled_joker", label: "Evaluated Joker"})
+            options.push({value: "evaled_joker", label: "Evaluated Joker", type: 'context'})
         }
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
           condition => condition.type === "joker_selected" && condition.negate === false
         ))) {
-          options.push({value: "selected_joker", label: "Selected Joker", exempt: ["joker", "card", "voucher", "deck"] })
+          options.push({value: "selected_joker", label: "Selected Joker", type: 'context', exempt: ["joker", "card", "voucher", "deck"] })
         }
       }
 
@@ -504,64 +505,64 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
       cardContexts.forEach(item => {
         if (param.variableTypes?.includes(item.context)) {
           if (trigger === "card_scored") {
-            options.push({value: "scored_card", label: `Scored Card ${item.label}`})
+            options.push({value: "scored_card", label: `Scored Card ${item.label}`, type: 'context'})
           }
           if (trigger === "card_destroyed") {
-            options.push({value: "destroyed_card", label: `Destroyed Card ${item.label}`})
+            options.push({value: "destroyed_card", label: `Destroyed Card ${item.label}`, type: 'context'})
           }
           if (trigger === "card_discarded") {
-            options.push({value: "discarded_card", label: `Discarded Card ${item.label}`})
+            options.push({value: "discarded_card", label: `Discarded Card ${item.label}`, type: 'context'})
           }
           if (trigger === "card_held_in_hand" || trigger === "card_held_in_hand_end_of_round") {
-            options.push({value: "held_card", label: `Card Held in Hand ${item.label}`})
+            options.push({value: "held_card", label: `Card Held in Hand ${item.label}`, type: 'context'})
           }
           if (trigger === "card_added") {
-            options.push({value: "added_card", label: `Added Card ${item.label}`})
+            options.push({value: "added_card", label: `Added Card ${item.label}`, type: 'context'})
           } 
         }
       })
 
       if (param.variableTypes?.includes("edition_context")) {
         if (trigger === "joker_evaluated") {
-          options.push({value: "evaled_joker", label: `Evaluated Joker Edition`})
+          options.push({value: "evaled_joker", label: `Evaluated Joker Edition`, type: 'context'})
         }
         if (selectedRule.conditionGroups.some(groups => groups.conditions.some(
           condition => condition.type === "joker_selected" && condition.negate === false
         ))) {
-          options.push({value: "selected_joker", label: "Selected Joker Edition", exempt: ["joker", "card", "voucher", "deck"] })
+          options.push({value: "selected_joker", label: "Selected Joker Edition", type: 'context', exempt: ["joker", "card", "voucher", "deck"] })
         }
       }
 
       if (param.variableTypes?.includes("consumable_context")) {
         if (trigger === "consumable_used") {
-          options.push({value: "used_consumable", label: `Used Consumable`})
+          options.push({value: "used_consumable", label: `Used Consumable`, type: 'context'})
         }
       }
 
       if (param.variableTypes?.includes("voucher_context")) {
         if (trigger === "voucher_redeemd") {
-          options.push({value: "redeemed_voucher", label: `Redeemed Voucher`})
+          options.push({value: "redeemed_voucher", label: `Redeemed Voucher`, type: 'context'})
         }
       }
 
       if (param.variableTypes?.includes("booster_context")) {
         if (trigger === "booster_opened") {
-          options.push({value: "opened_booster", label: `Opened Booster Pack`})
+          options.push({value: "opened_booster", label: `Opened Booster Pack`, type: 'context'})
         }
         if (trigger === "booster_skipped") {
-          options.push({value: "skipped_booster", label: `Skipped Booster Pack`})
+          options.push({value: "skipped_booster", label: `Skipped Booster Pack`, type: 'context'})
         }
         if (trigger === "booster_exited") {
-          options.push({value: "exited_booster", label: `Exited Booster Pack`})
+          options.push({value: "exited_booster", label: `Exited Booster Pack`, type: 'context'})
         }
       }
       
       if (param.variableTypes?.includes("tag_context")) {
         if (trigger === "tag_added") {
-          options.push({value: "added_tag", label: `Added Tag`})
+          options.push({value: "added_tag", label: `Added Tag`, type: 'context'})
         }
         if (trigger === "blind selected" || triggerDef?.category === "In Blind Events" || triggerDef?.category === "Hand Scoring") {
-          options.push({value: "blind_tag", label: `Current Blind Skip Tag`})
+          options.push({value: "blind_tag", label: `Current Blind Skip Tag`, type: 'context'})
         }
       }
 
@@ -572,6 +573,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push(...numberVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
+            type: 'user_var',
           })))}
         if (param.variableTypes?.includes("suit")) {
           const suitVariables =
@@ -579,6 +581,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push(...suitVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
+            type: 'user_var',
           })))}
         if (param.variableTypes?.includes("rank")) {
           const rankVariables =
@@ -586,6 +589,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push(...rankVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
+            type: 'user_var',
           })))}
         if (param.variableTypes?.includes("pokerhand")) {
           const pokerHandVariables =
@@ -593,6 +597,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push(...pokerHandVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
+            type: 'user_var',
           })))}
         if (param.variableTypes?.includes("key")) {
           const keyVariables =
@@ -600,6 +605,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push(...keyVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
+            type: 'user_var',
           })))}
         if (param.variableTypes?.includes("text")) {
           const textVariables =
@@ -607,6 +613,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
           options.push(...textVariables.map((variable) => ({
             value: variable.name,
             label: variable.name,
+            type: 'user_var',
           })))}
       } else {
 
@@ -693,16 +700,16 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         if (mode === "number") {
           setIsVariableMode(false);
           setIsRangeMode(false);
-          onChange(numericValue);
+          onChange({value: numericValue, type: 'number'});
           setInputValue(numericValue.toString());
         } else if (mode === "variable") {
           setIsVariableMode(true);
           setIsRangeMode(false);
-          onChange("");
+          onChange({value: "", type: 'user_var'});
         } else if (mode === "range") {
           setIsVariableMode(false);
           setIsRangeMode(true);
-          onChange("RANGE:1|5");
+          onChange({value: "RANGE:1|5", type: 'range_var'});
         }
       };
 
@@ -713,13 +720,13 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         setInputValue(newValue);
 
         if (newValue === "" || newValue === "-") {
-          onChange(0);
+          onChange({value: 0, type: 'number'});
           return;
         }
 
         const parsed = parseFloat(newValue);
         if (!isNaN(parsed)) {
-          onChange(parsed);
+          onChange({value: parsed, type: 'number'});
         }
       };
 
@@ -730,11 +737,11 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
         const parsed = parseFloat(newValue) || 0;
         if (field === "multiplier") {
           onChange(
-            `GAMEVAR:${gameVariableId}|${parsed}|${gameVariableStartsFrom}`
+            {value:`GAMEVAR:${gameVariableId}|${parsed}|${gameVariableStartsFrom}`, type: 'game_var'}
           );
         } else {
           onChange(
-            `GAMEVAR:${gameVariableId}|${gameVariableMultiplier}|${parsed}`
+            {value:`GAMEVAR:${gameVariableId}|${gameVariableMultiplier}|${parsed}`, type: 'game_var'}
           );
         }
       };
@@ -742,9 +749,9 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
       const handleRangeChange = (field: "min" | "max", newValue: string) => {
         const parsed = parseFloat(newValue) ?? 1;
         if (field === "min") {
-          onChange(`RANGE:${parsed}|${rangeValues.max}`);
+          onChange({value: `RANGE:${parsed}|${rangeValues.max}`, type: 'range_var'});
         } else {
-          onChange(`RANGE:${rangeValues.min}|${parsed}`);
+          onChange({value: `RANGE:${rangeValues.min}|${parsed}`, type: 'range_var'});
         }
       };
 
@@ -808,7 +815,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
                 </div>
                 <button
                   onClick={() => {
-                    onChange(numericValue);
+                    onChange({value: numericValue, type: 'number'});
                     setInputValue(numericValue.toString());
                   }}
                   className="p-1 text-mint hover:text-white transition-colors cursor-pointer"
@@ -915,7 +922,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
               {availableVariables && availableVariables.length > 0 ? (
                 <InputDropdown
                   value={(value as string) || ""}
-                  onChange={(newValue) => onChange(newValue)}
+                  onChange={(newValue) => onChange({value: newValue, type: 'user_var'})}
                   options={availableVariables}
                   placeholder="Select variable"
                   className="bg-black-dark"
@@ -957,7 +964,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
             value={(value as string) || ""}
             onChange={(e) => {
               const newValue = e.target.value;
-              onChange(newValue);
+              onChange({value: newValue, type: 'text'});
 
               if (isVariableName) {
                 const validation = validateVariableName(newValue);
@@ -1007,7 +1014,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
               if (param.checkboxOptions && Array.isArray(value)) {
                 param.checkboxOptions[index].checked = value[index] == true ? false : true
               }
-              onChange(boxes[index].checked)
+              onChange({value: boxes[index].checked, type: 'checkbox'})
             }}
             className="w-4 h-4 text-mint bg-black-darker border-black-lighter rounded focus:ring-mint focus:ring-2"
           />
@@ -1049,6 +1056,7 @@ const Inspector: React.FC<InspectorProps> = ({
   selectedItem,
   itemType,
 }) => {
+  console.log(selectedRule)
   const [customMessageValidationError, setCustomMessageValidationError] =
     useState<string>("");
 
@@ -1072,6 +1080,7 @@ const Inspector: React.FC<InspectorProps> = ({
     (variable: { name: string }) => ({
       value: variable.name,
       label: variable.name,
+      type: 'user_var'
     })
   );
 
@@ -1364,13 +1373,18 @@ const Inspector: React.FC<InspectorProps> = ({
                   selectedRule={selectedRule}
                   selectedCondition={selectedCondition}
                   selectedEffect={selectedEffect ?? undefined}
-                  onChange={(value) => {
+                  onChange={(item) => {
                     const newParams = {
                       ...selectedCondition.params,
-                      [param.id]: value,
+                      [param.id]: item.value,
+                    };
+                    const newValueTypes = {
+                      ...selectedCondition.paramValueTypes,
+                      [param.id]: item.type,
                     };
                     onUpdateCondition(selectedRule.id, selectedCondition.id, {
                       params: newParams,
+                      paramValueTypes: newValueTypes,
                     });
                   }}
                   parentValues={selectedCondition.params}
@@ -1762,16 +1776,21 @@ const Inspector: React.FC<InspectorProps> = ({
                   param={param}
                   value={selectedEffect.params[param.id]}
                   selectedRule={selectedRule}
-                  onChange={(value) => { 
+                  onChange={(item) => { 
                     if (param.type == "checkbox"){
-                      value = param.checkboxOptions?.map(box => box.checked ? true : false) 
+                      item.value = param.checkboxOptions?.map(box => box.checked ? true : false) 
                     }
                     const newParams = {
                       ...selectedEffect.params,
-                      [param.id]: value,
+                      [param.id]: item.value,
+                    };
+                    const newValueTypes = {
+                      ...selectedEffect.paramValueTypes,
+                      [param.id]: item.type,
                     };
                     onUpdateEffect(selectedRule.id, selectedEffect.id, {
                       params: newParams,
+                      paramValueTypes: newValueTypes,
                     });
                 }}
                   selectedCondition={selectedCondition ?? undefined}

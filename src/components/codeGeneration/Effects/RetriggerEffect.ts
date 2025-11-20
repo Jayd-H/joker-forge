@@ -31,8 +31,8 @@ const generateJokerCode = (
     sameTypeCount === 0 ? "repetitions" : `repetitions${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params.repetitions,
-    effect.id,
+    effect,
+    'repetitions',
     variableName,
     'joker'
   )
@@ -62,8 +62,8 @@ const generateCardCode = (
       : `retrigger_times${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effectValue,
-    effect.id,
+    effect,
+    'value',
     variableName,
     card?.objectType ?? 'enhancement'
   );

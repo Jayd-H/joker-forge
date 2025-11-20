@@ -29,8 +29,8 @@ const generateVoucherAndDeckCode = (
     sameTypeCount === 0 ? "interest_cap_value" : `interest_cap_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );

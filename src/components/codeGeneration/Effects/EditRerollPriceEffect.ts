@@ -30,8 +30,8 @@ const generateVoucherAndDeckCode = (
     sameTypeCount === 0 ? "reroll_price_value" : `reroll_price_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );

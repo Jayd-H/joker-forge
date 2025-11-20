@@ -128,8 +128,8 @@ export const generateEditItemSizeEffectCode = (
     sameTypeCount === 0 ? `${itemData.varName}` : `${itemData.varName}${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

@@ -47,8 +47,8 @@ const generateJokerCode = (
       sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
 
     const ret = generateConfigVariables(
-      effect.params?.value,
-      effect.id,
+    effect,
+    'value',
       variableName,
       'joker'
     )
@@ -301,8 +301,8 @@ const generateCardCode = (
     sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     card?.objectType ?? 'enhancement'
   );

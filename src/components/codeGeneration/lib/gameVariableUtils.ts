@@ -1,4 +1,5 @@
 import { getGameVariableById } from "../../data/GameVars";
+import { Effect } from "../../ruleBuilder";
 import { ConfigExtraVariable } from "./effectUtils";
 
 export interface ParsedGameVariable {
@@ -105,14 +106,14 @@ export const generateGameVariableCode = (
 };
 
 export const generateConfigVariables = (
-  effectValue: unknown,
-  effectId: string,
+  effect: Effect,
+  valueIndex: string,
   variableName: string,
   itemType: string
 ): ConfigVariablesReturn => {
-  effectValue = effectValue ?? 1;
-  const parsed = parseGameVariable(effectValue);
-  const rangeParsed = parseRangeVariable(effectValue);
+  const effectValue: unknown = effect.params[valueIndex] ?? 1
+  const effectValueType: string = effect.paramValueTypes[valueIndex]
+  const effectId: string = effect.id
   
   let abilityPath: string;
   if (itemType === "seal") {
@@ -125,11 +126,12 @@ export const generateConfigVariables = (
 
   let valueCode: string;
   const configVariables: ConfigExtraVariable[] = [];
-  if (parsed.isGameVariable) {
+  if (effectValueType === 'game_var') {
     valueCode = generateGameVariableCode(effectValue, itemType);
-  } else if (rangeParsed.isRangeVariable) {
+  } else if (effectValueType === 'range_var') {
     const seedName = `${variableName}_${effectId.substring(0, 8)}`;
     valueCode = `pseudorandom('${seedName}', ${abilityPath}.${variableName}_min, ${abilityPath}.${variableName}_max)`;
+    const rangeParsed = parseRangeVariable(effectValue);
 
     configVariables.push(
       { name: `${variableName}_min`, value: rangeParsed.min ?? 1 },
@@ -137,27 +139,25 @@ export const generateConfigVariables = (
     );
   } else if (itemType === "hook") {
     valueCode = `${effectValue}`;
-  } else if (typeof effectValue === "string") {
-    if (effectValue.endsWith("_value")) {
-      valueCode = effectValue;
-    } else {
-      valueCode = `${abilityPath}.${effectValue}`;
-    }
-  } else {
-    valueCode = `${abilityPath}.${variableName}`;
-
+  } else if (effectValueType === "user_var") {
+    valueCode = `${abilityPath}.${effectValue}`;
+  } else if (effectValueType === "number") {
+    valueCode = `${effectValue as string}`;
     configVariables.push({
       name: variableName,
       value: Number(effectValue ?? 1),
     });
+  } else {
+    valueCode = `${effectValue as string}`;
+
   }
   
   return {
     valueCode,
     configVariables,
     isXVariable: {
-      isGameVariable: parsed.isGameVariable,
-      isRangeVariable: rangeParsed.isRangeVariable,
+      isGameVariable: effectValueType === 'game_var',
+      isRangeVariable: effectValueType === 'range_var',
     },
   };
 };

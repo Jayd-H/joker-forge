@@ -39,6 +39,7 @@ export interface Condition {
   type: string;
   negate: boolean; // For NOT logic
   params: Record<string, unknown>;
+  paramValueTypes: Record<string, string>;
   operator?: string;
 }
 
@@ -47,6 +48,7 @@ export interface Effect {
   id: string;
   type: string;
   params: Record<string, unknown>;
+  paramValueTypes: Record<string, string>;
   customMessage?: string;
 }
 
@@ -68,6 +70,7 @@ export interface ShowWhenCondition {
 export interface ConditionParameterOption {
   value: string;
   label: string;
+  type: string;
   exempt?: string[],
 }
 
@@ -107,6 +110,7 @@ export interface GlobalConditionTypeDefinition {
 export interface EffectParameterOption {
   value: string;
   label: string;  
+  type: string;
   exempt?: string[],
   checked?: boolean;
 }

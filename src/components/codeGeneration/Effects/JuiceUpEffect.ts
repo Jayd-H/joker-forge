@@ -14,8 +14,8 @@ export const generateJuiceUpEffectCode = (
   const scaleVariableName =
     sameTypeCount === 0 ? "scale" : `scale${sameTypeCount + 1}`;
   const scaleRet = generateConfigVariables(
-    effect.params.scale,
-    effect.id,
+    effect,
+    'scale',
     scaleVariableName,
     'joker'
   )
@@ -28,8 +28,8 @@ export const generateJuiceUpEffectCode = (
   const rotationVariableName =
     sameTypeCount === 0 ? "rotation" : `rotation${sameTypeCount + 1}`;
   const rotationRet = generateConfigVariables(
-    effect.params.rotation,
-    effect.id,
+    effect,
+    'rotation',
     rotationVariableName,
     'joker'
   )

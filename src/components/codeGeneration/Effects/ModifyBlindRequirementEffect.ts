@@ -12,8 +12,8 @@ export const generateModifyBlindRequirementEffectCode = (
     sameTypeCount === 0 ? "blind_size" : `blind_size${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

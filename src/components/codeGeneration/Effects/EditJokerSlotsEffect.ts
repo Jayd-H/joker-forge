@@ -91,8 +91,8 @@ const generateJokerCode = (
     sameTypeCount === 0 ? "joker_slots" : `joker_slots${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -164,8 +164,8 @@ const generateConsumableCode = (
     sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );
@@ -266,8 +266,8 @@ const generateVoucherCode = (
     sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );
@@ -319,8 +319,8 @@ const generateDeckCode = (
     sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );

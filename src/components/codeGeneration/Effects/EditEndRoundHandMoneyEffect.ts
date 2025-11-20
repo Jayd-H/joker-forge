@@ -29,8 +29,8 @@ const generateVoucherAndDeckCode = (
     sameTypeCount === 0 ? "hand_dollars_value" : `hand_dollars_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );

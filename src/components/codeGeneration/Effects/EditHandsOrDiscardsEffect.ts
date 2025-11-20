@@ -11,8 +11,8 @@ export const generateEditItemCountPassiveEffectCode = (
   const variableName = "hand_change";
   
   const { valueCode, configVariables, isXVariable } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -110,8 +110,8 @@ const generateJokerConsumableVoucherCode = (
     sameTypeCount === 0 ? typeData.mainCode : `${typeData.mainCode}${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType,
   )
@@ -223,8 +223,8 @@ const generateDeckCode = (
     sameTypeCount === 0 ? "hands_value" : `hands_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );

@@ -12,9 +12,12 @@ export const generateChangeKeyVariableEffectCode = (
   const variableName =
     sameTypeCount === 0 ? "increment_count" : `increment_count${sameTypeCount + 1}`;
 
+  const indexValue = effect.params[`${itemType}_change_type`] === 'increment' 
+    ? `${itemType}_increment_count` : ''
+
   const { valueCode: numberCode, configVariables } = generateConfigVariables(
-    getParamForKeyType(effect, keyType),
-    effect.id,
+    effect, 
+    indexValue,
     variableName,
     itemType,
   );
@@ -42,11 +45,11 @@ const getParamForKeyType = (
   switch(keyType){
     case "joker":
       if (effect.params?.joker_change_type as string === "increment")
-        return effect.params?.joker_increment_count
+        return 'joker_increment_count'
       else return ''
     case "consumable":
       if (effect.params?.consumable_change_type as string === "increment")
-        return effect.params?.consumable_increment_count
+        return 'consumable_increment_count'
       else return ''
     case "enhancement":
       if (effect.params?.enhancement_change_type as string === "increment")

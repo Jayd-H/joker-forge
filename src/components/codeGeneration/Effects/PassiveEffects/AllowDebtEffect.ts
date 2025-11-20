@@ -8,8 +8,8 @@ export const generateAllowDebtPassiveEffectCode = (
   const variableName = "debt_amount";
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     'joker'
   )

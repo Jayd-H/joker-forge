@@ -35,8 +35,8 @@ const generateJokerCode = (
     sameTypeCount === 0 ? "sell_value" : `sell_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker',
   )

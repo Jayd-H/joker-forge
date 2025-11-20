@@ -14,8 +14,8 @@ export const generateSetAnteEffectCode = (
     sameTypeCount === 0 ? "ante_value" : `ante_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

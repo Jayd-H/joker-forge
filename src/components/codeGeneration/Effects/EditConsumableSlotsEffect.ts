@@ -8,8 +8,8 @@ export const generateEditConsumableSlotsPassiveEffectCode = (
   const operation = effect.params?.operation || "add";
 
   const { valueCode, configVariables, isXVariable } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     "slot_change",
     'joker'
   )
@@ -107,8 +107,8 @@ const generateJokerCode = (
       : `consumable_slots${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -190,8 +190,8 @@ const generateVoucherCode = (
     sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );
@@ -244,8 +244,8 @@ const generateDeckCode = (
     sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );
