@@ -21,20 +21,21 @@ export const updateRuleBlocks = (
       rule.trigger = updateTrigger(rule, item.objectType);
 
       (rule.conditionGroups || []).forEach(group => {group.conditions.map(condition => 
-        updateCondition(condition)
+        updateCondition(condition, item)
       )});
 
       (rule.effects|| []).map(effect => 
-        updateEffect(effect, item.objectType)
+        updateEffect(effect, item.objectType, item)
       );
 
       (rule.randomGroups || []).forEach(group => {group.effects.map(effect =>
-        updateEffect(effect, item.objectType)
+        updateEffect(effect, item.objectType, item)
       )});
 
       (rule.loops || []).forEach(group => {group.effects.map(effect =>
-        updateEffect(effect, item.objectType)
+        updateEffect(effect, item.objectType, item)
       )});
+
 
     })})
   }) 
@@ -70,14 +71,17 @@ const updateTrigger = (
 }
 
 const updateCondition = (
-  condition: Condition
+  condition: Condition,
+  object: JokerData | EnhancementData | SealData | EditionData
 ) => {
+  console.log(condition)
+  console.log(Object.values(condition.params))
+  if (Object.values(condition.params).some(value => typeof value !== "object")) {
+    condition.params = convertParamsToObjects(condition.params, object)
+  }
 
   condition.type = updateConditionId(condition.type)
-  if (typeof Object.entries(condition.params) !== "object") {
-    condition.params = convertParamsToObjects(condition.params)
-  }
-  condition.params = updateConditionParams(condition.type, condition.params)
+  condition.params = updateConditionParams(condition.type, condition.params, object)
 
   return condition
 }
@@ -107,22 +111,24 @@ const updateConditionId = (
 
 const updateConditionParams = (
   id: string, 
-  params: Record <string, {value: unknown, valueType?: string}>
+  params: Record <string, {value: unknown, valueType?: string}>,
+  object: JokerData | EnhancementData | SealData | EditionData
 ): Record <string, {value: unknown, valueType?: string}> => {
   const condition = getConditionTypeById(id)
   for (const key in params) {
-    if (!params[key].value) {
-      const param = condition?.params.find(param => param.id === key)
-      params[key].value = param?.default
-    }
+    const param = condition?.params.find(param => param.id === key)
+    params[key] = {
+      value: params[key]?.value ?? param?.default,
+      valueType: params[key]?.valueType ?? detectValueType(param?.default, object)
+    }       
   }
 
   condition?.params.forEach(param => {
     const key = param.id
-    if (!params[key].value) {
-      const param = condition?.params.find(param => param.id === key)
-      params[key].value = param?.default
-    }
+    params[key] = {
+      value: params[key]?.value ?? param?.default,
+      valueType: params[key]?.valueType ?? detectValueType(param?.default, object)
+    }       
   })
 
   return params
@@ -131,14 +137,15 @@ const updateConditionParams = (
 const updateEffect = (
   effect: Effect,
   itemType: string,
+  object: JokerData | EnhancementData | SealData | EditionData
 ) => {
   const oldEffectId = effect.type
   effect.type = updateEffectId(oldEffectId, itemType)
-  if (typeof Object.entries(effect.params) !== "object") {
-    effect.params = convertParamsToObjects(effect.params)
+  if (Object.values(effect.params).some(value => typeof value !== "object")) {
+    effect.params = convertParamsToObjects(effect.params, object)
   }
   effect.params = updateEffectParams(oldEffectId, itemType, effect.params)
-  effect.params = updateMissingEffectParams(effect.type, effect.params)
+  effect.params = updateMissingEffectParams(effect.type, effect.params, object)
 
   return effect
 }
@@ -264,7 +271,7 @@ const updateEffectParams = (
       }
       break
     case "double_dollars":
-      params["max_earnings"] = params["limit"]
+      params["max_earnings"].value = params["limit"]
       params["limit_dollars"].value = [false, true, false, false]
       break
     case "edit_selected_joker":
@@ -281,23 +288,25 @@ const updateEffectParams = (
 // For filling in any newly added params with blank values on prior effects
 const updateMissingEffectParams = (
   id: string, 
-  params: Record <string, {value: unknown, valueType?: string}>
+  params: Record <string, {value: unknown, valueType?: string}>,
+  object: JokerData | EnhancementData | SealData | EditionData,
 ): Record <string, {value: unknown, valueType?: string}> => {
   const effect = getEffectTypeById(id)
 
   for (const key in params) {
-    if (!params[key].value) {
-      const param = effect?.params.find(param => param.id === key)
-      params[key].value = param?.default
+    const param = effect?.params.find(param => param.id === key)
+    params[key] = {
+      value: params[key]?.value ?? param?.default,
+      valueType: params[key]?.valueType ?? detectValueType(param?.default, object)
     }
   }
 
   effect?.params.forEach(param => {
     const key = param.id
-    if (!params[key].value) {
-      const param = effect?.params.find(param => param.id === key)
-      params[key].value = param?.default
-    }
+    params[key] = {
+      value: params[key]?.value ?? param?.default,
+      valueType: params[key]?.valueType ?? detectValueType(param?.default, object)
+    } 
   })
 
   return params
@@ -305,18 +314,26 @@ const updateMissingEffectParams = (
 
 
 const convertParamsToObjects = (
-  params: Record<string, unknown>
+  params: Record<string, unknown>,
+  object: JokerData | EnhancementData | SealData | EditionData,
 ): Record<string, {value: unknown, valueType?: string}> => {
   const newRecord: Record<string, {value: unknown, valueType?: string}> = {}
   Object.entries(params).forEach(([key, item]) => {
-    newRecord[key].value = item
-    newRecord[key].valueType = detectValueType(item)
+    if (typeof newRecord[key] !== "object") {
+      newRecord[key] = {
+        value: item,
+        valueType: detectValueType(item, object)
+      }
+    }
   })
 
   return newRecord
 }
 
-const detectValueType = (item: unknown) => {
+export const detectValueType = (
+  item: unknown, 
+  object?: JokerData | EnhancementData | SealData | EditionData
+) => {
   if (Array.isArray(item) && typeof item[0] === "boolean") {
     return "checkbox"
   } else if (typeof item === "string") {
@@ -324,7 +341,9 @@ const detectValueType = (item: unknown) => {
       return "game_var"
     } else if (item.startsWith("RANGE")) {
       return "range_var"
-    } // check user vars
+    } else if (object && object.userVariables?.some((v) => v.name === item)) {
+      return "user_var"
+    }
   } else if (typeof item === "number") {
     return "number"
   }

@@ -492,6 +492,9 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   ): string => {
     const baseLabel = typeDefinition.label;
     const params = item.params;
+    if (item.type.includes('variable')) {
+      return baseLabel
+    }
 
     if (!params || Object.keys(params).length === 0) {
       return baseLabel;
@@ -526,14 +529,14 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
           params.operator.value as string
         )
           ? operatorMap[params.operator.value as string]
-          : params.operator;
+          : params.operator.value;
 
       let valueDisplay = params.value.value;
       if (
         typeDefinition.id === "player_money" ||
         typeDefinition.id === "add_dollars"
       ) {
-        valueDisplay = `$${params.value}`;
+        valueDisplay = `$${params.value.value}`;
       }
 
       title = `${prefix}${baseLabel
@@ -542,15 +545,15 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       processedParams.add("operator");
       processedParams.add("value");
     } else if (params.value !== undefined && !params.operator) {
-      title = `${prefix}${baseLabel} = ${params.value}`;
+      title = `${prefix}${baseLabel} = ${params.value.value}`;
       processedParams.add("value");
     } else if (params.specific_rank || params.rank_group) {
       const rank = params.specific_rank || params.rank_group;
-      title = `${prefix}Card Rank = ${rank}`;
+      title = `${prefix}Card Rank = ${rank.value}`;
       processedParams.add("specific_rank");
       processedParams.add("rank_group");
     } else if (params.specific_suit || params.suit_group) {
-      const suit = params.specific_suit || params.suit_group;
+      const suit = params.specific_suit?.value || params.suit_group?.value;
       title = `${prefix}Card Suit = ${suit}`;
       processedParams.add("specific_suit");
       processedParams.add("suit_group");
@@ -565,30 +568,30 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
         .replace("Edit ", "")
         .replace("Add ", "")
         .replace("Apply ", "");
-      title = `${op} ${params.value} ${target}`;
+      title = `${op} ${params.value.value} ${target}`;
       processedParams.add("operation");
       processedParams.add("value");
     } else if (!isCondition) {
       if (params.value !== undefined && baseLabel.startsWith("Add")) {
         let valueDisplay = params.value.value;
         if (typeDefinition.id === "add_dollars") {
-          valueDisplay = `$${params.value}`;
+          valueDisplay = `$${params.value.value}`;
         }
         title = `Add ${valueDisplay} ${baseLabel.replace("Add ", "")}`;
         processedParams.add("value");
       } else if (params.value !== undefined && baseLabel.startsWith("Apply")) {
-        title = `Apply ${params.value}x ${baseLabel
+        title = `Apply ${params.value.value}x ${baseLabel
           .replace("Apply x", "")
           .replace("Apply ", "")}`;
         processedParams.add("value");
       } else if (params.repetitions !== undefined) {
-        title = `Retrigger ${params.repetitions}x`;
+        title = `Retrigger ${params.repetitions.value}x`;
         processedParams.add("repetitions");
       } else if (
         typeDefinition.id === "level_up_hand" &&
         params.value !== undefined
       ) {
-        title = `Level Up Hand ${params.value}x`;
+        title = `Level Up Hand ${params.value.value}x`;
         processedParams.add("value");
       } else {
         title = baseLabel;
@@ -602,7 +605,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     Object.entries(params).forEach(([key, value]) => {
       if (
         processedParams.has(key) ||
-        !value ||
+        !value.value ||
         skipValues.includes(value.value as string)
       ) {
         return;
@@ -769,16 +772,16 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const addCondition = useCallback(
     (conditionType: string) => {
       if (!selectedItem) return;
+
       const conditionTypeData = getConditionType(conditionType);
       const defaultParams: Record<string, {value: unknown, valueType?: string}> = {};
+
       if (conditionTypeData) {
         conditionTypeData.params.forEach((param) => {
           if (param.default !== undefined) {
             defaultParams[param.id] = {
               value: param.default,
-              valueType:
-                defaultParams[param.id].valueType = 
-                param.type === "number" ? 'number' : 'text'
+              valueType: param.type === "number" ? 'number' : 'text'
             }
           }
         });
@@ -1166,6 +1169,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
     const effectTypeData = getEffectType(effectType);
     const defaultParams: Record<string, {value: unknown, valueType?: string}> = {};
+
     if (effectTypeData) {
       effectTypeData.params.forEach((param) => {
         if (param.default !== undefined) {

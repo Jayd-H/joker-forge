@@ -20,9 +20,6 @@ export const generateAllowDebtPassiveEffectCode = (
   return {
     addToDeck,
     removeFromDeck,
-    configVariables:
-      configVariables.length > 0
-        ? configVariables.map((cv) => cv.name + " = " + cv.value)
-        : [],
+    configVariables,
   };
 };

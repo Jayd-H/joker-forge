@@ -17,10 +17,7 @@ export const generateFreeRerollsPassiveEffectCode = (
   return {
     addToDeck: `SMODS.change_free_rerolls(${valueCode})`,
     removeFromDeck: `SMODS.change_free_rerolls(-(${valueCode}))`,
-    configVariables:
-      configVariables.length > 0
-        ? configVariables.map((cv) => cv.name + " = " + cv.value)
-        : [],
+    configVariables,
     locVars: [],
   };
 };

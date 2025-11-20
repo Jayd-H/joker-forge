@@ -10,7 +10,7 @@ export const generateReduceFlushStraightRequirementsPassiveEffectCode = (
   return {
     addToDeck: `-- Flush/Straight requirements reduced by ${reductionValue}`,
     removeFromDeck: `-- Flush/Straight requirements restored`,
-    configVariables: [`reduction_value = ${reductionValue}`],
+    configVariables: [{name: 'reduction_value', value: reductionValue}],
     locVars: [`card.ability.extra.reduction_value`],
     needsHook: {
       hookType: "reduce_flush_straight_requirements",

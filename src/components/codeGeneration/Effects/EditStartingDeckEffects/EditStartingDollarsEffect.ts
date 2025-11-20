@@ -1,14 +1,13 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../lib/effectUtils";
-import { generateGameVariableCode } from "../../lib/gameVariableUtils";
+import { generateValueCode } from "../../lib/gameVariableUtils";
 
 export const generateEditStartingDollarsEffectCode = (
   effect: Effect,
 ): EffectReturn => {
   const operation = effect.params?.operation.value || "add";
-  const value = effect.params?.value;
 
-  const valueCode = generateGameVariableCode(value, "deck");
+  const valueCode = generateValueCode(effect.params?.value.value as string, effect.params?.value.valueType);
 
   let dollarsCode = "";
 

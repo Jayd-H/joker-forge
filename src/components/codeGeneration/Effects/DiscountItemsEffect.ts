@@ -36,10 +36,7 @@ export const generateDiscountItemsPassiveEffectCode = (
         return true
     end
 }))`,
-    configVariables:
-      configVariables.length > 0
-        ? configVariables.map((cv) => cv.name + " = " + cv.value)
-        : [],
+    configVariables,
     locVars: [],
     needsHook: {
       hookType: "discount_items",

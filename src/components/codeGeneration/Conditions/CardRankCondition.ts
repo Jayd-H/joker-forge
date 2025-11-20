@@ -1,16 +1,14 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { getRankId, type JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable } from "../lib/userVariableUtils";
+import { getRankId } from "../../data/BalatroUtils";
 import { generateGameVariableCode } from "../lib/gameVariableUtils";
 
 export const generateCardRankConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
 ): string | null => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
+      return generateJokerCode(rules)
     case "card":
       return generateCardCode(rules)
   }
@@ -19,19 +17,16 @@ export const generateCardRankConditionCode = (
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
 
-  const rankType = (condition.params.rank_type.value as string) || "specific";
-  const specificRank = condition.params.specific_rank.value;
-  const rankGroup = (condition.params.rank_group.value as string) || null;
-  const quantifier = (condition.params.quantifier.value as string) || "at_least_one";
+  const rankType = condition.params.rank_type
+  const specificRank = condition.params.specific_rank
+  const rankGroup = condition.params.rank_group || null;
+  const quantifier = condition.params.quantifier
   const count = generateGameVariableCode(condition.params.count, 'joker');
-  const scope = (condition.params.card_scope.value as string) || "scoring";
-
-  const rankVarInfo = parseRankVariable(specificRank, joker);
+  const scope = condition.params.card_scope
 
   const getRanksCheckLogic = (
     ranks: string[],
@@ -63,15 +58,15 @@ const generateJokerCode = (
   let useVariable = false;
   let variableCode = "";
 
-  if (rankType === "specific") {
-    if (rankVarInfo.isRankVariable) {
+  if (rankType.value === "specific") {
+    if (rankType.valueType === "user_var") {
       useVariable = true;
-      variableCode = `G.GAME.current_round.${rankVarInfo.variableName}_card.id`;
-    } else if (typeof specificRank === "string") {
-      ranks = [specificRank];
+      variableCode = `G.GAME.current_round.${rankType.value}_card.id`;
+    } else if (typeof specificRank.value === "string") {
+      ranks = [specificRank.value];
     }
-  } else if (rankType === "group" && rankGroup) {
-    rankGroupType = rankGroup;
+  } else if (rankType.value === "group" && rankGroup) {
+    rankGroupType = rankGroup.value as string;
   }
 
   if (triggerType === "card_destroyed") {
@@ -109,11 +104,11 @@ end)()`;
   }
 
   const cardsToCheck =
-    scope === "scoring" && !(triggerType === "card_discarded")
+    scope.value === "scoring" && !(triggerType === "card_discarded")
       ? "context.scoring_hand"
       : "context.full_hand";
 
-  switch (quantifier) {
+  switch (quantifier.value) {
     case "all":
       return `(function()
     local allMatchRank = true

@@ -211,10 +211,10 @@ export const extractGameVariablesFromRules = (
 ): GameVariableInfo[] => {
   const gameVariableMap = new Map<string, GameVariableInfo>();
 
-  const processParams = (params: Record<string, unknown>) => {
-    Object.values(params).forEach((value) => {
-      const parsed = parseGameVariable(value);
-      if (parsed.isGameVariable && parsed.gameVariableId && parsed.code) {
+  const processParams = (params: Record<string, {value: unknown, valueType?: string}>) => {
+    Object.values(params).forEach((item) => {
+      if (item.valueType === "game_var") {
+        const parsed = parseGameVariable(item.value as string);
         const gameVar = getGameVariableById(parsed.gameVariableId);
         if (gameVar && !gameVariableMap.has(parsed.gameVariableId)) {
           gameVariableMap.set(parsed.gameVariableId, {

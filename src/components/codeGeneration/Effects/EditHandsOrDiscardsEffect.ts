@@ -46,10 +46,7 @@ export const generateEditItemCountPassiveEffectCode = (
   return {
     addToDeck,
     removeFromDeck,
-    configVariables: 
-      configVariables.length > 0 ?
-      configVariables.map((cv)=> `${cv.name} = ${cv.value}`)
-      : [],
+    configVariables,
     locVars:
       isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
   };

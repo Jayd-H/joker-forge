@@ -47,8 +47,8 @@ const generateJokerCode = (
       sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
 
     const ret = generateConfigVariables(
-    effect,
-    'value',
+      effect,
+      'value',
       variableName,
       'joker'
     )
@@ -147,7 +147,7 @@ const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
   const handType = effect.params?.hand_type.value || "Pair";
-  const levels = effect.params?.levels.value || 1;
+  const levels = effect.params?.levels;
   const customMessage = effect.customMessage;
   const pokerHandPoolActive = (effect.params.pokerhand_pool.value as Array<boolean>) || [];
   const pokerHandPoolPokerHands = [
@@ -272,7 +272,7 @@ const generateConsumableCode = (
   if (handType !== "random" && handType !== "all") {
     configVariables.push({name: `hand_type`, value: `${handType}`});
   }
-  if (!(typeof levels === "string" && levels.startsWith("GAMEVAR:"))) {
+  if (!(levels.valueType === "game_var")) {
     configVariables.push({name: `levels`, value: `${levels}`});
   }
 

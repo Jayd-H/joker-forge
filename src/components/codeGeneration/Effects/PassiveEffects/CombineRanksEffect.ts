@@ -13,21 +13,17 @@ export const generateCombineRanksPassiveEffectCode = (
     sourceRankType === "specific"
       ? sourceRanksString.split(",").map((rank) => rank.trim())
       : [];
+  
+  const configVariables = [
+    { name: "source_rank_type", value: `${sourceRankType}` },
+    { name: "source_ranks", value: `{${sourceRankType === "specific" ? sourceRanks.map((rank) => `"${rank}"`).join(", ") : [] }}`},
+    { name: "target_rank", value: `"${targetRank}"`},
+  ]
 
   return {
     addToDeck: `-- Combine ranks effect enabled`,
     removeFromDeck: `-- Combine ranks effect disabled`,
-    configVariables: [
-      `source_rank_type = "${sourceRankType}"`,
-      ...(sourceRankType === "specific"
-        ? [
-            `source_ranks = {${sourceRanks
-              .map((rank) => `"${rank}"`)
-              .join(", ")}}`,
-          ]
-        : []),
-      `target_rank = "${targetRank}"`,
-    ],
+    configVariables,
     locVars: [],
     needsHook: {
       hookType: "combine_ranks",

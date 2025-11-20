@@ -1,28 +1,13 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
-import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditJokerSizePassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
   const operation = effect.params?.operation.value || "add";
-  const effectValue = effect.params.value.value;
-  const parsed = parseGameVariable(effectValue);
-  const rangeParsed = parseRangeVariable(effectValue);
 
-  let valueCode: string;
-
-  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
-    valueCode = generateGameVariableCode(effectValue as string, '');
-  } else if (rangeParsed.isRangeVariable) {
-    const seedName = `jokersize_passive`;
-    valueCode = `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-  } else if (typeof effectValue === "string") {
-    valueCode = `card.ability.extra.${effectValue}`;
-  } else {
-    valueCode = (effectValue as number | boolean).toString();
-  }
+  let valueCode = generateValueCode(effect.params.value.value as string, effect.params.value.valueType);
 
   let addToDeck = "";
   let removeFromDeck = "";

@@ -104,7 +104,7 @@ interface ExtendedEffect extends Effect {
 export interface PassiveEffectResult {
   addToDeck?: string;
   removeFromDeck?: string;
-  configVariables?: string[];
+  configVariables?: ConfigExtraVariable[];
   locVars?: string[];
   calculateFunction?: string;
   needsHook?: {

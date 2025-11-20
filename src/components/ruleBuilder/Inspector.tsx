@@ -97,7 +97,7 @@ interface InspectorProps {
 
 interface ParameterFieldProps {
   param: ConditionParameter | EffectParameter;
-  value: unknown;
+  item: {value: unknown, valueType?: string};
   selectedRule: Rule;
   onChange: (param: {value: unknown, valueType?: string}) => void;
   selectedCondition?: Condition;
@@ -358,7 +358,7 @@ function hasShowWhen(param: ConditionParameter | EffectParameter | undefined): p
 
 const ParameterField: React.FC<ParameterFieldProps> = ({
   param,
-  value,
+  item,
   selectedRule,
   onChange,
   selectedCondition,
@@ -373,6 +373,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
   joker = null,
   itemType,
 }) => {
+  const value = item.value
   const [isVariableMode, setIsVariableMode] = React.useState(
     typeof value === "string" &&
       !value.startsWith("GAMEVAR:") &&
@@ -438,10 +439,9 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
 
     while (showing && currentParam && hasShowWhen(currentParam)) {
       const { parameter, values }: ShowWhenCondition = currentParam.showWhen;
-      const parentValue = parentValues[parameter];
-
+      const parentValue = parentValues[parameter].value;
       if (Array.isArray(parentValue) && typeof parentValue[0] === "boolean") {
-        if (!values.some(value => parentValue[parseFloat(value)])) {
+        if (!values.some(item => parentValue[parseFloat(item)])) {
           showing = false;
         }
       } else if (typeof parentValue === "string") {
@@ -1305,7 +1305,7 @@ const Inspector: React.FC<InspectorProps> = ({
 
       while (showing && currentParam && hasShowWhen(currentParam)) {
         const { parameter, values }: ShowWhenCondition = currentParam.showWhen;
-        const parentValue = selectedCondition.params[parameter];
+        const parentValue = selectedCondition.params[parameter].value;
 
         if (Array.isArray(parentValue) && typeof parentValue[0] === "boolean") {
           if (!values.some(value => parentValue[parseFloat(value)])) {
@@ -1374,7 +1374,7 @@ const Inspector: React.FC<InspectorProps> = ({
               >
                 <ParameterField
                   param={param}
-                  value={selectedCondition.params[param.id]}
+                  item={selectedCondition.params[param.id]}
                   selectedRule={selectedRule}
                   selectedCondition={selectedCondition}
                   selectedEffect={selectedEffect ?? undefined}
@@ -1653,7 +1653,7 @@ const Inspector: React.FC<InspectorProps> = ({
 
       while (showing && currentParam && hasShowWhen(currentParam)) {
         const { parameter, values }: ShowWhenCondition = currentParam.showWhen;
-        const parentValue = selectedEffect.params[parameter];
+        const parentValue = selectedEffect.params[parameter].value;
 
         if (Array.isArray(parentValue) && typeof parentValue[0] === "boolean") {
           if (!values.some(value => parentValue[parseFloat(value)])) {
@@ -1774,7 +1774,7 @@ const Inspector: React.FC<InspectorProps> = ({
               >
                 <ParameterField
                   param={param}
-                  value={selectedEffect.params[param.id]}
+                  item={selectedEffect.params[param.id]}
                   selectedRule={selectedRule}
                   onChange={(item) => { 
                     if (param.type == "checkbox"){
