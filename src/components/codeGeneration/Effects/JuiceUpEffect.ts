@@ -7,7 +7,7 @@ export const generateJuiceUpEffectCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const mode = effect.params?.mode.value || "onetime";
+  const mode = effect.params?.mode?.value || "onetime";
 
   const configVariables: ConfigExtraVariable[] = [];
 
@@ -23,7 +23,7 @@ export const generateJuiceUpEffectCode = (
   scaleRet.configVariables.forEach((cv) => {
     configVariables.push(cv)
   })
-  const scaleValueCode = scaleRet.valueCode
+  const scaleValueCode = scaleRet?.valueCode
 
   const rotationVariableName =
     sameTypeCount === 0 ? "rotation" : `rotation${sameTypeCount + 1}`;
@@ -37,7 +37,7 @@ export const generateJuiceUpEffectCode = (
   rotationRet.configVariables.forEach((cv) => {
     configVariables.push(cv)
   })
-  const rotationValueCode = rotationRet.valueCode
+  const rotationValueCode = rotationRet?.valueCode
 
   let cardType: string;
   if (effectType == "card") {

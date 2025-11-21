@@ -5,10 +5,10 @@ import { generateConfigVariables, generateValueCode } from "../lib/gameVariableU
 export const generateEditBoosterPacksPassiveEffectCode = (
   effect: Effect,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation.value || "add";
-  const selectedType = effect.params?.selected_type.value || "size";
+  const operation = effect.params?.operation?.value || "add";
+  const selectedType = effect.params?.selected_type?.value || "size";
 
-  const valueCode = generateValueCode(effect.params.value.value as string, effect.params.value.valueType);
+  const valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
 
   let addToDeckValueCode = "";
   let removeFromDeckValueCode = "";
@@ -100,8 +100,8 @@ const generateJokerAndConsumableCode = (
   sameTypeCount: number = 0,
   itemType: string
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
-  const selected_type = effect.params?.selected_type.value || "size";
+  const operation = effect.params?.operation?.value || "add";
+  const selected_type = effect.params?.selected_type?.value || "size";
   const customMessage = effect.customMessage;
 
   const variableName =
@@ -229,8 +229,8 @@ const generateVoucherAndDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
-  const selected_type = effect.params?.selected_type.value || "size";
+  const operation = effect.params?.operation?.value || "add";
+  const selected_type = effect.params?.selected_type?.value || "size";
   const variableName =
     sameTypeCount === 0 ? "edited_booster" : `edited_booster${sameTypeCount + 1}`;
 

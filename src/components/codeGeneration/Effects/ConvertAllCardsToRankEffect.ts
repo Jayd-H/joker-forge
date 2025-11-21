@@ -20,9 +20,9 @@ export const generateConvertAllCardToRankEffectCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const rank = effect.params?.rank.value || "Ace";
+  const rank = effect.params?.rank?.value || "Ace";
   const customMessage = effect.customMessage;
-  const rankPoolActive = (effect.params.rank_pool.value as Array<boolean>) || [];
+  const rankPoolActive = (effect.params.rank_pool?.value as Array<boolean>) || [];
   const rankPoolRanks = [
     "'A'","'2'","'3'","'4'","'5'",
     "'6'","'7'","'8'","'9'","'10'",

@@ -55,7 +55,7 @@ const generateCardCode = (
   sameTypeCount: number = 0,
   card?: EditionData | EnhancementData | SealData
 ): EffectReturn => {
-  const effectValue = effect.params?.value ?? 1;
+  const effectValue = effect.params?.value.value ?? 1;
   const variableName =
     sameTypeCount === 0
       ? "retrigger_times"

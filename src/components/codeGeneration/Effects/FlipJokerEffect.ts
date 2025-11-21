@@ -4,11 +4,11 @@ import type { EffectReturn } from "../lib/effectUtils";
 export const generateFlipJokerEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const selectionMethod = effect.params?.selection_method.value as string || "random";
-  const position = (effect.params?.position.value as string) || "first";
-  const specificIndex = effect.params?.specific_index.value as number;
+  const selectionMethod = effect.params?.selection_method?.value as string || "random";
+  const position = (effect.params?.position?.value as string) || "first";
+  const specificIndex = effect.params?.specific_index?.value as number;
   const customMessage = effect.customMessage;
-  const jokerVariable = (effect.params?.joker_variable.value as string) || "j_joker";
+  const jokerVariable = (effect.params?.joker_variable?.value as string) || "j_joker";
 
   let jokerFlipCode = "";
  if (selectionMethod === "all") {

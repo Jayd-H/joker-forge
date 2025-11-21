@@ -24,7 +24,7 @@ const generateConsumableCode = (
   sameTypeCount: number = 0
 ): EffectReturn => {
   const customMessage = effect.customMessage;
-  const selectionMethod = effect.params?.method.value as string || "random"
+  const selectionMethod = effect.params?.method?.value as string || "random"
 
   const variableName =
     sameTypeCount === 0 ? "destroy_count" : `destroy_count${sameTypeCount + 1}`;

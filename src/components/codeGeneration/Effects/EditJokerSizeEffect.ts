@@ -5,9 +5,9 @@ import { generateConfigVariables, generateValueCode } from "../lib/gameVariableU
 export const generateEditJokerSizePassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
 
-  let valueCode = generateValueCode(effect.params.value.value as string, effect.params.value.valueType);
+  let valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
 
   let addToDeck = "";
   let removeFromDeck = "";
@@ -70,7 +70,7 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
 
   const variableName =
     sameTypeCount === 0 ? "joker_size" : `joker_size${sameTypeCount + 1}`;
@@ -142,7 +142,7 @@ const generateConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
   const customMessage = effect.customMessage;
 
   const variableName =
@@ -246,7 +246,7 @@ const generateVoucherCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "joker_size_value" : `joker_size_value${sameTypeCount + 1}`;
 
@@ -299,7 +299,7 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "joker_size_value" : `joker_size_value${sameTypeCount + 1}`;
 

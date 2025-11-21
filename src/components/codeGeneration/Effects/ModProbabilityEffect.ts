@@ -6,8 +6,8 @@ export const generateModProbabilityEffectCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const chance_part = effect.params?.part.value || "numerator";
-  const operation = effect.params?.operation.value || "multiply";
+  const chance_part = effect.params?.part?.value || "numerator";
+  const operation = effect.params?.operation?.value || "multiply";
   const variableName =
     sameTypeCount === 0 ? "mod_probability" : `mod_probability${sameTypeCount + 1}`;
 

@@ -5,7 +5,7 @@ import { generateConfigVariables } from "../lib/gameVariableUtils";
 export const generateEditConsumableSlotsPassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
 
   const { valueCode, configVariables, isXVariable } = generateConfigVariables(
     effect,
@@ -97,7 +97,7 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0
       ? "consumable_slots"
@@ -182,7 +182,7 @@ const generateVoucherCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
 
@@ -236,7 +236,7 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
 

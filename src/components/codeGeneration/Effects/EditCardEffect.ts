@@ -30,17 +30,17 @@ const generateJokerCode = (
   modPrefix: string,
   joker?: JokerData
 ): EffectReturn => {
-  const newRank = (effect.params?.new_rank.value as string) || "none";
-  const newSuit = (effect.params?.new_suit.value as string) || "none";
-  const newEnhancement = (effect.params?.new_enhancement.value as string) || "none";
-  const newSeal = (effect.params?.new_seal.value as string) || "none";
-  const newEdition = (effect.params?.new_edition.value as string) || "none";
+  const newRank = (effect.params?.new_rank?.value as string) || "none";
+  const newSuit = (effect.params?.new_suit?.value as string) || "none";
+  const newEnhancement = (effect.params?.new_enhancement?.value as string) || "none";
+  const newSeal = (effect.params?.new_seal?.value as string) || "none";
+  const newEdition = (effect.params?.new_edition?.value as string) || "none";
   const customMessage = effect.customMessage;
 
   const editionPool = EDITIONS().map(edition => `'${
     edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)    
 
-  const variableUsers = effect.params?.variables.value as boolean[] || [false, false, false];
+  const variableUsers = effect.params?.variables?.value as boolean[] || [false, false, false];
   const rankVar = parseRankVariable(newRank, joker)
   const suitVar = parseSuitVariable(newSuit, joker)
 

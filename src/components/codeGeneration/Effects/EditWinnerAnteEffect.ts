@@ -30,7 +30,7 @@ const generateJokerAndVoucherCode = (
   triggerType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "set";
+  const operation = effect.params?.operation?.value || "set";
 
  const variableName =
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
@@ -117,7 +117,7 @@ const generateConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "set";
+  const operation = effect.params?.operation?.value || "set";
   const customMessage = effect.customMessage;
 
   const variableName =
@@ -227,7 +227,7 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "set";
+  const operation = effect.params?.operation?.value || "set";
   const variableName =
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  

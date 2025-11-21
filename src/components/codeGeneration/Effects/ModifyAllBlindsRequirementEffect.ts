@@ -7,7 +7,7 @@ export const generateModifyAllBlindsRequirementEffectCode = (
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "multiply";
+  const operation = effect.params?.operation?.value || "multiply";
   const variableName =
     sameTypeCount === 0 ? "all_blinds_size" : `all_blinds_size${sameTypeCount + 1}`;
 

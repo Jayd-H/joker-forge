@@ -66,7 +66,7 @@ const generateCardCode = (
   triggerType: string,
 ): EffectReturn => {
   const customMessage = effect.customMessage;
-  const setGlassTrigger = effect.params?.set_glass_trigger.value === "true";
+  const setGlassTrigger = effect.params?.set_glass_trigger?.value === "true";
 
   if (triggerType === "card_discarded") {
     const result: EffectReturn = {

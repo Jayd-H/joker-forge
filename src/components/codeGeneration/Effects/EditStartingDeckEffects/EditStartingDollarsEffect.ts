@@ -5,9 +5,9 @@ import { generateValueCode } from "../../lib/gameVariableUtils";
 export const generateEditStartingDollarsEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "add";
+  const operation = effect.params?.operation?.value || "add";
 
-  const valueCode = generateValueCode(effect.params?.value.value as string, effect.params?.value.valueType);
+  const valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
 
   let dollarsCode = "";
 

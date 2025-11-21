@@ -7,7 +7,7 @@ export const generateModifyBlindRequirementEffectCode = (
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation.value || "multiply";
+  const operation = effect.params?.operation?.value || "multiply";
   const variableName =
     sameTypeCount === 0 ? "blind_size" : `blind_size${sameTypeCount + 1}`;
 

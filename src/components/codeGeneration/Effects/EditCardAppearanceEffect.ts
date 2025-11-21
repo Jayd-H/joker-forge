@@ -5,7 +5,7 @@ export const generateEditCardAppearanceEffectCode = (
   effect: Effect,
 ): EffectReturn => {
   const card_appearance = effect.params?.card_appearance?.value || "appear";
-  const key = effect.params.key.value as string || "";
+  const key = effect.params.key?.value as string || "";
 
   let editAppearCode = "";
 
