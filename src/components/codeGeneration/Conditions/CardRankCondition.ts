@@ -20,9 +20,9 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
 
-  const rankType = condition.params.rank_type
-  const specificRank = condition.params.specific_rank
-  const rankGroup = condition.params.rank_group || null;
+  const rankType = condition.params?.rank_type
+  const specificRank = condition.params?.specific_rank
+  const rankGroup = condition.params?.rank_group || null;
 
   const getRanksCheckLogic = (
     ranks: string[],

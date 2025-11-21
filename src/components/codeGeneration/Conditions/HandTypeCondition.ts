@@ -19,9 +19,9 @@ const generateJokerCode = (
   joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const scope = condition.params.card_scope.value as string || "scoring";
-  const operator = condition.params.operator.value as string || "contains";
-  const handType = condition.params.value.value as string || "High Card";
+  const scope = condition.params?.card_scope?.value as string || "scoring";
+  const operator = condition.params?.operator?.value as string || "contains";
+  const handType = condition.params?.value?.value as string || "High Card";
 
     if (handType === "most_played_hand") {
       return `(function()

@@ -5,5 +5,5 @@ export const generateSystemConditionCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
 
-  return `love.system.getOS() == "${condition.params?.system.value || "Windows"}"`;
+  return `love.system.getOS() == "${condition.params?.system?.value || "Windows"}"`;
 }

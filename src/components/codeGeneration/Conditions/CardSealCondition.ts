@@ -19,7 +19,7 @@ const generateJokerCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
-  const sealType = (condition.params.seal.value as string) || "any";
+  const sealType = (condition.params?.seal?.value as string) || "any";
 
   const capitalizedSealType =
     sealType === "any"

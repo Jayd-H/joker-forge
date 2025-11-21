@@ -8,9 +8,9 @@ export const generateDeckCountConditionCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const propertyType =
-    (condition.params.property_type.value as string) || "enhancement";
-  const operator = (condition.params.operator.value as string);
-  const value = generateGameVariableCode(condition.params.value, '');
+    (condition.params?.property_type?.value as string) || "enhancement";
+  const operator = (condition.params?.operator?.value as string);
+  const value = generateGameVariableCode(condition.params?.value, '');
 
   let propertyCheck = "";
 

@@ -6,9 +6,9 @@ export const generateHandCountConditionCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const operator = (condition.params.operator.value as string) || "equals";
-  const value = generateGameVariableCode(condition.params.value, '') || "5";
-  const scope = (condition.params.card_scope.value as string) || "scoring";
+  const operator = (condition.params?.operator?.value as string) || "equals";
+  const value = generateGameVariableCode(condition.params?.value, '') || "5";
+  const scope = (condition.params?.card_scope?.value as string) || "scoring";
 
   let cardsToCheck = ""
   switch (scope) {

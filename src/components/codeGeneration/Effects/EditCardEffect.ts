@@ -1,18 +1,16 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { EDITIONS, JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../lib/userVariableUtils";
+import { EDITIONS } from "../../data/BalatroUtils";
 
 export const generateEditCardEffectCode = (
   effect: Effect,
   itemType: string,
   triggerType: string, 
   modPrefix: string, 
-  joker?: JokerData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, triggerType, modPrefix, joker)
+      return generateJokerCode(effect, triggerType, modPrefix)
     case "card":
       return generateCardCode(effect, triggerType)
 
@@ -28,58 +26,54 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
   modPrefix: string,
-  joker?: JokerData
 ): EffectReturn => {
-  const newRank = (effect.params?.new_rank?.value as string) || "none";
-  const newSuit = (effect.params?.new_suit?.value as string) || "none";
-  const newEnhancement = (effect.params?.new_enhancement?.value as string) || "none";
-  const newSeal = (effect.params?.new_seal?.value as string) || "none";
-  const newEdition = (effect.params?.new_edition?.value as string) || "none";
+  const newRank = effect.params?.new_rank
+  const newSuit = effect.params?.new_suit
+  const newEnhancement = effect.params?.new_enhancement
+  const newSeal = effect.params?.new_seal
+  const newEdition = effect.params?.new_edition
   const customMessage = effect.customMessage;
 
   const editionPool = EDITIONS().map(edition => `'${
     edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)    
 
-  const variableUsers = effect.params?.variables?.value as boolean[] || [false, false, false];
-  const rankVar = parseRankVariable(newRank, joker)
-  const suitVar = parseSuitVariable(newSuit, joker)
-
   let modificationCode = "";
   const target = 'context.other_card'
 
-  if (newRank !== "none" || newSuit !== "none") {
+  if (newRank.value !== "none" || newSuit.value !== "none") {
     let suitParam = "nil";
     let rankParam = "nil";
  
-    if (suitVar.isSuitVariable) {
-      suitParam = `ranks[${suitVar.code}]`;
+    if (newSuit.valueType === "user_var") {
+      suitParam = `ranks[G.GAME.current_round.${newSuit}_card.suit]`;
       modificationCode += `
       local ranks = {
           [2] = '2', [3] = '3', [4] = '4', [5] = '5', [6] = '6', 
           [7] = '7', [8] = '8', [9] = '9', [10] = 'T', 
           [11] = 'Jack', [12] = 'Queen', [13] = 'King', [14] = 'Ace'
       }`
-    } else if (newSuit === "random") {
+    } else if (newSuit.value === "random") {
       suitParam = "pseudorandom_element(SMODS.Suits, 'edit_card_suit').key";
-    } else if (newSuit !== "none") {
+    } else if (newSuit.value !== "none") {
       suitParam = `"${newSuit}"`;
     }
 
-    if (rankVar.isRankVariable) {
-      rankParam = `${rankVar.code}`;
-    } else if (newRank === "random") {
+    if (newRank.valueType === "user_var") {
+      rankParam = `G.GAME.current_round.${newRank}_card.id`;
+    } else if (newRank.value === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
-    } else if (newRank !== "none") {
+    } else if (newRank.value !== "none") {
       rankParam = `"${newRank}"`;
     }
 
     modificationCode += `
       assert(SMODS.change_base(${target}, ${suitParam}, ${rankParam}))`;
   }
-  if (newEnhancement === "remove") {
+
+  if (newEnhancement.value === "remove") {
     modificationCode += `
       ${target}:set_ability(G.P_CENTERS.c_base)`;
-  } else if (newEnhancement === "random") {
+  } else if (newEnhancement.value === "random") {
     modificationCode += `
       local enhancement_pool = {}
       for _, enhancement in pairs(G.P_CENTER_POOLS.Enhanced) do
@@ -89,45 +83,45 @@ const generateJokerCode = (
       end
       local random_enhancement = pseudorandom_element(enhancement_pool, 'edit_card_enhancement')
       ${target}:set_ability(random_enhancement)`;
-  } else if (variableUsers[0]) {
+  } else if (newEnhancement.valueType === "user_var") {
     modificationCode += `
   
       ${target}:set_ability(G.P_CENTERS[card.ability.extra.${newEnhancement}])`;
-  } else if (newEnhancement !== "none") {
+  } else if (newEnhancement.value !== "none") {
     modificationCode += `
       ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
   }
 
-  if (newSeal === "remove") {
+  if (newSeal.value === "remove") {
     modificationCode += `
       ${target}:set_seal(nil)`;
-  } else if (newSeal === "random") {
+  } else if (newSeal.value === "random") {
     modificationCode += `
       local random_seal = SMODS.poll_seal({mod = 10, guaranteed = true})
       if random_seal then
           ${target}:set_seal(random_seal, true)
       end`;
-  } else if (variableUsers[1]) {
+  } else if (newSeal.valueType === "user_var") {
     modificationCode += `
       ${target}:set_seal(card.ability.extra.${newSeal}, true)`;
-  } else if (newSeal !== "none") {
+  } else if (newSeal.value !== "none") {
     modificationCode += `
       ${target}:set_seal("${newSeal}", true)`;
   }
 
-  if (newEdition === "remove") {
+  if (newEdition.value === "remove") {
     modificationCode += `
       ${target}:set_edition(nil)`;
-  } else if (newEdition === "random") {
+  } else if (newEdition.value === "random") {
     modificationCode += `
       local edition = pseudorandom_element({${editionPool}}, 'random edition')
       if random_edition then
           ${target}:set_edition(random_edition, true)
       end`;
-  } else if (variableUsers[2]) {
+  } else if (newEdition.valueType === "user_var") {
     modificationCode += `
       ${target}:set_edition(card.ability.extra.${newEdition}, true)`;
-  }  else if (newEdition !== "none") {
+  }  else if (newEdition.value !== "none") {
     modificationCode += `
       ${target}:set_edition("${newEdition}", true)`;
   }

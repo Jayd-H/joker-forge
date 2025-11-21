@@ -799,7 +799,7 @@ export const generateSingleEffect = (
     case "convert_left_to_right":
       return generateConvertLeftToRightEffectCode(effect, itemType)
     case "create_playing_card":
-      return generateCreatePlayingCardEffectCode(effect, itemType, triggerType, modprefix, joker)
+      return generateCreatePlayingCardEffectCode(effect, itemType, triggerType, modprefix)
     case "create_playing_cards":
       return generateCreatePlayingCardsEffectCode(effect, itemType, modprefix)
     case "create_copy_triggered_card":
@@ -848,7 +848,7 @@ export const generateSingleEffect = (
       return generateEditItemSizeEffectCode(effect, cleanItemType, sameTypeCount, sizeItemType)
     }
     case "edit_playing_card":
-      return generateEditCardEffectCode(effect, itemType, triggerType, modprefix, joker)
+      return generateEditCardEffectCode(effect, itemType, triggerType, modprefix)
     case "edit_cards":
       return generateEditCardsEffectCode(effect, itemType, modprefix)
     case "edit_joker_slots":

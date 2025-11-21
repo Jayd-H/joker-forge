@@ -1,18 +1,16 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { EDITIONS, SEALS, type JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable, parseSuitVariable } from "../lib/userVariableUtils";
+import { EDITIONS, SEALS } from "../../data/BalatroUtils";
 
 export const generateCreatePlayingCardEffectCode = (
   effect: Effect,
   itemType: string,
   triggerType: string,
   modprefix: string,
-  joker?: JokerData,
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(effect, triggerType, modprefix, joker)
+      return generateJokerCode(effect, triggerType, modprefix,)
     default:
       return {
         statement: "",
@@ -25,16 +23,13 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string, 
   modprefix: string,
-  joker?: JokerData,
 ): EffectReturn => {
-  const suit = (effect.params?.suit?.value as string) || "random";
-  const rank = (effect.params?.rank?.value as string) || "random";
-  const enhancement = (effect.params?.enhancement.value as string) || "none";
-  const seal = (effect.params?.seal?.value as string) || "none";
-  const edition = (effect.params?.edition?.value as string) || "none";
+  const suit = effect.params?.suit
+  const rank = effect.params?.rank
+  const enhancement = effect.params?.enhancement
+  const seal = effect.params?.seal
+  const edition = effect.params?.edition
   const location = (effect.params?.location?.value as string) || "deck";
-
-  const variables = (effect.params?.variables?.value as string) || [false, false, false]
 
   const customMessage = effect.customMessage;
 
@@ -44,16 +39,13 @@ const generateJokerCode = (
   const isScoring = scoringTriggers.includes(triggerType);
   const isHeldInHand = heldInHandTriggers.includes(triggerType);
 
-  const rankVar = parseRankVariable((effect.params?.rank?.value as string) || "", joker);
-  const suitVar = parseSuitVariable((effect.params?.suit?.value as string) || "", joker);
-
   let cardSelectionCode = "";
 
-  if (suit === "random" && rank === "random") {
+  if (suit.value === "random" && rank.value === "random") {
     cardSelectionCode += "local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))";
   } else {
-    const suitCode = suitVar.isSuitVariable ? suitVar.code : `'${suit.charAt(0)}'`
-    const rankCode = rankVar.isRankVariable ? rankVar.code : `'${rank.charAt(0)}'`
+    const suitCode = suit.valueType === "user_var" ? `G.GAME.current_round.${suit}_card.suit` : `'${(suit.value as string).charAt(0)}'`
+    const rankCode = rank.valueType === "user_var" ?`G.GAME.current_round.${rank.value}_card.id` : `'${(rank.value as string).charAt(0)}'`
 
     if (suitCode === `'r'`) { 
       cardSelectionCode += `
@@ -76,39 +68,39 @@ const generateJokerCode = (
   }
 
   let centerParam = "";
-  if (enhancement === "none") {
+  if (enhancement.value === "none") {
     centerParam = `G.P_CENTERS.c_base`;
-  } else if (enhancement === "random") {
+  } else if (enhancement.value === "random") {
     centerParam = `pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))`;
-  } else if (variables[0]){
+  } else if (enhancement.valueType === "user_var"){
     centerParam = `G.P_CENTERS.[card.ability.extra.${enhancement}]`;
   } else {
     centerParam = `G.P_CENTERS.${enhancement}`;
   }
 
   let sealCode = "";
-  if (seal === "random") {
+  if (seal.value === "random") {
     const sealPool = SEALS().map(seal => `'${seal.value}'`)
     sealCode = `
       new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_hand_seal')), true)`;
-  } else if (variables[1]){
+  } else if (seal.valueType === "user_var"){
     sealCode = `
       new_card:set_seal(card.ability.extra.${seal}, true)`;
-  } else if (seal !== "none") {
+  } else if (seal.value !== "none") {
     sealCode = `
       new_card:set_seal("${seal}", true)`;
   }
 
   let editionCode = "";
-  if (edition === "random") {
+  if (edition.value === "random") {
     const editionPool = EDITIONS().map(edition => `'${
       edition.key.startsWith('e_') ? edition.key : `e_${modprefix}_${edition.key}`}'`)    
        editionCode = `
       new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_hand_edition')), true)`;
-  } else if (variables[2]){
+  } else if (edition.valueType === "user_var"){
     editionCode = `
       new_card:set_edition(card.ability.extra.${edition}, true)`;
-  } else if (edition !== "none") {
+  } else if (edition.value !== "none") {
     editionCode = `
       new_card:set_edition("${edition}", true)`;
   }

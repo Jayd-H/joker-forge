@@ -4,8 +4,8 @@ export const generatePokerHandVariableConditionCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const variableName = (condition.params.variable_name.value as string) || "pokerhandvar";
-  const CheckType = (condition.params.check_type.value as string) || "specific";
+  const variableName = (condition.params?.variable_name?.value as string) || "pokerhandvar";
+  const CheckType = (condition.params?.check_type?.value as string) || "specific";
 
 switch (CheckType) {
     case "specific":

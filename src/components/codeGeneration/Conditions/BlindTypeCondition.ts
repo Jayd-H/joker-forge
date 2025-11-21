@@ -4,7 +4,7 @@ export const generateBlindTypeConditionCode = (
   rules: Rule[],
 ):string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const blindType = (condition.params.blind_type.value as string) || "small";
+  const blindType = (condition.params?.blind_type?.value as string) || "small";
 
   switch (blindType) {
     case "small":
