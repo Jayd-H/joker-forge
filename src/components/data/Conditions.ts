@@ -1350,8 +1350,8 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "specific_card",
         type: "select",
         label: "Specific Card",
-        options: (parentValues: Record<string, unknown>) => {
-          const selectedSet = parentValues?.consumable_type as string;
+        options: (parentValues: Record<string, {value: unknown, valueType?: string}>) => {
+          const selectedSet = parentValues?.consumable_type.value as string;
 
           if (!selectedSet || selectedSet === "any") {
             return [];
@@ -1452,8 +1452,8 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         id: "specific_card",
         type: "select",
         label: "Specific Card",
-        options: (parentValues: Record<string, unknown>) => {
-          const selectedSet = parentValues?.consumable_type as string;
+        options: (parentValues: Record<string, {value: unknown, valueType?: string}>) => {
+          const selectedSet = parentValues?.consumable_type.value as string;
 
           if (!selectedSet || selectedSet === "any") {
             return [];

@@ -36,8 +36,8 @@ export const CONSUMABLE_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "specific_card",
         type: "select",
         label: "Specific Card",
-        options: (parentValues: Record<string, unknown>) => {
-          const selectedSet = parentValues?.set as string;
+        options: (parentValues: Record<string, {value: unknown, valueType?: string}>) => {
+          const selectedSet = parentValues?.set.value as string;
           if (!selectedSet || selectedSet === "random") {
             return [{ value: "random", label: "Random from Set" }];
           }
