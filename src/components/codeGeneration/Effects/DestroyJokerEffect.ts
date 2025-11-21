@@ -28,16 +28,16 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const selectionMethod = (effect.params?.selection_method as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const position = (effect.params?.position as string) || "first";
-  const specificIndex = effect.params?.specific_index as number;
+  const selectionMethod = (effect.params?.selection_method?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const position = (effect.params?.position?.value as string) || "first";
+  const specificIndex = effect.params?.specific_index?.value as number;
   
-  const sellValueMultiplier = (effect.params?.sell_value_multiplier as number) || 0;
-  const variableName = (effect.params?.variable_name as string) || "";
-  const bypassEternal = (effect.params?.bypass_eternal as string) === "yes";
+  const sellValueMultiplier = (effect.params?.sell_value_multiplier?.value as number) || 0;
+  const variableName = (effect.params?.variable_name?.value as string) || "";
+  const bypassEternal = (effect.params?.bypass_eternal?.value as string) === "yes";
   
-  const animation = effect?.params.animation as string
+  const animation = effect?.params.animation?.value as string
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];
@@ -210,13 +210,13 @@ const generateConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const selection_method = effect.params?.selection_method || "random";
+  const selection_method = effect.params?.selection_method?.value as string || "random";
   const variableName =
     sameTypeCount === 0 ? "destroy_count" : `destroy_count${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.amount ?? 1,
-    effect.id,
+    effect,
+    'amount',
     variableName,
     'consumable',
   )      
@@ -303,9 +303,9 @@ const generateCardCode = (
   effect: Effect
 ): EffectReturn => {
   const selectionMethod =
-    (effect.params?.selection_method as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const position = (effect.params?.position as string) || "first";
+    (effect.params?.selection_method?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const position = (effect.params?.position?.value as string) || "first";
   const customMessage = effect.customMessage;
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 

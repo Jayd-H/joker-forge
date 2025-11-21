@@ -801,12 +801,13 @@ function AppContent() {
           "Your auto-saved project has been loaded successfully!"
         );
       } catch (error) {
+        console.error(error)
         setShowErrorLoadingModal(true)
       }
     };
     
     loadAutoSave()
-  }, [loadFromLocalStorage]);
+  });
 
   useEffect(() => {
     if (!hasLoadedInitialData) return;

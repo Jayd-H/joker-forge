@@ -10,9 +10,8 @@ import {
 } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
-import { generateGameVariableCode, parseGameVariable } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
-import { parseRangeVariable } from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import { applyIndents } from "./jokers";
 import { extractGameVariablesFromRules, getAllVariables } from "../lib/userVariableUtils";
@@ -193,21 +192,7 @@ const generateCalculateFunction = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, itemType);
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown")
     }));
 
   const globalEffectCounts = new Map<string, number>();
@@ -372,7 +357,7 @@ const generateLocVarsFunction = (
       if (variableMapping.length >= maxVariableIndex) return;
 
       const value =
-        (unconditionalEffect.effect.params?.value as number) ||
+        (unconditionalEffect.effect.params?.value.value as number) ||
         getDefaultEffectValue(unconditionalEffect.effect.type);
       variableMapping.push(value.toString());
     });
@@ -659,13 +644,13 @@ const generateSingleEnhancementCode = (
     }
 
     if (effect.type === "edit_dollars") {
-      const operation = (effect.params?.operation as string) || "add";
+      const operation = (effect.params?.operation.value as string) || "add";
       if (operation !== "add") {
         return false;
       }
     }
 
-    const value = effect.params?.value;
+    const value = effect.params?.value.value;
 
     if (value === undefined || value === null) {
       return true;
@@ -765,7 +750,7 @@ const generateSingleEnhancementCode = (
         break;
 
       case "edit_dollars": {
-        const operation = (effect.params?.operation as string) || "add";
+        const operation = (effect.params?.operation.value as string) || "add";
         if (operation === "add") {
           if (trigger === "card_scored") {
             baseConfig.p_dollars = (baseConfig.p_dollars || 0) + value;
@@ -861,21 +846,7 @@ const generateSingleEnhancementCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'enhancement');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown"),
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -1066,21 +1037,7 @@ const generateSingleSealCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'seal');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown")
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -1234,21 +1191,7 @@ export const generateSingleEditionCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'edition');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown")
     }));
 
     const effectResult = generateEffectReturnStatement(

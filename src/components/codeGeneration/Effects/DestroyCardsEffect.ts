@@ -24,14 +24,14 @@ const generateConsumableCode = (
   sameTypeCount: number = 0
 ): EffectReturn => {
   const customMessage = effect.customMessage;
-  const selectionMethod = effect.params?.method as string || "random"
+  const selectionMethod = effect.params?.method?.value as string || "random"
 
   const variableName =
     sameTypeCount === 0 ? "destroy_count" : `destroy_count${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.count ?? 1,
-    effect.id,
+    effect,
+    'count',
     variableName,
     'consumable',
   )    

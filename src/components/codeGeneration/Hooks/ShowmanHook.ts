@@ -1,7 +1,7 @@
 export const generateShowmanHook = (
   showmanJokers: Array<{
     jokerKey: string;
-    params: Record<string, unknown>;
+    params: Record<string, {value: unknown, valueType?: string}>;
   }>,
   modPrefix: string
 ): string => {

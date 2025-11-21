@@ -175,7 +175,7 @@ export const generateSingleConditionCode = (
     case "card_suit":
       return generateCardSuitConditionCode([singleConditionRule], itemType, joker)
     case "card_rank":
-      return generateCardRankConditionCode([singleConditionRule], itemType, joker)
+      return generateCardRankConditionCode([singleConditionRule], itemType)
     case "card_seal":
       return generateCardSealConditionCode([singleConditionRule], itemType)
     case "cards_selected":

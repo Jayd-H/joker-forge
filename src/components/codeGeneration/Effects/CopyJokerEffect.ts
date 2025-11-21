@@ -27,14 +27,14 @@ const generateJokerCode = (
   triggerType: string,
 ): EffectReturn => {
   const selectionMethod =
-    (effect.params?.selection_method as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const position = (effect.params?.position as string) || "first";
-  const specificIndex = effect.params?.specific_index as number;
-  const edition = (effect.params?.edition as string) || "none";
+    (effect.params?.selection_method?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const position = (effect.params?.position?.value as string) || "first";
+  const specificIndex = effect.params?.specific_index?.value as number;
+  const edition = (effect.params?.edition?.value as string) || "none";
   const customMessage = effect.customMessage;
-  const ignoreSlotsParam = (effect.params?.ignore_slots as string) || "respect"
-  const sticker = (effect.params?.sticker as string) || "none"
+  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect"
+  const sticker = (effect.params?.sticker?.value as string) || "none"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -194,9 +194,9 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const selection_method = effect.params?.selection_method as string || "random";
-  const amount = effect.params?.amount as string || '1';
-  const edition = effect.params?.edition as string || "none";
+  const selection_method = effect.params?.selection_method?.value as string || "random";
+  const amount = effect.params?.amount?.value as string || '1';
+  const edition = effect.params?.edition?.value as string || "none";
   const customMessage = effect.customMessage;
 
   let copyJokerCode = `
@@ -310,10 +310,10 @@ const generateCardCode = (
   effect: Effect,
 ): EffectReturn => {
   const selectionMethod =
-    (effect.params?.selection_method as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const position = (effect.params?.position as string) || "first";
-  const edition = (effect.params?.edition as string) || "none";
+    (effect.params?.selection_method?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const position = (effect.params?.position?.value as string) || "first";
+  const edition = (effect.params?.edition?.value as string) || "none";
   const customMessage = effect.customMessage;
 
   const normalizedJokerKey = jokerKey.startsWith("j_") 

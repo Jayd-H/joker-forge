@@ -19,7 +19,7 @@ import {
   RarityData
 } from "../../data/BalatroUtils";
 import { generateUnlockJokerFunction } from "../lib/unlockUtils";
-import { generateConfigVariables, generateGameVariableCode, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { Rule } from "../../ruleBuilder";
 import { generateTriggerContext } from "../lib/triggerUtils";
@@ -84,14 +84,8 @@ export const convertRandomGroupsForCodegen = (
 ) => {
   return randomGroups.map((group) => ({
     ...group,
-    chance_numerator:
-      typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator, 'joker')
-      : group.chance_numerator,
-    chance_denominator:
-      typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator, 'joker')
-        : group.chance_denominator,
+    chance_numerator: generateValueCode(group.chance_numerator as string, "unknown"),
+    chance_denominator: generateValueCode(group.chance_denominator as string, "unknown")
   }));
 };
 
@@ -100,21 +94,7 @@ export const convertLoopGroupsForCodegen = (
 ) => {
   return loopGroups.map((group) => ({
     ...group,
-    repetitions:
-      typeof group.repetitions === "string"
-        ? (() => {
-          const parsed = parseGameVariable(group.repetitions);
-          const rangeParsed = parseRangeVariable(group.repetitions);
-          if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions, 'joker');
-          } else if (rangeParsed.isRangeVariable) {
-            const seedName = `repetitions_${group.id.substring(0, 8)}`;
-            return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-          } else {
-            return `card.ability.extra.${group.repetitions}`
-          }
-        })()
-        : group.repetitions,
+    repetitions: generateValueCode(group.repetitions as string, "unknown")
   }));
 };
 
@@ -251,9 +231,7 @@ const generateSingleJokerCode = (
   passiveEffects.forEach((effect) => {
     if (effect.configVariables) {
       effect.configVariables.forEach((configVar) => {
-        if (configVar.trim()) {
-          configItems.push(configVar);
-        }
+        configItems.push(`${configVar.name} = '${configVar.value || "0"}'`);
       });
     }
   });
@@ -292,8 +270,8 @@ const generateSingleJokerCode = (
         const variableName =
           blindRewards.length === 0 ? "blind_reward" : `blind_reward${blindRewards.length}`;        
         const { valueCode, configVariables } = generateConfigVariables(
-            effect.params.value,
-            effect.type,
+            effect,
+            'value',
             variableName,
             'joker'
         )
@@ -2163,7 +2141,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
     allHooks += generateShortcutHook(
       hooksByType.shortcut as Array<{
         jokerKey: string;
-        params: Record<string, unknown>;
+        params: Record<string, {value: unknown, valueType?: string}>;
       }>,
       modPrefix
     );
@@ -2173,7 +2151,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
     allHooks += generateShowmanHook(
       hooksByType.showman as Array<{
         jokerKey: string;
-        params: Record<string, unknown>;
+        params: Record<string, {value: unknown, valueType?: string}>;
       }>,
       modPrefix
     );

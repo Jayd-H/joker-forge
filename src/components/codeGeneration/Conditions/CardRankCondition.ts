@@ -1,16 +1,13 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { getRankId, type JokerData } from "../../data/BalatroUtils";
-import { parseRankVariable } from "../lib/userVariableUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { getRankId } from "../../data/BalatroUtils";
 
 export const generateCardRankConditionCode = (
   rules: Rule[],
   itemType: string,
-  joker?: JokerData,
 ): string | null => {
   switch(itemType) {
     case "joker":
-      return generateJokerCode(rules, joker)
+      return generateJokerCode(rules)
     case "card":
       return generateCardCode(rules)
   }
@@ -19,19 +16,13 @@ export const generateCardRankConditionCode = (
 
 const generateJokerCode = (
   rules: Rule[],
-  joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
 
-  const rankType = (condition.params.rank_type as string) || "specific";
-  const specificRank = condition.params.specific_rank;
-  const rankGroup = (condition.params.rank_group as string) || null;
-  const quantifier = (condition.params.quantifier as string) || "at_least_one";
-  const count = generateGameVariableCode(condition.params.count, 'joker');
-  const scope = (condition.params.card_scope as string) || "scoring";
-
-  const rankVarInfo = parseRankVariable(specificRank, joker);
+  const rankType = condition.params?.rank_type
+  const specificRank = condition.params?.specific_rank
+  const rankGroup = condition.params?.rank_group || null;
 
   const getRanksCheckLogic = (
     ranks: string[],
@@ -63,15 +54,15 @@ const generateJokerCode = (
   let useVariable = false;
   let variableCode = "";
 
-  if (rankType === "specific") {
-    if (rankVarInfo.isRankVariable) {
+  if (rankType.value === "specific") {
+    if (rankType.valueType === "user_var") {
       useVariable = true;
-      variableCode = `G.GAME.current_round.${rankVarInfo.variableName}_card.id`;
-    } else if (typeof specificRank === "string") {
-      ranks = [specificRank];
+      variableCode = `G.GAME.current_round.${rankType.value}_card.id`;
+    } else if (typeof specificRank.value === "string") {
+      ranks = [specificRank.value];
     }
-  } else if (rankType === "group" && rankGroup) {
-    rankGroupType = rankGroup;
+  } else if (rankType.value === "group" && rankGroup) {
+    rankGroupType = rankGroup.value as string;
   }
 
   if (triggerType === "card_destroyed") {
@@ -92,133 +83,14 @@ const generateJokerCode = (
 end)()`;
   }
 
-  if (
-    (triggerType === "card_scored" ||
-      triggerType === "card_held_in_hand" ||
-      triggerType === "card_held_in_hand_end_of_round") &&
-    condition.type === "card_rank"
-  ) {
-    const checkLogic = getRanksCheckLogic(
-      ranks,
-      rankGroupType,
-      useVariable,
-      variableCode,
-      "context.other_card"
-    );
-    return checkLogic;
-  }
-
-  const cardsToCheck =
-    scope === "scoring" && !(triggerType === "card_discarded")
-      ? "context.scoring_hand"
-      : "context.full_hand";
-
-  switch (quantifier) {
-    case "all":
-      return `(function()
-    local allMatchRank = true
-    for i, c in ipairs(${cardsToCheck}) do
-        if not (${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )}) then
-            allMatchRank = false
-            break
-        end
-    end
-    
-    return allMatchRank and #${cardsToCheck} > 0
-end)()`;
-
-    case "none":
-      return `(function()
-    local rankFound = true
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankFound = false
-            break
-        end
-    end
-    
-    return rankFound
-end)()`;
-
-    case "exactly":
-      return `(function()
-    local rankCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankCount = rankCount + 1
-        end
-    end
-    
-    return rankCount == ${count}
-end)()`;
-
-    case "at_least":
-      return `(function()
-    local rankCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankCount = rankCount + 1
-        end
-    end
-    
-    return rankCount >= ${count}
-end)()`;
-
-    case "at_most":
-      return `(function()
-    local rankCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankCount = rankCount + 1
-        end
-    end
-    
-    return rankCount <= ${count} and rankCount > 0
-end)()`;
-
-    default:
-      return `(function()
-    local rankFound = false
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getRanksCheckLogic(
-          ranks,
-          rankGroupType,
-          useVariable,
-          variableCode
-        )} then
-            rankFound = true
-            break
-        end
-    end
-    
-    return rankFound
-end)()`;
-  }
+  const checkLogic = getRanksCheckLogic(
+    ranks,
+    rankGroupType,
+    useVariable,
+    variableCode,
+    "context.other_card"
+  );
+  return checkLogic;
 };
 
 const generateCardCode = (
@@ -230,9 +102,9 @@ const generateCardCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "card_rank") return "";
 
-  const rankType = (condition.params?.rank_type as string) || "specific";
-  const specificRank = condition.params?.specific_rank as string;
-  const rankGroup = condition.params?.rank_group as string;
+  const rankType = (condition.params?.rank_type.value as string) || "specific";
+  const specificRank = condition.params?.specific_rank.value as string;
+  const rankGroup = condition.params?.rank_group.value as string;
 
   if (rankType === "specific" && specificRank) {
     const rankId = getRankId(specificRank);

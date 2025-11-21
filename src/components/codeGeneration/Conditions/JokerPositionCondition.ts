@@ -17,8 +17,8 @@ const generateJokerCode = (
   target: string,
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const position = (condition.params.position as string) || "first";
-  const specificIndex = condition.params?.specific_index as number;
+  const position = (condition.params?.position?.value as string) || "first";
+  const specificIndex = condition.params?.specific_index?.value as number;
 
   const valueCode = (target === "self" ? "card" : "context.other_joker")
 

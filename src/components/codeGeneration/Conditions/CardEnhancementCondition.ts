@@ -16,7 +16,7 @@ const generateJokerCode = (
 ): string | null => {
 const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
-  const enhancementType = (condition.params.enhancement as string) || "any";
+  const enhancementType = (condition.params?.enhancement?.value as string) || "any";
 
 
   if (triggerType === "card_destroyed") {

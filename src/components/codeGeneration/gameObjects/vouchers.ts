@@ -6,7 +6,7 @@ import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
 // import { generateUnlockVoucherFunction } from "../lib/unlockUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { parseRangeVariable, generateGameVariableCode, parseGameVariable } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { applyIndents } from "./jokers";
 
 interface VoucherGenerationOptions {
@@ -28,14 +28,8 @@ const convertRandomGroupsForCodegen = (
 ) => {
   return randomGroups.map((group) => ({
     ...group,
-    chance_numerator:
-      typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator, 'voucher')
-      : group.chance_numerator,
-    chance_denominator:
-      typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator, 'voucher')
-        : group.chance_denominator,
+    chance_numerator:generateValueCode(group.chance_numerator as string, "unknown"),
+    chance_denominator:generateValueCode(group.chance_denominator as string, "unknown")
   }));
 };
 
@@ -44,21 +38,7 @@ const convertLoopGroupsForCodegen = (
 ) => {
   return loopGroups.map((group) => ({
     ...group,
-    repetitions:
-      typeof group.repetitions === "string"
-        ? (() => {
-          const parsed = parseGameVariable(group.repetitions);
-          const rangeParsed = parseRangeVariable(group.repetitions);
-          if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions, 'voucher');
-          } else if (rangeParsed.isRangeVariable) {
-            const seedName = `repetitions_${group.id.substring(0, 8)}`;
-            return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-          } else {
-            return `card.ability.extra.${group.repetitions}`
-          }
-        })()
-        : group.repetitions,
+    repetitions: generateValueCode(group.repetitions as string, "unknown"),
   }));
 };
 
@@ -144,21 +124,7 @@ const generateCalculateFunction = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'voucher');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+    repetitions: generateValueCode(group.repetitions as string, "unknown"),
     }));
 
     const effectResult = generateEffectReturnStatement(

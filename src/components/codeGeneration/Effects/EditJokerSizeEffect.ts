@@ -1,28 +1,13 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
-import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditJokerSizePassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
-  const effectValue = effect.params.value;
-  const parsed = parseGameVariable(effectValue);
-  const rangeParsed = parseRangeVariable(effectValue);
+  const operation = effect.params?.operation?.value || "add";
 
-  let valueCode: string;
-
-  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
-    valueCode = generateGameVariableCode(effectValue as string, '');
-  } else if (rangeParsed.isRangeVariable) {
-    const seedName = `jokersize_passive`;
-    valueCode = `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-  } else if (typeof effectValue === "string") {
-    valueCode = `card.ability.extra.${effectValue}`;
-  } else {
-    valueCode = (effectValue as number | boolean).toString();
-  }
+  const valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
 
   let addToDeck = "";
   let removeFromDeck = "";
@@ -85,14 +70,14 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
 
   const variableName =
     sameTypeCount === 0 ? "joker_size" : `joker_size${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -157,15 +142,15 @@ const generateConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const customMessage = effect.customMessage;
 
   const variableName =
     sameTypeCount === 0 ? "joker_size_value" : `joker_size_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );
@@ -261,13 +246,13 @@ const generateVoucherCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "joker_size_value" : `joker_size_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );
@@ -314,13 +299,13 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "joker_size_value" : `joker_size_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );

@@ -14,15 +14,15 @@ export const generateApplyHyperChipsEffectCode = (
     sameTypeCount === 0 ? "hyperchips_arrows" : `hyperchips_arrows${sameTypeCount + 1}`;
 
   const N = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableNameN,
     itemType
   )
   
   const Arrows = generateConfigVariables(
-    effect.params?.arrows,
-    effect.id,
+    effect, 
+    'arrows',
     variableNameArrows,
     itemType
   )

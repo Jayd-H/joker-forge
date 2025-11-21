@@ -20,9 +20,9 @@ export const generateAddBoosterToShopEffectCode = (
 const generateJokerCode = (
   effect: Effect,
 ): EffectReturn => {
-  const method = effect.params.method_type as string || "specific";
-  const specificBooster = effect.params.specific_key as string || "p_arcana_normal_1";
-  const boosterVariable = effect.params.key_variable as string || "";
+  const method = effect.params.method_type?.value as string || "specific";
+  const specificBooster = effect.params.specific_key?.value as string || "p_arcana_normal_1";
+  const boosterVariable = effect.params.key_variable?.value as string || "";
 
   let boosterCode = ''
   if (method === "key_var") {

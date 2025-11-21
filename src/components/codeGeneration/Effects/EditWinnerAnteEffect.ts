@@ -30,14 +30,14 @@ const generateJokerAndVoucherCode = (
   triggerType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "set";
+  const operation = effect.params?.operation?.value || "set";
 
  const variableName =
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  
    const { valueCode, configVariables } = generateConfigVariables(
-     effect.params?.value,
-     effect.id,
+    effect,
+    'value',
      variableName,
      'joker'
    )
@@ -117,15 +117,15 @@ const generateConsumableCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "set";
+  const operation = effect.params?.operation?.value || "set";
   const customMessage = effect.customMessage;
 
   const variableName =
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'consumable'
   )
@@ -227,13 +227,13 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "set";
+  const operation = effect.params?.operation?.value || "set";
   const variableName =
      sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
  
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   )

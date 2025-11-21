@@ -8,8 +8,8 @@ export const generateFreeRerollsPassiveEffectCode = (
   const variableName = "reroll_amount";
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   );
@@ -17,10 +17,7 @@ export const generateFreeRerollsPassiveEffectCode = (
   return {
     addToDeck: `SMODS.change_free_rerolls(${valueCode})`,
     removeFromDeck: `SMODS.change_free_rerolls(-(${valueCode}))`,
-    configVariables:
-      configVariables.length > 0
-        ? configVariables.map((cv) => cv.name + " = " + cv.value)
-        : [],
+    configVariables,
     locVars: [],
   };
 };
@@ -47,11 +44,11 @@ const generateVoucherCode = (
   sameTypeCount: number = 0
 ): EffectReturn => {
   const variableName =
-    sameTypeCount === 0 ? "rerrols_value" : `rerolls_value${sameTypeCount + 1}`;
+    sameTypeCount === 0 ? "rerolls_value" : `rerolls_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher;'
   );

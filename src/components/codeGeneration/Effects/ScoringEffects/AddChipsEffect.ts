@@ -11,8 +11,8 @@ export const generateAddChipsEffectCode = (
     sameTypeCount === 0 ? "chips" : `chips${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     itemType
   );

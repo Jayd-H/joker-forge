@@ -27,16 +27,16 @@ const generateJokerCode = (
   triggerType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const target = (effect.params?.target as string) || "specific";
-  const operation: string = (effect.params?.operation as string) || "add";
-  const specificTarget = (effect.params?.specific_target as string) || "self";
+  const target = (effect.params?.target?.value as string) || "specific";
+  const operation: string = (effect.params?.operation?.value as string) || "add";
+  const specificTarget = (effect.params?.specific_target?.value as string) || "self";
 
   const variableName =
     sameTypeCount === 0 ? "sell_value" : `sell_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker',
   )

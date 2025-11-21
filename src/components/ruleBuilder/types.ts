@@ -38,7 +38,7 @@ export interface Condition {
   id: string;
   type: string;
   negate: boolean; // For NOT logic
-  params: Record<string, unknown>;
+  params: Record<string, {value: unknown, valueType?: string}>;
   operator?: string;
 }
 
@@ -46,7 +46,7 @@ export interface Condition {
 export interface Effect {
   id: string;
   type: string;
-  params: Record<string, unknown>;
+  params: Record<string, {value: unknown, valueType?: string}>;
   customMessage?: string;
 }
 
@@ -68,6 +68,7 @@ export interface ShowWhenCondition {
 export interface ConditionParameterOption {
   value: string;
   label: string;
+  valueType?: string;
   exempt?: string[],
 }
 
@@ -80,7 +81,7 @@ export interface ConditionParameter {
   options?:
     | ConditionParameterOption[]
     | (() => ConditionParameterOption[])
-    | ((parentValues: Record<string, unknown>) => ConditionParameterOption[]);
+    | ((parentValues: Record<string, {value: unknown, valueType?: string}>) => ConditionParameterOption[]);
   min?: number;
   max?: number;
   default?: unknown;
@@ -107,6 +108,7 @@ export interface GlobalConditionTypeDefinition {
 export interface EffectParameterOption {
   value: string;
   label: string;  
+  valueType?: string;
   exempt?: string[],
   checked?: boolean;
 }
@@ -120,7 +122,7 @@ export interface EffectParameter {
   options?:
     | EffectParameterOption[]
     | (() => EffectParameterOption[])
-    | ((parentValues: Record<string, unknown>) => EffectParameterOption[]);
+    | ((parentValues: Record<string, {value: unknown, valueType?: string}>) => EffectParameterOption[]);
   checkboxOptions?: EffectParameterOption[]
   min?: number;
   max?: number;

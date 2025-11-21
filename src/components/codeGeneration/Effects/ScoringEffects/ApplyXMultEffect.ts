@@ -11,8 +11,8 @@ export const generateApplyXMultEffectCode = (
     sameTypeCount === 0 ? "Xmult" : `Xmult${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     itemType
   )

@@ -4,10 +4,10 @@ import type { EffectReturn } from "../../lib/effectUtils";
 export const generateChangeTextVariableEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const variableName = (effect.params?.variable_name as string) || "textvar";
-  const changeType = (effect.params?.change_type as string) || "random";
-  const customText = (effect.params?.text as string) || "";
-  const keyVar = (effect.params?.key_variable as string) || "keyvar"
+  const variableName = (effect.params?.variable_name.value as string) || "textvar";
+  const changeType = (effect.params?.change_type.value as string) || "random";
+  const customText = (effect.params?.text.value as string) || "";
+  const keyVar = (effect.params?.key_variable.value as string) || "keyvar"
 
   let statement = `__PRE_RETURN_CODE__`
 

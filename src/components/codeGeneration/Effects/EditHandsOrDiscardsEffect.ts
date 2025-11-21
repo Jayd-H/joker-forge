@@ -6,13 +6,13 @@ export const generateEditItemCountPassiveEffectCode = (
   effect: Effect,
   effectType: string
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
 
   const variableName = "hand_change";
   
   const { valueCode, configVariables, isXVariable } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -46,10 +46,7 @@ export const generateEditItemCountPassiveEffectCode = (
   return {
     addToDeck,
     removeFromDeck,
-    configVariables: 
-      configVariables.length > 0 ?
-      configVariables.map((cv)=> `${cv.name} = ${cv.value}`)
-      : [],
+    configVariables,
     locVars:
       isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
   };
@@ -103,8 +100,8 @@ const generateJokerConsumableVoucherCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
-  const duration = effect.params?.duration || "permanent";
+  const operation = effect.params?.operation?.value || "add";
+  const duration = effect.params?.duration?.value || "permanent";
 
   const typeData = generateEffectTypeData(effectType)
 
@@ -112,8 +109,8 @@ const generateJokerConsumableVoucherCode = (
     sameTypeCount === 0 ? typeData.mainCode : `${typeData.mainCode}${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType,
   )
@@ -220,13 +217,13 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "hands_value" : `hands_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );

@@ -179,7 +179,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         <div className="col-span-9">
           <InputDropdown
             value={formData.unlockProperties?.[index].category || ""}
-            onChange={(value) => handleUnlockPropertyCategory(value, index)}
+            onChange={(item) => handleUnlockPropertyCategory(item.value, index)}
             options={propertyCategoryOptions || []}
             separator={true}
             label="Category"
@@ -188,7 +188,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
         <div className="col-span-9">
           <InputDropdown
             value={formData.unlockProperties?.[index].property || ""}
-            onChange={(value) => handleUnlockProperty(value, index)}
+            onChange={(item) => handleUnlockProperty(item.value, index)}
             options={propertyOptions || []}
             separator={true}
             label="Property"
@@ -1053,7 +1053,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                           <div className="grid grid-cols-2 gap-4">
                             <InputDropdown
                               value={formData.rarity.toString()}
-                              onChange={handleRarityChange}
+                              onChange={(item) => handleRarityChange(item.value)}
                               options={rarityOptions}
                               separator={true}
                               label="Rarity"
@@ -1193,7 +1193,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                               <div>
                                 <InputDropdown
                                   value={getForcedEditionValue()}
-                                  onChange={handleForcedEditionChange}
+                                  onChange={(item) => handleForcedEditionChange(item.value)}
                                   options={forcedEditionOptions}
                                   separator={true}
                                   label="Force Edition"
@@ -1268,7 +1268,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                               <div className="col-span-2">
                                 <InputDropdown
                                   value={formData.unlockTrigger as string || ""}
-                                  onChange={handleUnlockTrigger}
+                                  onChange={(item) => handleUnlockTrigger(item.value)}
                                   options={unlockTriggerOptions}
                                   separator={true}
                                   label="Trigger"
@@ -1276,7 +1276,7 @@ const EditJokerInfo: React.FC<EditJokerInfoProps> = ({
                               </div>
                               <InputDropdown
                                 value={formData.unlockOperator || ""}
-                                onChange={handleUnlockOperator}
+                                onChange={(item) => handleUnlockOperator(item.value)}
                                 options={unlockOperatorOptions}
                                 separator={true}
                                 label="Operator"

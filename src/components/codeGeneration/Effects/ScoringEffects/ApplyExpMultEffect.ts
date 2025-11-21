@@ -13,8 +13,8 @@ export const generateApplyExpMultEffectCode = (
   const customMessage = effect.customMessage;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     itemType
   )

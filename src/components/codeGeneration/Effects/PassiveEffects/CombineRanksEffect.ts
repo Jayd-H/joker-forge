@@ -6,28 +6,24 @@ export const generateCombineRanksPassiveEffectCode = (
   jokerKey: string,
 ): PassiveEffectResult => {
   const sourceRankType =
-    (effect.params?.source_rank_type as string) || "specific";
-  const sourceRanksString = (effect.params?.source_ranks as string) || "J,Q,K";
-  const targetRank = (effect.params?.target_rank as string) || "J";
+    (effect.params?.source_rank_type?.value as string) || "specific";
+  const sourceRanksString = (effect.params?.source_ranks?.value as string) || "J,Q,K";
+  const targetRank = (effect.params?.target_rank?.value as string) || "J";
   const sourceRanks =
     sourceRankType === "specific"
       ? sourceRanksString.split(",").map((rank) => rank.trim())
       : [];
+  
+  const configVariables = [
+    { name: "source_rank_type", value: `${sourceRankType}` },
+    { name: "source_ranks", value: `{${sourceRankType === "specific" ? sourceRanks.map((rank) => `"${rank}"`).join(", ") : [] }}`},
+    { name: "target_rank", value: `"${targetRank}"`},
+  ]
 
   return {
     addToDeck: `-- Combine ranks effect enabled`,
     removeFromDeck: `-- Combine ranks effect disabled`,
-    configVariables: [
-      `source_rank_type = "${sourceRankType}"`,
-      ...(sourceRankType === "specific"
-        ? [
-            `source_ranks = {${sourceRanks
-              .map((rank) => `"${rank}"`)
-              .join(", ")}}`,
-          ]
-        : []),
-      `target_rank = "${targetRank}"`,
-    ],
+    configVariables,
     locVars: [],
     needsHook: {
       hookType: "combine_ranks",

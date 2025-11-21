@@ -7,13 +7,13 @@ export const generateModifyBlindRequirementEffectCode = (
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "multiply";
+  const operation = effect.params?.operation?.value || "multiply";
   const variableName =
     sameTypeCount === 0 ? "blind_size" : `blind_size${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

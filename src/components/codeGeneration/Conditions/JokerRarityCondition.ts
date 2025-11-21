@@ -16,7 +16,7 @@ const generateJokerCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const rarity = (condition.params.rarity as string) || "any";
+  const rarity = (condition.params?.rarity?.value as string) || "any";
 
   const rarityData = getAllRarities().find((r) => r.key === rarity);
   const modPrefix = getModPrefix();

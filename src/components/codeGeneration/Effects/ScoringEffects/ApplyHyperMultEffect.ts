@@ -14,15 +14,15 @@ export const generateApplyHyperMultEffectCode = (
     sameTypeCount === 0 ? "hypermult_arrows" : `hypermult_arrows${sameTypeCount + 1}`;
 
   const N = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableNameN,
     itemType
   )
   
   const Arrows = generateConfigVariables(
-    effect.params?.arrows,
-    effect.id,
+    effect, 
+    'arrows',
     variableNameArrows,
     itemType
   )

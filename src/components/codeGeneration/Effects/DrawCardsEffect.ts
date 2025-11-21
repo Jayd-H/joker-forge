@@ -34,8 +34,8 @@ const generateJokerCode = (
     sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -98,8 +98,8 @@ const variableName =
     sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     card?.objectType ?? "enhancement"
   );

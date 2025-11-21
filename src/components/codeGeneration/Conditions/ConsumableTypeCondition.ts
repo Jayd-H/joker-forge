@@ -16,8 +16,8 @@ const generateJokerCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "consumable_used";
-  const consumableType = (condition.params.consumable_type as string) || "any";
-  const specificCard = (condition.params.specific_card as string) || "any";
+  const consumableType = (condition.params?.consumable_type?.value as string) || "any";
+  const specificCard = (condition.params?.specific_card?.value as string) || "any";
 
   // Determine the card reference based on trigger type
   const cardRef =

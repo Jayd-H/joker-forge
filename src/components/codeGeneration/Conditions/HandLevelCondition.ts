@@ -6,8 +6,8 @@ export const generateHandLevelConditionCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const operator = (condition.params.operator as string) || "equals";
-  const value = generateGameVariableCode(condition.params.value, '') || "1";
+  const operator = (condition.params?.operator?.value as string) || "equals";
+  const value = generateGameVariableCode(condition.params?.value, '') || "1";
 
   const comparison = generateOperationCode(
     operator,
@@ -15,8 +15,8 @@ export const generateHandLevelConditionCode = (
     value
   )
 
-  const handSelection = (condition?.params?.hand_selection as string) || "played";
-  const specificHand = (condition?.params?.specific_hand as string) || "High Card";
+  const handSelection = (condition?.params?.hand_selection.value as string) || "played";
+  const specificHand = (condition?.params?.specific_hand.value as string) || "High Card";
 
   let handDeterminationCode = "";
   switch (handSelection) {

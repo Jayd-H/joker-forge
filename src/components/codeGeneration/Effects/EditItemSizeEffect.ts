@@ -1,7 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
-import { generateConfigVariables, parseGameVariable, parseRangeVariable } from "../lib/gameVariableUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateConfigVariables } from "../lib/gameVariableUtils";
 
 const generateTypeData = (
   type: string,
@@ -63,24 +62,15 @@ export const generateEditItemSizePassiveEffectCode = (
   effect: Effect,
   type: string,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
-  const effectValue = effect.params.value;
-  const parsed = parseGameVariable(effectValue);
-  const rangeParsed = parseRangeVariable(effectValue);
-
+  const operation = effect.params?.operation?.value || "add";
   const itemData = generateTypeData(type)
 
-  let valueCode: string;
-
-  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
-    valueCode = generateGameVariableCode(effectValue as string, '');
-  } else if (rangeParsed.isRangeVariable) {
-    valueCode = `pseudorandom('${itemData.seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-  } else if (typeof effectValue === "string") {
-    valueCode = `card.ability.extra.${effectValue}`;
-  } else {
-    valueCode = (effectValue as number | boolean).toString();
-  }
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect,
+    'value',
+    'size_increase',
+    'joker'
+  )
 
   let addToDeck = "";
   let removeFromDeck = "";
@@ -111,7 +101,7 @@ export const generateEditItemSizePassiveEffectCode = (
   return {
     addToDeck,
     removeFromDeck,
-    configVariables: [],
+    configVariables,
     locVars: [],
   };
 };
@@ -122,14 +112,14 @@ export const generateEditItemSizeEffectCode = (
   sameTypeCount: number = 0,
   type: string
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const itemData = generateTypeData(type)
   const variableName =
     sameTypeCount === 0 ? `${itemData.varName}` : `${itemData.varName}${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

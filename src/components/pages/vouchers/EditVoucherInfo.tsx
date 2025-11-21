@@ -160,7 +160,7 @@ return (
         <div className="col-span-9">
           <InputDropdown
             value={formData.unlockProperties?.[index].category || ""}
-            onChange={(value) => handleUnlockPropertyCategory(value, index)}
+            onChange={(item) => handleUnlockPropertyCategory(item.value, index)}
             options={propertyCategoryOptions || []}
             separator={true}
             label="Category"
@@ -169,7 +169,7 @@ return (
         <div className="col-span-9">
           <InputDropdown
             value={formData.unlockProperties?.[index].property || ""}
-            onChange={(value) => handleUnlockProperty(value, index)}
+            onChange={(item) => handleUnlockProperty(item.value, index)}
             options={propertyOptions || []}
             separator={true}
             label="Property"
@@ -1058,7 +1058,7 @@ const addPropertyHidden =
                               <div className="col-span-2">
                                 <InputDropdown
                                   value={formData.unlockTrigger as string || ""}
-                                  onChange={handleUnlockTrigger}
+                                  onChange={(item) => handleUnlockTrigger(item.value)}
                                   options={unlockTriggerOptions}
                                   separator={true}
                                   label="Trigger"
@@ -1066,7 +1066,7 @@ const addPropertyHidden =
                               </div>
                               <InputDropdown
                                 value={formData.unlockOperator || ""}
-                                onChange={handleUnlockOperator}
+                                onChange={(item) => handleUnlockOperator(item.value)}
                                 options={unlockOperatorOptions}
                                 separator={true}
                                 label="Operator"
@@ -1154,7 +1154,7 @@ const addPropertyHidden =
                       ? ""
                       : formData.draw_shader_sprite || ""
                       }
-                    onChange={handleShaderChange}
+                    onChange={(item) => handleShaderChange(item.value)}
                   options={shaderOptions}
                 placeholder="Select a shader"
               size="md"

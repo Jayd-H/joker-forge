@@ -8,14 +8,14 @@ export const generateSetAnteEffectCode = (
   triggerType: string,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = (effect.params?.operation as string) || "set";
+  const operation = (effect.params?.operation?.value as string) || "set";
 
   const variableName =
     sameTypeCount === 0 ? "ante_value" : `ante_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     itemType
   )

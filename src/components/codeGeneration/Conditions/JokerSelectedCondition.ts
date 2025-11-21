@@ -11,8 +11,8 @@ export const generateJokerSelectedConditionCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "joker_selected") return "";
 
-  const operator = condition.params?.operator as string|| "greater_than";
-  const value = condition.params?.value || 1;
+  const operator = condition.params?.operator?.value as string|| "greater_than";
+  const value = condition.params?.value;
 
   const valueCode = generateGameVariableCode(value, '');
 

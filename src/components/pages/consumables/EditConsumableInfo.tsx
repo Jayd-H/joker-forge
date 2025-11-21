@@ -782,7 +782,7 @@ const EditConsumableInfo: React.FC<EditConsumableInfoProps> = ({
                           <div className="grid grid-cols-2 gap-4">
                             <InputDropdown
                               value={formData.set}
-                              onChange={handleSetChange}
+                              onChange={(item) => handleSetChange(item.value)}
                               options={setOptions}
                               separator={true}
                               label="Consumable Set"
