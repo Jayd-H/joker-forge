@@ -3,42 +3,39 @@ import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MagnifyingGlassIcon,
-  FunnelIcon,
   ArrowsUpDownIcon,
   DocumentDuplicateIcon,
   DocumentTextIcon,
+  LockOpenIcon,
+  LockClosedIcon,
   EyeIcon,
   EyeSlashIcon,
-  UserGroupIcon,
-  SparklesIcon as SparklesIconSolid,
-  RectangleStackIcon,
-  PlayIcon,
-  GiftIcon,
-  CubeIcon,
-  Cog6ToothIcon,
+  EyeSlashIcon as HiddenIcon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
-import { BoosterData, ConsumableSetData } from "../../data/BalatroUtils";
+import { PuzzlePieceIcon } from "@heroicons/react/24/solid";
+import { EditionData } from "../../data/BalatroUtils";
 import { formatBalatroText } from "../../generic/balatroTextFormatter";
-import { EditBoosterRulesModal } from "../BoostersPage";
+import RuleBuilder from "../../ruleBuilder/RuleBuilder";
 import Button from "../../generic/Button";
 import Tooltip from "../../generic/Tooltip";
 import { UserConfigContext } from "../../Contexts";
 
-interface BoostersVanillaReforgedPageProps {
-  onDuplicateToProject?: (item: BoosterData) => void;
-  onNavigateToBoosters?: () => void;
+interface EditionsVanillaReforgedPageProps {
+  onDuplicateToProject?: (item: EditionData) => void;
+  onNavigateToEditions?: () => void;
 }
 
 type SortOption = {
   value: string;
   label: string;
-  sortFn: (a: BoosterData, b: BoosterData) => number;
+  sortFn: (a: EditionData, b: EditionData) => number;
   ascText: string;
   descText: string;
 };
 
 const useAsyncDataLoader = () => {
-  const [vanillaBoosters, setVanillaBoosters] = useState<BoosterData[]>([]);
+  const [vanillaEditions, setVanillaEditions] = useState<EditionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,7 +56,7 @@ const useAsyncDataLoader = () => {
 
         if (!isCancelled) {
           startTransition(() => {
-            setVanillaBoosters(data.boosters || []);
+            setVanillaEditions(data.editions || []);
             setLoading(false);
           });
         }
@@ -67,7 +64,7 @@ const useAsyncDataLoader = () => {
         if (!isCancelled) {
           console.error("Error fetching vanilla data:", err);
           setError(err instanceof Error ? err.message : "Unknown error");
-          setVanillaBoosters([]);
+          setVanillaEditions([]);
           setLoading(false);
         }
       }
@@ -81,32 +78,26 @@ const useAsyncDataLoader = () => {
     };
   }, []);
 
-  return { vanillaBoosters, loading, error };
+  return { vanillaEditions, loading, error };
 };
 
-const BoostersVanillaReforgedPage: React.FC<
-  BoostersVanillaReforgedPageProps
-> = ({ onDuplicateToProject, onNavigateToBoosters }) => {
+const EditionsVanillaReforgedPage: React.FC<EditionsVanillaReforgedPageProps> = ({
+  onDuplicateToProject,
+  onNavigateToEditions,
+}) => {
   const { userConfig, setUserConfig } = useContext(UserConfigContext)
-  const { vanillaBoosters, loading } = useAsyncDataLoader();
+  const { vanillaEditions, loading } = useAsyncDataLoader();
   const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState<string | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
   const itemTypes = userConfig.pageData.map(item => item.objectType)
       const [sortBy, setSortBy] = useState(
-        userConfig.pageData[itemTypes.indexOf("vanilla_booster")].filter ?? "id")
+        userConfig.pageData[itemTypes.indexOf("vanilla_edition")].filter ?? "id")
       const [sortDirection, setSortDirection] = useState(
-        userConfig.pageData[itemTypes.indexOf("vanilla_booster")].direction ?? "asc")
+        userConfig.pageData[itemTypes.indexOf("vanilla_edition")].direction ?? "asc")
   const [showSortMenu, setShowSortMenu] = useState(false);
-  const [showBoosterRulesModal, setShowBoosterRulesModal] = useState(false);
+  const [showRuleBuilder, setShowRuleBuilder] = useState(false);
   const [currentItemForRules, setCurrentItemForRules] =
-    useState<BoosterData | null>(null);
+    useState<EditionData | null>(null);
   const [sortMenuPosition, setSortMenuPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
-  const [filtersMenuPosition, setFiltersMenuPosition] = useState({
     top: 0,
     left: 0,
     width: 0,
@@ -114,9 +105,7 @@ const BoostersVanillaReforgedPage: React.FC<
 
   const sortButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortDirectionButtonRef = React.useRef<HTMLButtonElement>(null);
-  const filtersButtonRef = React.useRef<HTMLButtonElement>(null);
   const sortMenuRef = React.useRef<HTMLDivElement>(null);
-  const filtersMenuRef = React.useRef<HTMLDivElement>(null);
 
   const sortOptions: SortOption[] = useMemo(
     () => [
@@ -135,23 +124,9 @@ const BoostersVanillaReforgedPage: React.FC<
         descText: "Z-A",
       },
       {
-        value: "type",
-        label: "Type",
-        sortFn: (a, b) => b.booster_type.localeCompare(a.booster_type),
-        ascText: "A-Z",
-        descText: "Z-A",
-      },
-      {
-        value: "cost",
-        label: "Cost",
-        sortFn: (a, b) => (b.cost || 0) - (a.cost || 0),
-        ascText: "Low to High",
-        descText: "High to Low",
-      },
-      {
         value: "rules",
         label: "Rules",
-        sortFn: (a, b) => (b.card_rules?.length || 0) - (a.card_rules?.length || 0),
+        sortFn: (a, b) => (b.rules?.length || 0) - (a.rules?.length || 0),
         ascText: "Least to Most",
         descText: "Most to Least",
       },
@@ -168,14 +143,6 @@ const BoostersVanillaReforgedPage: React.FC<
         !sortMenuRef.current.contains(event.target as Node)
       ) {
         setShowSortMenu(false);
-      }
-      if (
-        filtersButtonRef.current &&
-        !filtersButtonRef.current.contains(event.target as Node) &&
-        filtersMenuRef.current &&
-        !filtersMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowFilters(false);
       }
     };
 
@@ -196,29 +163,15 @@ const BoostersVanillaReforgedPage: React.FC<
     }
   }, [showSortMenu]);
 
-  useEffect(() => {
-    if (showFilters && filtersButtonRef.current) {
-      const rect = filtersButtonRef.current.getBoundingClientRect();
-      setFiltersMenuPosition({
-        top: rect.bottom + 8,
-        left: rect.right - 256,
-        width: 256,
-      });
-    }
-  }, [showFilters]);
-
   const filteredAndSortedItems = useMemo(() => {
-    if (loading || !vanillaBoosters.length) return [];
+    if (loading || !vanillaEditions.length) return [];
 
-    const filtered = vanillaBoosters.filter((item) => {
+    const filtered = vanillaEditions.filter((item) => {
       const matchesSearch =
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesFilter =
-        typeFilter === null || item.booster_type === typeFilter;
-
-      return matchesSearch && matchesFilter;
+      return matchesSearch;
     });
 
     const currentSort = sortOptions.find((option) => option.value === sortBy);
@@ -230,33 +183,9 @@ const BoostersVanillaReforgedPage: React.FC<
     }
 
     return filtered;
-  }, [vanillaBoosters, searchTerm, typeFilter, sortBy, sortOptions, loading, sortDirection]);
+  }, [vanillaEditions, searchTerm, sortBy, sortOptions, loading, sortDirection]);
 
-  const typeOptions = useMemo(
-    () => [
-      { value: null, label: "All Types", count: vanillaBoosters.length },
-      {
-        value: "joker",
-        label: "Joker Packs",
-        count: vanillaBoosters.filter((b) => b.booster_type === "joker").length,
-      },
-      {
-        value: "consumable",
-        label: "Consumable Packs",
-        count: vanillaBoosters.filter((b) => b.booster_type === "consumable")
-          .length,
-      },
-      {
-        value: "playing_card",
-        label: "Playing Card Packs",
-        count: vanillaBoosters.filter((b) => b.booster_type === "playing_card")
-          .length,
-      },
-    ],
-    [vanillaBoosters]
-  );
-
-  const handleDuplicateItem = (item: BoosterData) => {
+  const handleDuplicateItem = (item: EditionData) => {
     if (onDuplicateToProject) {
       const duplicatedItem = {
         ...item,
@@ -264,17 +193,21 @@ const BoostersVanillaReforgedPage: React.FC<
         name: `${item.name} Copy`,
       };
       onDuplicateToProject(duplicatedItem);
-      if (onNavigateToBoosters) onNavigateToBoosters();
+      if (onNavigateToEditions) onNavigateToEditions();
     }
   };
 
-  const handleViewRules = (item: BoosterData) => {
+  const handleViewRules = (item: EditionData) => {
+    const rules = item.rules;
+    if (rules && rules.length === 1) {
+      rules[0].position = { x: 500, y: 100 };
+    }
     setCurrentItemForRules(item);
-    setShowBoosterRulesModal(true);
+    setShowRuleBuilder(true);
   };
 
-  const handleCloseBoosterRulesModal = () => {
-    setShowBoosterRulesModal(false);
+  const handleCloseRuleBuilder = () => {
+    setShowRuleBuilder(false);
     setCurrentItemForRules(null);
   };
 
@@ -287,34 +220,14 @@ const handleSortDirectionToggle = () => {
     
     setUserConfig((prevConfig) => {
       const config = prevConfig
-      config.pageData[itemTypes.indexOf("vanilla_booster")].direction = direction
+      config.pageData[itemTypes.indexOf("vanilla_edition")].direction = direction
       return ({...config})
     })
   }
 
   const handleSortMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (showFilters) setShowFilters(false);
     setShowSortMenu(!showSortMenu);
-  };
-
-  const handleFiltersToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (showSortMenu) setShowSortMenu(false);
-    setShowFilters(!showFilters);
-  };
-
-  const getTypeColor = (type: string | null) => {
-    switch (type) {
-      case "joker":
-        return "text-balatro-purple";
-      case "consumable":
-        return "text-mint";
-      case "playing_card":
-        return "text-balatro-blue";
-      default:
-        return "text-white-light";
-    }
   };
 
   const currentSortMethod = sortOptions.find((option) => option.value === sortBy) 
@@ -327,7 +240,7 @@ const handleSortDirectionToggle = () => {
     currentSortMethod ? (sortDirection === "asc" ? currentSortMethod.ascText : currentSortMethod.descText) :
     "Least to Most";
 
-  const filterKey = `${searchTerm}-${typeFilter}-${sortBy}`;
+  const filterKey = `${searchTerm}-${sortBy}`;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -372,7 +285,7 @@ const handleSortDirectionToggle = () => {
     <div className="min-h-screen">
       <div className="p-8 font-lexend max-w-7xl mx-auto">
         <h1 className="text-3xl text-white-light tracking-widest text-center">
-          Vanilla Boosters
+          Vanilla Editions
         </h1>
         <h1 className="text-xl text-white-dark font-light tracking-widest mb-6 text-center">
           Reference Collection
@@ -386,8 +299,8 @@ const handleSortDirectionToggle = () => {
                 Vanilla Collection •{" "}
                 {loading
                   ? "Loading..."
-                  : `${filteredAndSortedItems.length} of ${vanillaBoosters.length}`}{" "}
-                booster{vanillaBoosters.length !== 1 ? "s" : ""}
+                  : `${filteredAndSortedItems.length} of ${vanillaEditions.length}`}{" "}
+                edition{vanillaEditions.length !== 1 ? "s" : ""}
               </div>
             </div>
           </div>
@@ -399,7 +312,7 @@ const handleSortDirectionToggle = () => {
               <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white-darker group-focus-within:text-mint transition-colors" />
               <input
                 type="text"
-                placeholder="Search vanilla boosters by name or description..."
+                placeholder="Search vanilla editions by name or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-black-darker shadow-2xl border-2 border-black-lighter rounded-lg pl-12 pr-4 py-4 text-white-light tracking-wider placeholder-white-darker focus:outline-none focus:border-mint transition-all duration-200"
@@ -407,42 +320,27 @@ const handleSortDirectionToggle = () => {
             </div>
 
             <div className="flex gap-3">
-                                      <div className="relative">
-                                        <button
-                                          ref={sortButtonRef}
-                                          onClick={handleSortMenuToggle}
-                                          className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                                        >
-                                          <ArrowsUpDownIcon className="h-4 w-4" />
-                                          <span className="whitespace-nowrap">{currentSortLabel}</span>
-                                        </button>
-                                      </div>
-                                      <button
-                                        ref={sortDirectionButtonRef}
-                                        onClick={handleSortDirectionToggle}
-                                        className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
-                                      >
-                                        <ArrowsUpDownIcon className="h-4 w-4" />
-                                        <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
-                                      </button>
-                        
-                                      <div className="relative">
-                                        <button
-                                          ref={filtersButtonRef}
-                                          onClick={handleFiltersToggle}
-                                          className={`flex items-center gap-2 px-4 py-4 border-2 rounded-lg transition-colors cursor-pointer ${
-                                            showFilters
-                                              ? "bg-mint-dark text-black-darker border-mint"
-                                              : "bg-black-dark text-white-light border-black-lighter hover:border-mint"
-                                          }`}
-                                        >
-                                          <FunnelIcon className="h-4 w-4" />
-                                          <span>Filters</span>
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+              <div className="relative">
+                <button
+                  ref={sortButtonRef}
+                    onClick={handleSortMenuToggle}
+                      className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                                                    >
+                                                      <ArrowsUpDownIcon className="h-4 w-4" />
+                                                      <span className="whitespace-nowrap">{currentSortLabel}</span>
+                                                    </button>
+                                                  </div>
+                                                  <button
+                                                    ref={sortDirectionButtonRef}
+                                                    onClick={handleSortDirectionToggle}
+                                                    className="flex items-center gap-2 bg-black-dark text-white-light px-4 py-4 border-2 border-black-lighter rounded-lg hover:border-mint transition-colors cursor-pointer"
+                                                  >
+                                                    <ArrowsUpDownIcon className="h-4 w-4" />
+                                                    <span className="whitespace-nowrap">{currentSortDirectionLabel}</span>
+                                                  </button>
+                          </div>
+                        </div>
+                      </div>
 
         <AnimatePresence mode="wait">
           {loading ? (
@@ -456,15 +354,14 @@ const handleSortDirectionToggle = () => {
               <div className="rounded-2xl p-8 max-w-md">
                 <div className="animate-spin h-16 w-16 border-4 border-mint border-t-transparent rounded-full mx-auto mb-4"></div>
                 <h3 className="text-white-light text-xl font-light mb-3">
-                  Loading Vanilla Boosters
+                  Loading Vanilla Editions
                 </h3>
                 <p className="text-white-darker text-sm leading-relaxed">
-                  Fetching the complete vanilla boosters collection...
+                  Fetching the complete vanilla editions collection...
                 </p>
               </div>
             </motion.div>
-          ) : filteredAndSortedItems.length === 0 &&
-            vanillaBoosters.length > 0 ? (
+          ) : filteredAndSortedItems.length === 0 && vanillaEditions.length > 0 ? (
             <motion.div
               key="no-results"
               initial={{ opacity: 0, y: 20 }}
@@ -475,21 +372,18 @@ const handleSortDirectionToggle = () => {
               <div className="rounded-2xl p-8 max-w-md">
                 <MagnifyingGlassIcon className="h-16 w-16 text-mint opacity-60 mb-4 mx-auto" />
                 <h3 className="text-white-light text-xl font-light mb-3">
-                  No Boosters Found
+                  No Editions Found
                 </h3>
                 <p className="text-white-darker text-sm mb-6 leading-relaxed">
-                  No vanilla boosters match your current search and filter
-                  criteria. Try adjusting your filters or search terms.
+                  No vanilla editions match your current search criteria. Try
+                  adjusting your search terms.
                 </p>
                 <Button
                   variant="secondary"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setTypeFilter(null);
-                  }}
+                  onClick={() => setSearchTerm("")}
                   fullWidth
                 >
-                  Clear All Filters
+                  Clear Search
                 </Button>
               </div>
             </motion.div>
@@ -504,10 +398,10 @@ const handleSortDirectionToggle = () => {
               <div className="rounded-2xl p-8 max-w-md">
                 <DocumentTextIcon className="h-16 w-16 text-mint opacity-60 mb-4 mx-auto" />
                 <h3 className="text-white-light text-xl font-light mb-3">
-                  No Vanilla Boosters Available
+                  No Vanilla Editions Available
                 </h3>
                 <p className="text-white-darker text-sm mb-6 leading-relaxed">
-                  Unable to load the vanilla boosters collection. Please try
+                  Unable to load the vanilla editions collection. Please try
                   refreshing the page.
                 </p>
                 <Button
@@ -536,8 +430,8 @@ const handleSortDirectionToggle = () => {
                   animate="visible"
                   custom={index}
                 >
-                  <VanillaBoosterCard
-                    booster={item}
+                  <VanillaEditionCard
+                    edition={item}
                     onDuplicate={() => handleDuplicateItem(item)}
                     onViewRules={() => handleViewRules(item)}
                   />
@@ -547,14 +441,15 @@ const handleSortDirectionToggle = () => {
           )}
         </AnimatePresence>
 
-        {showBoosterRulesModal && currentItemForRules && (
-          <EditBoosterRulesModal
-            isOpen={showBoosterRulesModal}
-            onClose={handleCloseBoosterRulesModal}
-            onSave={handleCloseBoosterRulesModal}
-            cardRules={currentItemForRules.card_rules || []}
-            boosterType={currentItemForRules.booster_type}
-            consumableSets={[] as ConsumableSetData[]}
+        {showRuleBuilder && currentItemForRules && (
+          <RuleBuilder
+            isOpen={showRuleBuilder}
+            onClose={handleCloseRuleBuilder}
+            onSave={() => {}}
+            existingRules={currentItemForRules.rules || []}
+            item={currentItemForRules}
+            onUpdateItem={() => {}}
+            itemType="card"
           />
         )}
       </div>
@@ -586,7 +481,7 @@ const handleSortDirectionToggle = () => {
                       setSortDirection(sortDirection)
                       setUserConfig((prevConfig) => {
                         const config = prevConfig
-                        config.pageData[itemTypes.indexOf("vanilla_booster")].filter = option.value
+                        config.pageData[itemTypes.indexOf("vanilla_edition")].filter = option.value
                         return ({...config})
                       })
                     }}
@@ -604,75 +499,12 @@ const handleSortDirectionToggle = () => {
           </div>,
           document.body
         )}
-
-      {showFilters &&
-        ReactDOM.createPortal(
-          <div
-            ref={filtersMenuRef}
-            className="fixed bg-black-darker border-2 border-black-lighter rounded-xl shadow-xl overflow-hidden"
-            style={{
-              top: `${filtersMenuPosition.top}px`,
-              left: `${filtersMenuPosition.left}px`,
-              width: `${filtersMenuPosition.width}px`,
-              zIndex: 99999,
-            }}
-          >
-            <div className="p-3 border-b border-black-lighter">
-              <h3 className="text-white-light font-medium text-sm mb-3">
-                Filter by Type
-              </h3>
-              <div className="space-y-1">
-                {typeOptions.map((option) => (
-                  <button
-                    key={option.value || "all"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTypeFilter(option.value);
-                      setShowFilters(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer ${
-                      typeFilter === option.value
-                        ? "bg-mint/20 border border-mint text-mint"
-                        : "hover:bg-black-lighter"
-                    }`}
-                  >
-                    <span className={getTypeColor(option.value)}>
-                      {option.label}
-                    </span>
-                    <span className="text-white-darker ml-1">
-                      ({option.count})
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {(searchTerm || typeFilter !== null) && (
-              <div className="p-3">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSearchTerm("");
-                    setTypeFilter(null);
-                    setShowFilters(false);
-                  }}
-                  fullWidth
-                >
-                  Clear All Filters
-                </Button>
-              </div>
-            )}
-          </div>,
-          document.body
-        )}
     </div>
   );
 };
 
-interface VanillaBoosterCardProps {
-  booster: BoosterData;
+interface VanillaEditionCardProps {
+  edition: EditionData;
   onDuplicate: () => void;
   onViewRules: () => void;
 }
@@ -716,65 +548,50 @@ const PropertyIcon: React.FC<{
   );
 };
 
-const VanillaBoosterCard: React.FC<VanillaBoosterCardProps> = ({
-  booster,
+const VanillaEditionCard: React.FC<VanillaEditionCardProps> = ({
+  edition,
   onDuplicate,
   onViewRules,
 }) => {
-  const [imageLoadError, setImageLoadError] = useState(false);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [tooltipDelayTimeout, setTooltipDelayTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
-  const getBoosterTypeIcon = () => {
-    switch (booster.booster_type) {
-      case "joker":
-        return <UserGroupIcon className="w-full h-full" />;
-      case "consumable":
-        return <SparklesIconSolid className="w-full h-full" />;
-      case "playing_card":
-        return <RectangleStackIcon className="w-full h-full" />;
-      default:
-        return <CubeIcon className="w-full h-full" />;
-    }
+const getShaderDisplayName = (shader?: string | false) => {
+    if (!shader) return "";
+
+    const shaderNames: Record<string, string> = {
+      foil: "Foil",
+      holo: "Holographic",
+      polychrome: "Polychrome",
+      booster: "Booster",
+      debuff: "Debuff",
+      voucher: "Voucher",
+      negative: "Negative",
+      negative_shine: "Negative Shine",
+    };
+
+    return (
+      shaderNames[shader] || shader.charAt(0).toUpperCase() + shader.slice(1)
+    );
   };
 
-  const getBoosterTypeLabel = () => {
-    switch (booster.booster_type) {
-      case "joker":
-        return "Joker Pack";
-      case "consumable":
-        return "Consumable Pack";
-      case "playing_card":
-        return "Playing Card Pack";
-      default:
-        return "Unknown Pack";
-    }
-  };
-
-  const getBoosterTypeColor = () => {
-    switch (booster.booster_type) {
-      case "joker":
-        return "text-balatro-purple border-balatro-purple";
-      case "consumable":
-        return "text-mint border-mint";
-      case "playing_card":
-        return "text-balatro-blue border-balatro-blue";
-      default:
-        return "text-balatro-gold-new border-balatro-gold-new";
-    }
-  };
-
-  const rulesCount = booster.card_rules?.length || 0;
-  const isDiscovered = booster.discovered ?? true;
-  const drawToHand = booster.draw_hand === true;
+  const rulesCount = edition.rules?.length || 0;
+  const isUnlocked = edition.unlocked !== false;
+  const isDiscovered = edition.discovered !== false;
+  const noCollection = edition.no_collection === true;
+  const inShop = edition.in_shop === true;
 
   const propertyIcons = [
     {
-      icon: getBoosterTypeIcon(),
-      tooltip: getBoosterTypeLabel(),
-      variant: "info" as const,
-      isEnabled: true,
+      icon: isUnlocked ? (
+        <LockOpenIcon className="w-full h-full" />
+      ) : (
+        <LockClosedIcon className="w-full h-full" />
+      ),
+      tooltip: isUnlocked ? "Unlocked by Default" : "Locked by Default",
+      variant: "warning" as const,
+      isEnabled: isUnlocked,
     },
     {
       icon: isDiscovered ? (
@@ -787,10 +604,16 @@ const VanillaBoosterCard: React.FC<VanillaBoosterCardProps> = ({
       isEnabled: isDiscovered,
     },
     {
-      icon: <PlayIcon className="w-full h-full" />,
-      tooltip: drawToHand ? "Draws to Hand" : "Opens Normally",
+      icon: <HiddenIcon className="w-full h-full" />,
+      tooltip: noCollection ? "Hidden from Collection" : "Shows in Collection",
+      variant: "disabled" as const,
+      isEnabled: noCollection,
+    },
+    {
+      icon: <ShoppingBagIcon className="w-full h-full" />,
+      tooltip: inShop ? "Appears in Shop" : "Doesn't Appear in Shop",
       variant: "success" as const,
-      isEnabled: drawToHand,
+      isEnabled: inShop,
     },
   ];
 
@@ -812,36 +635,34 @@ const VanillaBoosterCard: React.FC<VanillaBoosterCardProps> = ({
     setHoveredButton(null);
   };
 
+ const shaderName = getShaderDisplayName(edition.shader);
+
   return (
     <div className="flex gap-4 relative">
       <div className="relative flex flex-col items-center">
-        <div className="px-4 -mb-6 z-20 py-1 rounded-md border-2 font-bold transition-all bg-black tracking-widest border-balatro-money text-balatro-money w-18 text-center">
-          ${booster.cost}
-        </div>
-
         <div className="w-42 z-10 relative">
-          <div className="relative rounded-lg overflow-hidden">
-            {booster.imagePreview && !imageLoadError ? (
+          <div className="relative">
+            <div className="relative">
               <img
-                src={booster.imagePreview}
-                alt={booster.name}
-                className="w-full h-full object-contain"
-                draggable="false"
-                onError={() => setImageLoadError(true)}
-              />
-            ) : (
-              <div className="w-full h-48 flex items-center justify-center border-2 border-mint/30 rounded-lg">
-                <GiftIcon className="h-16 w-16 text-mint opacity-60" />
+              src="/images/acesbg/HC_J_jimbo.png"
+              alt="Base Edition Card"
+              className="w-full h-full object-contain"
+              draggable="false"
+            />
+            {shaderName && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-black/80 text-white px-3 py-1 rounded-lg text-sm font-bold border-2 border-white/50">
+                  {shaderName}
+                </div>
               </div>
             )}
+            </div>
           </div>
         </div>
 
         <div className="relative z-30">
-          <div
-            className={`px-4 py-1 -mt-6 rounded-md border-2 text-sm tracking-wide font-medium bg-black ${getBoosterTypeColor()}`}
-          >
-            {getBoosterTypeLabel()}
+          <div className="px-6 py-1 -mt-6 rounded-md border-2 text-sm tracking-wide font-medium bg-black border-balatro-gold text-balatro-gold">
+            Edition
           </div>
         </div>
       </div>
@@ -854,39 +675,28 @@ const VanillaBoosterCard: React.FC<VanillaBoosterCardProps> = ({
                 className="text-white-lighter text-xl tracking-wide leading-tight line-clamp-1"
                 style={{ lineHeight: "1.75rem" }}
               >
-                {booster.name}
+                {edition.name}
               </h3>
             </div>
-
-            <div
+           <div
               className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
             > 
               <span
                 className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               >
-                Id:{booster.orderValue}
+                Id:{edition.orderValue}
               </span>
             </div>
-
             <div className="mb-4 h-12 flex items-start overflow-hidden">
               <div
                 className="text-white-darker text-sm leading-relaxed w-full line-clamp-3"
                 dangerouslySetInnerHTML={{
-                  __html: formatBalatroText(booster.description),
+                  __html: formatBalatroText(edition.description),
                 }}
               />
             </div>
 
-            <div className="mb-4">
-              <div className="text-xs text-white-darker mb-1">
-                Configuration:
-              </div>
-              <div className="text-white-light text-sm">
-                {booster.config.extra} cards, choose {booster.config.choose}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mb-4 px-8 h-8 flex-wrap">
+            <div className="flex items-center justify-between mb-4 px-4 h-8 flex-wrap">
               {propertyIcons.map((iconConfig, index) => (
                 <PropertyIcon
                   key={index}
@@ -925,7 +735,7 @@ const VanillaBoosterCard: React.FC<VanillaBoosterCardProps> = ({
               >
                 <div className="flex-1 flex items-center justify-center py-3 px-3">
                   <div className="relative">
-                    <Cog6ToothIcon className="h-6 w-6 text-white group-hover:text-mint-lighter transition-colors" />
+                    <PuzzlePieceIcon className="h-6 w-6 text-white group-hover:text-mint-lighter transition-colors" />
                     {rulesCount > 0 && (
                       <div className="absolute -top-2 -right-2 bg-mint text-black text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm">
                         {rulesCount}
@@ -942,4 +752,4 @@ const VanillaBoosterCard: React.FC<VanillaBoosterCardProps> = ({
   );
 };
 
-export default BoostersVanillaReforgedPage;
+export default EditionsVanillaReforgedPage;

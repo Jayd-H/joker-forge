@@ -18,7 +18,7 @@ const gameObjectTypes = [
     "joker", "consumable", "enhancement",
     "seal", "edition", "voucher", "deck", "booster",
     "vanilla_joker", "vanilla_consumable", "vanilla_booster",
-    "vanilla_enhancement", "vanilla_seal", "vanilla_voucher",
+    "vanilla_enhancement", "vanilla_seal", "vanilla_edition", "vanilla_voucher",
     "vanilla_deck"
   ]
 

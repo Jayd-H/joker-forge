@@ -152,6 +152,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
       },
       { key: "HC_A_clubs", name: "♣", color: "text-blue-500" },
       { key: "HC_A_spades", name: "♠", color: "text-white-lighter" },
+      { key: "HC_J_jimbo", name: "🃏", color: "text-orange-500" },
     ],
   ];
 
@@ -366,6 +367,9 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     const parts = aceKey.split("_");
     const contrast = parts[0] === "HC" ? "High Contrast" : "Low Contrast";
     const suit = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
+    if (suit === "Jimbo") {
+      return `${suit}`;
+    }
     return `${contrast} Ace of ${suit}`;
   };
 
