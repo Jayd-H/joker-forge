@@ -367,7 +367,7 @@ const BalatroCard: React.FC<BalatroCardProps> = ({
     const parts = aceKey.split("_");
     const contrast = parts[0] === "HC" ? "High Contrast" : "Low Contrast";
     const suit = parts[2].charAt(0).toUpperCase() + parts[2].slice(1);
-    if (suit === "Jimbo") {
+    if (suit === "HC_J_jimbo") {
       return `${suit}`;
     }
     return `${contrast} Ace of ${suit}`;
