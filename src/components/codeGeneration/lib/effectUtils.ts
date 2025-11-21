@@ -94,6 +94,7 @@ import { generateCreatePlayingCardEffectCode } from "../Effects/CreatePlayingCar
 import { generateEditGameSpeedEffectCode } from "../Effects/EditGameSpeed";
 import { generateAddBoosterToShopEffectCode } from "../Effects/AddBoosterIntoShopEffect";
 import { generateCreatePlayingCardsEffectCode } from "../Effects/CreatePlayingCardsEffect";
+import { generateShowMessageReturn } from "../Effects/ShowSpecialMessageEffect";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -927,6 +928,8 @@ export const generateSingleEffect = (
       return generateEditGameSpeedEffectCode(effect)
     case "add_booster_shop":
       return generateAddBoosterToShopEffectCode(effect, itemType)
+    case "special_message":
+      return generateShowMessageReturn(effect, itemType);
 
 //////////DECK EXCLUSIVE EFFECTS\\\\\\\\\\\\
     case "edit_all_starting_cards":
