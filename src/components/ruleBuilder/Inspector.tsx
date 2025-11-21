@@ -1296,7 +1296,6 @@ const Inspector: React.FC<InspectorProps> = ({
   const renderConditionEditor = () => {
     if (!selectedCondition || !selectedRule) return null;
     const conditionType = getConditionTypeById(selectedCondition.type);
-    console.log(conditionType)
 
     if (!conditionType) return null;
     const paramsToRender = conditionType.params.filter((param) => {
@@ -1635,7 +1634,6 @@ const Inspector: React.FC<InspectorProps> = ({
     if (!selectedEffect || !selectedRule) return null;
     const effectType = getEffectTypeById(selectedEffect.type);
     if (!effectType) return null;
-    console.log(effectType)
 
     const paramsToRender = effectType.params.filter((param) => {
       if (param.type == "checkbox") {
