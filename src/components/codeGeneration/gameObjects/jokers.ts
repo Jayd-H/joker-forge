@@ -2141,7 +2141,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
     allHooks += generateShortcutHook(
       hooksByType.shortcut as Array<{
         jokerKey: string;
-        params: Record<string, unknown>;
+        params: Record<string, {value: unknown, valueType?: string}>;
       }>,
       modPrefix
     );
@@ -2151,7 +2151,7 @@ const generateHooks = (jokers: JokerData[], modPrefix: string): string => {
     allHooks += generateShowmanHook(
       hooksByType.showman as Array<{
         jokerKey: string;
-        params: Record<string, unknown>;
+        params: Record<string, {value: unknown, valueType?: string}>;
       }>,
       modPrefix
     );
