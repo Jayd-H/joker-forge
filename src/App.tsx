@@ -63,6 +63,10 @@ const SealsVanillaReforgedPage = lazy(
   () => import("./components/pages/vanillareforged/SealsVanillaReforgedPage")
 );
 
+const EditionsVanillaReforgedPage = lazy(
+  () => import("./components/pages/vanillareforged/EditionsVanillaReforgedPage")
+);
+
 const VouchersVanillaReforgedPage = lazy(
   () => import("./components/pages/vanillareforged/VouchersVanillaReforgedPage")
 );
@@ -1754,6 +1758,29 @@ const handleDiscardAndStartFresh = () => {
                   }}
                   onNavigateToSeals={() => {
                     navigate("/seals");
+                  }}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/vanilla/editions"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <EditionsVanillaReforgedPage
+                  onDuplicateToProject={(item) => {
+                    setEditions([...editions, item as EditionData]);
+                  }}
+                  onNavigateToEditions={() => {
+                    navigate("/editions");
                   }}
                 />
               </Suspense>

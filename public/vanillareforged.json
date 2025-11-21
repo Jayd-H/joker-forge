@@ -14415,7 +14415,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "buffoon_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 25
     },
     {
       "id": "b12e0044-ae4d-42b4-8c81-600a0c028c9c",
@@ -14438,7 +14439,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "buffoon_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 26
     },
     {
       "id": "d9b1af1a-9104-4281-b5c7-6c27c74d8633",
@@ -14461,7 +14463,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "jumbo_buffoon_pack",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 27
     },
     {
       "id": "c7c51139-3b74-4659-b971-256d72af3be6",
@@ -14484,7 +14487,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "mega_buffoon_pack",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 28
     },
     {
       "id": "e24f4065-43d2-4406-8f87-6a5db1376eac",
@@ -14521,7 +14525,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "arcana_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 1
     },
     {
       "id": "2fc42159-ab83-40fb-b7f3-af8734f5de18",
@@ -14558,7 +14563,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "arcana_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 2
     },
     {
       "id": "241a1b25-7bec-4fbf-bf33-21a046221989",
@@ -14595,7 +14601,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "arcana_pack_3",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 3
     },
     {
       "id": "ec68ff55-4611-457d-8d41-7849dfa36c1a",
@@ -14632,7 +14639,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "arcana_pack_4",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 4
     },
     {
       "id": "f15008aa-f5be-463a-9527-e4976b5dd08c",
@@ -14669,7 +14677,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "jumbo_arcana_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 5
     },
     {
       "id": "2aaa5345-458f-4605-8109-bca4680d6f7f",
@@ -14706,7 +14715,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "jumbo_arcana_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 6
     },
     {
       "id": "f6b48627-48b8-4f6f-9197-2c0b6e07d513",
@@ -14743,7 +14753,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "mega_arcana_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 7
     },
     {
       "id": "192c6ba8-c6c9-4cac-833a-30c61e4aa10f",
@@ -14780,7 +14791,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "mega_arcana_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 8
     },
     {
       "id": "c1de4e88-3642-4e78-880e-81da5eaf2344",
@@ -14809,7 +14821,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "celestial_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 9
     },
     {
       "id": "5c4d0e9f-7646-4be7-9b43-0008c6bfd362",
@@ -14838,7 +14851,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "celestial_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 10
     },
     {
       "id": "ed105980-58a0-4be5-8555-df37717af648",
@@ -14867,7 +14881,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "celestial_pack_3",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 11
     },
     {
       "id": "5c25d62f-a652-4b5b-bddb-cf515beed237",
@@ -14896,7 +14911,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "celestial_pack_4",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 12
     },
     {
       "id": "882f77c2-9f9e-4ea1-ae25-e723a78797cb",
@@ -14925,7 +14941,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "jumbo_celestial_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 13
     },
     {
       "id": "d3ad41f0-918e-446e-a434-395cad241f7f",
@@ -14954,7 +14971,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "jumbo_celestial_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 14
     },
     {
       "id": "3a63f594-88f9-4435-bc8b-b6c5f3a40d16",
@@ -14983,7 +15001,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "mega_celestial_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 15
     },
     {
       "id": "95d1fc8b-046b-4f4f-9c5e-bb8b8260de2f",
@@ -15012,7 +15031,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "mega_celestial_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 16
     },
     {
       "id": "5f73f8a7-6dbe-44ca-a345-a4718e8913f3",
@@ -15047,7 +15067,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "spectral_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 29
     },
     {
       "id": "4eaf387d-70b9-4df5-a6a0-8dc5c8fb34ec",
@@ -15082,7 +15103,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "spectral_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 30
     },
     {
       "id": "ab88344f-8693-44f9-a234-95c775f1e850",
@@ -15117,7 +15139,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "jumbo_spectral_pack",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 31
     },
     {
       "id": "7d719af4-4909-4e13-beb8-719f8e9635bf",
@@ -15152,7 +15175,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "mega_spectral_pack",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 32
     },
     {
       "id": "8d89317f-bc31-4f3c-a7a1-b9140b05a6ab",
@@ -15175,7 +15199,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "standard_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 17
     },
     {
       "id": "49bce602-ca6d-47fe-9e57-62f612d48866",
@@ -15198,7 +15223,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "standard_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 18
     },
     {
       "id": "83fe0110-12fa-4e9f-a86e-01c8cf6ab895",
@@ -15221,7 +15247,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "standard_pack_3",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 19
     },
     {
       "id": "a31da48a-cc07-4f05-a658-1e04122e47e1",
@@ -15244,7 +15271,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "standard_pack_4",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 20
     },
     {
       "id": "33e2f166-9480-4b7f-986d-6de6838a0b27",
@@ -15267,7 +15295,8 @@
       "discovered": true,
       "placeholderCreditIndex": 3,
       "boosterKey": "jumbo_standard_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 21
     },
     {
       "id": "5671e1ea-90e7-47e8-af95-1ad07afa9d5c",
@@ -15290,7 +15319,8 @@
       "discovered": true,
       "placeholderCreditIndex": 1,
       "boosterKey": "jumbo_standard_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 22
     },
     {
       "id": "fa6a7022-61f0-4815-8779-1542e21ec67a",
@@ -15313,7 +15343,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "mega_standard_pack_1",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 23
     },
     {
       "id": "322b2deb-9d40-4ef8-a0fd-9c74c4dc844b",
@@ -15336,7 +15367,8 @@
       "discovered": true,
       "placeholderCreditIndex": 2,
       "boosterKey": "mega_standard_pack_2",
-      "hasUserUploadedImage": true
+      "hasUserUploadedImage": true,
+      "orderValue": 24
     }
   ],
   "enhancements": [
@@ -15885,6 +15917,156 @@
       "placeholderCreditIndex": 4,
       "no_collection": false,
       "hasUserUploadedImage": true
+    }
+  ],
+  "editions": [
+    {
+      "objectKey": "e_foil",
+      "objectType": "edition",
+      "id": "6fa2f775-28c4-44ce-a987-8fe156f2a35a",
+      "name": "Foil",
+      "description": "{C:blue}+50{} chips",
+      "shader": "foil",
+      "unlocked": true,
+      "discovered": true,
+      "no_collection": false,
+      "in_shop": true,
+      "weight": 1,
+      "apply_to_float": false,
+      "badge_colour": "#FFAA00",
+      "sound": "foil1",
+      "volume": 0.4,
+      "pitch": 1.2,
+      "disable_shadow": false,
+      "disable_base_shader": false,
+      "rules": [
+        {
+          "id": "a4969b7d-3c26-4414-8814-dd233580895d",
+          "trigger": "card_scored",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "85f25904-765c-4943-ae2e-640ae88130ed",
+              "type": "add_chips",
+              "params": {
+                "value": 50
+              }
+            }
+          ],
+          "randomGroups": [],
+          "loops": [],
+          "position": {
+            "x": 1120,
+            "y": 439.5
+          }
+        }
+      ],
+      "orderValue": 1
+    },
+    {
+      "objectType": "edition",
+      "id": "6193a617-adaf-4d43-a46c-e3f031ba495c",
+      "name": "Holographic",
+      "description": "{C:red}+10{} Mult",
+      "objectKey": "e_holo",
+      "shader": "holo",
+      "unlocked": true,
+      "discovered": true,
+      "rules": [
+        {
+          "id": "831c4294-d88e-480a-8e0f-b27a5babb245",
+          "trigger": "card_scored",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "14f64196-df03-4c2a-8547-0c7fd11b54e3",
+              "type": "add_mult",
+              "params": {
+                "value": 10
+              }
+            }
+          ],
+          "randomGroups": [],
+          "loops": [],
+          "position": {
+            "x": 1120,
+            "y": 439.5
+          }
+        }
+      ],
+      "weight": 1,
+      "sound": "foil1",
+      "orderValue": 2,
+      "no_collection": false,
+      "in_shop": true,
+      "apply_to_float": false,
+      "disable_shadow": false,
+      "disable_base_shader": false,
+      "badge_colour": "#FFAA00"
+    },
+    {
+      "objectType": "edition",
+      "id": "b944f4a2-be5e-426c-837e-bbd88e65a852",
+      "name": "Negative",
+      "description": "{C:dark_edition}+1{} Joker slot",
+      "objectKey": "e_negative",
+      "shader": "negative",
+      "unlocked": true,
+      "discovered": true,
+      "rules": [],
+      "weight": 1,
+      "sound": "foil1",
+      "orderValue": 4,
+      "no_collection": false,
+      "in_shop": true,
+      "apply_to_float": false,
+      "disable_shadow": false,
+      "disable_base_shader": false,
+      "badge_colour": "#FFAA00"
+    },
+    {
+      "objectType": "edition",
+      "id": "19ec8b59-35da-4237-8020-26ee037ab467",
+      "name": "Polychrome",
+      "description": "{X:red,C:white} X1.5 {} Mult",
+      "objectKey": "e_polychrome",
+      "shader": "polychrome",
+      "unlocked": true,
+      "discovered": true,
+      "rules": [
+        {
+          "id": "32b655c9-eeaf-4775-8b1e-956a1d3beb68",
+          "trigger": "card_scored",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "0f2f4fe6-76d2-4171-9a09-d91fb1001de3",
+              "type": "apply_x_mult",
+              "params": {
+                "value": 1.5
+              }
+            }
+          ],
+          "randomGroups": [],
+          "loops": [],
+          "position": {
+            "x": 1120,
+            "y": 439.5
+          }
+        }
+      ],
+      "weight": 1,
+      "sound": "foil1",
+      "orderValue": 3,
+      "no_collection": false,
+      "in_shop": true,
+      "apply_to_float": false,
+      "disable_shadow": false,
+      "disable_base_shader": false,
+      "badge_colour": "#FFAA00"
     }
   ],
   "vouchers": [
@@ -16873,7 +17055,31 @@
       "unlocked": true,
       "discovered": false,
       "cost": 10,
-      "rules": [],
+      "rules": [
+        {
+          "id": "ad5aac92-ea16-48d0-9323-f9c3f1246bf8",
+          "trigger": "card_used",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "d9785610-bef4-4ed4-9a21-cd23c43dff7c",
+              "type": "discount_items",
+              "params": {
+                "discount_type": "all_shop_items",
+                "discount_method": "percentage_reduction",
+                "discount_amount": 25
+              }
+            }
+          ],
+          "randomGroups": [],
+          "loops": [],
+          "position": {
+            "x": 1120,
+            "y": 439.5
+          }
+        }
+      ],
       "placeholderCreditIndex": 6,
       "orderValue": 3,
       "no_collection": false,
@@ -16955,7 +17161,31 @@
       "unlocked": false,
       "discovered": false,
       "cost": 10,
-      "rules": [],
+      "rules": [
+        {
+          "id": "67ef3259-5ccd-43e8-97e3-be6c88b82a27",
+          "trigger": "card_used",
+          "blueprintCompatible": true,
+          "conditionGroups": [],
+          "effects": [
+            {
+              "id": "667bb2b7-9cbb-4501-b82b-54110385b508",
+              "type": "discount_items",
+              "params": {
+                "discount_type": "all_shop_items",
+                "discount_method": "percentage_reduction",
+                "discount_amount": 50
+              }
+            }
+          ],
+          "randomGroups": [],
+          "loops": [],
+          "position": {
+            "x": 1120,
+            "y": 439.5
+          }
+        }
+      ],
       "placeholderCreditIndex": 4,
       "orderValue": 4,
       "no_collection": false,
@@ -17278,7 +17508,7 @@
       "rules": [
       ],
       "placeholderCreditIndex": 18,
-      "orderValue": 4,
+      "orderValue": 9,
       "no_collection": false,
       "no_interest": false,
       "no_faces": true,
@@ -17323,7 +17553,7 @@
       "Config_consumables": [
         "c_hex"
       ],
-      "orderValue": 3,
+      "orderValue": 8,
       "no_collection": false,
       "no_interest": false,
       "no_faces": false,
@@ -17354,7 +17584,7 @@
         "c_fool",
         "c_fool"
       ],
-      "orderValue": 4
+      "orderValue": 6
     },
     {
       "objectType": "deck",
@@ -17390,7 +17620,7 @@
         }
       ],
       "placeholderCreditIndex": 16,
-      "orderValue": 2,
+      "orderValue": 7,
       "no_collection": false,
       "no_interest": false,
       "no_faces": false,
@@ -17417,7 +17647,7 @@
       ],
       "placeholderCreditIndex": 11,
       "hasUserUploadedImage": true,
-      "orderValue": 3
+      "orderValue": 15
     },
     {
       "objectKey": "painted_deck",
@@ -17466,7 +17696,7 @@
       ],
       "placeholderCreditIndex": 4,
       "hasUserUploadedImage": true,
-      "orderValue": 2
+      "orderValue": 12
     },
     {
       "objectKey": "zodiac_deck",
@@ -17484,7 +17714,7 @@
       "rules": [],
       "placeholderCreditIndex": 9,
       "hasUserUploadedImage": true,
-      "orderValue": 1,
+      "orderValue": 11,
       "Config_vouchers": [
         "v_tarot_merchant",
         "v_planet_merchant",
@@ -17525,7 +17755,7 @@
         }
       ],
       "placeholderCreditIndex": 15,
-      "orderValue": 2,
+      "orderValue": 13,
       "no_collection": false,
       "no_interest": false,
       "no_faces": false,
@@ -17580,7 +17810,7 @@
         }
       ],
       "placeholderCreditIndex": 5,
-      "orderValue": 1,
+      "orderValue": 10,
       "no_collection": false,
       "no_interest": false,
       "no_faces": false,
@@ -17598,7 +17828,7 @@
       "discovered": true,
       "rules": [],
       "placeholderCreditIndex": 3,
-      "orderValue": 3,
+      "orderValue": 14,
       "no_collection": false,
       "no_interest": false,
       "no_faces": false,
