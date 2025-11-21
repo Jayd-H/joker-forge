@@ -300,13 +300,13 @@ export const exportModCode = async (
       sounds.forEach((sound) => {
         soundsCode += `SMODS.Sound{
     key="${sound.key}",
-    path="${sound.key},"
+    path="${sound.key}.ogg",
     pitch=${sound.pitch ?? 0.7},
     volume=${sound.volume ?? 0.6},\n`
-  if (sound.replace !== undefined && sound.replace !== "") {
-    soundsCode += `    replace="${sound.replace}"\n`
-  }
-soundsCode += `}\n\n`
+        if (sound.replace !== undefined && sound.replace !== "") {
+          soundsCode += `    replace="${sound.replace}"\n`
+        }
+        soundsCode += `}\n\n`
       })
       zip.file("sounds.lua", soundsCode.trim());
     }
