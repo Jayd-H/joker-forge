@@ -209,8 +209,10 @@ const updateEffectId = (
       return "edit_starting_dollars"
     case "edit_raity_weight":
       return "edit_rarity_weight"
-    case "modify_base_blind_requirement":
-      return "modify_all_blinds_requirement"
+    case "modify_base_blind_requirement": case "modify_blind_requirement":
+      if (itemType === "deck")  
+        return "modify_all_blinds_requirement"
+      else return id
     case "edit_rerolls":
       return "edit_reroll_price"
     case "delete_triggered_card":
