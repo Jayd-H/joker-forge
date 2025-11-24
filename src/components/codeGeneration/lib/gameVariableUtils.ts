@@ -84,6 +84,8 @@ export const generateGameVariableCode = (
     const startsFromCode =
       itemType === "hook"
         ? parsed.startsFrom.toString()
+        : itemType === "deck" 
+        ? `back.ability.extra.${configVarName}`
         : `card.ability.extra.${configVarName}`;
 
     if (parsed.multiplier === 1 && parsed.startsFrom === 0) {
@@ -98,7 +100,9 @@ export const generateGameVariableCode = (
   }
 
   if (typeof value === "string") {
-    return `card.ability.extra.${value}`;
+    return itemType === "deck" 
+        ? `back.ability.extra.${value}`
+        : `card.ability.extra.${value}`;;
   }
 
   return typeof value === "number" ? value.toString() : "0";
@@ -119,6 +123,8 @@ export const generateConfigVariables = (
     abilityPath = "card.ability.seal.extra";
   } else if (itemType === "edition") {
     abilityPath = "card.edition.extra";
+  } else if (itemType === "deck") {
+    abilityPath = "back.ability.extra";
   } else {
     abilityPath = "card.ability.extra";
   }
