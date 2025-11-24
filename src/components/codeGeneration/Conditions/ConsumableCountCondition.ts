@@ -13,13 +13,16 @@ export const generateConsumableCountConditionCode = (
  
    const comparison = generateOperationCode(
     operator,
-    '#G.consumeables.cards',
+    'count',
     value
    )
  
    if (consumableType === "any") {
-     return `${comparison}`;
-   }
+     return generateOperationCode(
+      operator,
+      '#G.consumeables.cards',
+      value
+   )}
  
    // Handle vanilla sets
    if (consumableType === "Tarot" || consumableType === "Planet" || consumableType === "Spectral") {

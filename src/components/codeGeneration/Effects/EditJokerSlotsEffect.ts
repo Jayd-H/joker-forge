@@ -326,7 +326,10 @@ const generateDeckCode = (
   }
 
   return {
-    statement: jokerSlotsCode,
+    statement: `
+    __PRE_RETURN_CODE__
+      ${jokerSlotsCode}
+    __PRE_RETURN_CODE_END__`,
     colour: "G.C.DARK_EDITION",
     configVariables,
   };

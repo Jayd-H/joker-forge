@@ -272,7 +272,7 @@ const EditionCard: React.FC<EditionCardProps> = ({
         <div className="w-42 z-10 relative">
           <div className="relative">
             <img
-              src="/images/acesbg/HC_A_hearts.png"
+              src="/images/acesbg/HC_J_jimbo.png"
               alt="Base Edition Card"
               className="w-full h-full object-contain"
               draggable="false"

@@ -63,6 +63,10 @@ const SealsVanillaReforgedPage = lazy(
   () => import("./components/pages/vanillareforged/SealsVanillaReforgedPage")
 );
 
+const EditionsVanillaReforgedPage = lazy(
+  () => import("./components/pages/vanillareforged/EditionsVanillaReforgedPage")
+);
+
 const VouchersVanillaReforgedPage = lazy(
   () => import("./components/pages/vanillareforged/VouchersVanillaReforgedPage")
 );
@@ -110,6 +114,7 @@ import { UserConfigProvider } from "./components/Contexts";
 import SoundsPage from "./components/pages/SoundPage";
 import { scanGameObjectIds, scanGameObjectKeys } from "./components/generic/GameObjectOrdering";
 import { updateRuleBlocks } from "./components/generic/RuleBlockUpdater";
+import DebugPage from "./components/pages/DebugPage";
 
 interface AlertState {
   isVisible: boolean;
@@ -1604,7 +1609,7 @@ const handleDiscardAndStartFresh = () => {
               </Suspense>
             }
           />
-            <Route
+          <Route
             path="/vouchers"
             element={
               <Suspense
@@ -1625,6 +1630,22 @@ const handleDiscardAndStartFresh = () => {
                   modPrefix={modMetadata.prefix || ""}
                   showConfirmation={showConfirmation}
                 />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/debug"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <DebugPage/>
               </Suspense>
             }
           />
@@ -1738,6 +1759,29 @@ const handleDiscardAndStartFresh = () => {
                   }}
                   onNavigateToSeals={() => {
                     navigate("/seals");
+                  }}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/vanilla/editions"
+            element={
+              <Suspense
+                fallback={
+                  <SkeletonPage
+                    variant="grid"
+                    showFloatingDock={true}
+                    showFilters={true}
+                  />
+                }
+              >
+                <EditionsVanillaReforgedPage
+                  onDuplicateToProject={(item) => {
+                    setEditions([...editions, item as EditionData]);
+                  }}
+                  onNavigateToEditions={() => {
+                    navigate("/editions");
                   }}
                 />
               </Suspense>

@@ -142,7 +142,7 @@ const generateJokerCode = (
       return {
         statement: `__PRE_RETURN_CODE__
             ${cardSelectionCode}
-            local new_card = create_playing_card({
+            local base_card = create_playing_card({
                 front = card_front,
                 center = ${centerParam}
             }, G.discard, true, false, nil, true)
@@ -151,8 +151,8 @@ const generateJokerCode = (
             
             G.E_MANAGER:add_event(Event({
                 func = function()
-                    new_card:start_materialize()
-                    G.play:emplace(new_card)
+                    base_card:start_materialize()
+                    G.play:emplace(base_card)
                     return true
                 end
             }))
@@ -165,7 +165,7 @@ const generateJokerCode = (
                     end
                 }))
                 draw_card(G.play, G.deck, 90, 'up')
-                SMODS.calculate_context({ playing_card_added = true, cards = { new_card } })
+                SMODS.calculate_context({ playing_card_added = true, cards = { base_card } })
             end`,
         message: customMessage ? `"${customMessage}"` : '"Added Card!"',
         colour: "G.C.GREEN",
@@ -176,21 +176,21 @@ const generateJokerCode = (
       return {
         statement: `__PRE_RETURN_CODE__
                   ${cardSelectionCode}
-                  local new_card = create_playing_card({
+                  local base_card = create_playing_card({
                       front = card_front,
                       center = ${centerParam}
                   }, G.discard, true, false, nil, true)
-                  ${sealCode.replace(/new_card/g, "new_card")}
-                  ${editionCode.replace(/new_card/g, "new_card")}
+                  ${sealCode.replace(/new_card/g, "base_card")}
+                  ${editionCode.replace(/new_card/g, "base_card")}
                   
                   G.playing_card = (G.playing_card and G.playing_card + 1) or 1
-                  new_card.playing_card = G.playing_card
-                  table.insert(G.playing_cards, new_card)
+                  base_card.playing_card = G.playing_card
+                  table.insert(G.playing_cards, base_card)
                   
                   G.E_MANAGER:add_event(Event({
                       func = function() 
-                          G.hand:emplace(new_card)
-                          new_card:start_materialize()
+                          G.hand:emplace(base_card)
+                          base_card:start_materialize()
                           return true
                       end
                   }))
@@ -202,22 +202,22 @@ const generateJokerCode = (
       return {
         statement: `func = function()
                   ${cardSelectionCode}
-                  local new_card = create_playing_card({
+                  local base_card = create_playing_card({
                       front = card_front,
                       center = ${centerParam}
                   }, G.discard, true, false, nil, true)
-                  ${sealCode.replace(/new_card/g, "new_card")}
-                  ${editionCode.replace(/new_card/g, "new_card")}
+                  ${sealCode.replace(/new_card/g, "base_card")}
+                  ${editionCode.replace(/new_card/g, "base_card")}
                   
                   G.playing_card = (G.playing_card and G.playing_card + 1) or 1
-                  new_card.playing_card = G.playing_card
-                  table.insert(G.playing_cards, new_card)
+                  base_card.playing_card = G.playing_card
+                  table.insert(G.playing_cards, base_card)
                   
                   G.E_MANAGER:add_event(Event({
                       func = function()
-                          G.hand:emplace(new_card)
-                          new_card:start_materialize()
-                          SMODS.calculate_context({ playing_card_added = true, cards = { new_card } })
+                          G.hand:emplace(base_card)
+                          base_card:start_materialize()
+                          SMODS.calculate_context({ playing_card_added = true, cards = { base_card } })
                           return true
                       end
                   }))

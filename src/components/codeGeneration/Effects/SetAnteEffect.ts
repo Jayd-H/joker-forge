@@ -109,7 +109,7 @@ export const generateSetAnteEffectCode = (
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
 
-  if (itemType === "deck" || itemType === "consumable" || isScoring) {
+  if (itemType === "deck" || itemType === "consumable" || itemType === "voucher" || isScoring) {
     anteCode = `
       __PRE_RETURN_CODE__
       ${anteCode}

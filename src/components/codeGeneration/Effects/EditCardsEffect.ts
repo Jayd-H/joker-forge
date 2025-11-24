@@ -48,9 +48,27 @@ const generateConsumableCode = (
       colour: "G.C.WHITE",
     };
   }
+  let editCardsCode = '__PRE_RETURN_CODE__'
+  if (method === "random") {
+    editCardsCode += `
+      local affected_cards = {}
+      local temp_hand = {}
 
-  let editCardsCode = `
-            __PRE_RETURN_CODE__
+      for _, playing_card in ipairs(G.hand.cards) do temp_hand[#temp_hand + 1] = playing_card end
+      table.sort(temp_hand,
+        function(a, b)
+          return not a.playing_card or not b.playing_card or a.playing_card < b.playing_card
+        end
+      )
+
+      pseudoshuffle(temp_hand, 12345)
+
+      for i = 1, math.min(card.ability.extra.cards_amount, #temp_hand) do 
+        affected_cards[#affected_cards + 1] = temp_hand[i] 
+      end`
+  }
+
+editCardsCode += `
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 delay = 0.4,

@@ -702,6 +702,16 @@ const VanillaDeckCard: React.FC<VanillaDeckCardProps> = ({
               </h3>
             </div>
 
+            <div
+              className="absolute min-w-13 -top-3 right-7 h-8 bg-black-dark border-2 border-balatro-orange rounded-lg p-1 cursor-pointer transition-colors flex items-center justify-center z-10"
+            > 
+              <span
+                className="text-center text-balatro-orange outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              >
+                Id:{deck.orderValue}
+              </span>
+            </div>
+
             <div className="mb-4 h-12 flex items-start overflow-hidden">
               <div
                 className="text-white-darker text-sm leading-relaxed w-full line-clamp-3"

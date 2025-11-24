@@ -83,9 +83,9 @@ export const generateTriggerContext = (
       switch(objectType) {
         case "joker":
           if (hasRetriggerEffects) {
-            return `context.repetition and context.cardarea == G.hand and context.end_of_round and (next(context.card_effects[1]) or #context.card_effects > 1) ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+            return `context.repetition and not context.cardarea == G.hand and context.end_of_round and (next(context.card_effects[1]) or #context.card_effects > 1) ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
           } else {
-            return `context.cardarea == G.hand and context.end_of_round ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+            return `context.cardarea == G.hand and not context.end_of_round ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
           }
         case "card":
           return "context.cardarea == G.hand and context.main_scoring"

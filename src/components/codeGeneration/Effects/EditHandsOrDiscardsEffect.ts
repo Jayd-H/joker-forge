@@ -81,12 +81,14 @@ const generateEffectTypeData = (
     case "discards":
       return {
         mainCode: "discards",
+        function: "ease_discard",
         message: "Discards"
       }
     case "hands":
     default:
       return {
         mainCode: "hands",
+        function: "ease_hands_played",
         message: "Hands",
       }
   }
@@ -126,7 +128,7 @@ const generateJokerConsumableVoucherCode = (
       if (duration === "permanent") {
         editHandCode = `
           G.GAME.round_resets.${V} = G.GAME.round_resets.${V} + ${valueCode}
-          ease_${V}_played(${valueCode})
+          ${typeData.function}(${valueCode})
         `;
       } else if (duration === "round") {
         editHandCode = `
@@ -142,7 +144,7 @@ const generateJokerConsumableVoucherCode = (
       if (duration === "permanent") {
         editHandCode = `
         G.GAME.round_resets.${V} = G.GAME.round_resets.${V} - ${valueCode}
-        ease_${V}_played(-${valueCode})
+        ${typeData.function}(-${valueCode})
         `;
       } else if (duration === "round") {
         editHandCode = `G.GAME.current_round.${V}_left = G.GAME.current_round.${V}_left - ${valueCode}`;
@@ -157,7 +159,7 @@ const generateJokerConsumableVoucherCode = (
       if (duration === "permanent") {
         editHandCode = `
         G.GAME.round_resets.${V} = ${valueCode}
-        ease_${V}_played(${valueCode} - G.GAME.current_round.${V}_left)
+        ${typeData.function}(${valueCode} - G.GAME.current_round.${V}_left)
         `;
       } else if (duration === "round") {
         editHandCode = `G.GAME.current_round.${V}_left = ${valueCode}`;
