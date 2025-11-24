@@ -761,21 +761,21 @@ export const generateSingleEffect = (
 
   switch (effect.type) {
     case "add_chips":
-      return generateAddChipsEffectCode(effect, itemType, sameTypeCount)
+      return generateAddChipsEffectCode(effect, cleanItemType, sameTypeCount)
     case "apply_x_chips":
-      return generateApplyXChipsEffectCode(effect, itemType, sameTypeCount)
+      return generateApplyXChipsEffectCode(effect, cleanItemType, sameTypeCount)
     case "apply_exp_chips":
-      return generateApplyExpChipsEffectCode(effect, itemType, sameTypeCount)
+      return generateApplyExpChipsEffectCode(effect, cleanItemType, sameTypeCount)
     case "apply_hyper_chips":
-      return generateApplyHyperChipsEffectCode(effect, itemType, sameTypeCount)
+      return generateApplyHyperChipsEffectCode(effect, cleanItemType, sameTypeCount)
     case "add_mult":
-      return generateAddMultEffectCode(effect, itemType, sameTypeCount)
+      return generateAddMultEffectCode(effect, cleanItemType, sameTypeCount)
     case "apply_x_mult":
-      return generateApplyXMultEffectCode(effect, itemType, sameTypeCount)
+      return generateApplyXMultEffectCode(effect, cleanItemType, sameTypeCount)
     case "apply_exp_mult":
-      return generateApplyExpMultEffectCode(effect, itemType, sameTypeCount)
+      return generateApplyExpMultEffectCode(effect, cleanItemType, sameTypeCount)
     case "apply_hyper_mult":
-      return generateApplyHyperMultEffectCode(effect, itemType, sameTypeCount)
+      return generateApplyHyperMultEffectCode(effect, cleanItemType, sameTypeCount)
     case "balance_chips_mult":
       return generateBalanceChipsAndMultEffectCode(effect, itemType)
     case "swap_chips_mult":
