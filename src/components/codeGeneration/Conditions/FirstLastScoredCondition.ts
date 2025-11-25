@@ -19,10 +19,10 @@ const generateJokerCode = (
   joker?: JokerData
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const position = (condition.params.position as string) || "first";
-  const checkType = (condition.params.check_type as string) || "any";
-  const specificRank = condition.params.specific_rank;
-  const specificSuit = condition.params.specific_suit;
+  const position = (condition.params?.position?.value as string) || "first";
+  const checkType = (condition.params?.check_type?.value as string) || "any";
+  const specificRank = condition.params?.specific_rank?.value;
+  const specificSuit = condition.params?.specific_suit?.value;
 
   const rankVarInfo = parseRankVariable(specificRank, joker);
   const suitVarInfo = parseSuitVariable(specificSuit, joker);

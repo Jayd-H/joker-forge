@@ -354,7 +354,7 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                 <InputDropdown
                   label="Suit"
                   value={rule.suit || ""}
-                  onChange={(value) => handleUpdateRule(index, { suit: value })}
+                  onChange={(item) => handleUpdateRule(index, { suit: item.value })}
                   options={suitOptions}
                   size="sm"
                 />
@@ -388,9 +388,9 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                   <InputDropdown
                     label="Specific Type"
                     value={rule.specific_type || ""}
-                    onChange={(value) =>
+                    onChange={(item) =>
                       handleUpdateRule(index, {
-                        specific_type: value as "consumable" | "joker" | "voucher" | null,
+                        specific_type: item.value as "consumable" | "joker" | "voucher" | null,
                         specific_key: "",
                       })
                     }
@@ -438,8 +438,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Set"
                       value={rule.set || "Tarot"}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { set: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { set: item.value })
                       }
                       options={getConsumableSetOptions()}
                       size="sm"
@@ -447,8 +447,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Edition"
                       value={rule.edition || ""}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { edition: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { edition: item.value })
                       }
                       options={editionOptionsConsumable}
                       size="sm"
@@ -473,8 +473,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Rarity"
                       value={rule.rarity || ""}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { rarity: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { rarity: item.value })
                       }
                       options={rarityOptions}
                       size="sm"
@@ -482,8 +482,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Edition"
                       value={rule.edition || ""}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { edition: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { edition: item.value })
                       }
                       options={editionOptions}
                       size="sm"
@@ -496,8 +496,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Rank"
                       value={rule.rank || ""}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { rank: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { rank: item.value })
                       }
                       options={rankOptions}
                       size="sm"
@@ -505,9 +505,9 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Enhancement"
                       value={rule.enhancement || ""}
-                      onChange={(value) =>
+                      onChange={(item) =>
                         handleUpdateRule(index, {
-                          enhancement: value,
+                          enhancement: item.value,
                         })
                       }
                       options={enhancementOptions}
@@ -516,8 +516,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Edition"
                       value={rule.edition || ""}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { edition: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { edition: item.value })
                       }
                       options={editionOptions}
                       size="sm"
@@ -525,8 +525,8 @@ export const CardRuleEditor: React.FC<CardRuleEditorProps> = ({
                     <InputDropdown
                       label="Seal"
                       value={rule.seal || ""}
-                      onChange={(value) =>
-                        handleUpdateRule(index, { seal: value })
+                      onChange={(item) =>
+                        handleUpdateRule(index, { seal: item.value })
                       }
                       options={sealOptions}
                       size="sm"

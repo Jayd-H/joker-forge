@@ -8,15 +8,15 @@ export const generateDeckCountConditionCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const propertyType =
-    (condition.params.property_type as string) || "enhancement";
-  const operator = (condition.params.operator as string);
-  const value = generateGameVariableCode(condition.params.value, '');
+    (condition.params?.property_type?.value as string) || "enhancement";
+  const operator = (condition.params?.operator?.value as string);
+  const value = generateGameVariableCode(condition.params?.value, '');
 
   let propertyCheck = "";
 
   switch (propertyType) {
     case "rank": {
-      const rank = condition.params.rank as string;
+      const rank = condition.params.rank.value as string;
       if (rank === "any") {
         propertyCheck = "true";
       } else {
@@ -27,7 +27,7 @@ export const generateDeckCountConditionCode = (
     }
 
     case "suit": {
-      const suit = condition.params.suit as string;
+      const suit = condition.params.suit.value as string;
       if (suit === "any") {
         propertyCheck = "true";
       } else if (suit === "red") {
@@ -41,7 +41,7 @@ export const generateDeckCountConditionCode = (
     }
 
     case "enhancement": {
-      const enhancement = condition.params.enhancement as string;
+      const enhancement = condition.params.enhancement.value as string;
       if (enhancement === "any") {
         propertyCheck = "next(SMODS.get_enhancements(playing_card))";
       } else if (enhancement === "none") {
@@ -53,7 +53,7 @@ export const generateDeckCountConditionCode = (
     }
 
     case "seal": {
-      const seal = condition.params.seal as string;
+      const seal = condition.params.seal.value as string;
       if (seal === "any") {
         propertyCheck = "playing_card.seal ~= nil";
       } else if (seal === "none") {
@@ -65,7 +65,7 @@ export const generateDeckCountConditionCode = (
     }
 
     case "edition": {
-      const edition = condition.params.edition as string;
+      const edition = condition.params.edition.value as string;
       if (edition === "any") {
         propertyCheck = "playing_card.edition ~= nil";
       } else if (edition === "none") {

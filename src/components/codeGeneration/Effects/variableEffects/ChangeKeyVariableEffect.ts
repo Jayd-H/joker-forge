@@ -7,14 +7,17 @@ export const generateChangeKeyVariableEffectCode = (
   itemType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const keyType = (effect.params.key_type as string) || "joker"
+  const keyType = (effect.params?.key_type?.value as string) || "joker"
 
   const variableName =
     sameTypeCount === 0 ? "increment_count" : `increment_count${sameTypeCount + 1}`;
 
+  const indexValue = effect.params[`${itemType}_change_type`]?.value === 'increment' 
+    ? `${itemType}_increment_count` : ''
+
   const { valueCode: numberCode, configVariables } = generateConfigVariables(
-    getParamForKeyType(effect, keyType),
-    effect.id,
+    effect, 
+    indexValue,
     variableName,
     itemType,
   );
@@ -33,48 +36,6 @@ __PRE_RETURN_CODE_END__`,
   }
 
   return result;
-}
-
-const getParamForKeyType = (
-  effect: Effect,
-  keyType: string
-) => {
-  switch(keyType){
-    case "joker":
-      if (effect.params?.joker_change_type as string === "increment")
-        return effect.params?.joker_increment_count
-      else return ''
-    case "consumable":
-      if (effect.params?.consumable_change_type as string === "increment")
-        return effect.params?.consumable_increment_count
-      else return ''
-    case "enhancement":
-      if (effect.params?.enhancement_change_type as string === "increment")
-        return effect.params?.enhancement_increment_count
-      else return ''
-    case "seal":
-      if (effect.params?.seal_change_type as string === "increment")
-        return effect.params?.seal_increment_count
-      else return ''
-    case "edition":
-      if (effect.params?.edition_change_type as string === "increment")
-        return effect.params?.edition_increment_count
-      else return ''
-    case "booster":
-      if (effect.params?.booster_change_type as string === "increment")
-        return effect.params?.booster_increment_count
-      else return ''
-    case "voucher":
-      if (effect.params?.voucher_change_type as string === "increment")
-        return effect.params?.voucher_increment_count
-      else return ''    
-    case "tag":
-      if (effect.params?.tag_change_type as string === "increment")
-        return effect.params?.tag_increment_count
-      else return ''
-    default: 
-      return ''
-  }
 }
 
 const generateKeyCode = (
@@ -108,12 +69,12 @@ const generateJokerKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.joker_change_type as string) || "random";
-  const specificJoker = (effect.params.specific_joker as string) || "none";
-  const randomType = (effect.params.joker_random_type as string) || "all";
-  const rarity = (effect.params.rarity as string) || "1";
-  const pool = (effect.params.pool as string) || "";
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.joker_change_type?.value as string) || "random";
+  const specificJoker = (effect.params?.specific_joker?.value as string) || "none";
+  const randomType = (effect.params?.joker_random_type?.value as string) || "all";
+  const rarity = (effect.params?.rarity?.value as string) || "1";
+  const pool = (effect.params?.pool?.value as string) || "";
   
   let valueCode = 'j_joker'
   let statement = '__PRE_RETURN_CODE__'
@@ -208,11 +169,11 @@ const generateConsumableKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.consumable_change_type as string) || "random";
-  const specificConsumable = (effect.params.specific_consumable as string) || "none";
-  const randomType = (effect.params.consumable_random_type as string) || "all";
-  const set = (effect.params.consumable_set as string) || "tarot"
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.consumable_change_type?.value as string) || "random";
+  const specificConsumable = (effect.params?.specific_consumable?.value as string) || "none";
+  const randomType = (effect.params?.consumable_random_type?.value as string) || "all";
+  const set = (effect.params?.consumable_set?.value as string) || "tarot"
 
   let statement = ''
   let valueCode = ''
@@ -277,10 +238,10 @@ const generateEnhancementKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.enhancement_change_type as string) || "random";
-  const specificEnhancement = (effect.params.specific_enhancement as string) || "none";
-  const randomType = (effect.params.enhancement_random_type as string) || "all";
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.enhancement_change_type?.value as string) || "random";
+  const specificEnhancement = (effect.params?.specific_enhancement?.value as string) || "none";
+  const randomType = (effect.params?.enhancement_random_type?.value as string) || "all";
 
   let statement = ''
   let valueCode = ''
@@ -335,10 +296,10 @@ const generateSealKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.seal_change_type as string) || "random";
-  const specificSeal = (effect.params.specific_seal as string) || "none";
-  const randomType = (effect.params.seal_random_type as string) || "all";
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.seal_change_type?.value as string) || "random";
+  const specificSeal = (effect.params?.specific_seal?.value as string) || "none";
+  const randomType = (effect.params?.seal_random_type?.value as string) || "all";
 
   let statement = ''
   let valueCode = ''
@@ -393,10 +354,10 @@ const generateEditionKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.edition_change_type as string) || "random";
-  const specificEdition = (effect.params.specific_edition as string) || "none";
-  const randomType = (effect.params.edition_random_type as string) || "all";
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.edition_change_type?.value as string) || "random";
+  const specificEdition = (effect.params?.specific_edition?.value as string) || "none";
+  const randomType = (effect.params?.edition_random_type?.value as string) || "all";
 
   let statement = ''
   let valueCode = ''
@@ -456,10 +417,10 @@ const generateVoucherKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.voucher_change_type as string) || "random";
-  const specificVoucher = (effect.params.specific_voucher as string) || "none";
-  const randomType = (effect.params.voucher_random_type as string) || "all";
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.voucher_change_type?.value as string) || "random";
+  const specificVoucher = (effect.params?.specific_voucher?.value as string) || "none";
+  const randomType = (effect.params?.voucher_random_type?.value as string) || "all";
 
   let statement = ''
   let valueCode = ''
@@ -515,13 +476,13 @@ const generateBoosterKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.booster_change_type as string) || "random";
-  const specificBooster = (effect.params.specific_booster as string) || "none";
-  const randomType = (effect.params.booster_random_type as string) || "all";
-  const boosterKind = (effect.params.booster_category as string) || "Aracana"
-  const boosterExtraCount =  (effect.params.booster_size_extra as string) || "3"
-  const boosterChooseCount =  (effect.params.booster_size_choose as string) || "1"
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.booster_change_type?.value as string) || "random";
+  const specificBooster = (effect.params?.specific_booster?.value as string) || "none";
+  const randomType = (effect.params?.booster_random_type?.value as string) || "all";
+  const boosterKind = (effect.params?.booster_category?.value as string) || "Aracana"
+  const boosterExtraCount =  (effect.params?.booster_size_extra?.value as string) || "3"
+  const boosterChooseCount =  (effect.params?.booster_size_choose?.value as string) || "1"
 
   let statement = ''
   let valueCode = ''
@@ -587,10 +548,10 @@ const generateTagKeyCode = (
   effect: Effect,
   numberCode: string,
 ) => {
-  const variableName = (effect.params.variable_name as string) || "keyvar";
-  const changeType = (effect.params.tag_change_type as string) || "random";
-  const specificTag = (effect.params.specific_tag as string) || "none";
-  const randomType = (effect.params.tag_random_type as string) || "all";
+  const variableName = (effect.params?.variable_name?.value as string) || "keyvar";
+  const changeType = (effect.params?.tag_change_type?.value as string) || "random";
+  const specificTag = (effect.params?.specific_tag?.value as string) || "none";
+  const randomType = (effect.params?.tag_random_type?.value as string) || "all";
 
   let statement = ''
   let valueCode = ''

@@ -11,8 +11,8 @@ export const generateApplyXChipsEffectCode = (
     sameTypeCount === 0 ? "xchips" : `xchips${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     itemType
   )

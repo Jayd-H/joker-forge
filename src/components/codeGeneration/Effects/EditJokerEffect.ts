@@ -23,9 +23,9 @@ const generateConsumableCode = (
   effect: Effect,
   modPrefix: string,
 ): EffectReturn => {
-  const sticker = effect.params?.sticker as string || "none";
-  const edition = effect.params?.edition as string || "none";
-  const target = effect.params?.target as string || "random";
+  const sticker = effect.params?.sticker?.value as string || "none";
+  const edition = effect.params?.edition?.value as string || "none";
+  const target = effect.params?.target?.value as string || "random";
   const customMessage = effect.customMessage;
 
   const hasModifications = [edition, sticker].some(

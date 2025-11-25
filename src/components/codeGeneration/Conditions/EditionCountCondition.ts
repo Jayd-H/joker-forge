@@ -17,12 +17,12 @@ const generateJokerCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const operator = (condition.params.operator as string) || "equals";
-  const value = generateGameVariableCode(condition.params.value, 'joker');
-  const scope = (condition.params.card_scope as string) || "scoring";
+  const operator = (condition.params?.operator?.value as string) || "equals";
+  const value = generateGameVariableCode(condition.params?.value, 'joker');
+  const scope = (condition.params?.card_scope?.value as string) || "scoring";
 
   let propertyCheck = "";
-  const edition = condition.params.edition as string;
+  const edition = condition.params?.edition?.value as string;
   if (edition === "any") {
     propertyCheck = "playing_card.edition ~= nil";
   } else if (edition === "none") {

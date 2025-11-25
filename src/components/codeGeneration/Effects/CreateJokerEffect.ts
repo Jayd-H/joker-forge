@@ -31,16 +31,16 @@ const generateJokerCode = (
   triggerType: string,
   modPrefix?: string
 ): EffectReturn => {
- const jokerType = (effect.params?.joker_type as string) || "random";
-  const rarity = (effect.params?.rarity as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const pool = (effect.params?.pool as string) || "";
-  const edition = (effect.params?.edition as string) || "none";
+ const jokerType = (effect.params?.joker_type?.value as string) || "random";
+  const rarity = (effect.params?.rarity?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const pool = (effect.params?.pool?.value as string) || "";
+  const edition = (effect.params?.edition?.value as string) || "none";
   const customMessage = effect.customMessage;
-  const sticker = (effect.params?.sticker as string) || "none";
-  const ignoreSlots = (effect.params?.ignore_slots as string) === "y";
+  const sticker = (effect.params?.sticker?.value as string) || "none";
+  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "y";
 
-  const isEditionVar = !EDITIONS().map(edition => edition.value).includes(edition) && edition !== "none"
+  const isEditionVar = !EDITIONS().map(edition => edition?.value).includes(edition) && edition !== "none"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
@@ -162,13 +162,13 @@ const generateConsumableCode = (
   effect: Effect,
   modPrefix?: string,
 ): EffectReturn => {
-  const jokerType = (effect.params?.joker_type as string) || "random";
-  const rarity = (effect.params?.rarity as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const pool = (effect.params?.pool as string) || "";
-  const edition = (effect.params?.edition as string) || "none";
-  const sticker = (effect.params?.sticker as string) || "none";
-  const ignoreSlotsParam = (effect.params?.ignore_slots as string) || "respect";
+  const jokerType = (effect.params?.joker_type?.value as string) || "random";
+  const rarity = (effect.params?.rarity?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const pool = (effect.params?.pool?.value as string) || "";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const sticker = (effect.params?.sticker?.value as string) || "none";
+  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect";
   const customMessage = effect.customMessage;
 
   const isNegative = edition === "e_negative";
@@ -275,13 +275,13 @@ const generateCardCode = (
   effect: Effect,
   modPrefix?: string,
 ): EffectReturn => {
-  const jokerType = (effect.params?.joker_type as string) || "random";
-  const rarity = (effect.params?.rarity as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const pool = (effect.params?.pool as string) || "";
-  const edition = (effect.params?.edition as string) || "none";
-  const sticker = (effect.params?.sticker as string) || "none";
-  const ignoreSlotsParam = (effect.params?.ignore_slots as string) || "respect";
+  const jokerType = (effect.params?.joker_type?.value as string) || "random";
+  const rarity = (effect.params?.rarity?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const pool = (effect.params?.pool?.value as string) || "";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const sticker = (effect.params?.sticker?.value as string) || "none";
+  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect";
   const customMessage = effect.customMessage;
 
   const isNegative = edition === "e_negative";
@@ -373,13 +373,13 @@ const generateDeckCode = (
   effect: Effect,
   modPrefix?: string,
 ): EffectReturn => {
-  const jokerType = (effect.params?.joker_type as string) || "random";
-  const rarity = (effect.params?.rarity as string) || "random";
-  const jokerKey = (effect.params?.joker_key as string) || "";
-  const pool = (effect.params?.pool as string) || "";
-  const edition = (effect.params?.edition as string) || "none";
-  const sticker = (effect.params?.sticker as string) || "none";
-  const ignoreSlotsParam = (effect.params?.ignore_slots as string) || "respect";
+  const jokerType = (effect.params?.joker_type?.value as string) || "random";
+  const rarity = (effect.params?.rarity?.value as string) || "random";
+  const jokerKey = (effect.params?.joker_key?.value as string) || "";
+  const pool = (effect.params?.pool?.value as string) || "";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const sticker = (effect.params?.sticker?.value as string) || "none";
+  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect";
 
   const isNegative = edition === "e_negative";
   const hasSticker = sticker !== "none";

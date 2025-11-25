@@ -1,35 +1,21 @@
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../lib/effectUtils";
-import { parseGameVariable, parseRangeVariable, generateGameVariableCode } from "../../lib/gameVariableUtils";
+import { generateValueCode } from "../../lib/gameVariableUtils";
 
 export const generateModifyInternalVariableEffectCode = (
   effect: Effect,
   triggerType: string, 
 ): EffectReturn => {
-  const variableName = (effect.params?.variable_name as string) || "var1";
-  const operation = (effect.params?.operation as string) || "increment";
-  const effectValue = effect.params?.value;
-  const parsed = parseGameVariable(effectValue);
-  const rangeParsed = parseRangeVariable(effectValue);
-  const indexMethod = effect.params?.index_method || "self"
+  const variableName = (effect.params?.variable_name.value as string) || "var1";
+  const operation = (effect.params?.operation.value as string) || "increment";
+  const indexMethod = effect.params?.index_method.value || "self"
 
-  let valueCode: string;
-
-  if (parsed.isGameVariable) { /// change to generateConfigVariables maybe, i dunno, i dont see it necessary
-    valueCode = generateGameVariableCode(effectValue, '');
-  } else if (rangeParsed.isRangeVariable) {
-    const seedName = `${variableName}_${effect.id.substring(0, 8)}`;
-    valueCode = `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-  } else if (typeof effectValue === "string") {
-    valueCode = `card.ability.extra.${effectValue}`;
-  } else {
-    valueCode = effectValue?.toString() || "1";
-  }
+  const valueCode = generateValueCode(effect.params?.value.value as string, effect.params?.value.valueType)
 
   const customMessage = effect.customMessage;
 
-  const searchKey = (effect.params?.joker_key as string) || "j_joker"
-  const searchVar = (effect.params?.joker_variable) || "jokerVar"
+  const searchKey = (effect.params?.joker_key.value as string) || "j_joker"
+  const searchVar = (effect.params?.joker_variable.value) || "jokerVar"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);

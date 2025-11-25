@@ -6,7 +6,7 @@ export const generateJokerStickerConditionCode = (
   target: string,
 ):string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const sticker = (condition.params.sticker as string) || "eternal";
+  const sticker = (condition.params?.sticker?.value as string) || "eternal";
   let valueCode = ''
 
   switch(itemType) {

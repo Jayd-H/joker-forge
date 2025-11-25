@@ -114,11 +114,11 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
 
   const availableConditions = useMemo(() => {
     return selectedRule ? getConditionsForTriggerFn(selectedRule.trigger, itemType) : [];
-  }, [selectedRule, getConditionsForTriggerFn]);
+  }, [selectedRule, getConditionsForTriggerFn, itemType]);
 
   const availableEffects = useMemo(() => {
     return selectedRule ? getEffectsForTriggerFn(selectedRule.trigger, itemType) : [];
-  }, [selectedRule, getEffectsForTriggerFn]);
+  }, [selectedRule, getEffectsForTriggerFn, itemType]);
 
   const categorizedItems = useMemo(() => {
     const normalizedSearch = searchTerm.toLowerCase();
@@ -254,6 +254,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
     triggerCategories,
     conditionCategories,
     effectCategories,
+    itemType,
   ]);
 
   useEffect(() => {
@@ -276,7 +277,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       setExpandedCategories(new Set(allLabels));
     }
 
-  }, [activeFilter, searchTerm]);
+  }, [activeFilter, searchTerm, categorizedItems]);
 
   const shouldShowSection = (sectionType: FilterType) => {
     if (!selectedRule && sectionType !== "triggers") {

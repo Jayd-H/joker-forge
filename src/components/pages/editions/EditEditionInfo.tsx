@@ -515,7 +515,7 @@ const EditEditionInfo: React.FC<EditEditionInfoProps> = ({
                               ? ""
                               : formData.shader || ""
                           }
-                          onChange={handleShaderChange}
+                          onChange={(item) => handleShaderChange(item.value)}
                           options={shaderOptions}
                           placeholder="Select a shader"
                           size="md"

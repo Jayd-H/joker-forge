@@ -58,18 +58,6 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         variableTypes: ["rank"],
       },
       {
-        id: "variables",
-        type: "checkbox",
-        label: "Which types are Variables?",
-        checkboxOptions: [
-          { value: "A", label: "Enhancement"},
-          { value: "B", label: "Seal"},
-          { value: "C", label: "Edition"}
-        ],
-        default: [false, false, false],
-        exemptObjects: ["card"]
-      },
-      {
         id: "enhancement",
         type: "select",
         label: "Enhancement",
@@ -364,18 +352,6 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         ],
         default: "none",
         variableTypes: ["suit"],
-      },
-      {
-        id: "variables",
-        type: "checkbox",
-        label: "Which types are Variables?",
-        checkboxOptions: [
-          { value: "A", label: "Enhancement"},
-          { value: "B", label: "Seal"},
-          { value: "C", label: "Edition"}
-        ],
-        default: [false, false, false],
-        exemptObjects: ["card"]
       },
       {
         id: "new_enhancement",

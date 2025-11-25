@@ -71,7 +71,7 @@ interface RuleCardProps {
   itemType: "joker" | "consumable" | "card" | "voucher" | "deck";
   generateConditionTitle: (condition: Condition) => string;
   generateEffectTitle: (effect: Effect) => string;
-  getParameterCount: (params: Record<string, unknown>) => number;
+  getParameterCount: (params: Record<string, {value: unknown, valueType?: string}>) => number;
   onUpdateConditionOperator: (
     ruleId: string,
     conditionId: string,

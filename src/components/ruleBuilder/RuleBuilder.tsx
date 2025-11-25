@@ -59,6 +59,7 @@ import {
   DeckData,
 } from "../data/BalatroUtils";
 import { UserConfigContext } from "../Contexts";
+import { detectValueType } from "../generic/RuleBlockUpdater";
 
 export type ItemData =
   | JokerData
@@ -491,7 +492,13 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     isCondition: boolean
   ): string => {
     const baseLabel = typeDefinition.label;
-    const params = item.params;
+    const params: Record <string, unknown> = {}
+    Object.entries(item.params).map(([key, object]) => {
+      params[key] = object.value
+    });
+    if (item.type.includes('variable')) {
+      return baseLabel
+    }
 
     if (!params || Object.keys(params).length === 0) {
       return baseLabel;
@@ -510,7 +517,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
 
     let title = "";
 
-    if (params.operator && params.value !== undefined) {
+    if (params.operator && params !== undefined) {
       const operatorMap: Record<string, string> = {
         equals: "=",
         not_equals: "≠",
@@ -769,12 +776,16 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const addCondition = useCallback(
     (conditionType: string) => {
       if (!selectedItem) return;
+
       const conditionTypeData = getConditionType(conditionType);
-      const defaultParams: Record<string, unknown> = {};
+      const defaultParams: Record<string, {value: unknown, valueType?: string}> = {};
+
       if (conditionTypeData) {
         conditionTypeData.params.forEach((param) => {
-          if (param.default !== undefined) {
-            defaultParams[param.id] = param.default;
+          const defaultValue = param.default ?? undefined
+          defaultParams[param.id] = {
+            value: defaultValue,
+            valueType: detectValueType(defaultValue)
           }
         });
       }
@@ -1160,11 +1171,14 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     if (!selectedItem) return;
 
     const effectTypeData = getEffectType(effectType);
-    const defaultParams: Record<string, unknown> = {};
+    const defaultParams: Record<string, {value: unknown, valueType?: string}> = {};
+
     if (effectTypeData) {
       effectTypeData.params.forEach((param) => {
-        if (param.default !== undefined) {
-          defaultParams[param.id] = param.default;
+        const defaultValue = param.default ?? undefined
+        defaultParams[param.id] = {
+          value: defaultValue,
+          valueType: detectValueType(defaultValue)
         }
       });
     }
@@ -1427,7 +1441,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     );
   };
 
-  const getParameterCount = (params: Record<string, unknown>) => {
+  const getParameterCount = (params: Record<string, {value: unknown, valueType?: string}>): number => {
     return Object.keys(params).length;
   };
 

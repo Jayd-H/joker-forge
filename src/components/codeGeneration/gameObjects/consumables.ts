@@ -3,7 +3,7 @@ import { ConsumableSetData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
-import { parseGameVariable, generateGameVariableCode, parseRangeVariable } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
@@ -29,14 +29,8 @@ const convertRandomGroupsForCodegen = (
 ) => {
   return randomGroups.map((group) => ({
     ...group,
-    chance_numerator:
-      typeof group.chance_numerator === "string"
-      ? generateGameVariableCode(group.chance_numerator, 'consumable')
-      : group.chance_numerator,
-    chance_denominator:
-      typeof group.chance_denominator === "string"
-        ? generateGameVariableCode(group.chance_denominator, 'consumable')
-        : group.chance_denominator,
+    chance_numerator:generateValueCode(group.chance_numerator as string, "unknown"),
+    chance_denominator:generateValueCode(group.chance_denominator as string, "unknown")
   }));
 };
 
@@ -45,21 +39,7 @@ const convertLoopGroupsForCodegen = (
 ) => {
   return loopGroups.map((group) => ({
     ...group,
-    repetitions:
-      typeof group.repetitions === "string"
-        ? (() => {
-          const parsed = parseGameVariable(group.repetitions);
-          const rangeParsed = parseRangeVariable(group.repetitions);
-          if (parsed.isGameVariable) {
-            return generateGameVariableCode(group.repetitions, 'consmable');
-          } else if (rangeParsed.isRangeVariable) {
-            const seedName = `repetitions_${group.id.substring(0, 8)}`;
-            return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-          } else {
-            return `card.ability.extra.${group.repetitions}`
-          }
-        })()
-        : group.repetitions,
+    repetitions: generateValueCode(group.repetitions as string, "unknown"),
   }));
 };
 
@@ -403,21 +383,7 @@ const generateCalculateFunction = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions:
-        typeof group.repetitions === "string"
-          ? (() => {
-              const parsed = parseGameVariable(group.repetitions);
-              const rangeParsed = parseRangeVariable(group.repetitions);
-              if (parsed.isGameVariable) {
-                return generateGameVariableCode(group.repetitions, 'consumable');
-              } else if (rangeParsed.isRangeVariable) {
-                const seedName = `repetitions_${group.id.substring(0, 8)}`;
-                return `pseudorandom('${seedName}', ${rangeParsed.min}, ${rangeParsed.max})`;
-              } else {
-                return `card.ability.extra.${group.repetitions}`
-              }
-            })()
-          : group.repetitions,
+      repetitions: generateValueCode(group.repetitions as string, "unknown"),
     }));
 
     const effectResult = generateEffectReturnStatement(

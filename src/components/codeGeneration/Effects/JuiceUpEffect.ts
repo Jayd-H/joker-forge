@@ -7,15 +7,15 @@ export const generateJuiceUpEffectCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const mode = effect.params?.mode || "onetime";
+  const mode = effect.params?.mode?.value || "onetime";
 
   const configVariables: ConfigExtraVariable[] = [];
 
   const scaleVariableName =
     sameTypeCount === 0 ? "scale" : `scale${sameTypeCount + 1}`;
   const scaleRet = generateConfigVariables(
-    effect.params.scale,
-    effect.id,
+    effect,
+    'scale',
     scaleVariableName,
     'joker'
   )
@@ -23,13 +23,13 @@ export const generateJuiceUpEffectCode = (
   scaleRet.configVariables.forEach((cv) => {
     configVariables.push(cv)
   })
-  const scaleValueCode = scaleRet.valueCode
+  const scaleValueCode = scaleRet?.valueCode
 
   const rotationVariableName =
     sameTypeCount === 0 ? "rotation" : `rotation${sameTypeCount + 1}`;
   const rotationRet = generateConfigVariables(
-    effect.params.rotation,
-    effect.id,
+    effect,
+    'rotation',
     rotationVariableName,
     'joker'
   )
@@ -37,7 +37,7 @@ export const generateJuiceUpEffectCode = (
   rotationRet.configVariables.forEach((cv) => {
     configVariables.push(cv)
   })
-  const rotationValueCode = rotationRet.valueCode
+  const rotationValueCode = rotationRet?.valueCode
 
   let cardType: string;
   if (effectType == "card") {

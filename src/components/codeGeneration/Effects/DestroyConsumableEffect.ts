@@ -87,8 +87,8 @@ const generateJokerCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const consumableType = (effect.params?.consumable_type as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
+  const consumableType = (effect.params?.consumable_type?.value as string) || "random";
+  const specificCard = (effect.params?.specific_card?.value as string) || "random";
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];
@@ -122,21 +122,21 @@ const generateJokerCode = (
     if (consumableType === "tarot") {
       setName = "Tarot";
       if (specificCard === "random") {
-        cardKeys = Object.values(TAROT_CARD_KEYS);
+        cardKeys = Object?.values(TAROT_CARD_KEYS);
       } else {
         cardKeys = [TAROT_CARD_KEYS[specificCard] || "c_fool"];
       }
     } else if (consumableType === "planet") {
       setName = "Planet";
       if (specificCard === "random") {
-        cardKeys = Object.values(PLANET_CARD_KEYS);
+        cardKeys = Object?.values(PLANET_CARD_KEYS);
       } else {
         cardKeys = [PLANET_CARD_KEYS[specificCard] || "c_pluto"];
       }
     } else if (consumableType === "spectral") {
       setName = "Spectral";
       if (specificCard === "random") {
-        cardKeys = Object.values(SPECTRAL_CARD_KEYS);
+        cardKeys = Object?.values(SPECTRAL_CARD_KEYS);
       } else {
         cardKeys = [SPECTRAL_CARD_KEYS[specificCard] || "c_familiar"];
       }
@@ -205,8 +205,8 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
+  const set = (effect.params?.set?.value as string) || "random";
+  const specificCard = (effect.params?.specific_card?.value as string) || "random";
   const customMessage = effect.customMessage;
 
   let destroyCode = "";
@@ -281,8 +281,8 @@ const generateCardCode = (
   effect: Effect,
   triggerType: string,
 ): EffectReturn => {
-  const set = (effect.params?.set as string) || "random";
-  const specificCard = (effect.params?.specific_card as string) || "random";
+  const set = (effect.params?.set?.value as string) || "random";
+  const specificCard = (effect.params?.specific_card?.value as string) || "random";
   const customMessage = effect.customMessage;
 
   const scoringTriggers = ["hand_played", "card_scored"];

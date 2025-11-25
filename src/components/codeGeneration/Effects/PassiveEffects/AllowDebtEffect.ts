@@ -8,8 +8,8 @@ export const generateAllowDebtPassiveEffectCode = (
   const variableName = "debt_amount";
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     'joker'
   )
@@ -20,9 +20,6 @@ export const generateAllowDebtPassiveEffectCode = (
   return {
     addToDeck,
     removeFromDeck,
-    configVariables:
-      configVariables.length > 0
-        ? configVariables.map((cv) => cv.name + " = " + cv.value)
-        : [],
+    configVariables,
   };
 };

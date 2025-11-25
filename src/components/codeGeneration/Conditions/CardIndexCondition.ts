@@ -7,9 +7,9 @@ export const generateCardIndexConditionCode = (
 ):string | null => {
   const triggerType = rules[0].trigger || "card_scored";
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const indexType = (condition.params.index_type as string) || "number";
+  const indexType = (condition.params?.index_type?.value as string) || "number";
   const indexNumber =
-    generateGameVariableCode(condition.params.index_number, itemType) || "1";
+    generateGameVariableCode(condition.params?.index_number, itemType) || "1";
 
   let cardValue = ''
   let handType = ''

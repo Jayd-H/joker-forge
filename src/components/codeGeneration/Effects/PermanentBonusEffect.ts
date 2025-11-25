@@ -25,13 +25,13 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const bonusType = effect.params.bonus_type as string;
+  const bonusType = effect.params.bonus_type?.value as string;
   const uniqueId = effect.id.substring(0, 8);
   const variableName = `pb_${bonusType.replace("perma_", "")}_${uniqueId}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -72,14 +72,14 @@ const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
   const uniqueId = effect.id.substring(0, 8);
-  const bonusType = effect.params?.bonus_type as string || "perma_bonus";
+  const bonusType = effect.params?.bonus_type?.value as string || "perma_bonus";
   const customMessage = effect.customMessage;
 
   const variableName = `pb_${bonusType.replace("perma_", "")}_${uniqueId}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'consumable'
   )

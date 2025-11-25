@@ -576,9 +576,9 @@ const EditBoosterInfo: React.FC<EditBoosterInfoProps> = ({
                             <InputDropdown
                               label="Booster Type"
                               value={formData.booster_type || "joker"}
-                              onChange={(value) =>
+                              onChange={(item) =>
                                 onFormDataChange({
-                                  booster_type: value as BoosterType,
+                                  booster_type: item.value as BoosterType,
                                   card_rules: [],
                                 })
                               }

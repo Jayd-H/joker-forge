@@ -20,7 +20,7 @@ export const generateIncrementRankEffectCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "increment";
+  const operation = effect.params?.operation?.value || "increment";
   const value = effect.params?.value || 1;
   const customMessage = effect.customMessage;
 

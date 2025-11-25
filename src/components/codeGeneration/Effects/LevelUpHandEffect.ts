@@ -47,13 +47,13 @@ const generateJokerCode = (
       sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
 
     const ret = generateConfigVariables(
-      effect.params?.value,
-      effect.id,
+      effect,
+      'value',
       variableName,
       'joker'
     )
 
-    valueCode = ret.valueCode
+    valueCode = ret?.valueCode
     configVariables = ret.configVariables
   } else {
     valueCode = "card.ability.extra.levels";
@@ -63,8 +63,8 @@ const generateJokerCode = (
   const customVar = parsePokerHandVariable(effect?.params?.hand_selection || "", joker)
   const targetHandVar = sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`
 
-  const handSelection = (effect?.params?.hand_selection as string) || "current";
-  const specificHand = (effect?.params?.specific_hand as string) || "High Card";
+  const handSelection = (effect?.params?.hand_selection?.value as string) || "current";
+  const specificHand = (effect?.params?.specific_hand?.value as string) || "High Card";
   
   let handDeterminationCode = "";
    if (handSelection === "specific") {
@@ -146,10 +146,10 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const handType = effect.params?.hand_type || "Pair";
-  const levels = effect.params?.levels || 1;
+  const handType = effect.params?.hand_type?.value || "Pair";
+  const levels = effect.params?.levels;
   const customMessage = effect.customMessage;
-  const pokerHandPoolActive = (effect.params.pokerhand_pool as Array<boolean>) || [];
+  const pokerHandPoolActive = (effect.params.pokerhand_pool?.value as Array<boolean>) || [];
   const pokerHandPoolPokerHands = [
     "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
     "'Straight'","'Flush'","'Full House'","'Four of a Kind'",
@@ -272,7 +272,7 @@ const generateConsumableCode = (
   if (handType !== "random" && handType !== "all") {
     configVariables.push({name: `hand_type`, value: `${handType}`});
   }
-  if (!(typeof levels === "string" && levels.startsWith("GAMEVAR:"))) {
+  if (!(levels?.valueType === "game_var")) {
     configVariables.push({name: `levels`, value: `${levels}`});
   }
 
@@ -301,8 +301,8 @@ const generateCardCode = (
     sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     card?.objectType ?? 'enhancement'
   );
@@ -310,8 +310,8 @@ const generateCardCode = (
   const targetHandVar =
     sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`;
 
-  const handSelection = (effect?.params?.hand_selection as string) || "current";
-  const specificHand = (effect?.params?.specific_hand as string) || "High Card";
+  const handSelection = (effect?.params?.hand_selection?.value as string) || "current";
+  const specificHand = (effect?.params?.specific_hand?.value as string) || "High Card";
 
   let handDeterminationCode = "";
   switch (handSelection) {

@@ -11,8 +11,8 @@ export const generateAddMultEffectCode = (
     sameTypeCount === 0 ? "mult" : `mult${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect, 
+    'value',
     variableName,
     itemType,
   )

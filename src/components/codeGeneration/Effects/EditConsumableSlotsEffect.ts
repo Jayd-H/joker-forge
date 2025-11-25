@@ -5,11 +5,11 @@ import { generateConfigVariables } from "../lib/gameVariableUtils";
 export const generateEditConsumableSlotsPassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
 
   const { valueCode, configVariables, isXVariable } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     "slot_change",
     'joker'
   )
@@ -65,10 +65,7 @@ export const generateEditConsumableSlotsPassiveEffectCode = (
   return {
     addToDeck,
     removeFromDeck,
-    configVariables: 
-      configVariables.length > 0 ?
-      configVariables.map((cv)=> `${cv.name} = ${cv.value}`)
-      : [],
+    configVariables,
     locVars:
       isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
   };
@@ -100,15 +97,15 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0
       ? "consumable_slots"
       : `consumable_slots${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'joker'
   )
@@ -185,13 +182,13 @@ const generateVoucherCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'voucher'
   );
@@ -239,13 +236,13 @@ const generateDeckCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation || "add";
+  const operation = effect.params?.operation?.value || "add";
   const variableName =
     sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
 
   const { valueCode, configVariables } = generateConfigVariables(
-    effect.params?.value,
-    effect.id,
+    effect,
+    'value',
     variableName,
     'deck'
   );

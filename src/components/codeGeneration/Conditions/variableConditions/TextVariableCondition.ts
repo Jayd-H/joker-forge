@@ -4,10 +4,10 @@ export const generateTextVariableConditionCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const variableName = (condition.params.variable_name as string) || "textvar";
-  const CheckType = (condition.params.check_type as string) || "custom_text";
-  const customText = (condition.params?.text as string) || "";
-  const keyVar = (condition.params?.key_variable as string) || "keyvar"
+  const variableName = (condition.params?.variable_name?.value as string) || "textvar";
+  const CheckType = (condition.params?.check_type?.value as string) || "custom_text";
+  const customText = (condition.params?.text?.value as string) || "";
+  const keyVar = (condition.params?.key_variable?.value as string) || "keyvar"
 
 switch (CheckType) {
     case "key_var":

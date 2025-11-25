@@ -1,6 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
 import type { JokerData } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
 import { parseSuitVariable } from "../lib/userVariableUtils";
 
 export const generateCardSuitConditionCode = (
@@ -23,13 +22,9 @@ const generateJokerCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
-
-  const suitType = (condition.params.suit_type as string) || "specific";
-  const specificSuit = condition.params.specific_suit;
-  const suitGroup = (condition.params.suit_group as string) || null;
-  const quantifier = (condition.params.quantifier as string) || "at_least_one";
-  const count = generateGameVariableCode(condition.params.count, 'joker');
-  const scope = (condition.params.card_scope as string) || "scoring";
+  const suitType = (condition.params?.suit_type?.value as string) || "specific";
+  const specificSuit = condition.params?.specific_suit;
+  const suitGroup = (condition.params?.suit_group?.value as string) || null;
 
   const suitVarInfo = parseSuitVariable(specificSuit, joker);
 
@@ -84,103 +79,14 @@ const generateJokerCode = (
 end)()`;
   }
 
-  if (
-    (triggerType === "card_scored" ||
-      triggerType === "card_held_in_hand" ||
-      triggerType === "card_held_in_hand_end_of_round") &&
-    condition.type === "card_suit"
-  ) {
-    const checkLogic = getSuitsCheckLogic(
-      suits,
-      useVariable,
-      variableCode,
-      "context.other_card"
-    );
-    return checkLogic;
-  }
-
-  const cardsToCheck =
-    scope === "scoring" && !(triggerType === "card_discarded")
-      ? "context.scoring_hand"
-      : "context.full_hand";
-
-  switch (quantifier) {
-    case "at_least_one":
-      return `(function()
-    local suitFound = false
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
-            suitFound = true
-            break
-        end
-    end
-    
-    return suitFound
-end)()`;
-
-    case "all":
-      return `(function()
-    local allMatchSuit = true
-    for i, c in ipairs(${cardsToCheck}) do
-        if not (${getSuitsCheckLogic(suits, useVariable, variableCode)}) then
-            allMatchSuit = false
-            break
-        end
-    end
-    
-    return allMatchSuit and #${cardsToCheck} > 0
-end)()`;
-
-    case "exactly":
-      return `(function()
-    local suitCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
-            suitCount = suitCount + 1
-        end
-    end
-    
-    return suitCount == ${count}
-end)()`;
-
-    case "at_least":
-      return `(function()
-    local suitCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
-            suitCount = suitCount + 1
-        end
-    end
-    
-    return suitCount >= ${count}
-end)()`;
-
-    case "at_most":
-      return `(function()
-    local suitCount = 0
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
-            suitCount = suitCount + 1
-        end
-    end
-    
-    return suitCount <= ${count} and suitCount > 0
-end)()`;
-
-    default:
-      return `(function()
-    local suitFound = false
-    for i, c in ipairs(${cardsToCheck}) do
-        if ${getSuitsCheckLogic(suits, useVariable, variableCode)} then
-            suitFound = true
-            break
-        end
-    end
-    
-    return suitFound
-end)()`;
-  }
-};
+  const checkLogic = getSuitsCheckLogic(
+    suits,
+    useVariable,
+    variableCode,
+    "context.other_card"
+  );
+  return checkLogic;
+}
 
 const generateCardCode = (
   rules: Rule[],
@@ -191,9 +97,9 @@ const generateCardCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "card_suit") return "";
 
-  const suitType = (condition.params?.suit_type as string) || "specific";
-  const specificSuit = condition.params?.specific_suit as string;
-  const suitGroup = condition.params?.suit_group as string;
+  const suitType = (condition.params?.suit_type.value as string) || "specific";
+  const specificSuit = condition.params?.specific_suit.value as string;
+  const suitGroup = condition.params?.suit_group.value as string;
 
   if (suitType === "specific" && specificSuit) {
     return `card:is_suit("${specificSuit}")`;
