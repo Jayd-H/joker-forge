@@ -3,10 +3,10 @@ import type { EffectReturn } from "../lib/effectUtils";
 import { generateGameVariableCode } from "../lib/gameVariableUtils";
 
 export const generateShowMessageReturn = (effect: Effect, itemType: string): EffectReturn => {
-  const colour = (effect.params?.colour as string) || "G.C.WHITE";
+  const colour = (effect.params?.colour?.value as string) || "G.C.WHITE";
   const scale = effect.params?.scale || 1.3;
   const hold = effect.params?.hold || 1.4;
-  const silent = (effect.params?.silent as string) || "true";
+  const silent = (effect.params?.silent?.value as string) || "true";
   
   const scaleCode = generateGameVariableCode(scale, itemType);
   const holdCode = generateGameVariableCode(hold, itemType);
