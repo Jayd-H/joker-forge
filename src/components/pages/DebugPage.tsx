@@ -25,7 +25,7 @@ interface DebugButtons {
   callback: () => void;
 }
 
-const DebugPage: React.FC<undefined> = () => {
+const DebugPage: React.FC = () => {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
 
   const debugButtons: DebugButtons[] = [

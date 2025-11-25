@@ -1645,7 +1645,7 @@ const handleDiscardAndStartFresh = () => {
                   />
                 }
               >
-                <DebugPage/>
+                <DebugPage />
               </Suspense>
             }
           />
