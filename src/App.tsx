@@ -807,7 +807,7 @@ function AppContent() {
     };
     
     loadAutoSave()
-  });
+  }, [true]); // so it doesnt't reload every millisecond
 
   useEffect(() => {
     if (!hasLoadedInitialData) return;
@@ -1645,7 +1645,7 @@ const handleDiscardAndStartFresh = () => {
                   />
                 }
               >
-                <DebugPage/>
+                <DebugPage />
               </Suspense>
             }
           />

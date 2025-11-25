@@ -16,7 +16,6 @@ type HeroiconsSVG = React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGEl
   titleId?: string;
 } & React.RefAttributes<SVGSVGElement>>; // Copied from the LSP tooltip
 
-interface DebugPageProps { }
 
 interface DebugButtons {
   id: string;
@@ -26,7 +25,7 @@ interface DebugButtons {
   callback: () => void;
 }
 
-const DebugPage: React.FC<DebugPageProps> = ({ }) => {
+const DebugPage: React.FC = () => {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
 
   const debugButtons: DebugButtons[] = [
@@ -36,7 +35,7 @@ const DebugPage: React.FC<DebugPageProps> = ({ }) => {
       tooltip: "Dump every Trigger for every object type into console with the README.md formatting",
       icon: SparklesIcon,
       callback: () => {
-        let log_string: Set<string> = new Set();
+        const log_string: Set<string> = new Set();
 
         log_string.add("\n### Triggers\n");
         TRIGGERS.forEach((value) => {
