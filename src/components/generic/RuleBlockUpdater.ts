@@ -137,7 +137,6 @@ const updateEffect = (
   itemType: string,
   object: JokerData | EnhancementData | SealData | EditionData
 ) => {
-  console.log(effect)
   const oldEffectId = effect.type
   effect.type = updateEffectId(oldEffectId, itemType)
   if (Object.values(effect.params).some(value => typeof value !== "object")) {
