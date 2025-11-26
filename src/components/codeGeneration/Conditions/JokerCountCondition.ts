@@ -9,7 +9,7 @@ export const generateJokerCountConditionCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params?.operator?.value as string) || "equals";
   const rarity = (condition.params?.rarity?.value as string) || "any";
-  const value = generateValueCode(condition.params?.value, '');
+  const value = generateValueCode(condition.params?.value);
  
   const comparison = generateOperationCode(
     operator,

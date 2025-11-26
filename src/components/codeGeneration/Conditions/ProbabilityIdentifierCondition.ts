@@ -15,7 +15,7 @@ const generateJokerCode = (
   rules: Rule[],
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const mode = condition.params?.mode?.value || "vanilla";
+  const mode = (condition.params?.mode?.value as string) || "vanilla";
 
   let specific_card: string;
   switch (mode) {

@@ -12,9 +12,7 @@ export const generateJokerSelectedConditionCode = (
   if (!condition || condition.type !== "joker_selected") return "";
 
   const operator = condition.params?.operator?.value as string|| "greater_than";
-  const value = condition.params?.value;
-
-  const valueCode = generateValueCode(value, '');
+  const valueCode = generateValueCode(condition.params?.value);
 
   return generateOperationCode(
     operator,

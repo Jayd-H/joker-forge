@@ -22,7 +22,7 @@ const generateJokerCode = (
   const scope = (condition.params?.card_scope?.value as string) || "scoring";
 
   let propertyCheck = "";
-  const seal = condition.params.seal.value as string;
+  const seal = condition.params?.seal?.value as string;
   if (seal === "any") {
     propertyCheck = "playing_card.seal ~= nil";
   } else if (seal === "none") {

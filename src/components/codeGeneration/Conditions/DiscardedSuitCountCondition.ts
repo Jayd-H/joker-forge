@@ -23,7 +23,7 @@ const generateJokerCode = (
   const triggerType = rules[0].trigger || "hand_discarded";
 
   const suitType = (condition.params?.suit_type?.value as string) || "specific";
-  const specificSuit = condition.params?.specific_suit;
+  const specificSuit = (condition.params?.specific_suit?.value as string);
   const suitGroup = (condition.params?.suit_group?.value as string) || null;
   const quantifier = (condition.params?.quantifier?.value as string) || "at_least_one";
   const count = generateValueCode(condition.params?.count, 'joker');

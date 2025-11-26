@@ -23,7 +23,7 @@ const generateJokerCode = (
   const triggerType = rules[0].trigger || "hand_discarded";
 
   const rankType = (condition.params?.rank_type?.value as string) || "specific";
-  const specificRank = condition.params?.specific_rank;
+  const specificRank = (condition.params?.specific_rank?.value as string);
   const rankGroup = (condition.params?.rank_group?.value as string) || null;
   const quantifier = (condition.params?.quantifier?.value as string) || "at_least_one";
   const count = generateValueCode(condition.params?.count, 'joker');

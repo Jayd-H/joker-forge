@@ -11,10 +11,8 @@ export const generateRemainingHandsConditionCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "remaining_hands") return "";
 
-  const operator = condition.params?.operator?.value as string|| "greater_than";
-  const value = condition.params?.value ?? 1;
-
-  const valueCode = generateValueCode(value, '');
+  const operator = (condition.params?.operator?.value as string) || "greater_than";
+  const valueCode = generateValueCode(condition.params?.value);
 
   return generateOperationCode(
     operator,

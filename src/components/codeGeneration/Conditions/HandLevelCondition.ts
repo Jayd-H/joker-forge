@@ -7,7 +7,7 @@ export const generateHandLevelConditionCode = (
 ): string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params?.operator?.value as string) || "equals";
-  const value = generateValueCode(condition.params?.value, '') || "1";
+  const value = generateValueCode(condition.params?.value) || "1";
 
   const comparison = generateOperationCode(
     operator,
