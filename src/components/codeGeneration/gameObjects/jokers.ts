@@ -221,7 +221,6 @@ const generateSingleJokerCode = (
 
   const configItems: string[] = [];
   const variableNameCounts = new Map<string, number>();
-  console.log(calculateResult?.configVariables)
   const resolveVariableName = (baseName: string): string => {
     const count = variableNameCounts.get(baseName) || 0;
     variableNameCounts.set(baseName, count + 1);
@@ -1582,7 +1581,6 @@ const generateCalculateFunction = (
 
   calculateFunction += `
     end`;
-  console.log(allConfigVariables)
 
   return {
     code: calculateFunction,
