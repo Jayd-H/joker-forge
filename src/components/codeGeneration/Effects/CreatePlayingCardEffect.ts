@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { EDITIONS, SEALS } from "../../data/BalatroUtils";
+import { EDITIONS, RANKS, SEALS } from "../../data/BalatroUtils";
 
 export const generateCreatePlayingCardEffectCode = (
   effect: Effect,
@@ -44,7 +44,7 @@ const generateJokerCode = (
   if (suit.value === "random" && rank.value === "random") {
     cardSelectionCode += "local card_front = pseudorandom_element(G.P_CARDS, pseudoseed('add_card_hand'))";
   } else {
-    const suitCode = suit.valueType === "user_var" ? `G.GAME.current_round.${suit}_card.suit` : `'${(suit.value as string).charAt(0)}'`
+    const suitCode = suit.valueType === "user_var" ? `G.GAME.current_round.${suit.value}_card.suit` : `'${(suit.value as string).charAt(0)}'`
     const rankCode = rank.valueType === "user_var" ?`G.GAME.current_round.${rank.value}_card.id` : `'${(rank.value as string).charAt(0)}'`
 
     if (suitCode === `'r'`) { 
@@ -57,7 +57,7 @@ const generateJokerCode = (
 
     if (rankCode === `'r'`) { 
       cardSelectionCode += `
-        rank_suffix = pseudorandom_element({'2','3','4','5','6','7','8','9','T','J','Q','K','A'}, "random_rank")`
+        rank_suffix = pseudorandom_element({${RANKS.map(rank => `'${rank.value}'`)}}, "random_rank")`
     } else {
       cardSelectionCode += `
         rank_suffix = ${rankCode}`
@@ -73,9 +73,9 @@ const generateJokerCode = (
   } else if (enhancement.value === "random") {
     centerParam = `pseudorandom_element({G.P_CENTERS.m_gold, G.P_CENTERS.m_steel, G.P_CENTERS.m_glass, G.P_CENTERS.m_wild, G.P_CENTERS.m_mult, G.P_CENTERS.m_lucky, G.P_CENTERS.m_stone}, pseudoseed('add_card_hand_enhancement'))`;
   } else if (enhancement.valueType === "user_var"){
-    centerParam = `G.P_CENTERS.[card.ability.extra.${enhancement}]`;
+    centerParam = `G.P_CENTERS.[card.ability.extra.${enhancement.value}]`;
   } else {
-    centerParam = `G.P_CENTERS.${enhancement}`;
+    centerParam = `G.P_CENTERS.${enhancement.value}`;
   }
 
   let sealCode = "";
@@ -85,10 +85,10 @@ const generateJokerCode = (
       new_card:set_seal(pseudorandom_element({${sealPool}}, pseudoseed('add_card_hand_seal')), true)`;
   } else if (seal.valueType === "user_var"){
     sealCode = `
-      new_card:set_seal(card.ability.extra.${seal}, true)`;
+      new_card:set_seal(card.ability.extra.${seal.value}, true)`;
   } else if (seal.value !== "none") {
     sealCode = `
-      new_card:set_seal("${seal}", true)`;
+      new_card:set_seal("${seal.value}", true)`;
   }
 
   let editionCode = "";
@@ -99,10 +99,10 @@ const generateJokerCode = (
       new_card:set_edition(pseudorandom_element({${editionPool}}, pseudoseed('add_card_hand_edition')), true)`;
   } else if (edition.valueType === "user_var"){
     editionCode = `
-      new_card:set_edition(card.ability.extra.${edition}, true)`;
+      new_card:set_edition(card.ability.extra.${edition.value}, true)`;
   } else if (edition.value !== "none") {
     editionCode = `
-      new_card:set_edition("${edition}", true)`;
+      new_card:set_edition("${edition.value}", true)`;
   }
   
   if (location === "deck") {

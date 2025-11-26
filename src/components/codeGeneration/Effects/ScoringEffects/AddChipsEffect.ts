@@ -1,3 +1,4 @@
+import { EditionData, EnhancementData, JokerData, SealData } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../lib/effectUtils";
 import { generateConfigVariables } from "../../lib/gameVariableUtils";
@@ -6,15 +7,15 @@ export const generateAddChipsEffectCode = (
   effect: Effect,
   itemType: string,
   sameTypeCount: number = 0,
+  object?: JokerData | EnhancementData | EditionData | SealData
 ): EffectReturn => {
-  const variableName =
-    sameTypeCount === 0 ? "chips" : `chips${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect, 
     'value',
-    variableName,
-    itemType
+    "chips",
+    sameTypeCount,
+    itemType,
+    object,
   );
 
   const customMessage = effect.customMessage;

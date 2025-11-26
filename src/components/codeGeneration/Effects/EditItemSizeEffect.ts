@@ -1,3 +1,4 @@
+import { JokerData } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
 import { generateConfigVariables } from "../lib/gameVariableUtils";
@@ -61,15 +62,18 @@ const generateTypeData = (
 export const generateEditItemSizePassiveEffectCode = (
   effect: Effect,
   type: string,
+  joker?: JokerData,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation?.value || "add";
+  const operation = (effect.params?.operation?.value as string) || "add";
   const itemData = generateTypeData(type)
 
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    'size_increase',
-    'joker'
+    `${itemData.varName}_increase`,
+    1,
+    'joker',
+    joker,
   )
 
   let addToDeck = "";
@@ -114,14 +118,12 @@ export const generateEditItemSizeEffectCode = (
 ): EffectReturn => {
   const operation = effect.params?.operation?.value || "add";
   const itemData = generateTypeData(type)
-  const variableName =
-    sameTypeCount === 0 ? `${itemData.varName}` : `${itemData.varName}${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    itemType
+    itemData.varName,
+    sameTypeCount,
+    itemType,
   )
 
   let value = valueCode

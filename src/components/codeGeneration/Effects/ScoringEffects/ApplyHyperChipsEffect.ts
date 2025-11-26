@@ -1,3 +1,4 @@
+import { EditionData, EnhancementData, JokerData, SealData } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../lib/effectUtils";
 import { generateConfigVariables } from "../../lib/gameVariableUtils";
@@ -6,26 +7,24 @@ export const generateApplyHyperChipsEffectCode = (
   effect: Effect,
   itemType: string,
   sameTypeCount: number = 0,
+  object?: JokerData | EnhancementData | EditionData | SealData
 ): EffectReturn => {
-  const variableNameN =
-    sameTypeCount === 0 ? "hyperchips_n" : `hyperchips_n${sameTypeCount + 1}`;
-  
-    const variableNameArrows =
-    sameTypeCount === 0 ? "hyperchips_arrows" : `hyperchips_arrows${sameTypeCount + 1}`;
-
   const N = generateConfigVariables(
     effect, 
     'value',
-    variableNameN,
-    itemType
-  )
-  
+    "hyperchips_n",
+    sameTypeCount,
+    itemType,
+    object,
+  ); 
   const Arrows = generateConfigVariables(
     effect, 
     'arrows',
-    variableNameArrows,
-    itemType
-  )
+    "hyperchips_arrows",
+    sameTypeCount,
+    itemType,
+    object,
+  );
 
   const customMessage = effect.customMessage;
 

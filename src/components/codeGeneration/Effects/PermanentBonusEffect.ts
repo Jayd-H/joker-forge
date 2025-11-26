@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generatePermaBonusEffectCode = (
   effect: Effect,
@@ -33,7 +33,8 @@ const generateJokerCode = (
     effect,
     'value',
     variableName,
-    'joker'
+    1,
+    'joker',
   )
 
   const customMessage = effect.customMessage;
@@ -71,18 +72,10 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const uniqueId = effect.id.substring(0, 8);
-  const bonusType = effect.params?.bonus_type?.value as string || "perma_bonus";
+  const bonusType = (effect.params?.bonus_type?.value as string) || "perma_bonus";
   const customMessage = effect.customMessage;
+  const valueCode = generateValueCode(effect.params?.value, 'consumable')
 
-  const variableName = `pb_${bonusType.replace("perma_", "")}_${uniqueId}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'consumable'
-  )
   const permaBonusCode = `
             __PRE_RETURN_CODE__
             G.E_MANAGER:add_event(Event({
@@ -146,7 +139,6 @@ const generateConsumableCode = (
   const result: EffectReturn = {
     statement: permaBonusCode,
     colour: "G.C.CHIPS",
-    configVariables,
   };
 
   if (customMessage) {

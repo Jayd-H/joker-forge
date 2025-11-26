@@ -1,12 +1,14 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateFlipJokerEffectCode = (
   effect: Effect,
+  itemType: string,
 ): EffectReturn => {
-  const selectionMethod = effect.params?.selection_method?.value as string || "random";
+  const selectionMethod = (effect.params?.selection_method?.value as string) || "random";
   const position = (effect.params?.position?.value as string) || "first";
-  const specificIndex = effect.params?.specific_index?.value as number;
+  const specificIndex = generateValueCode(effect.params?.specific_index, itemType)
   const customMessage = effect.customMessage;
   const jokerVariable = (effect.params?.joker_variable?.value as string) || "j_joker";
 

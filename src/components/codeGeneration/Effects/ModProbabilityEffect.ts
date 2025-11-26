@@ -6,15 +6,13 @@ export const generateModProbabilityEffectCode = (
   effect: Effect,
   sameTypeCount: number = 0
 ): EffectReturn => {
-  const chance_part = effect.params?.part?.value || "numerator";
-  const operation = effect.params?.operation?.value || "multiply";
-  const variableName =
-    sameTypeCount === 0 ? "mod_probability" : `mod_probability${sameTypeCount + 1}`;
-
+  const chance_part = (effect.params?.part?.value as string) || "numerator";
+  const operation = (effect.params?.operation?.value as string) || "multiply";
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
+    "mod_probability",
+    sameTypeCount,
     'joker'
   )
 

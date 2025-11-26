@@ -5,10 +5,10 @@ import type { EffectReturn } from "../../lib/effectUtils";
 export const generateChangeRankVariableEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const variableName = (effect.params.variable_name.value as string) || "rankvar";
-  const changeType = (effect.params.change_type.value as string) || "random";
-  const specificRank = (effect.params.specific_rank.value as string) || "A";
-  const rankPoolActive = (effect.params.rank_pool.value as Array<boolean>) || [];
+  const variableName = (effect.params?.variable_name?.value as string) || "rankvar";
+  const changeType = (effect.params?.change_type?.value as string) || "random";
+  const specificRank = (effect.params?.specific_rank?.value as string) || "A";
+  const rankPoolActive = (effect.params?.rank_pool?.value as Array<boolean>) || [];
   const rankPoolRanks = RANKS.map(rank => rank.value)
 
   let statement = "";

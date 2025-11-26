@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import type { EditionData, EnhancementData, SealData } from "../../data/BalatroUtils";
+import type { EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 import { generateConfigVariables } from "../lib/gameVariableUtils";
 
 export const generateRetriggerEffectCode = (
@@ -26,15 +26,15 @@ export const generateRetriggerEffectCode = (
 const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
+  joker?: JokerData,
 ): EffectReturn => {
-  const variableName =
-    sameTypeCount === 0 ? "repetitions" : `repetitions${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'repetitions',
-    variableName,
-    'joker'
+    "repetitions",
+    sameTypeCount,
+    'joker',
+    joker
   )
 
   const customMessage = effect.customMessage;
@@ -55,7 +55,7 @@ const generateCardCode = (
   sameTypeCount: number = 0,
   card?: EditionData | EnhancementData | SealData
 ): EffectReturn => {
-  const effectValue = effect.params?.value.value ?? 1;
+  const effectValue = (effect.params?.value?.value as string) ?? 1;
   const variableName =
     sameTypeCount === 0
       ? "retrigger_times"
@@ -64,8 +64,10 @@ const generateCardCode = (
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    card?.objectType ?? 'enhancement'
+    "retrigger_times",
+    sameTypeCount,
+    card?.objectType ?? 'enhancement',
+    card
   );
 
   const abilityPath =

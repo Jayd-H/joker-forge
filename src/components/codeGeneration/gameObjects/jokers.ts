@@ -84,8 +84,8 @@ export const convertRandomGroupsForCodegen = (
 ) => {
   return randomGroups.map((group) => ({
     ...group,
-    chance_numerator: generateValueCode(group.chance_numerator as string, "unknown"),
-    chance_denominator: generateValueCode(group.chance_denominator as string, "unknown")
+    chance_numerator: generateValueCode({value: group.chance_numerator, valueType: "unknown"}),
+    chance_denominator: generateValueCode({value: group.chance_denominator, valueType: "unknown"})
   }));
 };
 
@@ -94,7 +94,7 @@ export const convertLoopGroupsForCodegen = (
 ) => {
   return loopGroups.map((group) => ({
     ...group,
-    repetitions: generateValueCode(group.repetitions as string, "unknown")
+    repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
   }));
 };
 
@@ -267,13 +267,13 @@ const generateSingleJokerCode = (
   endRoundRules?.forEach(rule => {
     rule.effects.forEach(effect => {
       if (effect.type === 'blind_reward') {
-        const variableName =
-          blindRewards.length === 0 ? "blind_reward" : `blind_reward${blindRewards.length}`;        
         const { valueCode, configVariables } = generateConfigVariables(
             effect,
             'value',
-            variableName,
-            'joker'
+            "blind_reward",
+            blindRewards.length,
+            'joker',
+            joker,
         )
 
         if (rule.trigger === 'round_end') {

@@ -1,7 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
 import { EDITIONS, RANKS, SEALS, SUITS } from "../../data/BalatroUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateCreatePlayingCardsEffectCode = (
   effect: Effect,
@@ -23,24 +23,18 @@ const generateConsumableCode = (
   effect: Effect,
   modPrefix: string,
 ): EffectReturn => {
-  const enhancement = effect.params?.enhancement?.value as string || "none";
-  const seal = effect.params?.seal?.value as string || "none";
-  const edition = effect.params?.edition?.value as string || "none";
-  const suit = effect.params?.suit?.value as string || "none";
-  const rank = effect.params?.rank?.value as string|| "random";
+  const enhancement = (effect.params?.enhancement?.value as string) || "none";
+  const seal = (effect.params?.seal?.value as string) || "none";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const suit = (effect.params?.suit?.value as string) || "none";
+  const rank = (effect.params?.rank?.value as string) || "random";
   const customMessage = effect.customMessage;
   const suitPoolActive = (effect.params.suit_pool?.value as Array<boolean>) || [];
   const rankPoolActive = (effect.params.rank_pool?.value as Array<boolean>) || [];
   const rankPoolRanks = RANKS.map(rank => `'${rank?.value}'`)
   const suitPoolSuits = SUITS.map(suit => `'${suit?.value}'`)
 
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'count',
-    'count',
-    'consumable'
-  );
+  const valueCode = generateValueCode(effect.params?.count, 'consumable')
 
   let addCardsCode = `
             __PRE_RETURN_CODE__
@@ -181,7 +175,6 @@ const generateConsumableCode = (
   const result: EffectReturn = {
     statement: addCardsCode,
     colour: "G.C.SECONDARY_SET.Spectral",
-    configVariables
   };
 
   if (customMessage) {

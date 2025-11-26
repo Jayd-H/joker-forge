@@ -1,3 +1,4 @@
+import { JokerData } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
 import { generateConfigVariables } from "../lib/gameVariableUtils";
@@ -5,17 +6,16 @@ import { generateConfigVariables } from "../lib/gameVariableUtils";
 export const generateFixProbabilityEffectCode = (
   effect: Effect,
   sameTypeCount: number = 0,
+  joker?: JokerData
 ): EffectReturn => {
-  const part = effect.params?.part.value || "numerator";
-
-  const variableName =
-    sameTypeCount === 0 ? "set_probability" : `set_probability${sameTypeCount + 1}`;
-
+  const part = (effect.params?.part.value as string) || "numerator";
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    'joker'
+    "set_probability",
+    sameTypeCount,
+    'joker',
+    joker
   )
 
   let statement = `

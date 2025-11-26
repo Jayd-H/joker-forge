@@ -1,15 +1,13 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateShowMessageReturn = (effect: Effect, itemType: string): EffectReturn => {
   const colour = (effect.params?.colour?.value as string) || "G.C.WHITE";
-  const scale = effect.params?.scale || 1.3;
-  const hold = effect.params?.hold || 1.4;
   const silent = (effect.params?.silent?.value as string) || "true";
   
-  const scaleCode = generateGameVariableCode(scale, itemType);
-  const holdCode = generateGameVariableCode(hold, itemType);
+  const scaleCode = generateValueCode(effect.params?.scale, itemType);
+  const holdCode = generateValueCode(effect.params?.hold, itemType);
   
   const customMessage = effect.customMessage;
 

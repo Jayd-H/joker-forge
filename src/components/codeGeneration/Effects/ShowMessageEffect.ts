@@ -6,8 +6,8 @@ export const generateShowMessageEffectCode = (
 ): EffectReturn => {
   const colour = (effect.params?.colour?.value as string) || "G.C.WHITE";
   const customMessage = effect.customMessage as string;
-  const type = effect.params?.message_type?.value as string
-  const textVar = effect.params?.text_var?.value as string
+  const type = (effect.params?.message_type?.value as string)
+  const textVar = (effect.params?.text_var?.value as string)
 
   const messageCode = customMessage ? `"${customMessage}"` : '"Message!"';
 

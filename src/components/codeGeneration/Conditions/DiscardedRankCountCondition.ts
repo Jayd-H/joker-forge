@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getRankId, type JokerData } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { parseRankVariable } from "../lib/userVariableUtils";
 
 export const generateDiscardedRankCountConditionCode = (
@@ -23,10 +23,10 @@ const generateJokerCode = (
   const triggerType = rules[0].trigger || "hand_discarded";
 
   const rankType = (condition.params?.rank_type?.value as string) || "specific";
-  const specificRank = condition.params?.specific_rank;
+  const specificRank = (condition.params?.specific_rank?.value as string);
   const rankGroup = (condition.params?.rank_group?.value as string) || null;
   const quantifier = (condition.params?.quantifier?.value as string) || "at_least_one";
-  const count = generateGameVariableCode(condition.params?.count, 'joker');
+  const count = generateValueCode(condition.params?.count, 'joker');
 
   const rankVarInfo = parseRankVariable(specificRank, joker);
 

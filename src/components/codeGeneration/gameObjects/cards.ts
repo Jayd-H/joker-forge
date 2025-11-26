@@ -192,7 +192,7 @@ const generateCalculateFunction = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions: generateValueCode(group.repetitions as string, "unknown")
+      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
     }));
 
   const globalEffectCounts = new Map<string, number>();
@@ -846,7 +846,7 @@ const generateSingleEnhancementCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions: generateValueCode(group.repetitions as string, "unknown"),
+      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -1037,7 +1037,7 @@ const generateSingleSealCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions: generateValueCode(group.repetitions as string, "unknown")
+      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -1191,7 +1191,7 @@ export const generateSingleEditionCode = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions: generateValueCode(group.repetitions as string, "unknown")
+      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
     }));
 
     const effectResult = generateEffectReturnStatement(

@@ -6,11 +6,11 @@ export const generateEditStartingSuitsEffectCode = (
   effect: Effect,
   modPrefix: string,
 ): EffectReturn => {
-  const enhancement = effect.params?.enhancement?.value || "none";
-  const seal = effect.params?.seal?.value || "none";
-  const edition = effect.params?.edition?.value || "none";
-  const selected_suit = effect.params?.selected_suit?.value || "Spades";
-  const replace_suit = effect.params?.replace_suit?.value || "none";
+  const enhancement = (effect.params?.enhancement?.value as string) || "none";
+  const seal = (effect.params?.seal?.value as string) || "none";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const selected_suit = (effect.params?.selected_suit?.value as string) || "Spades";
+  const replace_suit = (effect.params?.replace_suit?.value as string) || "none";
   
   const hasModifications = [enhancement, seal, edition, selected_suit, replace_suit].some(
     (param) => param !== "none"

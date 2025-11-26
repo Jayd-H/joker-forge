@@ -413,6 +413,16 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         default: "random",
       },
       {
+        id: "count",
+        type: "number",
+        label: "Amount of Cards to Edit",
+        default: "2",
+        showWhen: {
+          parameter: "selection_method",
+          values: ["random"]
+        }
+      },
+      {
         id: "enhancement",
         type: "select",
         label: "Enhancement Type",

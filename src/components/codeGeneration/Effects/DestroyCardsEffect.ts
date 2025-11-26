@@ -1,15 +1,14 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateDestroyCardsEffectCode = (
   effect: Effect,
   itemType: string,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "consumable":
-      return generateConsumableCode(effect, sameTypeCount)
+      return generateConsumableCode(effect)
 
     default:
       return {
@@ -21,20 +20,11 @@ export const generateDestroyCardsEffectCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   const customMessage = effect.customMessage;
   const selectionMethod = effect.params?.method?.value as string || "random"
 
-  const variableName =
-    sameTypeCount === 0 ? "destroy_count" : `destroy_count${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'count',
-    variableName,
-    'consumable',
-  )    
+  const valueCode = generateValueCode(effect.params?.count, 'consumable')
 
   switch (selectionMethod) {
     case "selected":
@@ -95,7 +85,6 @@ const generateConsumableCode = (
         delay(0.5)
         __PRE_RETURN_CODE_END__`,
       colour: "G.C.RED",
-      configVariables,
       message: customMessage ? `"${customMessage}"` : undefined   
     }
   };

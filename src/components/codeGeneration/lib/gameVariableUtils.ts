@@ -60,65 +60,21 @@ export const parseRangeVariable = (value: unknown): ParsedRangeVariable => {
 };
 
 export const generateValueCode = (
-  value: string,
-  valueType?: string,
-  isHook?: boolean,
+  item: {value: unknown, valueType?: string},
+  itemType?: string,
   object?: JokerData | EnhancementData | EditionData | SealData
 ): string => {
-  if (!value) return ''
+  if (!item.value) return ''
 
-  if (valueType === "unknown") {
-    valueType = detectValueType(value, object)
+  if (item.valueType === "unknown") {
+    item.valueType = detectValueType(item.value, object)
   }
 
-  if (valueType === "game_var") {
-    const parsedGameVar = parseGameVariable(value)
-    const gameVariable = getGameVariableById(parsedGameVar.gameVariableId!);
-    const configVarName = gameVariable?.label
-      .replace(/\s+/g, "")
-      .replace(/^([0-9])/, "_$1") // if the name starts with a number prefix it with _
-      .toLowerCase();
-    const startsFromCode = isHook ?
-        parsedGameVar.startsFrom.toString() :
-        `card.ability.extra.${configVarName}`;
-
-    if (parsedGameVar.multiplier === 1 && parsedGameVar.startsFrom === 0) {
-      return parsedGameVar.code;
-    } else if (parsedGameVar.startsFrom === 0) {
-      return `(${parsedGameVar.code}) * ${parsedGameVar.multiplier}`;
-    } else if (parsedGameVar.multiplier === 1) {
-      return `${startsFromCode} + (${parsedGameVar.code})`;
-    } else {
-      return `${startsFromCode} + (${parsedGameVar.code}) * ${parsedGameVar.multiplier}`;
-    }
-  }
-
-  if (valueType === "range_var") {
-    const parsedRangeVar = parseRangeVariable(value)
-    return `pseudorandom('${value}', ${parsedRangeVar.min}, ${parsedRangeVar.max})`;  
-  }
-
-  if (valueType === "user_var") {
-    if (object && object.userVariables && object.userVariables.some((v) => v.name === value && v.type === "suit")) {
-      return `G.GAME.current_round.${value}_card.suit`
-    }
-    if (object && object.userVariables && object.userVariables.some((v) => v.name === value && v.type === "rank")) {
-      return `G.GAME.current_round.${value}_card.id`
-    }
-    if (object && object.userVariables && object.userVariables.some((v) => v.name === value && v.type === "pokerhand")) {
-      return `G.GAME.current_round.${value}_hand`
-    }
-    return `card.ability.extra.${value}`;
-  }
-
-  return value;
-}
-
-export const generateGameVariableCode = (
-  item: {value: unknown, valueType?: string},
-  itemType: string
-): string => {
-  if (!item || !item.valueType) return "0"
+  const abilityPath = 
+    (itemType === "deck") ? "back.ability.extra" : 
+    (itemType === "seal") ? "card.ability.seal.extra" : 
+    (itemType === "edition") ? "card.ability.edition" : 
+    "card.ability.extra"
 
   if (item.valueType === "game_var") {
     const parsedGameVar = parseGameVariable(item.value as string)
@@ -130,9 +86,7 @@ export const generateGameVariableCode = (
     const startsFromCode =
       itemType === "hook"
         ? parsedGameVar.startsFrom.toString()
-        : itemType === "deck" 
-        ? `back.ability.extra.${configVarName}`
-        : `card.ability.extra.${configVarName}`;
+        : `${abilityPath}.${configVarName}`
 
     if (parsedGameVar.multiplier === 1 && parsedGameVar.startsFrom === 0) {
       return parsedGameVar.code;
@@ -146,67 +100,76 @@ export const generateGameVariableCode = (
   }
 
   if (item.valueType === "range_var") {
-    const parsedRangeVar = parseRangeVariable(item.value)
-    return `pseudorandom('${item.value as string}', ${parsedRangeVar.min}, ${parsedRangeVar.max})`;  
+    const parsedRangeVar = parseRangeVariable(item.value as string)
+    return `pseudorandom('${item.value}', ${parsedRangeVar.min}, ${parsedRangeVar.max})`;  
   }
 
   if (item.valueType === "user_var") {
-    return itemType === "deck" 
-        ? `back.ability.extra.${item.value}`
-        : `card.ability.extra.${item.value}`;;
+    if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "suit")) {
+      return `G.GAME.current_round.${item.value}_card.suit`
+    }
+    if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "rank")) {
+      return `G.GAME.current_round.${item.value}_card.id`
+    }
+    if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "pokerhand")) {
+      return `G.GAME.current_round.${item.value}_hand`
+    }
+    return `${abilityPath}.${item.value}`;
   }
 
-  return item.value as string;
-};
-
+  return (item.value as string);
+}
 
 export const generateConfigVariables = (
   effect: Effect,
   valueIndex: string,
-  variableName: string,
-  itemType: string
+  variableNameString: string,
+  sameTypeCount: number,
+  itemType: string, 
+  object?: JokerData | EnhancementData | EditionData | SealData,
 ): ConfigVariablesReturn => {
-  const effectValue: unknown = effect.params[valueIndex]?.value ?? 1
-  const effectValueType: string = effect.params[valueIndex]?.valueType ?? "text"
-  const effectId: string = effect.id
+  if (!effect.params[valueIndex]?.value) return {
+    valueCode: '', 
+    configVariables: [], 
+    isXVariable: {isGameVariable: false, isRangeVariable: false}
+  }
   
-  let abilityPath: string;
+  const effectValue: unknown = effect.params[valueIndex]?.value
+  const effectValueType: string = effect.params[valueIndex]?.valueType ?? "text"
+  const variableName = (
+    sameTypeCount !== 1 ? `${variableNameString}${sameTypeCount}` : `${variableNameString}`)
+
+  let abilityPath: string = "card.ability.extra"
+  
   if (itemType === "seal") {
     abilityPath = "card.ability.seal.extra";
   } else if (itemType === "edition") {
     abilityPath = "card.edition.extra";
   } else if (itemType === "deck") {
     abilityPath = "back.ability.extra";
-  } else {
-    abilityPath = "card.ability.extra";
   }
 
   let valueCode: string;
   const configVariables: ConfigExtraVariable[] = [];
-  if (effectValueType === 'game_var') {
-    valueCode = generateGameVariableCode(effect.params[valueIndex], itemType);
-  } else if (effectValueType === 'range_var') {
-    const seedName = `${variableName}_${effectId.substring(0, 8)}`;
-    valueCode = `pseudorandom('${seedName}', ${abilityPath}.${variableName}_min, ${abilityPath}.${variableName}_max)`;
-    const rangeParsed = parseRangeVariable(effectValue);
+  
+  valueCode = generateValueCode(effect.params[valueIndex], itemType, object);
+
+  if (effectValueType === 'range_var') {
+    const parts = valueCode.replace("RANGE:", "").split("|");
+    const min = parseFloat(parts[0] || "1");
+    const max = parseFloat(parts[1] || "5");
 
     configVariables.push(
-      { name: `${variableName}_min`, value: rangeParsed.min ?? 1 },
-      { name: `${variableName}_max`, value: rangeParsed.max ?? 5 }
+      { name: `${variableName}_min`, value: min },
+      { name: `${variableName}_max`, value: max }
     );
-  } else if (itemType === "hook") {
-    valueCode = `${effectValue}`;
-  } else if (effectValueType === "user_var") {
-    valueCode = `${abilityPath}.${effectValue}`;
-  } else if (effectValueType === "number") {
-    valueCode = `${effectValue as string}`;
+  } 
+
+  if (effectValueType === "number") {
     configVariables.push({
       name: variableName,
       value: Number(effectValue ?? 1),
     });
-  } else {
-    valueCode = `${effectValue as string}`;
-
   }
   
   return {

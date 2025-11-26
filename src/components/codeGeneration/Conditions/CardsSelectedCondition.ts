@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateCardsSelectedConditionCode = (
@@ -22,10 +22,8 @@ const generateConsumableCode = (
   const condition = rule.conditionGroups?.[0]?.conditions?.[0];
   if (!condition || condition.type !== "cards_selected") return "";
 
-  const operator = condition.params?.operator?.value as string || "greater_than";
-  const value = condition.params?.value
-
-  const valueCode = generateGameVariableCode(value, 'consumable');
+  const operator = (condition.params?.operator?.value as string) || "greater_than";
+  const valueCode = generateValueCode(condition.params?.value, 'consumable');
 
   return generateOperationCode(
     operator,

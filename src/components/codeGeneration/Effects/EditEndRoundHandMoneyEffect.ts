@@ -1,16 +1,15 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditHandsMoneyEffectCode = (
   effect: Effect,
   itemType: string,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "voucher":
     case "deck":
-      return generateVoucherAndDeckCode(effect, sameTypeCount)
+      return generateVoucherAndDeckCode(effect, itemType)
 
     default:
       return {
@@ -22,18 +21,11 @@ export const generateEditHandsMoneyEffectCode = (
 
 const generateVoucherAndDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
+  itemType: string,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0 ? "hand_dollars_value" : `hand_dollars_value${sameTypeCount + 1}`;
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, itemType)
 
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'voucher'
-  );
 
 
   let HandMoneyCode = "";
@@ -55,6 +47,5 @@ const generateVoucherAndDeckCode = (
   return {
     statement: `__PRE_RETURN_CODE__${HandMoneyCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.MONEY",
-    configVariables,
   };
 };

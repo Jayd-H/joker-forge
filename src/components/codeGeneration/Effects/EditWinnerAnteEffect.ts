@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditWinnerAnteEffectCode = (
   effect: Effect,
@@ -11,11 +11,11 @@ export const generateEditWinnerAnteEffectCode = (
   switch(itemType) {
     case "joker":
     case "voucher":
-      return generateJokerAndVoucherCode(effect, triggerType, sameTypeCount)
+      return generateJokerAndVoucherCode(effect, itemType, triggerType, sameTypeCount)
     case "consumable":
-      return generateConsumableCode(effect, sameTypeCount)
+      return generateConsumableCode(effect)
     case "deck":
-      return generateDeckCode(effect, sameTypeCount)
+      return generateDeckCode(effect)
 
     default:
       return {
@@ -27,20 +27,18 @@ export const generateEditWinnerAnteEffectCode = (
 
 const generateJokerAndVoucherCode = (
   effect: Effect,
+  itemType: string,
   triggerType: string,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "set";
-
- const variableName =
-     sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
- 
-   const { valueCode, configVariables } = generateConfigVariables(
+  const operation = (effect.params?.operation?.value as string) || "set"; 
+  const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-     variableName,
-     'joker'
-   )
+    "winner_ante_value",
+    sameTypeCount,
+    itemType,
+  )
   const customMessage = effect.customMessage ? `"${effect.customMessage}"` : undefined;
 
   let anteCode = "";
@@ -115,20 +113,10 @@ const generateJokerAndVoucherCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "set";
   const customMessage = effect.customMessage;
-
-  const variableName =
-     sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
- 
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'consumable'
-  )
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'consumable')  
 
   let EditWinCode = "";
 
@@ -219,24 +207,14 @@ const generateConsumableCode = (
   return {
     statement: EditWinCode,
     colour: "G.C.BLUE",
-    configVariables,
   };
 };
 
 const generateDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "set";
-  const variableName =
-     sameTypeCount === 0 ? "winner_ante_value" : `winner_ante_value${sameTypeCount + 1}`;
- 
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'deck'
-  )
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'deck')  
 
   let EditWinCode = "";
 
@@ -277,6 +255,5 @@ const generateDeckCode = (
   return {
     statement: `__PRE_RETURN_CODE__${EditWinCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.BLUE",
-    configVariables,
   };
 };

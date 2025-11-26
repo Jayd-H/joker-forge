@@ -30,7 +30,7 @@ const generateJokerCode = (
     (effect.params?.selection_method?.value as string) || "random";
   const jokerKey = (effect.params?.joker_key?.value as string) || "";
   const position = (effect.params?.position?.value as string) || "first";
-  const specificIndex = effect.params?.specific_index?.value as number;
+  const specificIndex = (effect.params?.specific_index?.value as number) || 1;
   const edition = (effect.params?.edition?.value as string) || "none";
   const customMessage = effect.customMessage;
   const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect"

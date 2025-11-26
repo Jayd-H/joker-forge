@@ -9,7 +9,7 @@ export const generateCreateTagEffectCode = (
   const tagType = (effect.params?.tag_type?.value as string) || "random";
   const specificTag = (effect.params?.specific_tag?.value as string) || "double";
   const customMessage = effect.customMessage;
-  const keyVar = effect.params?.variable?.value as string || "keyVar"
+  const keyVar = (effect.params?.variable?.value as string) || "keyVar"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);

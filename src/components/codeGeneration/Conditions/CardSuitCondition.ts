@@ -23,7 +23,7 @@ const generateJokerCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const triggerType = rules[0].trigger || "hand_played";
   const suitType = (condition.params?.suit_type?.value as string) || "specific";
-  const specificSuit = condition.params?.specific_suit;
+  const specificSuit = (condition.params?.specific_suit?.value);
   const suitGroup = (condition.params?.suit_group?.value as string) || null;
 
   const suitVarInfo = parseSuitVariable(specificSuit, joker);
@@ -98,8 +98,8 @@ const generateCardCode = (
   if (!condition || condition.type !== "card_suit") return "";
 
   const suitType = (condition.params?.suit_type.value as string) || "specific";
-  const specificSuit = condition.params?.specific_suit.value as string;
-  const suitGroup = condition.params?.suit_group.value as string;
+  const specificSuit = (condition.params?.specific_suit.value as string);
+  const suitGroup = (condition.params?.suit_group.value as string);
 
   if (suitType === "specific" && specificSuit) {
     return `card:is_suit("${specificSuit}")`;

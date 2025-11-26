@@ -22,7 +22,7 @@ const generateJokerCode = (
 
   const rankType = condition.params?.rank_type
   const specificRank = condition.params?.specific_rank
-  const rankGroup = condition.params?.rank_group || null;
+  const rankGroup = condition.params?.rank_group
 
   const getRanksCheckLogic = (
     ranks: string[],
@@ -61,7 +61,7 @@ const generateJokerCode = (
     } else if (typeof specificRank.value === "string") {
       ranks = [specificRank.value];
     }
-  } else if (rankType.value === "group" && rankGroup) {
+  } else if (rankType.value === "group" && rankGroup && rankGroup.value) {
     rankGroupType = rankGroup.value as string;
   }
 
@@ -103,8 +103,8 @@ const generateCardCode = (
   if (!condition || condition.type !== "card_rank") return "";
 
   const rankType = (condition.params?.rank_type.value as string) || "specific";
-  const specificRank = condition.params?.specific_rank.value as string;
-  const rankGroup = condition.params?.rank_group.value as string;
+  const specificRank = (condition.params?.specific_rank.value as string);
+  const rankGroup = (condition.params?.rank_group.value as string);
 
   if (rankType === "specific" && specificRank) {
     const rankId = getRankId(specificRank);
