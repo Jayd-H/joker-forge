@@ -800,6 +800,7 @@ function AppContent() {
           "Project Loaded",
           "Your auto-saved project has been loaded successfully!"
         );
+        localStorage.removeItem(AUTO_SAVE_KEY);
       } catch (error) {
         console.error(error)
         setShowErrorLoadingModal(true)
@@ -1066,6 +1067,7 @@ function AppContent() {
         "Project Loaded",
         "Your auto-saved project has been loaded successfully!"
       );
+      localStorage.removeItem(AUTO_SAVE_KEY);
     } catch (error) {
       console.error('ERROR: Failed to load mod data', error)
       showAlert('error', "Error", "Failed to Load Auto Save")
