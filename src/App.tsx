@@ -641,7 +641,6 @@ function AppContent() {
       };
     } catch (error) {
       console.warn("Failed to load auto-save:", error);
-      localStorage.removeItem(AUTO_SAVE_KEY);
       return null;
     }
   }, []);
@@ -787,6 +786,41 @@ function AppContent() {
     [saveToLocalStorage]
   );
 
+  const finishLoadSave = (type: string) => {
+    setHasLoadedInitialData(true)
+    setShowErrorLoadingModal(false)
+    if (type === "import") {
+      showAlert(
+        "success",
+        "Mod Imported",
+        "Your mod has been imported successfully!"
+      );
+    } else if (type === "autosave") {
+      showAlert(
+        "success",
+        "Project Loaded",
+        "Your auto-saved project has been loaded successfully!"
+      );
+    }
+    if (localStorage.getItem(AUTO_SAVE_KEY)) {
+      localStorage.removeItem(AUTO_SAVE_KEY)
+    }
+    saveToLocalStorage(
+      prevDataRef?.current?.modMetadata ?? DEFAULT_MOD_METADATA, 
+      prevDataRef?.current?.jokers ?? [],
+      prevDataRef?.current?.sounds ?? [], 
+      prevDataRef?.current?.consumables ?? [],
+      prevDataRef?.current?.customRarities ?? [], 
+      prevDataRef?.current?.consumableSets ?? [],
+      prevDataRef?.current?.boosters ?? [], 
+      prevDataRef?.current?.enhancements ?? [],
+      prevDataRef?.current?.seals ?? [], 
+      prevDataRef?.current?.editions ?? [],
+      prevDataRef?.current?.vouchers ?? [], 
+      prevDataRef?.current?.decks ?? [],
+    )  
+  }
+
   useEffect(() => {
     const loadAutoSave = async () => {
       try {
@@ -794,13 +828,7 @@ function AppContent() {
         if (savedData) {
           await handleRestoreAutoSave();
         }
-        setHasLoadedInitialData(true);
-        showAlert(
-          "success",
-          "Project Loaded",
-          "Your auto-saved project has been loaded successfully!"
-        );
-        localStorage.removeItem(AUTO_SAVE_KEY);
+        finishLoadSave("autosave")
       } catch (error) {
         console.error(error)
         setShowErrorLoadingModal(true)
@@ -1010,8 +1038,8 @@ function AppContent() {
           vouchers: normalizedData.vouchers,
           decks: normalizedData.decks,
         };
+      }
     }
-  };
 
   const showAlert = (
     type: "success" | "warning" | "error",
@@ -1056,18 +1084,12 @@ function AppContent() {
 
   const onRetryLoadAutoSave = () => {
     try {
+      if (!showErrorLoadingModal) return;
       const savedData = loadFromLocalStorage();
       if (savedData) {
         handleRestoreAutoSave();
       }
-      setHasLoadedInitialData(true);
-      setShowErrorLoadingModal(false)
-      showAlert(
-        "success",
-        "Project Loaded",
-        "Your auto-saved project has been loaded successfully!"
-      );
-      localStorage.removeItem(AUTO_SAVE_KEY);
+      finishLoadSave("autosave")
     } catch (error) {
       console.error('ERROR: Failed to load mod data', error)
       showAlert('error', "Error", "Failed to Load Auto Save")
@@ -1301,11 +1323,7 @@ const handleDiscardAndStartFresh = () => {
           vouchers: scanGameObjectKeys(scanGameObjectIds(updatedData.vouchers || [])),
           decks: scanGameObjectKeys(scanGameObjectIds(updatedData.decks || [])),
         };
-        showAlert(
-          "success",
-          "Mod Imported",
-          "Your mod has been imported successfully!"
-        );
+        finishLoadSave("import")
       }
     } catch (error) {
       console.error("JSON import failed:", error);
