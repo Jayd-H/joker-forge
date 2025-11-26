@@ -137,6 +137,7 @@ const updateEffect = (
   itemType: string,
   object: JokerData | EnhancementData | SealData | EditionData
 ) => {
+  console.log(effect)
   const oldEffectId = effect.type
   effect.type = updateEffectId(oldEffectId, itemType)
   if (Object.values(effect.params).some(value => typeof value !== "object")) {
@@ -243,42 +244,42 @@ const updateEffectParams = (
 
   switch (id) {
     case "destroy_random_cards":
-      params["method"].value = 'random'
+      params["method"] =  {value: "random", valueType: "text"}
       break
     case "destroy_selected_cards":
-      params["method"].value = 'selected'
+      params["method"] =  {value: "selected", valueType: "text"}
       break
     case "copy_triggered_card_to_hand":
     case "copy_played_card_to_hand":
-      params["add_to"].value = "hand"
+      params["add_to"] =  {value: "hand", valueType: "text"}
       break
     case "copy_triggered_card":
     case "copy_played_card":
-      params["add_to"].value = "deck"
+      params["add_to"] =  {value: "deck", valueType: "text"}
       break   
     case "edit_cards_in_hand":
-      params["selection_method"].value = "selected" 
+      params["selection_method"] =  {value: "selected", valueType: "text"}
       break
     case "add_card_to_deck":
-      params["location"].value = "deck"
+      params["location"] =  {value: "deck", valueType: "text"}
       break
     case "add_card_to_hand":
-      params["location"].value = "hand"
+      params["location"] =  {value: "hand", valueType: "text"}
       break
     case "destroy_self":
       if (itemType === "joker") {
-        params["selection_method"].value = "self"
+        params["selection_method"] = {value: "self", valueType: "text"}
       }
       break
     case "double_dollars":
-      params["max_earnings"].value = params["limit"]
-      params["limit_dollars"].value = [false, true, false, false]
+      params["max_earnings"] = {value: params["limit"], valueType: detectValueType(params["limit"])}
+      params["limit_dollars"] = {value: [false, true, false, false], valueType: "checkbox"}
       break
     case "edit_selected_joker":
-      params["target"].value = "selected_joker"
+      params["target"] = {value: "selected_joker", valueType: "context"}
       break
     case "add_dollars_from_jokers":
-      params["value"].value = "GAMEVAR:all_jokers_sell_value"
+      params["value"] = {value: "GAMEVAR:all_jokers_sell_value", valueType: "game_var"}
       break
   }
 
