@@ -139,16 +139,6 @@ export const generateConfigVariables = (
   const variableName = (
     sameTypeCount !== 1 ? `${variableNameString}${sameTypeCount}` : `${variableNameString}`)
 
-  let abilityPath: string = "card.ability.extra"
-  
-  if (itemType === "seal") {
-    abilityPath = "card.ability.seal.extra";
-  } else if (itemType === "edition") {
-    abilityPath = "card.edition.extra";
-  } else if (itemType === "deck") {
-    abilityPath = "back.ability.extra";
-  }
-
   let valueCode: string;
   const configVariables: ConfigExtraVariable[] = [];
   
