@@ -25,7 +25,7 @@ const generateJokerCode = (
   const customMessage = effect.customMessage;
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);
-  const addTo = effect.params?.add_to?.value as string || "deck"
+  const addTo = (effect.params?.add_to?.value as string) || "deck"
 
   let valueCode = `
       G.playing_card = (G.playing_card and G.playing_card + 1) or 1

@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateConsumableCountConditionCode = (
@@ -9,7 +9,7 @@ export const generateConsumableCountConditionCode = (
    const consumableType = (condition.params?.consumable_type?.value as string) || "any";
    const specificCard = (condition.params?.specific_card?.value as string) || "any";
    const operator = (condition.params?.operator?.value as string) || "equals";
-   const value = generateGameVariableCode(condition.params?.value, '');
+   const value = generateValueCode(condition.params?.value, '');
  
    const comparison = generateOperationCode(
     operator,

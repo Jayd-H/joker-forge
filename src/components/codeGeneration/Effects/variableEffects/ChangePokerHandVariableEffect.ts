@@ -6,11 +6,11 @@ export const generateChangePokerHandVariableEffectCode = (
   effect: Effect,
 ): EffectReturn => {
    const variableName =
-     (effect.params.variable_name.value as string) || "pokerhandvar";
-   const changeType = (effect.params.change_type.value as string) || "random";
+     (effect.params?.variable_name?.value as string) || "pokerhandvar";
+   const changeType = (effect.params?.change_type?.value as string) || "random";
    const specificPokerHand =
-     (effect.params.specific_pokerhand.value as string) || "High Card";
-   const pokerHandPoolActive = (effect.params.pokerhand_pool.value as Array<boolean>) || [];
+     (effect.params?.specific_pokerhand?.value as string) || "High Card";
+   const pokerHandPoolActive = (effect.params?.pokerhand_pool?.value as Array<boolean>) || [];
    const pokerHandPoolPokerHands = POKER_HANDS.map(hand => hand.value)
  
    let statement = "";

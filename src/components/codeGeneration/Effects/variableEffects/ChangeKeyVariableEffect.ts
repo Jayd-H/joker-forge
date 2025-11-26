@@ -9,20 +9,18 @@ export const generateChangeKeyVariableEffectCode = (
 ): EffectReturn => {
   const keyType = (effect.params?.key_type?.value as string) || "joker"
 
-  const variableName =
-    sameTypeCount === 0 ? "increment_count" : `increment_count${sameTypeCount + 1}`;
-
   const indexValue = effect.params[`${itemType}_change_type`]?.value === 'increment' 
     ? `${itemType}_increment_count` : ''
 
-  const { valueCode: numberCode, configVariables } = generateConfigVariables(
+  const { valueCode, configVariables } = generateConfigVariables(
     effect, 
     indexValue,
-    variableName,
-    itemType,
+    "increment_count",
+    sameTypeCount,
+    'joker',
   );
   
-  const statement = generateKeyCode(effect, keyType, numberCode)   
+  const statement = generateKeyCode(effect, keyType, valueCode)   
 
   const result: EffectReturn = {
     statement: `__PRE_RETURN_CODE__${statement}

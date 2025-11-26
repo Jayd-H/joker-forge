@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getRankId, type JokerData } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { parseRankVariable } from "../lib/userVariableUtils";
 
 export const generateDiscardedRankCountConditionCode = (
@@ -26,7 +26,7 @@ const generateJokerCode = (
   const specificRank = condition.params?.specific_rank;
   const rankGroup = (condition.params?.rank_group?.value as string) || null;
   const quantifier = (condition.params?.quantifier?.value as string) || "at_least_one";
-  const count = generateGameVariableCode(condition.params?.count, 'joker');
+  const count = generateValueCode(condition.params?.count, 'joker');
 
   const rankVarInfo = parseRankVariable(specificRank, joker);
 

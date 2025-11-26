@@ -3,8 +3,8 @@ import type { ConfigExtraVariable, EffectReturn } from "../lib/effectUtils";
 import type { EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
+  generateValueCode,
 } from "../lib/gameVariableUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
 import { parsePokerHandVariable } from "../lib/userVariableUtils";
 
 export const generateLevelUpHandEffectCode = (
@@ -36,29 +36,18 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
   triggerType: string,
-  joker?: JokerData
+  joker?: JokerData,
 ): EffectReturn => {
   const customMessage = effect?.customMessage;
-  let valueCode: string;
-  let configVariables: ConfigExtraVariable[] = [];
 
-  if (effect) {
-    const variableName =
-      sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
-
-    const ret = generateConfigVariables(
-      effect,
-      'value',
-      variableName,
-      'joker'
-    )
-
-    valueCode = ret?.valueCode
-    configVariables = ret.configVariables
-  } else {
-    valueCode = "card.ability.extra.levels";
-  }
-
+  const { valueCode, configVariables } = generateConfigVariables(
+    effect,
+    'value',
+    "levels",
+    sameTypeCount,
+    'joker',
+    joker,
+  )
 
   const customVar = parsePokerHandVariable(effect?.params?.hand_selection || "", joker)
   const targetHandVar = sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`
@@ -146,9 +135,9 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const handType = effect.params?.hand_type?.value || "Pair";
-  const levels = effect.params?.levels;
+  const handType = (effect.params?.hand_type?.value as string) || "Pair";
   const customMessage = effect.customMessage;
+  const levels = effect.params?.levels
   const pokerHandPoolActive = (effect.params.pokerhand_pool?.value as Array<boolean>) || [];
   const pokerHandPoolPokerHands = [
     "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
@@ -156,7 +145,7 @@ const generateConsumableCode = (
     "'Straight Flush'","'Five of a Kind'","'Flush Five'","'Flush House'"
   ]
 
-  const levelsCode = generateGameVariableCode(levels, '');
+  const levelsCode = generateValueCode(levels, 'consumable');
 
   let levelUpCode = "";
 
@@ -296,15 +285,13 @@ const generateCardCode = (
   card?: EditionData | EnhancementData | SealData
 ): EffectReturn => {
   const customMessage = effect?.customMessage;
-
-  const variableName =
-    sameTypeCount === 0 ? "levels" : `levels${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    card?.objectType ?? 'enhancement'
+    "levels",
+    sameTypeCount,
+    card?.objectType ?? 'enhancement',
+    card
   );
 
   const targetHandVar =

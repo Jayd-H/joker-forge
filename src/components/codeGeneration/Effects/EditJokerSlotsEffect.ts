@@ -1,13 +1,14 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
 import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
+import { JokerData } from "../../data/BalatroUtils";
 
 export const generateEditJokerSlotsPassiveEffectCode = (
   effect: Effect
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation?.value || "add";
+  const operation = (effect.params?.operation?.value as string) || "add";
 
-  const valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
+  const valueCode = generateValueCode(effect.params?.value)
   let addToDeck = "";
   let removeFromDeck = "";
 
@@ -51,11 +52,11 @@ export const generateEditJokerSlotsEffectCode = (
     case "joker":
       return generateJokerCode(effect, sameTypeCount)
     case "consumable":
-      return generateConsumableCode(effect, sameTypeCount)
+      return generateConsumableCode(effect)
     case "voucher":
-      return generateVoucherCode(effect, sameTypeCount)
+      return generateVoucherCode(effect)
     case "deck":
-      return generateDeckCode(effect, sameTypeCount)
+      return generateDeckCode(effect)
 
     default:
       return {
@@ -68,17 +69,16 @@ export const generateEditJokerSlotsEffectCode = (
 const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
+  joker?: JokerData,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-
-  const variableName =
-    sameTypeCount === 0 ? "joker_slots" : `joker_slots${sameTypeCount + 1}`;
-
+  const operation = (effect.params?.operation?.value as string) || "add";
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    'joker'
+    "joker_slots",
+    sameTypeCount,
+    'joker',
+    joker,
   )
 
   const customMessage = effect.customMessage;
@@ -139,20 +139,10 @@ const generateJokerCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'consumable')  
   const customMessage = effect.customMessage;
-
-  const variableName =
-    sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'deck'
-  );
 
   let jokerSlotsCode = "";
 
@@ -237,24 +227,14 @@ const generateConsumableCode = (
   return {
     statement: jokerSlotsCode,
     colour: "G.C.DARK_EDITION",
-    configVariables,
   };
 };
 
 const generateVoucherCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'deck'
-  );
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'voucher')  
 
   let jokerSlotsCode = "";
 
@@ -290,24 +270,14 @@ G.jokers.config.card_limit = ${valueCode}
   return {
     statement: jokerSlotsCode,
     colour: "G.C.DARK_EDITION",
-    configVariables,
   };
 };
 
 const generateDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0 ? "joker_slots_value" : `joker_slots_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'deck'
-  );
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'decj')  
 
   let jokerSlotsCode = "";
 
@@ -331,6 +301,5 @@ const generateDeckCode = (
       ${jokerSlotsCode}
     __PRE_RETURN_CODE_END__`,
     colour: "G.C.DARK_EDITION",
-    configVariables,
   };
 }

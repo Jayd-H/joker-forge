@@ -8,17 +8,14 @@ export const generateEditItemWeightEffectCode = (
   sameTypeCount: number = 0,
   type: string
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value as string || "add";
-  const key = effect.params?.key?.value as string || "";
-
-  const variableName =
-    sameTypeCount === 0 ? "item_rate" : `item${sameTypeCount + 1}`;
-
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const key = (effect.params?.key?.value as string) || "";
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    itemType
+    "item_rate",
+    sameTypeCount,
+    itemType,
   );
 
   const itemCode = type === "rarity_weight" ? `G.GAME.${key}_mod` : `G.GAME.${key}_rate`

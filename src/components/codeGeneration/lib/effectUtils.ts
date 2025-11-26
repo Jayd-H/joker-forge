@@ -822,11 +822,11 @@ export const generateSingleEffect = (
     case "create_tag":
       return generateCreateTagEffectCode(effect, triggerType)
     case "destroy_cards":
-      return generateDestroyCardsEffectCode(effect, itemType, sameTypeCount)
+      return generateDestroyCardsEffectCode(effect, itemType)
     case "destroy_playing_card":
       return generateDestroyCardEffectCode(effect, itemType, triggerType)
     case "destroy_joker":
-      return generateDestroyJokerEffectCode(effect, itemType, triggerType, sameTypeCount)
+      return generateDestroyJokerEffectCode(effect, itemType, triggerType)
     case "destroy_consumable":
       return generateDestroyConsumableEffectCode(effect, itemType, triggerType)
     case "draw_cards":
@@ -836,7 +836,7 @@ export const generateSingleEffect = (
     case "discount_items":
       return generateDiscountItemsEffectCode(effect, itemType, sameTypeCount)
     case "free_rerolls":
-      return generateFreeRerollsEffectCode(effect, itemType, sameTypeCount)
+      return generateFreeRerollsEffectCode(effect, itemType)
     case "edit_joker":
       return generateEditJokerEffectCode(effect, itemType, modprefix)
     case "edit_win_ante":
@@ -859,13 +859,13 @@ export const generateSingleEffect = (
     case "edit_consumable_slots":
       return generateEditConsumableSlotsEffectCode(effect, itemType, sameTypeCount)
     case "edit_discards_money":
-      return generateEditDiscardsMoneyEffectCode(effect, itemType, sameTypeCount)
+      return generateEditDiscardsMoneyEffectCode(effect, itemType)
     case "edit_hands_money":
-      return generateEditHandsMoneyEffectCode(effect, itemType, sameTypeCount)
+      return generateEditHandsMoneyEffectCode(effect, itemType)
     case "edit_interest_cap":
-      return generateEditInterestCapEffectCode(effect, itemType, sameTypeCount)
+      return generateEditInterestCapEffectCode(effect, itemType)
     case "edit_reroll_price":
-      return generateEditRerollPriceEffectCode(effect, itemType, sameTypeCount)
+      return generateEditRerollPriceEffectCode(effect, itemType)
     case "edit_hands": case "edit_discards": {
       const countItemType = effect.type.slice(5)
       return generateEditItemCountEffectCode(effect, itemType, sameTypeCount, countItemType)
@@ -885,7 +885,7 @@ export const generateSingleEffect = (
     case "modify_all_blinds_requirement":
       return generateModifyAllBlindsRequirementEffectCode(effect, cleanItemType)
     case "flip_joker":
-      return generateFlipJokerEffectCode(effect)
+      return generateFlipJokerEffectCode(effect, itemType)
     case "juice_up_joker":
       return generateJuiceUpEffectCode(effect, sameTypeCount, 'joker')
     case "juice_up_card":

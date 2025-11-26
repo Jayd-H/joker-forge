@@ -5,10 +5,10 @@ import { generateConfigVariables, generateValueCode } from "../lib/gameVariableU
 export const generateEditBoosterPacksPassiveEffectCode = (
   effect: Effect,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation?.value || "add";
-  const selectedType = effect.params?.selected_type?.value || "size";
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const selectedType = (effect.params?.selected_type?.value as string) || "size";
 
-  const valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
+  const valueCode = generateValueCode(effect.params?.value);
 
   let addToDeckValueCode = "";
   let removeFromDeckValueCode = "";
@@ -85,7 +85,7 @@ export const generateEditBoosterPacksEffectCode = (
       return generateJokerAndConsumableCode(effect, sameTypeCount, 'consumable')
     case "voucher":
     case "deck":
-      return generateVoucherAndDeckCode(effect, sameTypeCount)
+      return generateVoucherAndDeckCode(effect)
 
     default:
       return {
@@ -100,17 +100,15 @@ const generateJokerAndConsumableCode = (
   sameTypeCount: number = 0,
   itemType: string
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const selected_type = effect.params?.selected_type?.value || "size";
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const selected_type = (effect.params?.selected_type?.value as string) || "size";
   const customMessage = effect.customMessage;
-
-  const variableName =
-    sameTypeCount === 0 ? "booster_packs_edit" : `booster_packs_edit${sameTypeCount + 1}`;
   
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
+    "booster_packs_edit",
+    sameTypeCount,
     'joker'
   )
 
@@ -227,19 +225,11 @@ const generateJokerAndConsumableCode = (
 
 const generateVoucherAndDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   const operation = effect.params?.operation?.value || "add";
   const selected_type = effect.params?.selected_type?.value || "size";
-  const variableName =
-    sameTypeCount === 0 ? "edited_booster" : `edited_booster${sameTypeCount + 1}`;
+  const valueCode = generateValueCode(effect.params?.value, "deck")
 
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'voucher'
-  );
 
   let EditBoosterCode = "";
 
@@ -311,6 +301,5 @@ const generateVoucherAndDeckCode = (
   return {
     statement: EditBoosterCode,
     colour: "G.C.BLUE",
-    configVariables,
   };
 };

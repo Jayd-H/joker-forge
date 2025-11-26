@@ -1,17 +1,19 @@
+import { JokerData } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateFreeRerollsPassiveEffectCode = (
   effect: Effect,
+  joker?: JokerData,
 ): PassiveEffectResult => {
-  const variableName = "reroll_amount";
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    'joker'
+    "reroll_amount",
+    1,
+    'joker',
+    joker
   );
 
   return {
@@ -25,11 +27,10 @@ export const generateFreeRerollsPassiveEffectCode = (
 export const generateFreeRerollsEffectCode = (
   effect: Effect,
   itemType: string,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "voucher":
-      return generateVoucherCode(effect, sameTypeCount)
+      return generateVoucherCode(effect)
 
     default:
       return {
@@ -41,23 +42,13 @@ export const generateFreeRerollsEffectCode = (
 
 const generateVoucherCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const variableName =
-    sameTypeCount === 0 ? "rerolls_value" : `rerolls_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'voucher;'
-  );
+  const valueCode = generateValueCode(effect.params?.value, 'voucher')  
 
   const FreeRerollsCode = `SMODS.change_free_rerolls(${valueCode})`
 
   return {
     statement: FreeRerollsCode,
     colour: "G.C.DARK_EDITION",
-    configVariables
   };
 };

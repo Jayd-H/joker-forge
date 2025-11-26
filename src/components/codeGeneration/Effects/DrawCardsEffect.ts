@@ -1,8 +1,7 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
 import type { EditionData, EnhancementData, SealData } from "../../data/BalatroUtils";
-import { generateConfigVariables, } from "../lib/gameVariableUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode, } from "../lib/gameVariableUtils";
 
 export const generateDrawCardsEffectCode = (
   effect: Effect,
@@ -30,13 +29,11 @@ const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
 ): EffectReturn => {
-  const variableName =
-    sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
+    "card_draw",
+    sameTypeCount,
     'joker'
   )
 
@@ -61,7 +58,7 @@ const generateConsumableCode = (
   const value = effect.params?.value || 1;
   const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value, '');
+  const valueCode = generateValueCode(value, 'consumable');
 
   const defaultMessage = customMessage
   ? `"${customMessage}"`
@@ -94,14 +91,13 @@ const generateCardCode = (
   sameTypeCount: number = 0,
   card?: EditionData | EnhancementData | SealData,
 ): EffectReturn => {
-const variableName =
-    sameTypeCount === 0 ? "card_draw" : `card_draw${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    card?.objectType ?? "enhancement"
+    "card_draw",
+    sameTypeCount,
+    card?.objectType ?? "enhancement",
+    card,
   );
 
   const customMessage = effect.customMessage;

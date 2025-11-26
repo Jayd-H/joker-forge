@@ -28,7 +28,7 @@ export const generatePlaySoundEffectCode = (
 const generateJokerCode = (
   effect: Effect,
 ): EffectReturn => {
-  const key = effect.params.sound_key?.value as string || "";
+  const key = (effect.params?.sound_key?.value as string) || "";
 
   const customMessage = effect.customMessage
 
@@ -49,7 +49,7 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const key = effect.params.sound_key?.value as string || "";
+  const key = (effect.params?.sound_key?.value as string) || "";
 
   const customMessage = effect.customMessage
 
@@ -70,7 +70,7 @@ const generateConsumableCode = (
 const generateCardCode = (
   effect: Effect,
 ): EffectReturn => {
-  const key = effect.params.sound_key?.value as string || "";
+  const key = (effect.params?.sound_key?.value as string) || "";
 
   const customMessage = effect.customMessage
 
@@ -91,7 +91,7 @@ const generateCardCode = (
 const generateVoucherCode = (
   effect: Effect,
 ): EffectReturn => {
-  const key = effect.params.sound_key?.value as string || "";
+  const key = (effect.params?.sound_key?.value as string) || "";
 
   return {
     colour: "G.C.BLUE",
@@ -109,7 +109,7 @@ const generateVoucherCode = (
 const generateDeckCode = (
   effect: Effect,
 ): EffectReturn => {
-  const key = effect.params.sound_key?.value as string || "";
+  const key = (effect.params?.sound_key?.value as string) || "";
 
   return {
     colour: "G.C.BLUE",

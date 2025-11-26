@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getAllRarities, getModPrefix } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateJokerCountConditionCode = (
@@ -9,7 +9,7 @@ export const generateJokerCountConditionCode = (
   const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params?.operator?.value as string) || "equals";
   const rarity = (condition.params?.rarity?.value as string) || "any";
-  const value = generateGameVariableCode(condition.params?.value, '');
+  const value = generateValueCode(condition.params?.value, '');
  
   const comparison = generateOperationCode(
     operator,

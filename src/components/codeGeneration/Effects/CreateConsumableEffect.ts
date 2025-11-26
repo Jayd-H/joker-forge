@@ -1,5 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateCreateConsumableEffectCode = (
   effect: Effect,
@@ -33,7 +34,7 @@ const generateJokerCode = (
   const isNegative = (effect.params?.is_negative?.value as string) === 'y';
   const customMessage = effect.customMessage as string;
   const isSoulable = (effect.params?.soulable?.value as string) === 'y';
-  const countCode = String(effect.params?.count) || '1'
+  const countCode = generateValueCode(effect.params?.count)
   const ignoreSlots = (effect.params?.ignore_slots?.value as string) === 'y';
   const keyVar = (effect.params?.variable?.value as string)
 

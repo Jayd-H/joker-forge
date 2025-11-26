@@ -1,16 +1,15 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditRerollPriceEffectCode = (
   effect: Effect,
   itemType: string,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "voucher":
     case "deck":
-      return generateVoucherAndDeckCode(effect, sameTypeCount)
+      return generateVoucherAndDeckCode(effect, itemType)
 
     default:
       return {
@@ -22,19 +21,10 @@ export const generateEditRerollPriceEffectCode = (
 
 const generateVoucherAndDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
+  itemType: string,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  
-  const variableName =
-    sameTypeCount === 0 ? "reroll_price_value" : `reroll_price_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'voucher'
-  );
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, itemType)  
 
 
   let RelorrsCode = "";
@@ -66,6 +56,5 @@ const generateVoucherAndDeckCode = (
   return {
     statement: RelorrsCode,
     colour: "G.C.BLUE",
-    configVariables,
   };
 };

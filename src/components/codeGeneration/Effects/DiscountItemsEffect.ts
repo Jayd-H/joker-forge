@@ -10,13 +10,12 @@ export const generateDiscountItemsPassiveEffectCode = (
   const discountMethod =
     (effect.params?.discount_method?.value as string) || "make_free";
 
-  const variableName = "discount_amount";
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'discount_amount',
-    variableName,
-    "hook"
+    "discount_amount",
+    1,
+    "joker",
   );
 
   return {
@@ -74,13 +73,11 @@ const generateVoucherCode = (
 ): EffectReturn => {
   const operation = effect.params?.operation?.value as string|| "add";
 
-  const variableName =
-    sameTypeCount === 0 ? "item_prices" : `item_prices${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
+    'item_prices',
+    sameTypeCount,
     'voucher'
   );
 

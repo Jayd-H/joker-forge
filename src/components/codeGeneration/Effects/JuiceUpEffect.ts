@@ -7,16 +7,15 @@ export const generateJuiceUpEffectCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const mode = effect.params?.mode?.value || "onetime";
+  const mode = (effect.params?.mode?.value as string) || "onetime";
 
   const configVariables: ConfigExtraVariable[] = [];
 
-  const scaleVariableName =
-    sameTypeCount === 0 ? "scale" : `scale${sameTypeCount + 1}`;
   const scaleRet = generateConfigVariables(
     effect,
     'scale',
-    scaleVariableName,
+    "scale",
+    sameTypeCount,
     'joker'
   )
 
@@ -25,12 +24,11 @@ export const generateJuiceUpEffectCode = (
   })
   const scaleValueCode = scaleRet?.valueCode
 
-  const rotationVariableName =
-    sameTypeCount === 0 ? "rotation" : `rotation${sameTypeCount + 1}`;
   const rotationRet = generateConfigVariables(
     effect,
     'rotation',
-    rotationVariableName,
+    "rotation",
+    sameTypeCount,
     'joker'
   )
 

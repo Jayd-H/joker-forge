@@ -1,3 +1,4 @@
+import { EditionData, EnhancementData, JokerData, SealData } from "../../../data/BalatroUtils";
 import type { Effect } from "../../../ruleBuilder/types";
 import type { EffectReturn } from "../../lib/effectUtils";
 import { generateConfigVariables } from "../../lib/gameVariableUtils";
@@ -6,18 +7,17 @@ export const generateApplyExpMultEffectCode = (
   effect: Effect,
   itemType: string,
   sameTypeCount: number = 0,
+  object?: JokerData | EnhancementData | EditionData | SealData
 ): EffectReturn => {
-  const variableName =
-    sameTypeCount === 0 ? "emult" : `emult${sameTypeCount + 1}`;
-
-  const customMessage = effect.customMessage;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect, 
     'value',
-    variableName,
-    itemType
-  )
+    "emult",
+    sameTypeCount,
+    itemType,
+    object,
+  );
+  const customMessage = effect.customMessage;
 
   const result: EffectReturn = {
     statement: `e_mult = ${valueCode}`,

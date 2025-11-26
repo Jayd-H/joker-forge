@@ -5,10 +5,10 @@ import { SUITS } from "../../../data/BalatroUtils"
 export const generateChangeSuitVariableEffectCode = (
   effect: Effect,
 ): EffectReturn => {
-  const variableName = (effect.params.variable_name.value as string) || "suitvar";
-  const changeType = (effect.params.change_type.value as string) || "random";
-  const specificSuit = (effect.params.specific_suit.value as string) || "Spades";
-  const suitPoolActive = (effect.params.suit_pool.value as Array<boolean>) || [];
+  const variableName = (effect.params?.variable_name?.value as string) || "suitvar";
+  const changeType = (effect.params?.change_type?.value as string) || "random";
+  const specificSuit = (effect.params?.specific_suit?.value as string) || "Spades";
+  const suitPoolActive = (effect.params?.suit_pool?.value as Array<boolean>) || [];
   const suitPoolSuits = SUITS.map(suit => suit.value)
   
 

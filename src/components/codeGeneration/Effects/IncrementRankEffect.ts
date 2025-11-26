@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateIncrementRankEffectCode = (
   effect: Effect,
@@ -20,11 +20,10 @@ export const generateIncrementRankEffectCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "increment";
-  const value = effect.params?.value || 1;
+  const operation = (effect.params?.operation?.value as string) || "increment";
   const customMessage = effect.customMessage;
 
-  const valueCode = generateGameVariableCode(value, '');
+  const valueCode = generateValueCode(effect.params?.value, 'consumable');
   const actualValue = operation === "decrement" ? `-${valueCode}` : `${valueCode}`;
 
   const incrementRankCode = `

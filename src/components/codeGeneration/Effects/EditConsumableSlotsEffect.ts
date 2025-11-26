@@ -1,17 +1,21 @@
+import { JokerData } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditConsumableSlotsPassiveEffectCode = (
-  effect: Effect
+  effect: Effect,
+  joker?: JokerData,
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation?.value || "add";
+  const operation = (effect.params?.operation?.value as string) || "add";
 
-  const { valueCode, configVariables, isXVariable } = generateConfigVariables(
+  const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
     "slot_change",
-    'joker'
+    1,
+    'joker',
+    joker,
   )
 
   let addToDeck = "";
@@ -66,8 +70,6 @@ export const generateEditConsumableSlotsPassiveEffectCode = (
     addToDeck,
     removeFromDeck,
     configVariables,
-    locVars:
-      isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
   };
 };
 
@@ -81,9 +83,9 @@ export const generateEditConsumableSlotsEffectCode = (
     case "joker":
       return generateJokerCode(effect, sameTypeCount)
     case "voucher":
-      return generateVoucherCode(effect, sameTypeCount)
+      return generateVoucherCode(effect)
     case "deck":
-      return generateDeckCode(effect, sameTypeCount)
+      return generateDeckCode(effect)
 
     default:
       return {
@@ -96,18 +98,17 @@ export const generateEditConsumableSlotsEffectCode = (
 const generateJokerCode = (
   effect: Effect,
   sameTypeCount: number = 0,
+  joker?: JokerData,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0
-      ? "consumable_slots"
-      : `consumable_slots${sameTypeCount + 1}`;
+  const operation = (effect.params?.operation?.value as string) || "add";
 
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    'joker'
+    "consumable_slots",
+    sameTypeCount,
+    'joker',
+    joker
   )
 
   const customMessage = effect.customMessage;
@@ -180,18 +181,9 @@ const generateJokerCode = (
 
 const generateVoucherCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'voucher'
-  );
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'voucher')
 
   let addToDeck = "";
 
@@ -227,25 +219,15 @@ G.consumeables.config.card_limit = ${valueCode}
   return {
     statement: addToDeck,
     colour: "G.C.BLUE",
-    configVariables,
   };
 };
 
 
 const generateDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0 ? "consumable_slots_value" : `consumable_slots_value${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'deck'
-  );
+  const valueCode = generateValueCode(effect.params?.value, 'deck')
 
 
   let addToDeck = "";
@@ -264,6 +246,5 @@ const generateDeckCode = (
   return {
     statement: addToDeck,
     colour: "G.C.BLUE",
-    configVariables,
   };
 };

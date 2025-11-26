@@ -1,6 +1,6 @@
 import type { Rule } from "../../ruleBuilder/types";
 import { getRankId } from "../../data/BalatroUtils";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateDeckCountConditionCode = (
@@ -10,7 +10,7 @@ export const generateDeckCountConditionCode = (
   const propertyType =
     (condition.params?.property_type?.value as string) || "enhancement";
   const operator = (condition.params?.operator?.value as string);
-  const value = generateGameVariableCode(condition.params?.value, '');
+  const value = generateValueCode(condition.params?.value, '');
 
   let propertyCheck = "";
 

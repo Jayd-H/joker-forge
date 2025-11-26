@@ -45,7 +45,7 @@ const generateJokerCode = (
     let rankParam = "nil";
  
     if (newSuit.valueType === "user_var") {
-      suitParam = `ranks[G.GAME.current_round.${newSuit}_card.suit]`;
+      suitParam = `ranks[G.GAME.current_round.${newSuit.value}_card.suit]`;
       modificationCode += `
       local ranks = {
           [2] = '2', [3] = '3', [4] = '4', [5] = '5', [6] = '6', 
@@ -55,15 +55,15 @@ const generateJokerCode = (
     } else if (newSuit.value === "random") {
       suitParam = "pseudorandom_element(SMODS.Suits, 'edit_card_suit').key";
     } else if (newSuit.value !== "none") {
-      suitParam = `"${newSuit}"`;
+      suitParam = `"${newSuit.value}"`;
     }
 
     if (newRank.valueType === "user_var") {
-      rankParam = `G.GAME.current_round.${newRank}_card.id`;
+      rankParam = `G.GAME.current_round.${newRank.value}_card.id`;
     } else if (newRank.value === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank.value !== "none") {
-      rankParam = `"${newRank}"`;
+      rankParam = `"${newRank.value}"`;
     }
 
     modificationCode += `
@@ -86,10 +86,10 @@ const generateJokerCode = (
   } else if (newEnhancement.valueType === "user_var") {
     modificationCode += `
   
-      ${target}:set_ability(G.P_CENTERS[card.ability.extra.${newEnhancement}])`;
+      ${target}:set_ability(G.P_CENTERS[card.ability.extra.${newEnhancement.value}])`;
   } else if (newEnhancement.value !== "none") {
     modificationCode += `
-      ${target}:set_ability(G.P_CENTERS.${newEnhancement})`;
+      ${target}:set_ability(G.P_CENTERS.${newEnhancement.value})`;
   }
 
   if (newSeal.value === "remove") {
@@ -103,10 +103,10 @@ const generateJokerCode = (
       end`;
   } else if (newSeal.valueType === "user_var") {
     modificationCode += `
-      ${target}:set_seal(card.ability.extra.${newSeal}, true)`;
+      ${target}:set_seal(card.ability.extra.${newSeal.value}, true)`;
   } else if (newSeal.value !== "none") {
     modificationCode += `
-      ${target}:set_seal("${newSeal}", true)`;
+      ${target}:set_seal("${newSeal.value}", true)`;
   }
 
   if (newEdition.value === "remove") {
@@ -120,10 +120,10 @@ const generateJokerCode = (
       end`;
   } else if (newEdition.valueType === "user_var") {
     modificationCode += `
-      ${target}:set_edition(card.ability.extra.${newEdition}, true)`;
+      ${target}:set_edition(card.ability.extra.${newEdition.value}, true)`;
   }  else if (newEdition.value !== "none") {
     modificationCode += `
-      ${target}:set_edition("${newEdition}", true)`;
+      ${target}:set_edition("${newEdition.value}", true)`;
   }
 
   const scoringTriggers = ["card_scored"];

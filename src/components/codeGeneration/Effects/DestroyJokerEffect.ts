@@ -1,18 +1,17 @@
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateDestroyJokerEffectCode = (
   effect: Effect,
   itemType: string,
   triggerType: string, 
-  sameTypeCount: number = 0
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
       return generateJokerCode(effect, triggerType)
     case "consumable":
-      return generateConsumableCode(effect, sameTypeCount)
+      return generateConsumableCode(effect)
     case "card":
       return generateCardCode(effect)
 
@@ -31,7 +30,7 @@ const generateJokerCode = (
   const selectionMethod = (effect.params?.selection_method?.value as string) || "random";
   const jokerKey = (effect.params?.joker_key?.value as string) || "";
   const position = (effect.params?.position?.value as string) || "first";
-  const specificIndex = effect.params?.specific_index?.value as number;
+  const specificIndex = generateValueCode(effect.params?.specific_index, 'joker')
   
   const sellValueMultiplier = (effect.params?.sell_value_multiplier?.value as number) || 0;
   const variableName = (effect.params?.variable_name?.value as string) || "";
@@ -208,18 +207,9 @@ const generateJokerCode = (
 
 const generateConsumableCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
   const selection_method = effect.params?.selection_method?.value as string || "random";
-  const variableName =
-    sameTypeCount === 0 ? "destroy_count" : `destroy_count${sameTypeCount + 1}`;
-
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'amount',
-    variableName,
-    'consumable',
-  )      
+  const valueCode = generateValueCode(effect.params?.amount, 'consumable')
   const customMessage = effect.customMessage;
 
   let destroyJokerCode = `
@@ -289,7 +279,6 @@ const generateConsumableCode = (
   const result: EffectReturn = {
     statement: destroyJokerCode,
     colour: "G.C.RED",
-    configVariables,
   };
 
   if (customMessage) {

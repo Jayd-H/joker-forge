@@ -6,9 +6,9 @@ export const generateEditStartingRanksEffectCode = (
   effect: Effect,
   modPrefix: string,
 ): EffectReturn => {
-  const enhancement = effect.params?.enhancement?.value || "none";
-  const seal = effect.params?.seal?.value || "none";
-  const edition = effect.params?.edition?.value || "none";
+  const enhancement = (effect.params?.enhancement?.value as string) || "none";
+  const seal = (effect.params?.seal?.value as string) || "none";
+  const edition = (effect.params?.edition?.value as string) || "none";
   const specific_selected_Rank = effect.params?.specific_selected_Rank?.value as string;
   const specific_replace_Rank = effect.params?.specific_replace_Rank?.value as string;
   

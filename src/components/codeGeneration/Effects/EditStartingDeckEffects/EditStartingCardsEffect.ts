@@ -6,11 +6,11 @@ export const generateEditStartingCardsEffectCode = (
   effect: Effect,
   modPrefix: string
 ): EffectReturn => {
-  const enhancement = effect.params?.enhancement?.value || "none";
-  const seal = effect.params?.seal?.value || "none";
-  const edition = effect.params?.edition?.value || "none";
-  const suit = effect.params?.suit?.value || "none";
-  const rank = effect.params?.rank?.value || "none";
+  const enhancement = (effect.params?.enhancement?.value as string) || "none";
+  const seal = (effect.params?.seal?.value as string) || "none";
+  const edition = (effect.params?.edition?.value as string) || "none";
+  const suit = (effect.params?.suit?.value as string) || "none";
+  const rank = (effect.params?.rank?.value as string) || "none";
   const suitPoolActive = (effect.params.suit_pool?.value as Array<boolean>) || [];
   const suitPoolSuits = ["'Spades'","'Hearts'","'Diamonds'","'Clubs'"]
   const rankPoolActive = (effect.params.rank_pool?.value as Array<boolean>) || [];

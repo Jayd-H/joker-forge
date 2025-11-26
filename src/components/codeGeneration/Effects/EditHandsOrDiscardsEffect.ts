@@ -1,22 +1,24 @@
+import { JokerData } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn, PassiveEffectResult } from "../lib/effectUtils";
-import { generateConfigVariables } from "../lib/gameVariableUtils";
+import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
 
 export const generateEditItemCountPassiveEffectCode = (
   effect: Effect,
-  effectType: string
+  effectType: string,
+  joker?: JokerData
 ): PassiveEffectResult => {
-  const operation = effect.params?.operation?.value || "add";
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const typeData = generateEffectTypeData(effectType)
 
-  const variableName = "hand_change";
-  
-  const { valueCode, configVariables, isXVariable } = generateConfigVariables(
+  const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
-    'joker'
+    `${typeData.mainCode}_change`,
+    1,
+    'joker',
+    joker,
   )
-  const typeData = generateEffectTypeData(effectType)
 
   let addToDeck = "";
   let removeFromDeck = "";
@@ -47,8 +49,6 @@ export const generateEditItemCountPassiveEffectCode = (
     addToDeck,
     removeFromDeck,
     configVariables,
-    locVars:
-      isXVariable.isGameVariable || isXVariable.isRangeVariable ? [] : [valueCode],
   };
 };
 
@@ -64,7 +64,7 @@ export const generateEditItemCountEffectCode = (
     case "voucher":
       return generateJokerConsumableVoucherCode(effect, itemType, sameTypeCount, effectType)
     case "deck":
-      return generateDeckCode(effect, sameTypeCount)
+      return generateDeckCode(effect)
 
     default:
       return {
@@ -105,13 +105,11 @@ const generateJokerConsumableVoucherCode = (
 
   const typeData = generateEffectTypeData(effectType)
 
-  const variableName =
-    sameTypeCount === 0 ? typeData.mainCode : `${typeData.mainCode}${sameTypeCount + 1}`;
-
   const { valueCode, configVariables } = generateConfigVariables(
     effect,
     'value',
-    variableName,
+    typeData.mainCode,
+    sameTypeCount,
     itemType,
   )
 
@@ -215,18 +213,10 @@ const generateJokerConsumableVoucherCode = (
 
 const generateDeckCode = (
   effect: Effect,
-  sameTypeCount: number = 0
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const variableName =
-    sameTypeCount === 0 ? "hands_value" : `hands_value${sameTypeCount + 1}`;
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const valueCode = generateValueCode(effect.params?.value, 'deck')
 
-  const { valueCode, configVariables } = generateConfigVariables(
-    effect,
-    'value',
-    variableName,
-    'deck'
-  );
 
   let editHandCode = "";
 
@@ -247,6 +237,5 @@ const generateDeckCode = (
   return {
     statement: `__PRE_RETURN_CODE__${editHandCode}__PRE_RETURN_CODE_END__`,
     colour: "G.C.GREEN",
-    configVariables,
   };
 };

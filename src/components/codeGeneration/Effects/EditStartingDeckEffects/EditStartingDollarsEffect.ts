@@ -7,7 +7,7 @@ export const generateEditStartingDollarsEffectCode = (
 ): EffectReturn => {
   const operation = effect.params?.operation?.value || "add";
 
-  const valueCode = generateValueCode(effect.params?.value?.value as string, effect.params?.value?.valueType);
+  const valueCode = generateValueCode(effect.params?.value, "deck");
 
   let dollarsCode = "";
 

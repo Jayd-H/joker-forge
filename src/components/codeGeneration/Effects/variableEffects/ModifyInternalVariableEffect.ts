@@ -6,11 +6,11 @@ export const generateModifyInternalVariableEffectCode = (
   effect: Effect,
   triggerType: string, 
 ): EffectReturn => {
-  const variableName = (effect.params?.variable_name.value as string) || "var1";
-  const operation = (effect.params?.operation.value as string) || "increment";
-  const indexMethod = effect.params?.index_method.value || "self"
+  const variableName = (effect.params?.variable_name?.value as string) || "var1";
+  const operation = (effect.params?.operation?.value as string) || "increment";
+  const indexMethod = effect.params?.index_method?.value || "self"
 
-  const valueCode = generateValueCode(effect.params?.value.value as string, effect.params?.value.valueType)
+  const valueCode = generateValueCode(effect.params?.value)
 
   const customMessage = effect.customMessage;
 

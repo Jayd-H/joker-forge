@@ -29,8 +29,8 @@ const convertRandomGroupsForCodegen = (
 ) => {
   return randomGroups.map((group) => ({
     ...group,
-    chance_numerator:generateValueCode(group.chance_numerator as string, "unknown"),
-    chance_denominator:generateValueCode(group.chance_denominator as string, "unknown")
+    chance_numerator:generateValueCode({value: group.chance_numerator, valueType: "unknown"}),
+    chance_denominator:generateValueCode({value: group.chance_denominator, valueType: "unknown"})
   }));
 };
 
@@ -39,7 +39,7 @@ const convertLoopGroupsForCodegen = (
 ) => {
   return loopGroups.map((group) => ({
     ...group,
-    repetitions: generateValueCode(group.repetitions as string, "unknown"),
+    repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
   }));
 };
 
@@ -383,7 +383,7 @@ const generateCalculateFunction = (
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions: generateValueCode(group.repetitions as string, "unknown"),
+      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
     }));
 
     const effectResult = generateEffectReturnStatement(

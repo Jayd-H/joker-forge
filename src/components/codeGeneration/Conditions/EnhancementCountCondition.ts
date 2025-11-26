@@ -1,5 +1,5 @@
 import type { Rule } from "../../ruleBuilder/types";
-import { generateGameVariableCode } from "../lib/gameVariableUtils";
+import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateOperationCode } from "../lib/operationUtils";
 
 export const generateEnhancementCountConditionCode = (
@@ -18,7 +18,7 @@ const generateJokerCode = (
 ): string | null => {
  const condition = rules[0].conditionGroups[0].conditions[0];
   const operator = (condition.params?.operator?.value as string) || "equals";
-  const value = generateGameVariableCode(condition.params?.value, 'joker');
+  const value = generateValueCode(condition.params?.value, 'joker');
   const scope = (condition.params?.card_scope?.value as string) || "scoring";
 
   let propertyCheck = "";
