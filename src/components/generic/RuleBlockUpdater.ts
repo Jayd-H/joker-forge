@@ -200,8 +200,8 @@ const updateEffectId = (
       return "apply_hyper_mult"
     case "add_hyper_chips":
       return "apply_hyper_chips"
-    case "retrigger_card":
-      return "retrigger_cards"
+    case "retrigger_card": case "retrigger_cards":
+      return "retrigger_playing_card"
     case "destroy_card":
       return "destroy_playing_card"
     case "perma_bonus":

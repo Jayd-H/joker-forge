@@ -103,21 +103,21 @@ export const generateValueCode = (
     const parsedRangeVar = parseRangeVariable(item.value as string)
     return `pseudorandom('${item.value}', ${parsedRangeVar.min}, ${parsedRangeVar.max})`;  
   }
-
   if (item.valueType === "user_var") {
+    const value = item.value as {value: unknown, valueType: string}
+
     if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "suit")) {
-      return `G.GAME.current_round.${item.value}_card.suit`
+      return `G.GAME.current_round.${value.value}_card.suit`
     }
     if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "rank")) {
-      return `G.GAME.current_round.${item.value}_card.id`
+      return `G.GAME.current_round.${value.value}_card.id`
     }
     if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "pokerhand")) {
-      return `G.GAME.current_round.${item.value}_hand`
+      return `G.GAME.current_round.${value.value}_hand`
     }
-    return `${abilityPath}.${item.value}`;
+    return `${abilityPath}.${value.value}`;
   }
-
-  return (item.value as string);
+  return (`${item.value}` as string);
 }
 
 export const generateConfigVariables = (
@@ -142,8 +142,7 @@ export const generateConfigVariables = (
   let valueCode: string;
   const configVariables: ConfigExtraVariable[] = [];
   
-  valueCode = generateValueCode(effect.params[valueIndex], itemType, object);
-
+  valueCode = generateValueCode(effect.params[valueIndex], itemType, object) as string;
   if (effectValueType === 'range_var') {
     const parts = valueCode.replace("RANGE:", "").split("|");
     const min = parseFloat(parts[0] || "1");
