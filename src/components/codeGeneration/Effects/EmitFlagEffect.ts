@@ -3,6 +3,58 @@ import { EffectReturn } from "../lib/effectUtils";
 
 export const generateEmitFlagEffectCode = (
   effect: Effect,
+  itemType: string,
+  modPrefix: string,
+): EffectReturn => {
+  switch(itemType) {
+    case "joker":
+      return generateJokerCode(effect, modPrefix)
+    case "consumable":
+      return generateConsumableCode(effect, modPrefix)
+    case "voucher":
+      return generateVoucherCode(effect, modPrefix)
+    case "deck":
+      return generateDeckCode(effect, modPrefix)
+
+    default:
+      return {
+        statement: "",
+        colour: "G.C.WHITE",
+      };
+  }
+}
+
+export const generateJokerCode = (
+  effect: Effect,
+  modprefix: string
+): EffectReturn => {
+  const flagName = (effect.params?.flag_name?.value as string) || "custom_flag";
+  const change = (effect.params?.change?.value as string) || "true";
+  const customMessage = effect.customMessage;
+
+  const safeFlagName = flagName.trim().replace(/[^a-zA-Z0-9_]/g, '_'); // replace non-alphanumeric charactes with underscore
+  const changeCode = change === "invert" ? `not (G.GAME.pool_flags.${modprefix}_${safeFlagName} or false)` : change
+
+  return {
+    statement: `
+            __PRE_RETURN_CODE__
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    card:juice_up(0.3, 0.5)
+                    card_eval_status_text(card, 'extra', nil, nil, nil, {message = "${customMessage ?? safeFlagName}", colour = G.C.BLUE})
+                    G.GAME.pool_flags.${modprefix}_${safeFlagName} = ${changeCode}
+                    return true
+                end
+            }))
+            __PRE_RETURN_CODE_END__`,
+    colour: "G.C.BLUE"
+  }
+};
+
+export const generateConsumableCode = (
+  effect: Effect,
   modprefix: string
 ): EffectReturn => {
   const flagName = (effect.params?.flag_name?.value as string) || "custom_flag";
@@ -27,6 +79,62 @@ export const generateEmitFlagEffectCode = (
                 end
             }))
             delay(0.6)
+            __PRE_RETURN_CODE_END__`,
+    colour: "G.C.BLUE"
+  }
+};
+
+export const generateVoucherCode = (
+  effect: Effect,
+  modprefix: string
+): EffectReturn => {
+  const flagName = (effect.params?.flag_name?.value as string) || "custom_flag";
+  const change = (effect.params?.change?.value as string) || "true";
+  const customMessage = effect.customMessage;
+
+  const safeFlagName = flagName.trim().replace(/[^a-zA-Z0-9_]/g, '_'); // replace non-alphanumeric charactes with underscore
+  const changeCode = change === "invert" ? `not (G.GAME.pool_flags.${modprefix}_${safeFlagName} or false)` : change
+
+  return {
+    statement: `
+            __PRE_RETURN_CODE__
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    card_eval_status_text(card, 'extra', nil, nil, nil, {message = "${customMessage ?? safeFlagName}", colour = G.C.BLUE})
+                    G.GAME.pool_flags.${modprefix}_${safeFlagName} = ${changeCode}
+                    return true
+                end
+            }))
+            __PRE_RETURN_CODE_END__`,
+    colour: "G.C.BLUE"
+  }
+};
+
+export const generateDeckCode = (
+  effect: Effect,
+  modprefix: string
+): EffectReturn => {
+  const flagName = (effect.params?.flag_name?.value as string) || "custom_flag";
+  const change = (effect.params?.change?.value as string) || "true";
+  const customMessage = effect.customMessage;
+
+  const safeFlagName = flagName.trim().replace(/[^a-zA-Z0-9_]/g, '_'); // replace non-alphanumeric charactes with underscore
+  const changeCode = change === "invert" ? `not (G.GAME.pool_flags.${modprefix}_${safeFlagName} or false)` : change
+
+  return {
+    statement: `
+            __PRE_RETURN_CODE__
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    card_eval_status_text(self, 'extra', nil, nil, nil, {message = "${customMessage ?? safeFlagName}", colour = G.C.BLUE})
+                    G.GAME.pool_flags.${modprefix}_${safeFlagName} = ${changeCode}
+                    return true
+                end
+            }))
             __PRE_RETURN_CODE_END__`,
     colour: "G.C.BLUE"
   }

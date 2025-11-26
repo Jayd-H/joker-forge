@@ -915,8 +915,8 @@ export const generateSingleEffect = (
     case "set_ante":
       return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "emit_flag":
-      return generateEmitFlagEffectCode(effect, modprefix);
-    case "win_blind":
+      return generateEmitFlagEffectCode(effect, modprefix, itemType);
+    case "beat_current_blind":
       return generateWinBlindEffectCode(effect)
     case "unlock_joker":
       return generateUnlockJokerEffectCode(effect)
