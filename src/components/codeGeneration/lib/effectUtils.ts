@@ -392,7 +392,7 @@ export function generateEffectReturnStatement(
 
       const isRetriggerEffect = (effect: EffectReturn): boolean => {
         return (
-          effect.effectType === "retrigger_cards" ||
+          effect.effectType === "retrigger_playing_card" ||
           (effect.statement
             ? effect.statement.includes("repetitions") ||
               effect.statement.includes("repetition")
@@ -649,7 +649,7 @@ export function generateEffectReturnStatement(
 
       const isRetriggerEffect = (effect: EffectReturn): boolean => {
         return (
-          effect.effectType === "retrigger_cards" ||
+          effect.effectType === "retrigger_playing_card" ||
           (effect.statement
             ? effect.statement.includes("repetitions") ||
               effect.statement.includes("repetition")
@@ -906,7 +906,7 @@ export const generateSingleEffect = (
       return generatePlaySoundEffectCode(effect, itemType)
     case "redeem_voucher":
       return generateRedeemVoucherEffectCode(effect)
-    case "retrigger":
+    case "retrigger_playing_card":
       return generateRetriggerEffectCode(effect, itemType, sameTypeCount, card)
     case "set_sell_value":
       return generateSetSellValueEffectCode(effect, itemType, triggerType, sameTypeCount)

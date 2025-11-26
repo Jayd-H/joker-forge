@@ -4,7 +4,7 @@ import { GENERIC_TRIGGERS } from "../Conditions";
 
 export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
   {
-    id: "retrigger_cards",
+    id: "retrigger_playing_card",
     label: "Retrigger",
     description: "Retrigger the scored/activated card",
     objectUsers: ["joker", "card"],
