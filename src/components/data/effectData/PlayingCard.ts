@@ -85,7 +85,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition",
-        options: [
+        options: () => [
           { value: "none", label: "None" },
           { value: "random", label: "Random" },
           ...EDITIONS()
@@ -180,7 +180,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition Type",
-        options: [
+        options: () => [
           { value: "none", label: "No Edition" },
           { value: "random", label: "Random Edition" },
           ...EDITIONS()
@@ -306,7 +306,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition Type",
-        options: [
+        options: () => [
           { value: "none", label: "Keep Original Edition" },
           { value: "remove", label: "Remove Edition" },
           { value: "random", label: "Random Edition" },
@@ -383,7 +383,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "new_edition",
         type: "select",
         label: "New Edition",
-        options: [
+        options: () => [
           { value: "none", label: "Don't Change" },
           { value: "remove", label: "Remove Edition" },
           { value: "random", label: "Random" },
@@ -450,7 +450,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "edition",
         type: "select",
         label: "Edition Type",
-        options: [
+        options: () => [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Edition" },
           { value: "random", label: "Random Edition" },
