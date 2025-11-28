@@ -922,7 +922,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
               {availableVariables && availableVariables.length > 0 ? (
                 <InputDropdown
                   value={(value as string) || ""}
-                  onChange={(newValue) => onChange({value: newValue, valueType: 'user_var'})}
+                  onChange={(newValue) => onChange(newValue)}
                   options={availableVariables}
                   placeholder="Select variable"
                   className="bg-black-dark"
@@ -1083,6 +1083,7 @@ const Inspector: React.FC<InspectorProps> = ({
       valueType: 'user_var'
     })
   );
+  console.log(availableVariables)
 
   const handleCreateVariable = (name: string, initialValue: number) => {
     const validation = validateVariableName(name);

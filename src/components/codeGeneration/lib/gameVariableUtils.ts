@@ -64,7 +64,7 @@ export const generateValueCode = (
   itemType?: string,
   object?: JokerData | EnhancementData | EditionData | SealData
 ): string => {
-  if (!item.value) return ''
+  if (!item || !item.value) return ''
 
   if (item.valueType === "unknown") {
     item.valueType = detectValueType(item.value, object)
