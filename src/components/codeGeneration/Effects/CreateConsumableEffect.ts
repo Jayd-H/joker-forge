@@ -392,7 +392,7 @@ const generateDeckCode = (
   const specificCard = (effect.params?.specific_card?.value as string) || "random";
   const isNegative = (effect.params?.is_negative?.value as string) === 'y';
   const isSoulable = (effect.params?.soulable?.value as string) === 'y';
-  const countCode = String(effect.params?.count) || '1'
+  const countCode = generateValueCode(effect.params?.count, "deck")
   const ignoreSlots = (effect.params?.ignore_slots?.value as string) === 'y';
 
 
