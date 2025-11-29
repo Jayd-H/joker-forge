@@ -1083,7 +1083,6 @@ const Inspector: React.FC<InspectorProps> = ({
       valueType: 'user_var'
     })
   );
-  console.log(availableVariables)
 
   const handleCreateVariable = (name: string, initialValue: number) => {
     const validation = validateVariableName(name);

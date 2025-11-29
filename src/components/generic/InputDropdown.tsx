@@ -110,8 +110,7 @@ useEffect(() => {
 
   const selectedOption = options.find((option) => option.value === value);
   const displayText = selectedOption ? selectedOption.label : placeholder;
-  console.log(selectedOption)
-  console.log(displayText)
+  
   const getSeparatorColor = () => {
     if (error) return "bg-balatro-red";
     if (isFocused || isOpen) return "bg-mint";
