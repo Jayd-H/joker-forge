@@ -102,7 +102,7 @@ const generateJokerCode = (
       new_card:set_edition(card.ability.extra.${edition.value}, true)`;
   } else if (edition.value !== "none") {
     editionCode = `
-      new_card:set_edition("${edition.value}", true)`;
+      new_card:set_edition("${(edition.value as string).startsWith('e_') ? edition.value : `e_${edition.value}`}", true)`;
   }
   
   if (location === "deck") {
