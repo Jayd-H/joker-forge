@@ -10,11 +10,11 @@ import {
 } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { ConfigExtraVariable, generateEffectReturnStatement } from "../lib/effectUtils";
-import { generateValueCode } from "../lib/gameVariableUtils";
 import type { Rule, Effect } from "../../ruleBuilder/types";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import { applyIndents } from "./jokers";
 import { extractGameVariablesFromRules, getAllVariables } from "../lib/userVariableUtils";
+import { convertLoopGroupsForCodegen, convertRandomGroupsForCodegen } from "../lib/groupUtils";
 
 interface EnhancementGenerationOptions {
   modPrefix?: string;
@@ -181,19 +181,8 @@ const generateCalculateFunction = (
     }
 
     const regularEffects = rule.effects || [];
-    const randomGroups = (rule.randomGroups || []).map((group) => ({
-      ...group,
-      chance_numerator:
-        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
-      chance_denominator:
-        typeof group.chance_denominator === "string"
-          ? 1
-          : group.chance_denominator,
-    }));
-    const loopGroups = (rule.loops || []).map((group) => ({
-      ...group,
-      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
-    }));
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || [])
 
   const globalEffectCounts = new Map<string, number>();
 
@@ -835,19 +824,8 @@ const generateSingleEnhancementCode = (
 
   conditionalRules.forEach((rule) => {
     const regularEffects = rule.effects || [];
-    const randomGroups = (rule.randomGroups || []).map((group) => ({
-      ...group,
-      chance_numerator:
-        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
-      chance_denominator:
-        typeof group.chance_denominator === "string"
-          ? 1
-          : group.chance_denominator,
-    }));
-    const loopGroups = (rule.loops || []).map((group) => ({
-      ...group,
-      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
-    }));
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || [])
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
@@ -1026,19 +1004,8 @@ const generateSingleSealCode = (
 
   activeRules.forEach((rule) => {
     const regularEffects = rule.effects || [];
-    const randomGroups = (rule.randomGroups || []).map((group) => ({
-      ...group,
-      chance_numerator:
-        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
-      chance_denominator:
-        typeof group.chance_denominator === "string"
-          ? 1
-          : group.chance_denominator,
-    }));
-    const loopGroups = (rule.loops || []).map((group) => ({
-      ...group,
-      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
-    }));
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || [])
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
@@ -1180,19 +1147,8 @@ export const generateSingleEditionCode = (
 
   activeRules.forEach((rule) => {
     const regularEffects = rule.effects || [];
-    const randomGroups = (rule.randomGroups || []).map((group) => ({
-      ...group,
-      chance_numerator:
-        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
-      chance_denominator:
-        typeof group.chance_denominator === "string"
-          ? 1
-          : group.chance_denominator,
-    }));
-    const loopGroups = (rule.loops || []).map((group) => ({
-      ...group,
-      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
-    }));
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || [])
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,

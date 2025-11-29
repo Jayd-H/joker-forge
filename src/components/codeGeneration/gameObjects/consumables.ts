@@ -3,11 +3,11 @@ import { ConsumableSetData } from "../../data/BalatroUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { generateEffectReturnStatement } from "../lib/effectUtils";
 import { slugify } from "../../data/BalatroUtils";
-import { generateValueCode } from "../lib/gameVariableUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
 import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
 import { applyIndents } from "./jokers";
+import { convertLoopGroupsForCodegen, convertRandomGroupsForCodegen } from "../lib/groupUtils";
 
 interface ConsumableGenerationOptions {
   modPrefix?: string;
@@ -21,25 +21,6 @@ const ensureConsumableKeys = (
   return consumables.map((consumable) => ({
     ...consumable,
     objectKey: consumable.objectKey || slugify(consumable.name),
-  }));
-};
-
-const convertRandomGroupsForCodegen = (
-  randomGroups: import("../../ruleBuilder/types").RandomGroup[]
-) => {
-  return randomGroups.map((group) => ({
-    ...group,
-    chance_numerator:generateValueCode({value: group.chance_numerator, valueType: "unknown"}),
-    chance_denominator:generateValueCode({value: group.chance_denominator, valueType: "unknown"})
-  }));
-};
-
-const convertLoopGroupsForCodegen = (
-  loopGroups: import("../../ruleBuilder/types").LoopGroup[]
-) => {
-  return loopGroups.map((group) => ({
-    ...group,
-    repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
   }));
 };
 
@@ -374,16 +355,18 @@ const generateCalculateFunction = (
     const regularEffects = rule.effects || [];
     const randomGroups = (rule.randomGroups || []).map((group) => ({
       ...group,
-      chance_numerator:
-        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
-      chance_denominator:
-        typeof group.chance_denominator === "string"
-          ? 1
-          : group.chance_denominator,
+      chance_numerator: {
+        value: typeof group.chance_numerator.value === "string" ? 1 : group.chance_numerator.value,
+        valueType: group.chance_numerator.valueType
+      },
+      chance_denominator: {
+        value: typeof group.chance_denominator.value === "string" ? 1 : group.chance_denominator.value,
+        valueType: group.chance_denominator.valueType
+      }
     }));
     const loopGroups = (rule.loops || []).map((group) => ({
       ...group,
-      repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
+      repetitions: group.repetitions
     }));
 
     const effectResult = generateEffectReturnStatement(
@@ -694,7 +677,7 @@ const generateLocVarsFunction = (
       const probabilityVars: string[] = [];
       denominators.forEach((index) => {
         const varName =
-          index === 0
+          index.value === 0
             ? "card.ability.extra.odds"
             : `card.ability.extra.odds${Number(index) + 1}`;
         probabilityVars.push(varName);

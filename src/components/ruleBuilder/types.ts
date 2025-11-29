@@ -13,8 +13,8 @@ export interface Rule {
 // A group of effects with shared random chance
 export interface RandomGroup {
   id: string;
-  chance_numerator: number | string;
-  chance_denominator: number | string;
+  chance_numerator: {value: number | string, valueType?: string};
+  chance_denominator: {value: number | string, valueType?: string};
   respect_probability_effects: boolean;
   custom_key: string;
   effects: Effect[];
@@ -22,7 +22,7 @@ export interface RandomGroup {
 
 export interface LoopGroup {
   id: string;
-  repetitions: number | string;
+  repetitions: {value: number | string, valueType?: string};
   effects: Effect[];
 }
 

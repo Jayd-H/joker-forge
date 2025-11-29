@@ -6,8 +6,8 @@ import { extractGameVariablesFromRules } from "../lib/userVariableUtils";
 // import { generateUnlockVoucherFunction } from "../lib/unlockUtils";
 import { generateTriggerContext } from "../lib/triggerUtils";
 import type { Rule } from "../../ruleBuilder/types";
-import { generateValueCode } from "../lib/gameVariableUtils";
 import { applyIndents } from "./jokers";
+import { convertLoopGroupsForCodegen, convertRandomGroupsForCodegen } from "../lib/groupUtils";
 
 interface VoucherGenerationOptions {
   modPrefix?: string;
@@ -20,25 +20,6 @@ const ensureVoucherKeys = (
   return vouchers.map((voucher) => ({
     ...voucher,
     voucherKey: voucher.objectKey || slugify(voucher.name),
-  }));
-};
-
-const convertRandomGroupsForCodegen = (
-  randomGroups: import("../../ruleBuilder/types").RandomGroup[]
-) => {
-  return randomGroups.map((group) => ({
-    ...group,
-    chance_numerator:generateValueCode({value: group.chance_numerator, valueType: "unknown"}),
-    chance_denominator:generateValueCode({value: group.chance_denominator, valueType: "unknown"})
-  }));
-};
-
-const convertLoopGroupsForCodegen = (
-  loopGroups: import("../../ruleBuilder/types").LoopGroup[]
-) => {
-  return loopGroups.map((group) => ({
-    ...group,
-    repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
   }));
 };
 
@@ -113,19 +94,8 @@ const generateCalculateFunction = (
     }
 
     const regularEffects = rule.effects || [];
-    const randomGroups = (rule.randomGroups || []).map((group) => ({
-      ...group,
-      chance_numerator:
-        typeof group.chance_numerator === "string" ? 1 : group.chance_numerator,
-      chance_denominator:
-        typeof group.chance_denominator === "string"
-          ? 1
-          : group.chance_denominator,
-    }));
-    const loopGroups = (rule.loops || []).map((group) => ({
-      ...group,
-    repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"}),
-    }));
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || [])
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
@@ -540,7 +510,7 @@ const generateLocVarsFunction = (
       const probabilityVars: string[] = [];
       denominators.forEach((index) => {
         const varName =
-          index === 0
+          index.value === 0
             ? "card.ability.extra.odds"
             : `card.ability.extra.odds${Number(index) + 1}`;
         probabilityVars.push(varName);

@@ -4,18 +4,19 @@ import { generateValueCode } from "../../lib/gameVariableUtils";
 
 export const generateModifyInternalVariableEffectCode = (
   effect: Effect,
+  itemType: string,
   triggerType: string, 
 ): EffectReturn => {
   const variableName = (effect.params?.variable_name?.value as string) || "var1";
   const operation = (effect.params?.operation?.value as string) || "increment";
-  const indexMethod = effect.params?.index_method?.value || "self"
+  const indexMethod = (effect.params?.index_method?.value as string) || "self"
 
-  const valueCode = generateValueCode(effect.params?.value)
+  const valueCode = generateValueCode(effect.params?.value, itemType)
 
   const customMessage = effect.customMessage;
 
   const searchKey = (effect.params?.joker_key.value as string) || "j_joker"
-  const searchVar = (effect.params?.joker_variable.value) || "jokerVar"
+  const searchVar = (effect.params?.joker_variable?.value as string) || "jokerVar"
 
   const scoringTriggers = ["hand_played", "card_scored"];
   const isScoring = scoringTriggers.includes(triggerType);

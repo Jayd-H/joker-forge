@@ -19,7 +19,7 @@ import {
   RarityData
 } from "../../data/BalatroUtils";
 import { generateUnlockJokerFunction } from "../lib/unlockUtils";
-import { generateConfigVariables, generateValueCode } from "../lib/gameVariableUtils";
+import { generateConfigVariables } from "../lib/gameVariableUtils";
 import { generateConditionChain } from "../lib/conditionUtils";
 import { Rule } from "../../ruleBuilder";
 import { generateTriggerContext } from "../lib/triggerUtils";
@@ -29,6 +29,7 @@ import { generateShortcutHook } from "../Hooks/ShortcutHook";
 import { generateShowmanHook } from "../Hooks/ShowmanHook";
 import { generateCombineRanksHook } from "../Hooks/CombineRanksHook";
 import { generateCombineSuitsHook } from "../Hooks/CombineSuitsHook";
+import { convertLoopGroupsForCodegen, convertRandomGroupsForCodegen } from "../lib/groupUtils";
 
 
 
@@ -77,25 +78,6 @@ ${hookCode}`;
   });
 
   return { jokersCode, hooks: "" };
-};
-
-export const convertRandomGroupsForCodegen = (
-  randomGroups: import("../../ruleBuilder/types").RandomGroup[]
-) => {
-  return randomGroups.map((group) => ({
-    ...group,
-    chance_numerator: generateValueCode({value: group.chance_numerator, valueType: "unknown"}),
-    chance_denominator: generateValueCode({value: group.chance_denominator, valueType: "unknown"})
-  }));
-};
-
-export const convertLoopGroupsForCodegen = (
-  loopGroups: import("../../ruleBuilder/types").LoopGroup[]
-) => {
-  return loopGroups.map((group) => ({
-    ...group,
-    repetitions: generateValueCode({value: group.repetitions, valueType: "unknown"})
-  }));
 };
 
 export const generateCustomRaritiesCode = (

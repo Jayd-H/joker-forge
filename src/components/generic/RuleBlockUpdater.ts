@@ -1,7 +1,8 @@
 import { ConsumableData, DeckData, EditionData, EnhancementData, JokerData, SealData, VoucherData } from "../data/BalatroUtils";
 import { getConditionTypeById } from "../data/Conditions";
 import { getEffectTypeById } from "../data/Effects";
-import { Condition, Effect, Rule } from "../ruleBuilder";
+import { Condition, Effect, RandomGroup, Rule } from "../ruleBuilder";
+import { LoopGroup } from "../ruleBuilder/types";
 
 export const updateRuleBlocks = (
   jokers: JokerData[],
@@ -30,11 +31,15 @@ export const updateRuleBlocks = (
 
       (rule.randomGroups || []).forEach(group => {group.effects.map(effect =>
         updateEffect(effect, item.objectType, item)
-      )});
+      )
+      updateRandomGroup(group, item)
+    });
 
       (rule.loops || []).forEach(group => {group.effects.map(effect =>
         updateEffect(effect, item.objectType, item)
-      )});
+      )
+      updateLoopGroup(group, item)
+    });
 
 
     })})
@@ -127,6 +132,10 @@ const updateConditionParams = (
       value: params[key]?.value ?? param?.default,
       valueType: params[key]?.valueType ?? detectValueType(param?.default, object)
     }       
+  })
+
+  Object.keys(params).forEach((key) => {
+    params[key].valueType = (params[key].valueType || "unknown").toLowerCase()
   })
 
   return params
@@ -281,7 +290,6 @@ const updateEffectParams = (
       params["value"] = {value: "GAMEVAR:all_jokers_sell_value", valueType: "game_var"}
       break
   }
-
   return params
 }
 
@@ -308,10 +316,45 @@ const updateMissingEffectParams = (
       valueType: params[key]?.valueType ?? detectValueType(param?.default, object)
     } 
   })
+  
+  Object.keys(params).forEach((key) => {
+    params[key].valueType = (params[key].valueType || "unknown").toLowerCase()
+  })
 
   return params
 }
 
+const updateRandomGroup = (
+  group: RandomGroup,
+  object?: JokerData | EnhancementData | SealData | EditionData
+) => {
+  if (typeof group.chance_numerator !== "object") {
+    group.chance_numerator = {
+      value: group.chance_numerator,
+      valueType: detectValueType(group.chance_numerator, object)
+    }
+  }
+  if (typeof group.chance_denominator !== "object") {
+    group.chance_denominator = {
+      value: group.chance_denominator,
+      valueType: detectValueType(group.chance_denominator, object)
+    }
+  }
+  return group
+}
+
+const updateLoopGroup = (
+  group: LoopGroup,
+  object?: JokerData | EnhancementData | SealData | EditionData
+) => {
+  if (typeof group.repetitions !== "object") {
+    group.repetitions = {
+      value: group.repetitions,
+      valueType: detectValueType(group.repetitions, object)
+    }
+  }
+  return group
+}
 
 const convertParamsToObjects = (
   params: Record<string, unknown>,

@@ -95,6 +95,7 @@ import { generateEditGameSpeedEffectCode } from "../Effects/EditGameSpeed";
 import { generateAddBoosterToShopEffectCode } from "../Effects/AddBoosterIntoShopEffect";
 import { generateCreatePlayingCardsEffectCode } from "../Effects/CreatePlayingCardsEffect";
 import { generateShowMessageReturn } from "../Effects/ShowSpecialMessageEffect";
+import { convertLoopGroupsForCodegen, convertRandomGroupsForCodegen } from "./groupUtils";
 
 interface ExtendedEffect extends Effect {
   _isInRandomGroup?: boolean;
@@ -179,8 +180,8 @@ export function generateEffectReturnStatement(
   const allLoopGroups: LoopGroup[] = []
 
   object?.rules?.forEach(rule => {
-    const randoms = rule.randomGroups || []
-    const loops = rule.loops || []
+    const randoms = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loops = convertLoopGroupsForCodegen(rule.loops || [])
     allLoopGroups.push(...loops)
     allRandomGroups.push(...randoms)
   });
@@ -259,10 +260,10 @@ export function generateEffectReturnStatement(
     const randomGroupStatements: string[] = [];
   
     const currentDenominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator as number)),
+      ...new Set(randomGroups.map((group) => group.chance_denominator.value as number)),
     ];
     const allDenominators = [
-      ...new Set(allRandomGroups.map((group) => group.chance_denominator as number)),
+      ...new Set(allRandomGroups.map((group) => group.chance_denominator.value as number)),
     ];
     const denominatorToOddsVar: Record<number, string> = {};
     const abilityPath =
@@ -363,7 +364,7 @@ export function generateEffectReturnStatement(
         });
       });
 
-      const oddsVar = denominatorToOddsVar[group.chance_denominator as number];
+      const oddsVar = denominatorToOddsVar[group.chance_denominator.value as number];
       const probabilityIdentifier = `group_${groupIndex}_${group.id.substring(
         0,
         8
@@ -513,16 +514,16 @@ export function generateEffectReturnStatement(
     const loopGroupStatements: string[] = [];
 
     const allRepetitions = [
-      ...new Set(allLoopGroups.map((group) => group.repetitions as number)),
+      ...new Set(allLoopGroups.map((group) => group.repetitions.value as number)),
     ];
     const currentRepetitions = [
-      ...new Set(loopGroups.map((group) => group.repetitions as number)),
+      ...new Set(loopGroups.map((group) => group.repetitions.value as number)),
     ];
 
     const repetitionsToVar: Record<number, string> = {};
     const abilityPath =
       itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
-
+    
     allRepetitions.forEach((value, index) => {
       if (index === 0) {
         repetitionsToVar[value] = `${abilityPath}.repetitions`;
@@ -623,9 +624,8 @@ export function generateEffectReturnStatement(
           statement: newStatement,
         });
       });
-
-      const repetitionsVar = typeof group.repetitions === "string" ? group.repetitions : repetitionsToVar[group.repetitions as number];
-
+      const repetitionsVar = 
+        group.repetitions.valueType === "number" ? group.repetitions.value : repetitionsToVar[group.repetitions.value as number];
       let groupContent = "";
 
       const hasDeleteInGroup = group.effects.some(
@@ -792,7 +792,7 @@ export const generateSingleEffect = (
     case "change_text_variable":
       return generateChangeTextVariableEffectCode(effect)
     case "modify_internal_variable":
-      return generateModifyInternalVariableEffectCode(effect, triggerType)
+      return generateModifyInternalVariableEffectCode(effect, cleanItemType, triggerType)
     case "convert_all_cards_to_rank":
       return generateConvertAllCardToRankEffectCode(effect, itemType)
     case "convert_all_cards_to_suit":

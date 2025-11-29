@@ -617,7 +617,7 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
     (rule.randomGroups || []).forEach((group) => {
       group.effects.forEach((effect) => {
         if (effect.type === "modify_internal_variable") {
-          const varName = (effect.params.variable_name.value as string) || "var1";
+          const varName = (effect.params?.variable_name?.value as string) || "var1";
           if (!variableMap.has(varName)) {
             variableMap.set(varName, {
               name: varName,
@@ -666,7 +666,7 @@ export const getVariableNamesFromItem = (
   item.rules.forEach((rule) => {
     (rule.effects || []).forEach((effect) => {
       if (effect.type === "modify_internal_variable") {
-        const varName = (effect.params.variable_name.value as string) || "var1";
+        const varName = (effect.params?.variable_name?.value as string) || "var1";
         variableNames.add(varName);
       }
     });
@@ -674,7 +674,7 @@ export const getVariableNamesFromItem = (
     (rule.randomGroups || []).forEach((group) => {
       group.effects.forEach((effect) => {
         if (effect.type === "modify_internal_variable") {
-          const varName = (effect.params.variable_name.value as string) || "var1";
+          const varName = (effect.params?.variable_name?.value as string) || "var1";
           variableNames.add(varName);
         }
       });
@@ -683,7 +683,7 @@ export const getVariableNamesFromItem = (
     rule.conditionGroups.forEach((group) => {
       group.conditions.forEach((condition) => {
         if (condition.type === "internal_variable") {
-          const varName = (condition.params.variable_name.value as string) || "var1";
+          const varName = (condition.params?.variable_name?.value as string) || "var1";
           variableNames.add(varName);
         }
       });
@@ -737,7 +737,7 @@ export const getVariableUsageDetails = (
     (rule.randomGroups || []).forEach((group) => {
       group.effects.forEach((effect) => {
         if (effect.type === "modify_internal_variable") {
-          const varName = (effect.params.variable_name.value as string) || "var1";
+          const varName = (effect.params?.variable_name?.value as string) || "var1";
           const currentCount = usageCount.get(varName) || 0;
           usageCount.set(varName, currentCount + 1);
 
@@ -815,10 +815,10 @@ export const getAllVariables = (
       (rule) => rule.randomGroups || []
     );
     const denominators = [
-      ...new Set(randomGroups.map((group) => group.chance_denominator)),
+      ...new Set(randomGroups.map((group) => group.chance_denominator.value as number)),
     ];
     const numerators = [
-      ...new Set(randomGroups.map((group) => group.chance_numerator)),
+      ...new Set(randomGroups.map((group) => group.chance_numerator.value as number)),
     ];
 
     if (denominators.length === 1 && numerators.length === 1) {
