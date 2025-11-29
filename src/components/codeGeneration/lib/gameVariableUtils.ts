@@ -64,7 +64,8 @@ export const generateValueCode = (
   itemType?: string,
   object?: JokerData | EnhancementData | EditionData | SealData
 ): string => {
-  if (!item.value) return ''
+  if (item && item.valueType && item.valueType === "number") return `${item.value}`
+  if (!item || !item.value) return ''
 
   if (item.valueType === "unknown") {
     item.valueType = detectValueType(item.value, object)
@@ -103,6 +104,7 @@ export const generateValueCode = (
     const parsedRangeVar = parseRangeVariable(item.value as string)
     return `pseudorandom('${item.value}', ${parsedRangeVar.min}, ${parsedRangeVar.max})`;  
   }
+
   if (item.valueType === "user_var") {
     const value = item.value as {value: unknown, valueType: string}
 
@@ -128,7 +130,7 @@ export const generateConfigVariables = (
   itemType: string, 
   object?: JokerData | EnhancementData | EditionData | SealData,
 ): ConfigVariablesReturn => {
-  if (!effect.params[valueIndex]?.value) return {
+  if (!effect.params[valueIndex]?.value && effect.params[valueIndex]?.valueType !== "number") return {
     valueCode: '', 
     configVariables: [], 
     isXVariable: {isGameVariable: false, isRangeVariable: false}

@@ -927,8 +927,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const addRandomGroup = (ruleId: string) => {
     const newGroup: RandomGroup = {
       id: crypto.randomUUID(),
-      chance_numerator: 1,
-      chance_denominator: 4,
+      chance_numerator: {value: 1, valueType: "number"},
+      chance_denominator: {value: 4, valueType: "number"},
       respect_probability_effects: true,
       custom_key: "",
       effects: [],
@@ -954,7 +954,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const addLoopGroup = (ruleId: string) => {
     const newLoop: LoopGroup = {
       id: crypto.randomUUID(),
-      repetitions: 1,
+      repetitions: {value: 1, valueType: "number"},
       effects: [],
     };
     setRules((prev) =>
@@ -1078,8 +1078,8 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const createRandomGroupFromEffect = (ruleId: string, effectId: string) => {
     const newGroup: RandomGroup = {
       id: crypto.randomUUID(),
-      chance_numerator: 1,
-      chance_denominator: 4,
+      chance_numerator: {value: 1, valueType: "number"},
+      chance_denominator: {value: 4, valueType: "number"},
       respect_probability_effects: true,
       custom_key: "",
       effects: [],
@@ -1127,7 +1127,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
   const createLoopGroupFromEffect = (ruleId: string, effectId: string) => {
     const newGroup: LoopGroup = {
       id: crypto.randomUUID(),
-      repetitions: 1,
+      repetitions: {value: 1, valueType: "number"},
       effects: [],
     };
     setRules((prev) =>

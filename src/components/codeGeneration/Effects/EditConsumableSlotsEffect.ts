@@ -226,7 +226,7 @@ G.consumeables.config.card_limit = ${valueCode}
 const generateDeckCode = (
   effect: Effect,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
+  const operation = (effect.params?.operation?.value) || "add";
   const valueCode = generateValueCode(effect.params?.value, 'deck')
 
 
@@ -244,7 +244,9 @@ const generateDeckCode = (
   }
 
   return {
-    statement: addToDeck,
+    statement: `__PRE_RETURN_CODE__
+      ${addToDeck}
+    __PRE_RETURN_CODE_END__`,
     colour: "G.C.BLUE",
   };
 };

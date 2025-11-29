@@ -103,7 +103,6 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
         options: [
           { value: "random", label: "Random Joker" },
           { value: "position", label: "By Position" },
-          { value: "selected", label: "Selected Joker" },
         ],
         default: "random",
       },
@@ -257,7 +256,6 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "specific", label: "Specific Joker" },
           { value: "self", label: "This Joker", exempt: ["consumable", "card"] },
           { value: "position", label: "By Position" },
-          { value: "selected", label: "Selected Joker", exempt: ["joker", "card"] },
         ],
         default: "random",
         variableTypes: ["key", "joker_context"],
@@ -355,7 +353,6 @@ export const JOKER_EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "random", label: "Random Joker" },
           { value: "self", label: "This Joker", exempt: ["consumable"] },
           { value: "position", label: "By Position" },
-          { value: "selected", label: "By Selection" },
         ],
         default: "all",
       },

@@ -216,7 +216,7 @@ const RandomGroupContainer: React.FC<{
     >
       <div className="flex items-center justify-between mb-4">
         <div className="text-mint text-xs tracking-wider font-medium">
-          {group.chance_numerator} in {group.chance_denominator} chance{" "}
+          {group.chance_numerator.value} in {group.chance_denominator.value} chance{" "}
           {isSelected && "(SELECTED)"}
         </div>
         <div onClick={(e) => e.stopPropagation()}>
@@ -256,7 +256,7 @@ const LoopGroupContainer: React.FC<{
     >
       <div className="flex items-center justify-between mb-4">
         <div className="text-balatro-blue text-xs tracking-wider font-medium">
-          Loop {group.repetitions} times{" "}
+          Loop {group.repetitions.value} times{" "}
           {isSelected && "(SELECTED)"}
         </div>
         <div onClick={(e) => e.stopPropagation()}>

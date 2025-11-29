@@ -117,7 +117,7 @@ interface ParameterFieldProps {
 interface ChanceInputProps {
   label: string;
   value: string | number | undefined;
-  onChange: (value: string | number) => void;
+  onChange: (param: {value: string | number, valueType?: string}) => void;
   availableVariables: Array<{ value: string; label: string, valueType?: string }>;
   onCreateVariable: (name: string, initialValue: number) => void;
   onOpenVariablesPanel: () => void;
@@ -197,9 +197,10 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
           ? parseFloat(currentValue.split("|")[2] || "0")
           : 0;
 
-        onChange(
-          `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`
-        );
+        onChange({
+          value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
+          valueType: "game_var"
+        });
         onGameVariableApplied?.();
       }
     }, [selectedGameVariable, value, onChange, onGameVariableApplied]);
@@ -208,15 +209,15 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
       if (mode === "number") {
         setIsVariableMode(false);
         setIsRangeMode(false);
-        onChange(numericValue);
+        onChange({value: numericValue, valueType: "number"});
       } else if (mode === "variable") {
         setIsVariableMode(true);
         setIsRangeMode(false);
-        onChange("");
+        onChange({value: "", valueType: "user_var"});
       } else if (mode === "range") {
         setIsVariableMode(false);
         setIsRangeMode(true);
-        onChange("RANGE:1|5");
+        onChange({value: "RANGE:1|5", valueType: "range_var"});
       }
     };
 
@@ -227,13 +228,13 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
       setInputValue(newValue);
 
       if (newValue === "" || newValue === "-") {
-        onChange(0);
+        onChange({value: 0, valueType: "number"});
         return;
       }
 
       const parsed = parseFloat(newValue);
       if (!isNaN(parsed)) {
-        onChange(parsed);
+        onChange({value: parsed, valueType: "number"});
       }
     };
 
@@ -287,7 +288,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
               value={rangeValues.min.toString()}
               onChange={(e) => {
                 const newMin = parseFloat(e.target.value) ?? 1;
-                onChange(`RANGE:${newMin}|${rangeValues.max}`);
+                onChange({value: `RANGE:${newMin}|${rangeValues.max}`, valueType: "range_var"});
               }}
               size="sm"
               className="w-16"
@@ -299,7 +300,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
               value={rangeValues.max.toString()}
               onChange={(e) => {
                 const newMax = parseFloat(e.target.value) ?? 1;
-                onChange(`RANGE:${rangeValues.min}|${newMax}`);
+                onChange({value: `RANGE:${rangeValues.min}|${newMax}`, valueType: "range_var"});
               }}
               size="sm"
               className="w-16"
@@ -311,7 +312,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
             {availableVariables.length > 0 ? (
               <InputDropdown
                 value={(actualValue as string) || ""}
-                onChange={(newValue) => onChange(newValue.value)}
+                onChange={(newValue) => newValue}
                 options={availableVariables}
                 placeholder="Select variable"
                 className="bg-black-dark"
@@ -922,7 +923,7 @@ const ParameterField: React.FC<ParameterFieldProps> = ({
               {availableVariables && availableVariables.length > 0 ? (
                 <InputDropdown
                   value={(value as string) || ""}
-                  onChange={(newValue) => onChange({value: newValue, valueType: 'user_var'})}
+                  onChange={(newValue) => onChange(newValue)}
                   options={availableVariables}
                   placeholder="Select variable"
                   className="bg-black-dark"
@@ -1193,7 +1194,7 @@ const Inspector: React.FC<InspectorProps> = ({
               ...selectedEffect.params,
               [paramKey]: {
                 value: `GAMEVAR:${selectedGameVariable.id}|${multiplier}|${startsFrom}`,
-                valueType: 'game_Var'
+                valueType: 'game_var'
               }
             },
           });
@@ -1201,13 +1202,17 @@ const Inspector: React.FC<InspectorProps> = ({
         }
       } else if (selectedItem.type === "randomgroup" && selectedRandomGroup) {
         onUpdateRandomGroup(selectedRule?.id || "", selectedRandomGroup.id, {
-          chance_numerator: `GAMEVAR:${selectedGameVariable.id}|1|0`,
-        });
+          chance_numerator: {
+            value: `GAMEVAR:${selectedGameVariable.id}|1|0`,
+            valueType: "game_var",
+        }});
         onGameVariableApplied();
       } else if (selectedItem.type === "loopgroup" && selectedLoopGroup) {
         onUpdateLoopGroup(selectedRule?.id || "", selectedLoopGroup.id, {
-          repetitions: `GAMEVAR:${selectedGameVariable.id}|1|0`,
-        });
+          repetitions: {
+            value: `GAMEVAR:${selectedGameVariable.id}|1|0`,
+            valueType: "game_var"
+        }});
         onGameVariableApplied();
       }
     }
@@ -1439,10 +1444,10 @@ const Inspector: React.FC<InspectorProps> = ({
               <ChanceInput
                 key="numerator"
                 label="Numerator"
-                value={selectedRandomGroup.chance_numerator}
+                value={selectedRandomGroup.chance_numerator.value}
                 onChange={(value) => {
                   onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
-                    chance_numerator: value,
+                    chance_numerator: value
                   });
                 }}
                 availableVariables={availableVariables}
@@ -1457,7 +1462,7 @@ const Inspector: React.FC<InspectorProps> = ({
               <ChanceInput
                 key="denominator"
                 label="Denominator"
-                value={selectedRandomGroup.chance_denominator}
+                value={selectedRandomGroup.chance_denominator.value}
                 onChange={(value) => {
                   onUpdateRandomGroup(selectedRule.id, selectedRandomGroup.id, {
                     chance_denominator: value,
@@ -1599,7 +1604,7 @@ const Inspector: React.FC<InspectorProps> = ({
               <ChanceInput
                 key="repetitions"
                 label=""
-                value={selectedLoopGroup.repetitions}
+                value={selectedLoopGroup.repetitions.value}
                 onChange={(value) => {
                   onUpdateLoopGroup(selectedRule.id, selectedLoopGroup.id, {
                     repetitions: value,
