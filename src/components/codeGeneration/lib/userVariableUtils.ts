@@ -77,7 +77,7 @@ export const coordinateVariableConflicts = (
 
   effects.forEach((effect, index) => {
     if (effect.type === "modify_internal_variable") {
-      const varName = effect.params.variable_name.value as string;
+      const varName = effect.params?.variable_name?.value as string;
       if (varName) {
         variableOperations.push({
           varName,
@@ -576,7 +576,7 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
     rule.conditionGroups.forEach((group) => {
       group.conditions.forEach((condition) => {
         if (condition.type === "internal_variable") {
-          const varName = (condition.params.variable_name.value as string) || "var1";
+          const varName = (condition.params?.variable_name?.value as string) || "var1";
           if (!variableMap.has(varName)) {
             variableMap.set(varName, {
               name: varName,
@@ -590,7 +590,7 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
 
     (rule.effects || []).forEach((effect) => {
       if (effect.type === "modify_internal_variable") {
-        const varName = (effect.params.variable_name.value as string) || "var1";
+        const varName = (effect.params?.variable_name?.value as string) || "var1";
         if (!variableMap.has(varName)) {
           variableMap.set(varName, {
             name: varName,
@@ -704,7 +704,7 @@ export const getVariableUsageDetails = (
   item.rules.forEach((rule, ruleIndex) => {
     (rule.effects || []).forEach((effect) => {
       if (effect.type === "modify_internal_variable") {
-        const varName = (effect.params.variable_name.value as string) || "var1";
+        const varName = (effect.params?.variable_name?.value as string) || "var1";
         const currentCount = usageCount.get(varName) || 0;
         usageCount.set(varName, currentCount + 1);
 
@@ -771,7 +771,7 @@ export const getVariableUsageDetails = (
     rule.conditionGroups.forEach((group) => {
       group.conditions.forEach((condition) => {
         if (condition.type === "internal_variable") {
-          const varName = (condition.params.variable_name.value as string) || "var1";
+          const varName = (condition.params?.variable_name?.value as string) || "var1";
           const currentCount = usageCount.get(varName) || 0;
           usageCount.set(varName, currentCount + 1);
 
