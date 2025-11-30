@@ -105,7 +105,7 @@ const generateJokerCode = (
   )} })`;
   const editionCode =
     isEditionVar ? `joker_card:set_edition(card.ability.extra.${edition}, true)` : 
-    edition !== "none" ? `joker_card:set_edition("${edition}", true)` : ``;
+    edition !== "none" ? `joker_card:set_edition("${edition.startsWith("e_") ? edition : `e_${edition}`}", true)` : ``;
 
   const stickerCode = hasSticker
     ? `joker_card:add_sticker('${sticker}', true)`
@@ -233,7 +233,7 @@ const generateConsumableCode = (
   lines.push("        if new_joker then");
 
   if (edition !== "none") {
-    lines.push(`            new_joker:set_edition("${edition}", true)`);
+    lines.push(`            new_joker:set_edition("${edition.startsWith("e_") ? edition : `e_${edition}`}", true)`);
   }
 
   if (hasSticker) {
@@ -335,7 +335,7 @@ const generateCardCode = (
     ", "
   )} })`;
   const editionCode =
-    edition !== "none" ? `joker_card:set_edition("${edition}", true)` : "";
+    edition !== "none" ? `joker_card:set_edition("${edition.startsWith("e_") ? edition : `e_${edition}`}", true)` : "";
   const stickerCode = hasSticker
     ? `joker_card:add_sticker('${sticker}', true)`
     : "";
@@ -441,7 +441,7 @@ const generateDeckCode = (
   lines.push("        if new_joker then");
 
   if (edition !== "none") {
-    lines.push(`            new_joker:set_edition("${edition}", true)`);
+    lines.push(`            new_joker:set_edition("${edition.startsWith("e_") ? edition : `e_${edition}`}", true)`);
   }
 
   if (hasSticker) {
