@@ -34,7 +34,7 @@ const generateJokerCode = (
   const isNegative = (effect.params?.is_negative?.value as string) === 'y';
   const customMessage = effect.customMessage as string;
   const isSoulable = (effect.params?.soulable?.value as string) === 'y';
-  const countCode = generateValueCode(effect.params?.count)
+  const countCode = generateValueCode(effect.params?.count, "joker")
   const ignoreSlots = (effect.params?.ignore_slots?.value as string) === 'y';
   const keyVar = (effect.params?.variable?.value as string)
 
@@ -163,7 +163,7 @@ const generateConsumableCode = (
   const isNegative = (effect.params?.is_negative?.value as string) === 'y';
   const customMessage = effect.customMessage as string;
   const isSoulable = (effect.params?.soulable?.value as string) === 'y';
-  const countCode = String(effect.params?.count) || '1'
+  const countCode = generateValueCode(effect.params?.count, "consumable")
   const ignoreSlots = (effect.params?.ignore_slots?.value as string) === 'y';
 
 
@@ -278,7 +278,7 @@ const generateCardCode = (
   const isNegative = (effect.params?.is_negativ?.value as string) === 'y';
   const customMessage = effect.customMessage;
   const isSoulable = effect.params?.soulable?.value as string === 'y';
-  const countCode = String(effect.params?.count) || '1'
+  const countCode = generateValueCode(effect.params?.count)
   const ignoreSlots = effect.params?.ignore_slots?.value as string === 'y';
 
 
