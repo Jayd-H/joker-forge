@@ -496,9 +496,6 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
     Object.entries(item.params).map(([key, object]) => {
       params[key] = object.value
     });
-    if (item.type.includes('variable')) {
-      return baseLabel
-    }
 
     if (!params || Object.keys(params).length === 0) {
       return baseLabel;
@@ -549,13 +546,7 @@ const RuleBuilder: React.FC<RuleBuilderProps> = ({
       processedParams.add("operator");
       processedParams.add("value");
     } else if (params.value !== undefined && !params.operator) {
-      const valueType = item.params?.value?.valueType ?? "text"
-      const value = params.value as {value: unknown, valueType?: string}
-      if (valueType === "user_var") {
-        title = `${prefix}${baseLabel} = ${value.value}`;
-      } else {
-        title = `${prefix}${baseLabel} = ${params.value}`;
-      }
+      title = `${prefix}${baseLabel} = ${params.value}`
       processedParams.add("value");
     } else if (params.specific_rank || params.rank_group) {
       const rank = params.specific_rank || params.rank_group;

@@ -106,18 +106,16 @@ export const generateValueCode = (
   }
 
   if (item.valueType === "user_var") {
-    const value = item.value as {value: unknown, valueType: string}
-
     if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "suit")) {
-      return `G.GAME.current_round.${value.value}_card.suit`
+      return `G.GAME.current_round.${item.value}_card.suit`
     }
     if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "rank")) {
-      return `G.GAME.current_round.${value.value}_card.id`
+      return `G.GAME.current_round.${item.value}_card.id`
     }
     if (object && object.userVariables && object.userVariables.some((v) => v.name === item.value && v.type === "pokerhand")) {
-      return `G.GAME.current_round.${value.value}_hand`
+      return `G.GAME.current_round.${item.value}_hand`
     }
-    return `${abilityPath}.${value.value}`;
+    return `${abilityPath}.${item.value}`;
   }
   return (`${item.value}` as string);
 }

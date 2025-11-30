@@ -312,7 +312,7 @@ const ChanceInput: React.FC<ChanceInputProps> = React.memo(
             {availableVariables.length > 0 ? (
               <InputDropdown
                 value={(actualValue as string) || ""}
-                onChange={(newValue) => newValue}
+                onChange={(newValue) => onChange(newValue)}
                 options={availableVariables}
                 placeholder="Select variable"
                 className="bg-black-dark"

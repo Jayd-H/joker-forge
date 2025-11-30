@@ -463,7 +463,7 @@ export function generateEffectReturnStatement(
         hasFixProbablityEffects || hasModProbablityEffects // prevents stack overflow
       ) || group.respect_probability_effects === false;
       
-      const probabilityStatement =  `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${object?.objectKey}`}', ${no_modParam})`;
+      const probabilityStatement =  `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator.value}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${object?.objectKey}`}', ${no_modParam})`;
       
       const groupStatement = `if ${probabilityStatement} then
               ${groupContent}

@@ -353,21 +353,8 @@ const generateCalculateFunction = (
     }
 
     const regularEffects = rule.effects || [];
-    const randomGroups = (rule.randomGroups || []).map((group) => ({
-      ...group,
-      chance_numerator: {
-        value: typeof group.chance_numerator.value === "string" ? 1 : group.chance_numerator.value,
-        valueType: group.chance_numerator.valueType
-      },
-      chance_denominator: {
-        value: typeof group.chance_denominator.value === "string" ? 1 : group.chance_denominator.value,
-        valueType: group.chance_denominator.valueType
-      }
-    }));
-    const loopGroups = (rule.loops || []).map((group) => ({
-      ...group,
-      repetitions: group.repetitions
-    }));
+    const randomGroups = convertRandomGroupsForCodegen(rule.randomGroups || [])
+    const loopGroups = convertLoopGroupsForCodegen(rule.loops || [])
 
     const effectResult = generateEffectReturnStatement(
       regularEffects,
@@ -679,7 +666,7 @@ const generateLocVarsFunction = (
         const varName =
           index.value === 0
             ? "card.ability.extra.odds"
-            : `card.ability.extra.odds${Number(index) + 1}`;
+            : `card.ability.extra.odds${Number(index.value) + 1}`;
         probabilityVars.push(varName);
       });
 
