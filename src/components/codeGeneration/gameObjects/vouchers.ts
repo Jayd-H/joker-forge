@@ -512,7 +512,7 @@ const generateLocVarsFunction = (
         const varName =
           index.value === 0
             ? "card.ability.extra.odds"
-            : `card.ability.extra.odds${Number(index) + 1}`;
+            : `card.ability.extra.odds${Number(index.value) + 1}`;
         probabilityVars.push(varName);
       });
 

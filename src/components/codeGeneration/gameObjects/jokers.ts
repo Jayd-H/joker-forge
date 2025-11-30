@@ -1940,7 +1940,7 @@ const generateLocVarsFunction = (
       const oddsVar = "card.ability.extra.odds";
 
       locVarsReturn = `local new_numerator, new_denominator = SMODS.get_probability_vars(card, ${
-        numerators[0]
+        numerators[0].value
       }, ${oddsVar}, 'j_${modPrefix}_${joker.objectKey}') 
         return {vars = {${nonProbabilityVars.join(", ")}${
         nonProbabilityVars.length > 0 ? `, ` : ``
@@ -1955,7 +1955,7 @@ const generateLocVarsFunction = (
           index === 0
             ? "card.ability.extra.odds"
             : `card.ability.extra.odds${index + 1}`;
-        const numerator = numerators[Math.min(index, numerators.length - 1)];
+        const numerator = numerators[Math.min(index, numerators.length - 1)].value;
         const varSuffix = index === 0 ? "" : (index + 1).toString();
 
         probabilityCalls.push(
