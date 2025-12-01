@@ -38,20 +38,17 @@ const generateJokerCode = (
     edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)    
 
   let modificationCode = "";
-  const target = 'context.other_card'
+
+  const scoringTriggers = ["card_scored"];
+  const isScoring = scoringTriggers.includes(triggerType);
+  const target = isScoring ? 'scored_card' : 'context.other_card'
 
   if (newRank.value !== "none" || newSuit.value !== "none") {
     let suitParam = "nil";
     let rankParam = "nil";
  
     if (newSuit.valueType === "user_var") {
-      suitParam = `ranks[G.GAME.current_round.${newSuit.value}_card.suit]`;
-      modificationCode += `
-      local ranks = {
-          [2] = '2', [3] = '3', [4] = '4', [5] = '5', [6] = '6', 
-          [7] = '7', [8] = '8', [9] = '9', [10] = 'T', 
-          [11] = 'Jack', [12] = 'Queen', [13] = 'King', [14] = 'Ace'
-      }`
+      suitParam = `G.GAME.current_round.${newSuit.value}_card.suit`;
     } else if (newSuit.value === "random") {
       suitParam = "pseudorandom_element(SMODS.Suits, 'edit_card_suit').key";
     } else if (newSuit.value !== "none") {
@@ -59,7 +56,7 @@ const generateJokerCode = (
     }
 
     if (newRank.valueType === "user_var") {
-      rankParam = `G.GAME.current_round.${newRank.value}_card.id`;
+      rankParam = `G.GAME.current_round.${newRank.value}_card.rank`;
     } else if (newRank.value === "random") {
       rankParam = "pseudorandom_element(SMODS.Ranks, 'edit_card_rank').key";
     } else if (newRank.value !== "none") {
@@ -126,14 +123,20 @@ const generateJokerCode = (
       ${target}:set_edition("${newEdition.value}", true)`;
   }
 
-  const scoringTriggers = ["card_scored"];
-  const isScoring = scoringTriggers.includes(triggerType);
-
   if (isScoring) {
+    const message = customMessage ? `"${customMessage}"` : `"Card Modified!"`
     return {
-      statement: `__PRE_RETURN_CODE__${modificationCode}
-                __PRE_RETURN_CODE_END__`,
-      message: customMessage ? `"${customMessage}"` : `"Card Modified!"`,
+      statement: `
+        __PRE_RETURN_CODE__
+        local scored_card = context.other_card
+        G.E_MANAGER:add_event(Event({
+          func = function()
+            ${modificationCode}
+            card_eval_status_text(scored_card, 'extra', nil, nil, nil, {message = ${message}, colour = G.C.ORANGE})
+            return true
+          end
+        }))
+        __PRE_RETURN_CODE_END__`,
       colour: "G.C.BLUE",
     };
   } else {
