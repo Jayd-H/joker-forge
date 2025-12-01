@@ -14,6 +14,6 @@ export const generateBlindTypeConditionCode = (
     case "boss":
       return `G.GAME.blind.boss`;
     default:
-      return `G.GAME.blind.small`;
+      return `G.GAME.blind:get_type() == 'Small'`;
   }
 }

@@ -42,16 +42,7 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Modify Blind Requirement",
     description: "Changes the score requirement of a blind",
     objectUsers: ["joker", "consumable"],
-    applicableTriggers: [
-      "blind_selected",
-      "card_scored",
-      "hand_played",
-      "card_discarded",
-      "hand_discarded",
-      "card_held_in_hand",
-      "card_used",
-      "joker_evaluated",
-    ],
+    applicableTriggers: [...GENERIC_TRIGGERS], // Will check if the player is in blind
     params: [
       {
         id: "operation",

@@ -284,6 +284,8 @@ export const generateSingleConditionCode = (
       return generateGameSpeedConditionCode([singleConditionRule])
     case "booster_type":
       return generateBoosterPackTypeConditionCode([singleConditionRule], itemType, rule.trigger)
+    case "in_blind":
+      return `G.GAME.blind.in_blind`
       
   }
   return null
