@@ -448,7 +448,9 @@ const generateSingleJokerCode = (
       }
     })
     blindRewardCode += `
-      return blind_reward
+      if blind_reward > 0 then
+        return blind_reward
+      end
     end`
     jokerCode += `, \n ${blindRewardCode}`
   }
