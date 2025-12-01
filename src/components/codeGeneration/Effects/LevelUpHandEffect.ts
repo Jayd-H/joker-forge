@@ -14,7 +14,6 @@ export const generateLevelUpHandEffectCode = (
   sameTypeCount: number = 0,
   joker?: JokerData,
   card?: EnhancementData | EditionData | SealData,
-
 ): EffectReturn => {
   switch(itemType) {
     case "joker":
@@ -135,9 +134,10 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  const handType = (effect.params?.hand_type?.value as string) || "Pair";
+  console.log(effect)
+  const handType = (effect.params?.hand_selection?.value as string) || "Pair";
   const customMessage = effect.customMessage;
-  const levels = effect.params?.levels
+  const levels = effect.params?.value
   const pokerHandPoolActive = (effect.params.pokerhand_pool?.value as Array<boolean>) || [];
   const pokerHandPoolPokerHands = [
     "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
@@ -146,61 +146,64 @@ const generateConsumableCode = (
   ]
 
   const levelsCode = generateValueCode(levels, 'consumable');
-
   let levelUpCode = "";
 
     levelUpCode += `
-        __PRE_RETURN_CODE__
-        update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3 },`
-    
+      __PRE_RETURN_CODE__
+      update_hand_text(
+        { sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3 },`
+  
     if (handType === "all") {
-        levelUpCode += `
-                { handname = localize('k_all_hands'), chips = '...', mult = '...', level = '' })`
+      levelUpCode += `
+        { handname = localize('k_all_hands'), chips = '...', mult = '...', level = '' }`
     } else if (handType === "random") {
-        levelUpCode += `
-                { handname = '???', chips = '???', mult = '???', level = '' })`
+      levelUpCode += `
+        { handname = '???', chips = '???', mult = '???', level = '' }`
     } else {
-        levelUpCode += `
-                { handname = localize('${handType}', 'poker_hands'), 
-                  chips = G.GAME.hands['${handType}'].chips, 
-                  mult = G.GAME.hands['${handType}'].mult, 
-                  level = G.GAME.hands['${handType}'].level })`
+      levelUpCode += `
+        { 
+          handname = localize('${handType}', 'poker_hands'), 
+          chips = G.GAME.hands['${handType}'].chips, 
+          mult = G.GAME.hands['${handType}'].mult, 
+          level = G.GAME.hands['${handType}'].level 
+        }`
     }
 
     levelUpCode += `
-                G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.2,
-                func = function()
-                    play_sound('tarot1')
-                    card:juice_up(0.8, 0.5)
-                    G.TAROT_INTERRUPT_PULSE = true
-                    return true
-                end
-            }))
-            update_hand_text({ delay = 0 }, { mult = '+', StatusText = true })
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.9,
-                func = function()
-                    play_sound('tarot1')
-                    card:juice_up(0.8, 0.5)
-                    return true
-                end
-            }))
-            update_hand_text({ delay = 0 }, { chips = '+', StatusText = true })
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.9,
-                func = function()
-                    play_sound('tarot1')
-                    card:juice_up(0.8, 0.5)
-                    G.TAROT_INTERRUPT_PULSE = nil
-                    return true
-                end
-            }))
-            update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.9, delay = 0 }, { level = '+'..tostring(${levelsCode}) })
-            delay(1.3)`
+    )
+      G.E_MANAGER:add_event(Event({
+        trigger = 'after',
+        delay = 0.2,
+        func = function()
+            play_sound('tarot1')
+            card:juice_up(0.8, 0.5)
+            G.TAROT_INTERRUPT_PULSE = true
+            return true
+        end
+      }))
+      update_hand_text({ delay = 0 }, { mult = '+', StatusText = true })
+      G.E_MANAGER:add_event(Event({
+          trigger = 'after',
+          delay = 0.9,
+          func = function()
+              play_sound('tarot1')
+              card:juice_up(0.8, 0.5)
+              return true
+          end
+      }))
+      update_hand_text({ delay = 0 }, { chips = '+', StatusText = true })
+      G.E_MANAGER:add_event(Event({
+          trigger = 'after',
+          delay = 0.9,
+          func = function()
+              play_sound('tarot1')
+              card:juice_up(0.8, 0.5)
+              G.TAROT_INTERRUPT_PULSE = nil
+              return true
+          end
+      }))
+      update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.9, delay = 0 }, { level = '+'..tostring(${levelsCode}) })
+      delay(1.3)`
 
     if (handType === "all") {
         levelUpCode += `
@@ -260,9 +263,6 @@ const generateConsumableCode = (
   const configVariables: ConfigExtraVariable[] = [];
   if (handType !== "random" && handType !== "all") {
     configVariables.push({name: `hand_type`, value: `${handType}`});
-  }
-  if (!(levels?.valueType === "game_var")) {
-    configVariables.push({name: `levels`, value: `${levels}`});
   }
 
   const result: EffectReturn = {

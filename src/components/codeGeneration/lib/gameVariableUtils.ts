@@ -64,7 +64,8 @@ export const generateValueCode = (
   itemType?: string,
   object?: JokerData | EnhancementData | EditionData | SealData
 ): string => {
-  if (item.valueType && item.valueType === "number") return `${item.value}`
+  console.log(item)
+  if (item && item.valueType !== undefined && item.valueType === "number") return `${item.value}`
   if (!item || !item.value) return ''
 
   if (item.valueType === "unknown") {
