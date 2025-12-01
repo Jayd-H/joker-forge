@@ -25,7 +25,7 @@ const generateTypeData = (
       }
     case "shop_slots":
       return {
-        slotsCode: "SMODS.change_shop_size",
+        slotsCode: "change_shop_size",
         differenceCheck: "G.GAME.modifiers.shop_size",
         varName: "shop_slots",
         seedName: "shopslots_passive",
