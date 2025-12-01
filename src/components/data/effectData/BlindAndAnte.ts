@@ -7,17 +7,7 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Draw Cards to Hand",
     description: "Draw cards from your deck to your hand",
     objectUsers: ["joker", "consumable", "card"],
-    applicableTriggers: [
-      "hand_played",
-      "card_scored",
-      "card_destoyed",
-      "card_held_in_hand",
-      "after_hand_played",
-      "before_hand_played",
-      "card_used",
-      "card_discarded",
-      "hand_discarded",
-    ],
+    applicableTriggers: [...GENERIC_TRIGGERS], // Will check if a hand is currently drawn
     params: [
       {
         id: "value",

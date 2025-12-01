@@ -52,7 +52,7 @@ import { generateCardSuitConditionCode } from "../Conditions/CardSuitCondition";
 import { generateDiscardedSuitCountConditionCode } from "../Conditions/DiscardedSuitCountCondition";
 import { generateCardRankConditionCode } from "../Conditions/CardRankCondition";
 import { generateDiscardedRankCountConditionCode } from "../Conditions/DiscardedRankCountCondition";
-import { generateGameSpeedConditionCode } from "../Conditions/GameSpeed";
+import { generateGameSpeedConditionCode } from "../Conditions/GameSpeedCondition";
 import { generateInternalVariableConditionCode } from "../Conditions/variableConditions/InternalVariableCondition";
 import { generateSuitVariableConditionCode } from "../Conditions/variableConditions/SuitVariableCondition";
 import { generateRankVariableConditionCode } from "../Conditions/variableConditions/RankVariableCondition";
@@ -286,6 +286,8 @@ export const generateSingleConditionCode = (
       return generateBoosterPackTypeConditionCode([singleConditionRule], itemType, rule.trigger)
     case "in_blind":
       return `G.GAME.blind.in_blind`
+    case "hand_drawn":
+      return `G.hand and #G.hand.cards > 0`
       
   }
   return null
