@@ -17,8 +17,8 @@ import { generateConsumableTypeConditionCode } from "../Conditions/ConsumableTyp
 import { generateDeckCountConditionCode } from "../Conditions/DeckCountCondition";
 import { generateDeckSizeConditionCode } from "../Conditions/DeckSizeCondition";
 import { generateDiscardedHandCountConditionCode } from "../Conditions/DiscardedHandCountCondition";
-import { generateEditionCountConditionCode } from "../Conditions/EditionCountCondition";
-import { generateEnhancementCountConditionCode } from "../Conditions/EnhancementCountCondition";
+import { generateEditionCountConditionCode } from "../Conditions/HandEditionCountCondition";
+import { generateEnhancementCountConditionCode } from "../Conditions/HandEnhancementCountCondition";
 import { generateFirstDiscardedHandConditionCode } from "../Conditions/FirstDiscardedHandCondition";
 import { generateFirstPlayedHandConditionCode } from "../Conditions/FirstPlayedHandCondition";
 import { generateFirstLastScoredConditionCode } from "../Conditions/FirstLastScoredCondition";
@@ -43,7 +43,7 @@ import { generateProbabilityPartCompareConditionCode } from "../Conditions/Proba
 import { generateProbabilitySucceededConditionCode } from "../Conditions/ProbabilitySucceededCondition";
 import { generateRemainingDiscardsConditionCode } from "../Conditions/RemainingDiscardsCondition";
 import { generateRemainingHandsConditionCode } from "../Conditions/RemainingHandsCondition";
-import { generateSealCountConditionCode } from "../Conditions/SealCountCondition";
+import { generateSealCountConditionCode } from "../Conditions/HandSealCountCondition";
 import { generateSystemConditionCode } from "../Conditions/SystemCondition";
 import { generateTriggeredBossBlindConditionCode } from "../Conditions/TriggeredBossBlindCondition";
 import { generateVoucherRedeemedConditionCode } from "../Conditions/VoucherRedeemedCondition";
@@ -52,7 +52,7 @@ import { generateCardSuitConditionCode } from "../Conditions/CardSuitCondition";
 import { generateDiscardedSuitCountConditionCode } from "../Conditions/DiscardedSuitCountCondition";
 import { generateCardRankConditionCode } from "../Conditions/CardRankCondition";
 import { generateDiscardedRankCountConditionCode } from "../Conditions/DiscardedRankCountCondition";
-import { generateGameSpeedConditionCode } from "../Conditions/GameSpeed";
+import { generateGameSpeedConditionCode } from "../Conditions/GameSpeedCondition";
 import { generateInternalVariableConditionCode } from "../Conditions/variableConditions/InternalVariableCondition";
 import { generateSuitVariableConditionCode } from "../Conditions/variableConditions/SuitVariableCondition";
 import { generateRankVariableConditionCode } from "../Conditions/variableConditions/RankVariableCondition";
@@ -61,6 +61,8 @@ import { generateKeyVariableConditionCode } from "../Conditions/variableConditio
 import { generateTextVariableConditionCode } from "../Conditions/variableConditions/TextVariableCondition";
 import { generateBoosterPackTypeConditionCode } from "../Conditions/BoosterPackTypeCondition";
 import { generateOwnedJokerConditionCode } from "../Conditions/OwnedJokerCondition";
+import { generateRankCountConditionCode } from "../Conditions/HandRankCountCondition";
+import { generateSuitCountConditionCode } from "../Conditions/HandSuitCountCondition";
 
 
 export const generateConditionChain = (
@@ -270,6 +272,10 @@ export const generateSingleConditionCode = (
       return generateRemainingDiscardsConditionCode([singleConditionRule])
     case "remaining_hands":
       return generateRemainingHandsConditionCode([singleConditionRule])
+    case "rank_count":
+      return generateRankCountConditionCode([singleConditionRule], itemType)
+    case "suit_count":
+      return generateSuitCountConditionCode([singleConditionRule], itemType)
     case "seal_count":
       return generateSealCountConditionCode([singleConditionRule], itemType)
     case "system_condition":
@@ -284,6 +290,10 @@ export const generateSingleConditionCode = (
       return generateGameSpeedConditionCode([singleConditionRule])
     case "booster_type":
       return generateBoosterPackTypeConditionCode([singleConditionRule], itemType, rule.trigger)
+    case "in_blind":
+      return `G.GAME.blind.in_blind`
+    case "hand_drawn":
+      return `G.hand and #G.hand.cards > 0`
       
   }
   return null

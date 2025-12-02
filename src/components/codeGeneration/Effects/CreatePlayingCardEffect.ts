@@ -49,18 +49,18 @@ const generateJokerCode = (
 
     if (suitCode === `'r'`) { 
       cardSelectionCode += `
-        suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")`
+        local suit_prefix = pseudorandom_element({'H','S','D','C'}, "random_suit")`
     } else {
       cardSelectionCode += `
-        suit_prefix = ${suitCode}`
+        local suit_prefix = ${suitCode}`
     }
 
     if (rankCode === `'r'`) { 
       cardSelectionCode += `
-        rank_suffix = pseudorandom_element({${RANKS.map(rank => `'${rank.value}'`)}}, "random_rank")`
+        local rank_suffix = pseudorandom_element({${RANKS.map(rank => `'${rank.value}'`)}}, "random_rank")`
     } else {
       cardSelectionCode += `
-        rank_suffix = ${rankCode}`
+        local rank_suffix = ${rankCode}`
     }
 
     cardSelectionCode += `

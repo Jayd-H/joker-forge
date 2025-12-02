@@ -7,17 +7,7 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Draw Cards to Hand",
     description: "Draw cards from your deck to your hand",
     objectUsers: ["joker", "consumable", "card"],
-    applicableTriggers: [
-      "hand_played",
-      "card_scored",
-      "card_destoyed",
-      "card_held_in_hand",
-      "after_hand_played",
-      "before_hand_played",
-      "card_used",
-      "card_discarded",
-      "hand_discarded",
-    ],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"], // Will check if a hand is currently drawn
     params: [
       {
         id: "value",
@@ -32,7 +22,7 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     id: "beat_current_blind",
     label: "Win Current Blind",
     description: "Forces to Win the current Blind",
-    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"], // Will check if the player is in blind
     objectUsers: ["joker", "consumable"],
     params: [],
     category: "Blind & Ante",
@@ -42,16 +32,7 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     label: "Modify Blind Requirement",
     description: "Changes the score requirement of a blind",
     objectUsers: ["joker", "consumable"],
-    applicableTriggers: [
-      "blind_selected",
-      "card_scored",
-      "hand_played",
-      "card_discarded",
-      "hand_discarded",
-      "card_held_in_hand",
-      "card_used",
-      "joker_evaluated",
-    ],
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"], // Will check if the player is in blind
     params: [
       {
         id: "operation",

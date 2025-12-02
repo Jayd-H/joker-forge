@@ -136,6 +136,10 @@ const updateConditionParams = (
 
   Object.keys(params).forEach((key) => {
     params[key].valueType = (params[key].valueType || "unknown").toLowerCase()
+    if (typeof params[key].value === "object") {
+      const object = params[key].value as {value: unknown, valueType?: string}
+      params[key].value = object.value
+    }
   })
 
   return params
@@ -319,6 +323,10 @@ const updateMissingEffectParams = (
   
   Object.keys(params).forEach((key) => {
     params[key].valueType = (params[key].valueType || "unknown").toLowerCase()
+    if (typeof params[key].value === "object") {
+      const object = params[key].value as {value: unknown, valueType?: string}
+      params[key].value = object.value
+    }
   })
 
   return params

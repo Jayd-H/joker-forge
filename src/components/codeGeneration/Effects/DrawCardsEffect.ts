@@ -38,11 +38,12 @@ const generateJokerCode = (
   )
 
   const customMessage = effect.customMessage;
-  const statement = `__PRE_RETURN_CODE__
-  if G.GAME.blind.in_blind then
-    SMODS.draw_cards(${valueCode})
-  end__PRE_RETURN_CODE_END__
-  `;
+  const statement = `
+    __PRE_RETURN_CODE__
+    if G.hand and #G.hand.cards > 0 then
+      SMODS.draw_cards(${valueCode})
+    end
+    __PRE_RETURN_CODE_END__`;
  
   return {
     statement: statement,
@@ -65,20 +66,20 @@ const generateConsumableCode = (
   : `"+"..tostring(${valueCode}).." Cards Drawn"`;
   
   const drawCardsCode = `
-      __PRE_RETURN_CODE__
-      if G.GAME.blind.in_blind then
-        G.E_MANAGER:add_event(Event({
-            trigger = 'after',
-            delay = 0.4,
-            func = function()
-                card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${defaultMessage}, colour = G.C.BLUE})
-                SMODS.draw_cards(${valueCode})
-                return true
-            end
-        }))
-        delay(0.6)
-      end
-      __PRE_RETURN_CODE_END__`;
+    __PRE_RETURN_CODE__
+    if G.hand and #G.hand.cards > 0 then
+      G.E_MANAGER:add_event(Event({
+          trigger = 'after',
+          delay = 0.4,
+          func = function()
+              card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${defaultMessage}, colour = G.C.BLUE})
+              SMODS.draw_cards(${valueCode})
+              return true
+          end
+      }))
+      delay(0.6)
+    end
+    __PRE_RETURN_CODE_END__`;
 
   return {
     statement: drawCardsCode,
@@ -103,10 +104,12 @@ const generateCardCode = (
   const customMessage = effect.customMessage;
 
   const result: EffectReturn = {
-    statement: `__PRE_RETURN_CODE__
-  if G.GAME.blind.in_blind then
-    SMODS.draw_cards(${valueCode})
-  end__PRE_RETURN_CODE_END__`,
+    statement: `
+      __PRE_RETURN_CODE__
+        if G.hand and #G.hand.cards > 0 then
+          SMODS.draw_cards(${valueCode})
+        end
+      __PRE_RETURN_CODE_END__`,
     message: customMessage
       ? `"${customMessage}"`
       : `"+"..tostring(${valueCode}).." Cards Drawn"`,
