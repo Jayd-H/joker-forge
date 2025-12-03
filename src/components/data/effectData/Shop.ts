@@ -294,4 +294,55 @@ export const SHOP_EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Shop",
   },
+  {
+    id: "add_voucher_shop",
+    label: "Add Voucher Into Shop",
+    description: "Add a Voucher into the current Shop",
+    objectUsers: ["joker"],
+    applicableTriggers: ["shop_entered", "shop_reroll", "card_bought", ],
+    params: [
+      {
+        id: "method_type",
+        type: "select",
+        label: "Selection Method",
+        options: [
+          { value: "random", label: "Random Voucher"},
+          { value: "specific", label: "Specific Voucher Key"},
+          { value: "key_var", label: "Key Variable"},
+        ],
+        default: "random"
+      },
+      {
+        id: "key_variable",
+        type: "select",
+        label: "Key Variable",
+        variableTypes: ["key"],
+        showWhen: {
+          parameter: "method_type",
+          values: ["key_var"]
+        }
+      },
+      {
+        id: "specific_key",
+        type: "text",
+        label: "Voucher Key",
+        default: "",
+        showWhen: {
+          parameter: "method_type",
+          values: ["specific"]
+        }
+      },
+      {
+        id: "duration",
+        type: "select",
+        label: "Dont Save Voucher?(will not appear next shop)",
+        options: [
+          { value: "false", label: "Save"},
+          { value: "true", label: "Don't Save"},
+        ],
+        default: "false"
+      },
+    ],
+    category: "Shop",
+  },
 ]

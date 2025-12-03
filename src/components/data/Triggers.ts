@@ -265,6 +265,21 @@ export const TRIGGERS: GlobalTriggerDefinition[] = [
     objectUsers: ["joker", "voucher", "deck"],
   },
   {
+    id: "blind_disabled",
+    label: {
+      joker: "When Blind is Disable",
+      voucher: "When Blind is Disable",
+      deck: "When Blind is Disable",
+    },
+    description: {
+      joker: "Triggers when the blind is Disabled by the player.",
+      voucher: "Triggers when the blind is Disabled by the player.",
+      deck: "Triggers when the blind is Disabled by the player.",    
+    },    
+    category: "In Blind Events",
+    objectUsers: ["joker", "voucher", "deck"],
+  },
+  {
     id: "boss_defeated",
     label: {
       joker: "When a Boss is Defeated",

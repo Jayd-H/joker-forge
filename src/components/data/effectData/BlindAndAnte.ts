@@ -19,15 +19,6 @@ export const BLIND_AND_ANTE_EFFECTS: GlobalEffectTypeDefinition[] = [
     category: "Blind & Ante",
   },
   {
-    id: "beat_current_blind",
-    label: "Win Current Blind",
-    description: "Forces to Win the current Blind",
-    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"], // Will check if the player is in blind
-    objectUsers: ["joker", "consumable"],
-    params: [],
-    category: "Blind & Ante",
-  },
-  {
     id: "modify_blind_requirement",
     label: "Modify Blind Requirement",
     description: "Changes the score requirement of a blind",

@@ -163,6 +163,14 @@ export const generateTriggerContext = (
         default: 
           return `context.skip_blind`
       }
+
+      case "blind_disabled":
+      switch(objectType) {
+        case "joker":
+          return `context.blind_disabled ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+        default:
+          return `context.blind_disabled`
+      }
       
     case "boss_defeated":
       switch(objectType) {

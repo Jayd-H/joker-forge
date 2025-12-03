@@ -63,6 +63,7 @@ export const GENERIC_TRIGGERS: string[] = [
   "tag_added",
   "ante_start",
   "player_action",
+  "blind_disabled"
 ];
 
 export const ALL_OBJECTS = [
@@ -2289,6 +2290,44 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
           parameter: "position",
           values: ["specific"],
         },
+      },
+    ],
+    category: "Jokers",
+  },
+  {
+    id: "joker_edition",
+    label: "Joker Edition",
+    description: "Check the editions of the evaluated or selected joker",
+    objectUsers: ["joker", "consumable"],
+    applicableTriggers: ["joker_evaluated", "card_used"],
+    params: [
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition",
+        options: [
+          ...EDITIONS()
+        ],
+        default: "foil",
+      },
+    ],
+    category: "Jokers",
+  },
+  {
+    id: "this_joker_edition",
+    label: "This Joker Edition",
+    description: "Check the editions of this joker",
+    objectUsers: ["joker"],
+    applicableTriggers: [...GENERIC_TRIGGERS],
+    params: [
+      {
+        id: "edition",
+        type: "select",
+        label: "Edition",
+        options: [
+          ...EDITIONS()
+        ],
+        default: "foil",
       },
     ],
     category: "Jokers",

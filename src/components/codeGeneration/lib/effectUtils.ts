@@ -15,7 +15,7 @@ import { generateShowMessageEffectCode } from "../Effects/ShowMessageEffect";
 import { generateDisableBossBlindEffectCode, generateDisableBossBlindPassiveEffectCode } from "../Effects/DisableBossBlindEffect";
 import { generateEmitFlagEffectCode } from "../Effects/EmitFlagEffect";
 import { generatePlaySoundEffectCode } from "../Effects/PlaySoundEffect";
-import { generateWinBlindEffectCode } from "../Effects/WinBlindEffect";
+import { generateWinGameEffectCode } from "../Effects/WinGameEffect";
 import { generateEditCardAppearanceEffectCode } from "../Effects/EditCardAppearanceEffect";
 import { generateChangeKeyVariableEffectCode } from "../Effects/variableEffects/ChangeKeyVariableEffect";
 import { generateChangePokerHandVariableEffectCode } from "../Effects/variableEffects/ChangePokerHandVariableEffect";
@@ -95,6 +95,7 @@ import { generateEditGameSpeedEffectCode } from "../Effects/EditGameSpeed";
 import { generateAddBoosterToShopEffectCode } from "../Effects/AddBoosterIntoShopEffect";
 import { generateCreatePlayingCardsEffectCode } from "../Effects/CreatePlayingCardsEffect";
 import { generateShowMessageReturn } from "../Effects/ShowSpecialMessageEffect";
+import { generateAddVoucherToShopEffectCode } from "../Effects/AddVoucherIntoShopEffect";
 import { convertLoopGroupsForCodegen, convertRandomGroupsForCodegen } from "./groupUtils";
 
 interface ExtendedEffect extends Effect {
@@ -915,9 +916,9 @@ export const generateSingleEffect = (
     case "set_ante":
       return generateSetAnteEffectCode(effect, itemType, triggerType, sameTypeCount)
     case "emit_flag":
-      return generateEmitFlagEffectCode(effect, modprefix, itemType);
-    case "beat_current_blind":
-      return generateWinBlindEffectCode(effect)
+      return generateEmitFlagEffectCode(effect, modprefix);
+    case "win_game":
+      return generateWinGameEffectCode(effect)
     case "unlock_joker":
       return generateUnlockJokerEffectCode(effect)
     case "shuffle_jokers":
@@ -930,6 +931,8 @@ export const generateSingleEffect = (
       return generateAddBoosterToShopEffectCode(effect, itemType)
     case "special_message":
       return generateShowMessageReturn(effect, itemType);
+    case "add_voucher_shop":
+      return generateAddVoucherToShopEffectCode(effect, itemType)
 
 //////////DECK EXCLUSIVE EFFECTS\\\\\\\\\\\\
     case "edit_all_starting_cards":

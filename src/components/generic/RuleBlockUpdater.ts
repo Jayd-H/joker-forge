@@ -173,8 +173,8 @@ const updateEffectId = (
         return "destroy_joker"
       }
       return id
-    case "win_blind":
-      return "beat_current_blind"
+    case "Win_blind":
+      return "win_game"
     case "add_dollars":
     case "edit_dollars":
       return "set_dollars"
