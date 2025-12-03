@@ -6,7 +6,7 @@ export const generateJokerEditionConditionCode = (
   target: string,
 ):string | null => {
   const condition = rules[0].conditionGroups[0].conditions[0];
-  const edition = (condition.params.edition.value as string) || "foil";
+  const edition = (condition.params?.edition.value as string) || "foil";
   let valueCode = ''
 
   switch(itemType) {

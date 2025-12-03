@@ -20,9 +20,9 @@ export const generateAddVoucherToShopEffectCode = (
 const generateJokerCode = (
   effect: Effect,
 ): EffectReturn => {
-  const method = effect.params.method_type.value as string || "specific";
-  const specificVoucher = effect.params.specific_key?.value as string || "v_overstock_norm";
-  const voucherVariable = effect.params.key_variable?.value as string || "";
+  const method = effect.params.method_type?.value as string || "specific";
+  const specificVoucher = effect.params?.specific_key?.value as string || "v_overstock_norm";
+  const voucherVariable = effect.params?.key_variable?.value as string || "";
   const duration = effect.params?.duration || "false";
 
   let voucherCode = ''
