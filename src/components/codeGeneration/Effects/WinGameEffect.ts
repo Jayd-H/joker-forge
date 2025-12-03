@@ -5,7 +5,7 @@ export const generateWinGameEffectCode = (
   effect: Effect,
 ): EffectReturn => {
   const customMessage = effect.customMessage;
-  const Win_type = (effect.params?.win_type as string) || "blind";
+  const Win_type = (effect.params?.win_type.value as string) || "blind";
 
   let WinGameCode = ""
 
