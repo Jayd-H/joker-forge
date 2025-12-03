@@ -175,11 +175,11 @@ export const generateSingleConditionCode = (
       return generateCardEnhancementConditionCode([singleConditionRule], itemType)
     case "card_index":
       return generateCardIndexConditionCode([singleConditionRule], cleanItemType)
-    case "card_suit":case "suit_count":
+    case "card_suit":
       return generateCardSuitConditionCode([singleConditionRule], itemType, joker)
-    case "card_rank":case "rank_count":
+    case "card_rank":
       return generateCardRankConditionCode([singleConditionRule], itemType)
-    case "card_seal":case "seal_count":
+    case "card_seal":
       return generateCardSealConditionCode([singleConditionRule], itemType)
     case "cards_selected":
       return generateCardsSelectedConditionCode([singleConditionRule], itemType)
