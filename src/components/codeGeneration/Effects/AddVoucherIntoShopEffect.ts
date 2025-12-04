@@ -23,7 +23,7 @@ const generateJokerCode = (
   const method = effect.params.method_type?.value as string || "specific";
   const specificVoucher = effect.params?.specific_key?.value as string || "v_overstock_norm";
   const voucherVariable = effect.params?.key_variable?.value as string || "";
-  const duration = effect.params?.duration || "false";
+  const duration = effect.params?.duration.value || "false";
 
   let voucherCode = ''
   if (method === "key_var") {
