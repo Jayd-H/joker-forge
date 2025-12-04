@@ -200,11 +200,11 @@ const generateSingleVoucherCode = (
 
   if (configItems.length > 0) {
     voucherCode += `
-    config = { 
-      extra = {
-        ${configItems.join(`,\n`)}
-      } 
-    },`;
+      config = { 
+        extra = {
+          ${configItems.join(`,\n`)}
+        } 
+      },`
   }
 
   voucherCode += `
