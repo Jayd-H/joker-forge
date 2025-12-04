@@ -159,6 +159,47 @@ const generateConsumableCode = (
     } else if (handType === "random") {
       levelUpCode += `
         { handname = '???', chips = '???', mult = '???', level = '' }`
+    } else if (handType === "most") {
+      levelUpCode = `
+        local temp_played = 0
+        local temp_order = math.huge
+        local target_hand = 'High Card'
+        for hand, value in pairs(G.GAME.hands) do 
+          if value.played > temp_played and value.visible then
+            temp_played = value.played
+            temp_order = value.order
+            target_hand = hand
+          elseif value.played == temp_played and value.visible then
+            if value.order < temp_order then
+              temp_order = value.order
+              target_hand = hand
+            end
+          end
+        end`;
+      
+    } else if (handType === "least") {
+      levelUpCode = `
+        local temp_played = math.huge
+        local temp_order = math.huge
+        local target_hand = 'High Card'
+        for hand, value in pairs(G.GAME.hands) do 
+          if value.played < temp_played and value.visible then
+            temp_played = value.played
+            temp_order = value.order
+            target_hand = hand
+          elseif value.played == temp_played and value.visible then
+            if value.order < temp_order then
+              temp_order = value.order
+              target_hand = hand
+            end
+          end
+        end
+        { 
+          handname = localize(target_hand, 'poker_hands'), 
+          chips = G.GAME.hands[target_hand].chips, 
+          mult = G.GAME.hands[target_hand].mult, 
+          level = G.GAME.hands[target_hand].level 
+        }`; 
     } else {
       levelUpCode += `
         { 
