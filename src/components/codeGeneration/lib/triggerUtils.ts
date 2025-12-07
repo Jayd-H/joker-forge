@@ -7,7 +7,7 @@ export const generateTriggerContext = (
 ): string => {
 
   const hasRetriggerEffects = (objectType === "joker") && rules?.some((rule) =>
-    rule.effects.some((effect) => effect.type === "retrigger_cards")
+    rule.effects.some((effect) => effect.type === "retrigger_playing_card")
   );
 
   const isBlueprintCompatible = (objectType === "joker") && rules?.some((rule) => 

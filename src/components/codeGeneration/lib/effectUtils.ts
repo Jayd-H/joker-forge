@@ -894,7 +894,7 @@ export const generateSingleEffect = (
     case "level_up_hand":
       return generateLevelUpHandEffectCode(effect, itemType, triggerType, sameTypeCount, joker, card)
     case "force_game_over":
-      return generateForceGameOverEffectCode(effect)
+      return generateForceGameOverEffectCode(effect, itemType)
     case "fix_probability":
       return generateFixProbabilityEffectCode(effect, sameTypeCount)
     case "mod_probability":
