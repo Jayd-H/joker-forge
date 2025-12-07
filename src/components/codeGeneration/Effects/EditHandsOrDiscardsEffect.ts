@@ -100,8 +100,8 @@ const generateJokerConsumableVoucherCode = (
   sameTypeCount: number = 0,
   effectType: string,
 ): EffectReturn => {
-  const operation = effect.params?.operation?.value || "add";
-  const duration = effect.params?.duration?.value || "permanent";
+  const operation = (effect.params?.operation?.value as string) || "add";
+  const duration = (effect.params?.duration?.value as string) || "permanent";
 
   const typeData = generateEffectTypeData(effectType)
 
@@ -173,7 +173,7 @@ const generateJokerConsumableVoucherCode = (
   if (itemType === "joker" || itemType === "consumable") {
     statement = `
       func = function()
-        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${returnMessage}, colour = ${colour}})
+        card_eval_status_text(${itemType === "joker" ? 'context.blueprint_card or ' : 'used_'}card, 'extra', nil, nil, nil, {message = ${returnMessage}, colour = ${colour}})
         ${editHandCode}
         return true
       end`;

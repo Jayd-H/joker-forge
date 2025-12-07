@@ -307,7 +307,7 @@ const generateCardCode = (
                         return true
                     end
                 }))
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.RED})
+                card_eval_status_text(card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.RED})
             end`;
   } else {
     if (specificCard === "random") {
@@ -326,7 +326,7 @@ const generateCardCode = (
                         return true
                     end
                 }))
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.RED})
+                card_eval_status_text(card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.RED})
             end`;
     } else {
       destroyCode = `
@@ -344,7 +344,7 @@ const generateCardCode = (
                         return true
                     end
                 }))
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.RED})
+                card_eval_status_text(card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.RED})
             end`;
     }
   }

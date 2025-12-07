@@ -51,7 +51,7 @@ const customMessage = effect.customMessage;
                         return true
                     end
                 }))
-                card_eval_status_text(${itemType === "joker" ? 'context.blueprint_card or ' : ''}card, 'extra', nil, nil, nil, {message = ${
+                card_eval_status_text(${itemType === "joker" ? 'context.blueprint_card or ' : itemType === "consumable" ? 'used_' : ''}card, 'extra', nil, nil, nil, {message = ${
                   customMessage
                     ? `"${customMessage}"`
                     : `localize('ph_boss_disabled')`

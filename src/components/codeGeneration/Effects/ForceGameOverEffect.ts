@@ -3,9 +3,14 @@ import type { EffectReturn } from "../lib/effectUtils";
 
 export const generateForceGameOverEffectCode = (
   effect: Effect,
+  itemType: string,
 ): EffectReturn => {
   const customMessage = effect.customMessage;
-  const message = customMessage ? `card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = "${customMessage}", colour = G.C.RED})`: ``;
+  const target = 
+    (itemType === "joker") ? "context.blueprint_card or card" : 
+    (itemType === "consumable") ? "used_card" : "card"
+
+  const message = customMessage ? `card_eval_status_text(${target}, 'extra', nil, nil, nil, {message = "${customMessage}", colour = G.C.RED})`: ``;
 
   const statement = `func = function()
                 ${message}
