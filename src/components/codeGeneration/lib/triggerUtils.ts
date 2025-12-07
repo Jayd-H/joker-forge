@@ -85,7 +85,7 @@ export const generateTriggerContext = (
           if (hasRetriggerEffects) {
             return `context.repetition and not context.cardarea == G.hand and context.end_of_round and (next(context.card_effects[1]) or #context.card_effects > 1) ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
           } else {
-            return `context.cardarea == G.hand and not context.end_of_round ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+            return `context.individual and context.cardarea == G.hand and not context.end_of_round ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
           }
         case "card":
           return "context.cardarea == G.hand and context.main_scoring"
@@ -98,7 +98,7 @@ export const generateTriggerContext = (
           if (hasRetriggerEffects) {
             return `context.repetition and context.cardarea == G.hand and context.end_of_round and (next(context.card_effects[1]) or #context.card_effects > 1) ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
           } else {
-            return `context.cardarea == G.hand and context.end_of_round ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
+            return `context.individual and context.cardarea == G.hand and context.end_of_round ${isBlueprintCompatible ? '' : ' and not context.blueprint'}`
           }
         case "card":
           return "context.end_of_round and context.cardarea == G.hand and context.other_card == card and context.individual"
