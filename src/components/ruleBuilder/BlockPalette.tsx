@@ -277,7 +277,7 @@ const BlockPalette: React.FC<BlockPaletteProps> = ({
       setExpandedCategories(new Set(allLabels));
     }
 
-  }, [activeFilter, searchTerm, categorizedItems]);
+  }, [activeFilter, searchTerm]);
 
   const shouldShowSection = (sectionType: FilterType) => {
     if (!selectedRule && sectionType !== "triggers") {
