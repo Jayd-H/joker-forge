@@ -33,7 +33,7 @@ const generateJokerCode = (
   const specificIndex = (effect.params?.specific_index?.value as number) || 1;
   const edition = (effect.params?.edition?.value as string) || "none";
   const customMessage = effect.customMessage;
-  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect"
+  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "ignore";
   const sticker = (effect.params?.sticker?.value as string) || "none"
 
   const scoringTriggers = ["hand_played", "card_scored"];
@@ -41,7 +41,6 @@ const generateJokerCode = (
 
   const isNegative = edition === "e_negative";
   const hasEdition = edition !== "none";
-  const ignoreSlots = ignoreSlotsParam === "ignore"
   const hasSticker = sticker !== "none";
 
   let jokerSelectionCode = "";

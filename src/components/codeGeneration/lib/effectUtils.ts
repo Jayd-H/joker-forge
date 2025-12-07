@@ -1121,12 +1121,12 @@ const buildReturnStatement = (effects: EffectReturn[]): string => {
 
       if (extraCount === 0) {
         extraChain = `,
-                    extra = {
-                        ${extraContent}`;
+          extra = {
+              ${extraContent}`;
 
         if (effect.colour && effect.colour.trim()) {
           extraChain += `,
-                        colour = ${effect.colour}`;
+            colour = ${effect.colour}`;
         }
       } else {
         extraChain += `,

@@ -11,18 +11,20 @@ export const generateEditCardAppearanceEffectCode = (
 
   if (card_appearance !== "none") {
     if (card_appearance === "appear") {
-        editAppearCode += `
+      editAppearCode += `
         G.P_CENTERS["${key}"].in_pool = function() return true end
         `;
     } else if (card_appearance === "disappear") {
-        editAppearCode += `
+      editAppearCode += `
         G.P_CENTERS["${key}"].in_pool = function() return false end
         `;
     }
   }
 
   return {
-    statement: editAppearCode,
+    statement: `__PRE_RETURN_CODE__
+      ${editAppearCode}
+      __PRE_RETURN_CODE_END__`,
     colour: "G.C.MONEY",
   };
 }

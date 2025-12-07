@@ -38,7 +38,7 @@ const generateJokerCode = (
   const edition = (effect.params?.edition?.value as string) || "none";
   const customMessage = effect.customMessage;
   const sticker = (effect.params?.sticker?.value as string) || "none";
-  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "y";
+  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "ignore";
 
   const isEditionVar = !EDITIONS().map(edition => edition?.value).includes(edition) && edition !== "none"
 
@@ -168,12 +168,11 @@ const generateConsumableCode = (
   const pool = (effect.params?.pool?.value as string) || "";
   const edition = (effect.params?.edition?.value as string) || "none";
   const sticker = (effect.params?.sticker?.value as string) || "none";
-  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect";
+  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "ignore";
   const customMessage = effect.customMessage;
 
   const isNegative = edition === "e_negative";
   const hasSticker = sticker !== "none";
-  const ignoreSlots = ignoreSlotsParam === "ignore";
 
   const normalizedJokerKey = jokerKey.startsWith("j_")
     ? jokerKey
@@ -281,12 +280,11 @@ const generateCardCode = (
   const pool = (effect.params?.pool?.value as string) || "";
   const edition = (effect.params?.edition?.value as string) || "none";
   const sticker = (effect.params?.sticker?.value as string) || "none";
-  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect";
+  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "ignore";
   const customMessage = effect.customMessage;
 
   const isNegative = edition === "e_negative";
   const hasSticker = sticker !== "none";
-  const ignoreSlots = ignoreSlotsParam === "ignore";
 
   const normalizedJokerKey = jokerKey.startsWith("j_")
     ? jokerKey
@@ -379,11 +377,10 @@ const generateDeckCode = (
   const pool = (effect.params?.pool?.value as string) || "";
   const edition = (effect.params?.edition?.value as string) || "none";
   const sticker = (effect.params?.sticker?.value as string) || "none";
-  const ignoreSlotsParam = (effect.params?.ignore_slots?.value as string) || "respect";
+  const ignoreSlots = (effect.params?.ignore_slots?.value as string) === "ignore";
 
   const isNegative = edition === "e_negative";
   const hasSticker = sticker !== "none";
-  const ignoreSlots = ignoreSlotsParam === "ignore";
 
   const normalizedJokerKey = jokerKey.startsWith("j_")
     ? jokerKey
