@@ -35,6 +35,7 @@ import { generateJokerPositionConditionCode } from "../Conditions/JokerPositionC
 import { generateJokerRarityConditionCode } from "../Conditions/JokerRarityCondition";
 import { generateJokerSelectedConditionCode } from "../Conditions/JokerSelectedCondition";
 import { generateJokerStickerConditionCode } from "../Conditions/JokerStickerCondition";
+import { generateJokerEditionConditionCode } from "../Conditions/JokerEditionCondition";
 import { generateLuckyCardTriggeredConditionCode } from "../Conditions/LuckyCardTriggeredCondition";
 import { generatePlayerMoneyConditionCode } from "../Conditions/PlayerMoneyCondition";
 import { generatePokerHandBeenPlayedConditionCode } from "../Conditions/PokerHandBeenPlayedCondition";
@@ -174,11 +175,11 @@ export const generateSingleConditionCode = (
       return generateCardEnhancementConditionCode([singleConditionRule], itemType)
     case "card_index":
       return generateCardIndexConditionCode([singleConditionRule], cleanItemType)
-    case "card_suit":case "suit_count":
+    case "card_suit":
       return generateCardSuitConditionCode([singleConditionRule], itemType, joker)
-    case "card_rank":case "rank_count":
+    case "card_rank":
       return generateCardRankConditionCode([singleConditionRule], itemType)
-    case "card_seal":case "seal_count":
+    case "card_seal":
       return generateCardSealConditionCode([singleConditionRule], itemType)
     case "cards_selected":
       return generateCardsSelectedConditionCode([singleConditionRule], itemType)
@@ -256,6 +257,10 @@ export const generateSingleConditionCode = (
       return generateJokerStickerConditionCode([singleConditionRule], itemType, "other")
     case "this_joker_sticker":
       return generateJokerStickerConditionCode([singleConditionRule], itemType, "self")
+    case "joker_edition":
+      return generateJokerEditionConditionCode([singleConditionRule], itemType, "other")
+    case "this_joker_edition":
+      return generateJokerEditionConditionCode([singleConditionRule], itemType, "self")
     case "lucky_card_triggered":
       return generateLuckyCardTriggeredConditionCode()
     case "player_money":

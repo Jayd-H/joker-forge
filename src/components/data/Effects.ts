@@ -676,6 +676,27 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
     ],
     category: "Special",
   },
+  {
+    id: "win_game",
+    label: "Win Game",
+    description: "Forces to Win the current Blind/Game",
+    applicableTriggers: [...GENERIC_TRIGGERS, "card_used"],
+    objectUsers: ["joker", "consumable"],
+    params: [
+      {
+        id: "win_type",
+        type: "select",
+        label: "Win",
+        options: [
+        { value: "blind", label: "Current Blind" },
+        { value: "run", label: "Current Game" },          
+        ],
+        default: "blind",
+      },
+    ],
+    category: "Special",
+  },
+
   ...SCORING_EFFECTS,
   ...ECONOMY_EFFECTS,
   ...JOKER_EFFECTS,

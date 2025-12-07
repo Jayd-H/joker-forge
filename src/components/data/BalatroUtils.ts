@@ -1643,7 +1643,7 @@ export const VANILLA_EDITIONS = [
 export const STICKERS = [
   { key: "eternal", value: "eternal", label: "Eternal (Can't be sold or destroyed)" },
   { key: "rental", value: "rental", label: "Rental (Lose money at end of round)" },
-  { key: "perishable", value: "perishable", label: "Perishable (Debuffed after 3 rounds)" },
+  { key: "perishable", value: "perishable", label: "Perishable (Debuffed after 5 rounds)" },
 ] as const;
 
 export const STICKER_KEYS = STICKERS.map((sticker) => sticker.key);

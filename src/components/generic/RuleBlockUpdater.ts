@@ -174,7 +174,9 @@ const updateEffectId = (
       }
       return id
     case "win_blind":
-      return "beat_current_blind"
+      return "win_game"
+    case "beat_current_blind":
+      return "win_game"
     case "add_dollars":
     case "edit_dollars":
       return "set_dollars"
@@ -292,6 +294,9 @@ const updateEffectParams = (
       break
     case "add_dollars_from_jokers":
       params["value"] = {value: "GAMEVAR:all_jokers_sell_value", valueType: "game_var"}
+      break
+    case "win_game":
+      params["win_type"] =  {value: "blind", valueType: "text"}
       break
   }
   return params
