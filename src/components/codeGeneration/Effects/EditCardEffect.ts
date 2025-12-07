@@ -120,7 +120,7 @@ const generateJokerCode = (
       ${target}:set_edition(card.ability.extra.${newEdition.value}, true)`;
   }  else if (newEdition.value !== "none") {
     modificationCode += `
-      ${target}:set_edition("${newEdition.value}", true)`;
+      ${target}:set_edition("${(newEdition.value as string).startsWith("e_") ? newEdition.value : `e_${newEdition.value}`}", true)`;
   }
 
   if (isScoring) {
