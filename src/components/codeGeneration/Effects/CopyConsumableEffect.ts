@@ -222,7 +222,7 @@ const generateConsumableCode = (
                         return true
                     end
                 }))
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+                card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
             end`;
   } else {
     if (specificCard === "random") {
@@ -245,7 +245,7 @@ const generateConsumableCode = (
                         return true
                     end
                 }))
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+                card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
             end`;
     } else {
       copyCode = `
@@ -267,7 +267,7 @@ const generateConsumableCode = (
                         return true
                     end
                 }))
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
+                card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${messageText}, colour = G.C.GREEN})
             end`;
     }
   }

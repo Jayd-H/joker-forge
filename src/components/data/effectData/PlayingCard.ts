@@ -426,7 +426,7 @@ export const PLAYING_CARD_EFFECTS: GlobalEffectTypeDefinition[] = [
         id: "enhancement",
         type: "select",
         label: "Enhancement Type",
-        options: [
+        options: () => [
           { value: "none", label: "No Change" },
           { value: "remove", label: "Remove Enhancement" },
           { value: "random", label: "Random Enhancement" },

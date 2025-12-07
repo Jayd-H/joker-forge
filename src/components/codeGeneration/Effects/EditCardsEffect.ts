@@ -163,17 +163,18 @@ editCardsCode += `
                     func = function()`
 
     if (edition === "remove") {
-        editCardsCode += `
-                        ${target}[i]:set_edition(nil, true)`
+      editCardsCode += `
+        ${target}[i]:set_edition(nil, true)`
     } else if (edition === "random") {
-        const editionPool = EDITIONS().map(edition => `'${
-                    edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
-        editCardsCode += `
-                        local edition = pseudorandom_element({${editionPool}}, 'random edition')
-                        ${target}[i]:set_edition(edition, true)`
+      const editionPool = EDITIONS().map(edition => `'${
+        edition.key.startsWith('e_') ? edition.key : `e_${modPrefix}_${edition.key}`}'`)
+
+      editCardsCode += `
+        local edition = pseudorandom_element({${editionPool}}, 'random edition')
+          ${target}[i]:set_edition(edition, true)`
     } else {
-        editCardsCode += `
-                        ${target}[i]:set_edition('${edition}', true)`
+      editCardsCode += `
+        ${target}[i]:set_edition('${edition.startsWith("e_") ? edition : `e_${edition}`}', true)`
     }
     
     editCardsCode += `

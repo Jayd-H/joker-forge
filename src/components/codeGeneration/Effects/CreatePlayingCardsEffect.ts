@@ -73,16 +73,16 @@ const generateConsumableCode = (
         }}
 
     addCardsCode += `
-                        local rank_pool = {${rankPool}}
-                        local _rank = pseudorandom_element(rank_pool, 'random_rank')`
+      local rank_pool = {${rankPool}}
+      local _rank = pseudorandom_element(rank_pool, 'random_rank')`
   } else {
     addCardsCode += `
-                        local _rank = '${rank}'`;
+      local _rank = '${rank}'`;
   }
 
   if (suit === "random") {
     addCardsCode += `
-                        local _suit = pseudorandom_element(SMODS.Suits, 'add_random_suit').key`;
+      local _suit = pseudorandom_element(SMODS.Suits, 'add_random_suit').key`;
   } else if (suit === "pool") {
     
     const suitPool = []
@@ -92,57 +92,57 @@ const generateConsumableCode = (
         }}
 
     addCardsCode += `
-                        local suit_pool = {${suitPool}}
-                        local _suit = pseudorandom_element(suit_pool, 'random_suit')`
+      local suit_pool = {${suitPool}}
+      local _suit = pseudorandom_element(suit_pool, 'random_suit')`
   } else if (suit !== "none") {
     addCardsCode += `
-                        local _suit = '${suit}'`;
+      local _suit = '${suit}'`;
   } else {
     addCardsCode += `
-                        local _suit = nil`;
+      local _suit = nil`;
   }
 
   if (enhancement === "random") {
     addCardsCode += `
-                        local cen_pool = {}
-                        for _, enhancement_center in pairs(G.P_CENTER_POOLS["Enhanced"]) do
-                            if enhancement_center.key ~= 'm_stone' and not enhancement_center.overrides_base_rank then
-                                cen_pool[#cen_pool + 1] = enhancement_center
-                            end
-                        end
-                        local enhancement = pseudorandom_element(cen_pool, 'add_cards_enhancement')`;
+      local cen_pool = {}
+      for _, enhancement_center in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+          if enhancement_center.key ~= 'm_stone' and not enhancement_center.overrides_base_rank then
+              cen_pool[#cen_pool + 1] = enhancement_center
+          end
+      end
+      local enhancement = pseudorandom_element(cen_pool, 'add_cards_enhancement')`;
   } else if (enhancement !== "none") {
     addCardsCode += `
-                        local enhancement = G.P_CENTERS['${enhancement}']`;
+      local enhancement = G.P_CENTERS['${enhancement}']`;
   }
 
   addCardsCode += `
-                        local new_card_params = { set = "Base" }
-                        if _rank then new_card_params.rank = _rank end
-                        if _suit then new_card_params.suit = _suit end`;
+    local new_card_params = { set = "Base" }
+    if _rank then new_card_params.rank = _rank end
+    if _suit then new_card_params.suit = _suit end`;
 
   if (enhancement !== "none") {
     addCardsCode += `
-                        if enhancement then new_card_params.enhancement = enhancement.key end`;
+      if enhancement then new_card_params.enhancement = enhancement.key end`;
   }
 
   addCardsCode += `
-                        cards[i] = SMODS.add_card(new_card_params)`;
+    cards[i] = SMODS.add_card(new_card_params)`;
 
   if (seal !== "none") {
     if (seal === "random") {
       const sealPool = SEALS().map(seal => `'${seal?.value}'`)
       addCardsCode += `
-                        if cards[i] then
-                            local seal_pool = {${sealPool}}
-                            local random_seal = pseudorandom_element(seal_pool, 'add_cards_seal')
-                            cards[i]:set_seal(random_seal, nil, true)
-                        end`;
+        if cards[i] then
+            local seal_pool = {${sealPool}}
+            local random_seal = pseudorandom_element(seal_pool, 'add_cards_seal')
+            cards[i]:set_seal(random_seal, nil, true)
+        end`;
     } else {
       addCardsCode += `
-                        if cards[i] then
-                            cards[i]:set_seal('${seal}', nil, true)
-                        end`;
+        if cards[i] then
+            cards[i]:set_seal('${seal}', nil, true)
+        end`;
     }
   }
 
@@ -158,7 +158,7 @@ const generateConsumableCode = (
     } else {
       addCardsCode += `
                         if cards[i] then
-                            cards[i]:set_edition('${edition}', true)
+                            cards[i]:set_edition('${edition.startsWith("e_") ? edition : `e_${edition}`}', true)
                         end`;
     }
   }

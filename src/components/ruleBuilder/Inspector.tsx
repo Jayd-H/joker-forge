@@ -1118,7 +1118,7 @@ const Inspector: React.FC<InspectorProps> = ({
   React.useEffect(() => {
     if (selectedGameVariable && selectedItem) {
       if (selectedItem.type === "condition" && selectedCondition) {
-        if (selectedCondition.id == "Generic Compare") {
+        if (selectedCondition.type !== "generic_compare") {
           const valueParam = selectedCondition.params.value;
           if (valueParam !== undefined) {
             const currentValue = valueParam.value as string

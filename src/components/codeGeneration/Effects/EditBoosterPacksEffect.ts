@@ -121,6 +121,8 @@ const generateJokerAndConsumableCode = (
       trigger = 'after',
           delay = 0.4,`
   }
+  const target = 
+    (itemType === "joker") ? "context.blueprint_card or card" : "used_card"
 
   if (selected_type !== "none") { 
     if (selected_type === "size") {
@@ -131,7 +133,7 @@ const generateJokerAndConsumableCode = (
             : `"+"..tostring(${valueCode}).." Booster Size"`;
           EditBoosterCode += `
                 func = function()
-                  card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
+                  card_eval_status_text(${target}, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
                   G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) +${valueCode}
                   return true
                 end`;
@@ -143,7 +145,7 @@ const generateJokerAndConsumableCode = (
             : `"-"..tostring(${valueCode}).." Booster Size"`;
           EditBoosterCode += `
                 func = function()
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
+                card_eval_status_text(${target}, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
             G.GAME.modifiers.booster_size_mod = (G.GAME.modifiers.booster_size_mod or 0) -${valueCode}
                     return true
                 end`;
@@ -155,7 +157,7 @@ const generateJokerAndConsumableCode = (
             : `"Booster Size "..tostring(${valueCode})`;
           EditBoosterCode += `
                 func = function()
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
+                card_eval_status_text(${target}, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
             G.GAME.modifiers.booster_size_mod = ${valueCode}
                     return true
                 end`;
@@ -172,7 +174,7 @@ const generateJokerAndConsumableCode = (
             : `"+"..tostring(${valueCode}).." Booster Choice"`;
           EditBoosterCode += `
                 func = function()
-            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
+            card_eval_status_text${target}, 'extra', nil, nil, nil, {message = ${addMessage}, colour = G.C.DARK_EDITION})
             G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) +${valueCode}
                     return true
                 end`;
@@ -184,7 +186,7 @@ const generateJokerAndConsumableCode = (
             : `"-"..tostring(${valueCode}).." Booster Choice"`;
           EditBoosterCode += `
                 func = function()
-                card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
+                card_eval_status_text(${target}, 'extra', nil, nil, nil, {message = ${subtractMessage}, colour = G.C.RED})
             G.GAME.modifiers.booster_choice_mod = (G.GAME.modifiers.booster_choice_mod or 0) -${valueCode}
                     return true
                 end`;
@@ -196,7 +198,7 @@ const generateJokerAndConsumableCode = (
             : `"Booster Choice "..tostring(${valueCode})`;
           EditBoosterCode += `
                 func = function()
-                  card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
+                  card_eval_status_text(${target}, 'extra', nil, nil, nil, {message = ${setMessage}, colour = G.C.BLUE})
                   G.GAME.modifiers.booster_choice_mod = ${valueCode}
                   return true
                 end`;

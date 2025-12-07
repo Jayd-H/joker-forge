@@ -46,7 +46,7 @@ const generateJokerCode = (
     statement: `repetitions = ${valueCode}`,
     message: messageCode,
     colour: "G.C.RED",
-    configVariables: configVariables.length > 0 ? configVariables : undefined,
+    configVariables,
   };
 };
 

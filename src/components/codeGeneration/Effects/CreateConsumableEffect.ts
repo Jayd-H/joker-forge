@@ -257,7 +257,7 @@ const generateConsumableCode = (
       statement: `__PRE_RETURN_CODE__
       ${createCode}
                       if created_consumable then
-                        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+                        card_eval_status_text(used_card, 'extra', nil, nil, nil, {message = ${
                           customMessage
                             ? `"${customMessage}"`
                             : `localize('${localizeKey}')`
@@ -373,7 +373,7 @@ const generateCardCode = (
   return {
       statement: `${createCode}
                     if created_consumable then
-                        card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = ${
+                        card_eval_status_text(card, 'extra', nil, nil, nil, {message = ${
                           customMessage
                             ? `"${customMessage}"`
                             : `localize('${localizeKey}')`
