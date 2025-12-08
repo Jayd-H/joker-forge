@@ -78,6 +78,10 @@ export const generateValueCode = (
     (itemType === "edition") ? "card.ability.edition" : 
     "card.ability.extra"
 
+  if (item.valueType === "conflicted_user_var") {
+    return `${item.value}_value`
+  }
+  
   if (item.valueType === "game_var") {
     const parsedGameVar = parseGameVariable(item.value as string)
     const gameVariable = getGameVariableById(parsedGameVar.gameVariableId!);

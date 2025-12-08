@@ -147,7 +147,7 @@ export const coordinateVariableConflicts = (
       if (conflictedVars.includes(varName)) {
         Object.entries(effect.params).forEach(([key, value]) => {
           if (value.value === varName) {
-            modifiedParams[key].value = `${varName}_value`;
+            modifiedParams[key].valueType = "conflicted_user_var"
           }
         });
       }
@@ -600,18 +600,6 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
         }
         variableMap.get(varName)!.usedInEffects.push(effect.type);
       }
-
-      const explicitVariables = extractExplicitVariablesFromEffect(effect);
-      explicitVariables.forEach((varName) => {
-        if (!variableMap.has(varName)) {
-          variableMap.set(varName, {
-            name: varName,
-            initialValue: 0,
-            usedInEffects: [],
-          });
-        }
-        variableMap.get(varName)!.usedInEffects.push(effect.type);
-      });
     });
 
     (rule.randomGroups || []).forEach((group) => {
@@ -627,18 +615,6 @@ export const extractVariablesFromRules = (rules: Rule[]): VariableInfo[] => {
           }
           variableMap.get(varName)!.usedInEffects.push(effect.type);
         }
-
-        const explicitVariables = extractExplicitVariablesFromEffect(effect);
-        explicitVariables.forEach((varName) => {
-          if (!variableMap.has(varName)) {
-            variableMap.set(varName, {
-              name: varName,
-              initialValue: 0,
-              usedInEffects: [],
-            });
-          }
-          variableMap.get(varName)!.usedInEffects.push(effect.type);
-        });
       });
     });
   });
