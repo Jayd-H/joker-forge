@@ -1,4 +1,4 @@
-import { EDITIONS, RANKS, SEALS, SUITS } from "../../data/BalatroUtils";
+import { EDITIONS, getRankId, RANKS, SEALS, SUITS } from "../../data/BalatroUtils";
 import type { Effect } from "../../ruleBuilder/types";
 import type { EffectReturn } from "../lib/effectUtils";
 import { generateValueCode } from "../lib/gameVariableUtils";
@@ -185,73 +185,75 @@ editCardsCode += `
     }
 
 
-    if (suit !== "none") {
-        editCardsCode += `
-            for i = 1, #${target} do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()`
-        if (suit === "random") {
-        editCardsCode += `
-                    local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
-                    assert(SMODS.change_base(${target}[i], _suit.key))`
-        } else if (suit === "pool") {
+  if (suit !== "none") {
+    editCardsCode += `
+      for i = 1, #${target} do
+        G.E_MANAGER:add_event(Event({
+          trigger = 'after',
+          delay = 0.1,
+          func = function()`
+          
+    if (suit === "random") {
+      editCardsCode += `
+        local _suit = pseudorandom_element(SMODS.Suits, 'random_suit')
+        assert(SMODS.change_base(${target}[i], _suit.key))`
+    } else if (suit === "pool") {
+      const suitPool = []
+      for (let i = 0; i < suitPoolActive.length; i++){
+          if (suitPoolActive[i] == true){
+              suitPool.push(suitPoolSuits[i])
+      }}
 
-            const suitPool = []
-            for (let i = 0; i < suitPoolActive.length; i++){
-                if (suitPoolActive[i] == true){
-                    suitPool.push(suitPoolSuits[i])
-            }}
-
-            editCardsCode += `
-                    local suit_pool = {${suitPool}}
-                    local _suit = pseudorandom_element(suit_pool, 'random_suit')
-                    assert(SMODS.change_base(${target}[i], _suit))`
-        } else {
-            editCardsCode += `
-                    assert(SMODS.change_base(${target}[i], '${suit}'))`
-        }
-        editCardsCode += `
-                        return true
-                    end
-                }))
-            end`;
+      editCardsCode += `
+        local suit_pool = {${suitPool}}
+        local _suit = pseudorandom_element(suit_pool, 'random_suit')
+        assert(SMODS.change_base(${target}[i], _suit))`
+    } else {
+      editCardsCode += `
+        assert(SMODS.change_base(${target}[i], '${suit}'))`
     }
 
-    if (rank !== "none") {
-        editCardsCode += `
-            for i = 1, #${target} do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.1,
-                    func = function()`
-        if (rank === "random") {
-            editCardsCode +=`
-                        local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
-                        assert(SMODS.change_base(${target}[i], nil, _rank.key))`
-        } else if (rank === "pool") {
-                const rankPool = []
-                for (let i = 0; i < rankPoolActive.length; i++){
-                    if (rankPoolActive[i] == true){
-                        rankPool.push(rankPoolRanks[i])
-                }}
+  editCardsCode += `
+        return true
+      end
+    }))
+  end`;
+  }
 
-                editCardsCode += `
-                        local rank_pool = {${rankPool}}
-                        local _rank = pseudorandom_element(rank_pool, 'random_rank')
-                        assert(SMODS.change_base(${target}[i], _rank))`
-        } else {
-        editCardsCode += `
-                        assert(SMODS.change_base(${target}[i], nil, '${rank}'))`
-        }
+  if (rank !== "none") {
+    editCardsCode += `
+      for i = 1, #${target} do
+        G.E_MANAGER:add_event(Event({
+          trigger = 'after',
+          delay = 0.1,
+          func = function()`
 
-        editCardsCode += `
-                        return true
-                    end
-                }))
-            end`
+    if (rank === "random") {
+      editCardsCode +=`
+        local _rank = pseudorandom_element(SMODS.Ranks, 'random_rank')
+        assert(SMODS.change_base(${target}[i], nil, _rank.key))`
+    } else if (rank === "pool") {
+      const rankPool = []
+      for (let i = 0; i < rankPoolActive.length; i++){
+          if (rankPoolActive[i] == true){
+              rankPool.push(rankPoolRanks[i])
+      }}
+
+      editCardsCode += `
+        local rank_pool = {${rankPool}}
+        local _rank = pseudorandom_element(rank_pool, 'random_rank')
+        assert(SMODS.change_base(${target}[i], _rank))`
+    } else {
+      editCardsCode += `
+        assert(SMODS.change_base(${target}[i], nil, '${getRankId(rank)}'))`
     }
+
+    editCardsCode += `
+          return true
+        end
+      }))
+    end`
+  }
 
   editCardsCode += `
             for i = 1, #${target} do
