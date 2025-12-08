@@ -51,9 +51,10 @@ const generateJokerCode = (
   let propertyCheck = getRanksCheckLogic(
     rankType, 
     rankType.value === "specific" ? specificRank : rankGroup, 
-    cardsToCheck
+    "playing_card"
   )
-  let comparison = `count == #context.scoring_hand`
+
+  let comparison = `count == #${cardsToCheck}`
   if (cardCount === "none") {
     comparison = `count == 0`
   } else if (cardCount === "exactly") {
