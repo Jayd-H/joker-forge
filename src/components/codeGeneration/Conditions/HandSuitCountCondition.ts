@@ -49,10 +49,10 @@ const generateJokerCode = (
   let propertyCheck = getSuitsCheckLogic(
     suitType, 
     suitType.value === "specific" ? specificSuit : suitGroup, 
-    cardsToCheck
+    "playing_card"
   )
 
-  let comparison = `count == #context.scoring_hand`
+  let comparison = `count == #${cardsToCheck}`
 
   if (cardCount === "none") {
     comparison = `count == 0`

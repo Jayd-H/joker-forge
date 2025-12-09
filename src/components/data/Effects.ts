@@ -101,6 +101,7 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           { value: "most", label: "Most Played" },
           { value: "least", label: "Least Played" },
           { value: "random", label: "Random Hand" },
+          { value: "pool", label: "Random Hand from Pool" },
         ],
         default: "current",
         variableTypes: ["pokerhand"],
@@ -114,6 +115,17 @@ export const EFFECTS: GlobalEffectTypeDefinition[] = [
           parameter: "hand_selection",
           values: ["specific"],
         },
+      },
+      {
+        id: "poker_hand_pool",
+        type: "checkbox",
+        label: "Poker Hands",
+        checkboxOptions: [...POKER_HANDS.map(h => {return {value: h.value, valueType: "text", checked: false, label: h.label}})],
+        default: [...POKER_HANDS.map(_ => false)],
+        showWhen: {
+          parameter: "hand_selection",
+          values: ["pool"]
+        }
       },
       {
         id: "value",

@@ -172,14 +172,13 @@ export function generateEffectReturnStatement(
   const object = 
     (itemType === "joker") ? joker :
     (itemType === "consumable") ? consumable :
-    (itemType === "card") ? card :
+    (itemType === "enhancement") || (itemType === "seal") || (itemType === "edition") ? card :
     (itemType === "voucher") ? voucher :
     (itemType === "deck") ? deck : 
     null
     
   const allRandomGroups: RandomGroup[] = []
   const allLoopGroups: LoopGroup[] = []
-
   object?.rules?.forEach(rule => {
     const randoms = convertRandomGroupsForCodegen(rule.randomGroups || [])
     const loops = convertLoopGroupsForCodegen(rule.loops || [])
@@ -269,7 +268,6 @@ export function generateEffectReturnStatement(
     const denominatorToOddsVar: Record<number, string> = {};
     const abilityPath =
       itemType === "seal" ? "card.ability.seal.extra" : "card.ability.extra";
-
     allDenominators.forEach((denom, index) => {
       if (index === 0) {
         denominatorToOddsVar[denom] =`${abilityPath}.odds`;
@@ -364,7 +362,6 @@ export function generateEffectReturnStatement(
           statement: newStatement,
         });
       });
-
       const oddsVar = denominatorToOddsVar[group.chance_denominator.value as number];
       const probabilityIdentifier = `group_${groupIndex}_${group.id.substring(
         0,
@@ -463,7 +460,6 @@ export function generateEffectReturnStatement(
       const no_modParam = (
         hasFixProbablityEffects || hasModProbablityEffects // prevents stack overflow
       ) || group.respect_probability_effects === false;
-      
       const probabilityStatement =  `SMODS.pseudorandom_probability(card, '${probabilityIdentifier}', ${group.chance_numerator.value}, ${oddsVar}, '${group.custom_key || `j_${modprefix}_${object?.objectKey}`}', ${no_modParam})`;
       
       const groupStatement = `if ${probabilityStatement} then

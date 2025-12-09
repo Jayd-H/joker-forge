@@ -1,6 +1,6 @@
 import type { Effect } from "../../ruleBuilder/types";
-import type { ConfigExtraVariable, EffectReturn } from "../lib/effectUtils";
-import type { EditionData, EnhancementData, JokerData, SealData } from "../../data/BalatroUtils";
+import type { EffectReturn } from "../lib/effectUtils";
+import { POKER_HANDS, type EditionData, type EnhancementData, type JokerData, type SealData } from "../../data/BalatroUtils";
 import {
   generateConfigVariables,
   generateValueCode,
@@ -48,9 +48,10 @@ const generateJokerCode = (
     joker,
   )
 
-  const customVar = parsePokerHandVariable(effect?.params?.hand_selection || "", joker)
+  const customVar = parsePokerHandVariable(effect?.params?.hand_selection.value || "", joker)
   const targetHandVar = sameTypeCount === 0 ? `target_hand` : `target_hand${sameTypeCount + 1}`
-
+  const pokerHandPoolActive = (effect.params.poker_hand_pool?.value as Array<boolean>) || [];
+  const pokerHandPoolPokerHands = [...POKER_HANDS.map(h => `'${h.value}'`)]
   const handSelection = (effect?.params?.hand_selection?.value as string) || "current";
   const specificHand = (effect?.params?.specific_hand?.value as string) || "High Card";
   
@@ -86,7 +87,15 @@ const generateJokerCode = (
           end
         end
       `;
-      
+    } else if (handSelection === "pool") {
+        const pokerhand_pool = []
+        for (let i = 0; i < pokerHandPoolActive.length; i++){
+          if (pokerHandPoolActive[i] == true){
+            pokerhand_pool.push(pokerHandPoolPokerHands[i])
+        }}
+        handDeterminationCode += `            
+          local hand_pool = {${pokerhand_pool}}
+          local random_hand = pseudorandom_element(hand_pool, 'random_hand_levelup')`
      } else if (handSelection === "least") {
       handDeterminationCode = `
         local temp_played = math.huge
@@ -103,8 +112,7 @@ const generateJokerCode = (
               ${targetHandVar} = hand
             end
           end
-        end
-      `; 
+        end`; 
     } else if (handSelection === "current") {
       if (triggerType === "hand_discarded") {
         handDeterminationCode = `
@@ -134,16 +142,12 @@ const generateJokerCode = (
 const generateConsumableCode = (
   effect: Effect,
 ): EffectReturn => {
-  console.log(effect)
-  const handType = (effect.params?.hand_selection?.value as string) || "Pair";
+  const handType = (effect.params?.hand_selection?.value as string) || "random";
+  const specificHand = (effect.params?.specific_hand?.value as string) || "Pair";
   const customMessage = effect.customMessage;
   const levels = effect.params?.value
-  const pokerHandPoolActive = (effect.params.pokerhand_pool?.value as Array<boolean>) || [];
-  const pokerHandPoolPokerHands = [
-    "'High Card'","'Pair'","'Two Pair'","'Three of a Kind'",
-    "'Straight'","'Flush'","'Full House'","'Four of a Kind'",
-    "'Straight Flush'","'Five of a Kind'","'Flush Five'","'Flush House'"
-  ]
+  const pokerHandPoolActive = (effect.params.poker_hand_pool?.value as Array<boolean>) || [];
+  const pokerHandPoolPokerHands = [...POKER_HANDS.map(h => `'${h.value}'`)]
 
   const levelsCode = generateValueCode(levels, 'consumable');
   let levelUpCode = "";
@@ -203,10 +207,10 @@ const generateConsumableCode = (
     } else {
       levelUpCode += `
         { 
-          handname = localize('${handType}', 'poker_hands'), 
-          chips = G.GAME.hands['${handType}'].chips, 
-          mult = G.GAME.hands['${handType}'].mult, 
-          level = G.GAME.hands['${handType}'].level 
+          handname = localize('${specificHand}', 'poker_hands'), 
+          chips = G.GAME.hands['${specificHand}'].chips, 
+          mult = G.GAME.hands['${specificHand}'].mult, 
+          level = G.GAME.hands['${specificHand}'].level 
         }`
     }
 
@@ -271,8 +275,8 @@ const generateConsumableCode = (
     } else if (handType === "pool") {
         const pokerhand_pool = []
         for (let i = 0; i < pokerHandPoolActive.length; i++){
-            if (pokerHandPoolActive[i] == true){
-                pokerhand_pool.push(pokerHandPoolPokerHands[i])
+          if (pokerHandPoolActive[i] == true){
+            pokerhand_pool.push(pokerHandPoolPokerHands[i])
         }}
         levelUpCode += `            
             local hand_pool = {${pokerhand_pool}}
@@ -286,12 +290,12 @@ const generateConsumableCode = (
                  level = G.GAME.hands[random_hand].level})`
     } else {
         levelUpCode += `
-            level_up_hand(card, "${handType}", true, ${levelsCode})
+            level_up_hand(card, "${specificHand}", true, ${levelsCode})
             update_hand_text({sound = 'button', volume = 0.7, pitch = 1.1, delay = 0}, 
-                {handname=localize('${handType}', 'poker_hands'), 
-                 chips = G.GAME.hands['${handType}'].chips, 
-                 mult = G.GAME.hands['${handType}'].mult, 
-                 level=G.GAME.hands['${handType}'].level})`
+                {handname=localize('${specificHand}', 'poker_hands'), 
+                 chips = G.GAME.hands['${specificHand}'].chips, 
+                 mult = G.GAME.hands['${specificHand}'].mult, 
+                 level=G.GAME.hands['${specificHand}'].level})`
     }
 
     if (handType !== "all") {
@@ -301,15 +305,10 @@ const generateConsumableCode = (
     }
 
   // Only add config variable if it's not a game variable and not "all" or "random"
-  const configVariables: ConfigExtraVariable[] = [];
-  if (handType !== "random" && handType !== "all") {
-    configVariables.push({name: `hand_type`, value: `${handType}`});
-  }
 
   const result: EffectReturn = {
     statement: levelUpCode,
     colour: "G.C.SECONDARY_SET.Planet",
-    configVariables,
   };
 
   if (customMessage) {
@@ -340,6 +339,13 @@ const generateCardCode = (
 
   const handSelection = (effect?.params?.hand_selection?.value as string) || "current";
   const specificHand = (effect?.params?.specific_hand?.value as string) || "High Card";
+  const pokerHandPoolActive = (effect.params.poker_hand_pool?.value as Array<boolean>) || [];
+  const pokerHandPoolPokerHands = [...POKER_HANDS.map(h => `'${h.value}'`)]
+  const pokerhand_pool = []
+  for (let i = 0; i < pokerHandPoolActive.length; i++){
+    if (pokerHandPoolActive[i] == true){
+      pokerhand_pool.push(pokerHandPoolPokerHands[i])
+  }}
 
   let handDeterminationCode = "";
   switch (handSelection) {
@@ -375,21 +381,26 @@ const generateCardCode = (
       break;
     case "least":
       handDeterminationCode = `
-                local temp_played = math.huge
-                local temp_order = math.huge
-                for hand, value in pairs(G.GAME.hands) do 
-                  if value.played < temp_played and value.visible then
-                    temp_played = value.played
-                    temp_order = value.order
-                    ${targetHandVar} = hand
-                  elseif value.played == temp_played and value.visible then
-                    if value.order < temp_order then
-                      temp_order = value.order
-                      ${targetHandVar} = hand
-                    end
-                  end
-                end`;
+        local temp_played = math.huge
+        local temp_order = math.huge
+        for hand, value in pairs(G.GAME.hands) do 
+          if value.played < temp_played and value.visible then
+            temp_played = value.played
+            temp_order = value.order
+            ${targetHandVar} = hand
+          elseif value.played == temp_played and value.visible then
+            if value.order < temp_order then
+              temp_order = value.order
+              ${targetHandVar} = hand
+            end
+          end
+        end`;
       break;
+    case "pool":
+      handDeterminationCode += `            
+        local hand_pool = {${pokerhand_pool}}
+        local random_hand = pseudorandom_element(hand_pool, 'random_hand_levelup')`
+        break
     case "current":
       handDeterminationCode = `${targetHandVar} = context.scoring_name or "High Card"`;
       break;

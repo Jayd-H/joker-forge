@@ -193,7 +193,8 @@ const extractExplicitVariablesFromEffect = (effect: Effect): string[] => {
         value.startsWith("e_") ||
         value.startsWith("b_") ||
         value.startsWith("tag_") ||
-        value.startsWith("v_"))
+        value.startsWith("v_")
+      )
     ) {
       return;
     }

@@ -64,7 +64,6 @@ export const generateValueCode = (
   itemType?: string,
   object?: JokerData | EnhancementData | EditionData | SealData
 ): string => {
-  console.log(item)
   if (item && item.valueType !== undefined && item.valueType === "number") return `${item.value}`
   if (!item || !item.value) return ''
 
@@ -78,6 +77,10 @@ export const generateValueCode = (
     (itemType === "edition") ? "card.ability.edition" : 
     "card.ability.extra"
 
+  if (item.valueType === "conflicted_user_var") {
+    return `${item.value}_value`
+  }
+  
   if (item.valueType === "game_var") {
     const parsedGameVar = parseGameVariable(item.value as string)
     const gameVariable = getGameVariableById(parsedGameVar.gameVariableId!);
