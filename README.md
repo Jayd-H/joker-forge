@@ -146,7 +146,6 @@ The plan here is to implement enough triggers, conditions, and effects, so as th
 
 - [ ] **Apply Edition to Joker** - Apply an edition to a random/set Joker owned
 
-
 ---
 
 ### Code Generation Features
