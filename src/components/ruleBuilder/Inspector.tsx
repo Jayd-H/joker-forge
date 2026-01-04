@@ -1057,7 +1057,6 @@ const Inspector: React.FC<InspectorProps> = ({
   selectedItem,
   itemType,
 }) => {
-  console.log(selectedRule)
   const [customMessageValidationError, setCustomMessageValidationError] =
     useState<string>("");
 
