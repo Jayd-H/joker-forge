@@ -1751,27 +1751,7 @@ export const CONDITIONS: GlobalConditionTypeDefinition[] = [
         },
         default: "any",
         exemptObjects: ["consumable"]
-      },
-      {
-        id: "operator",
-        type: "select",
-        label: "Operator",
-        options: [
-          { value: "equals", label: "equals" },
-          { value: "greater_than", label: "greater than" },
-          { value: "less_than", label: "less than" },
-          { value: "greater_equals", label: "greater than or equal" },
-          { value: "less_equals", label: "less than or equal" },
-        ],
-        default: "equals",
-      },
-      {
-        id: "value",
-        type: "number",
-        label: "Number of Jokers",
-        min: 1,
-        default: 1,
-      },
+      }
     ],
     category: "Jokers",
   },
