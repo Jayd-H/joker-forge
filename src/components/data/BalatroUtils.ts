@@ -640,27 +640,12 @@ export const VANILLA_SHADERS = [
 
 export const CUSTOM_SHADERS = [
   {
-    label: "Anaglyphic (SMODS)",
-    key: "anaglyphic",
-    filepath: "/shaders/anaglyphic.fs",
-  },
-  {
     label: "Flipped (stupxd)",
     key: "flipped",
     filepath: "/shaders/flipped.fs",
   },
-  {
-    label: "Fluorescent (SMODS)",
-    key: "fluorescent",
-    filepath: "/shaders/fluorescent.fs",
-  },
   { label: "Gilded (SMODS)", key: "gilded", filepath: "/shaders/gilded.fs" },
   { label: "Gold (stupxd)", key: "gold", filepath: "/shaders/gold.fs" },
-  {
-    label: "Greyscale (SMODS)",
-    key: "greyscale",
-    filepath: "/shaders/greyscale.fs",
-  },
   { label: "Ionized (SMODS)", key: "ionized", filepath: "/shaders/ionized.fs" },
   {
     label: "Laminated (SMODS)",
@@ -671,11 +656,6 @@ export const CUSTOM_SHADERS = [
     label: "Monochrome (SMODS)",
     key: "monochrome",
     filepath: "/shaders/monochrome.fs",
-  },
-  {
-    label: "Overexposed (SMODS)",
-    key: "overexposed",
-    filepath: "/shaders/overexposed.fs",
   },
   { label: "Sepia (SMODS)", key: "sepia", filepath: "/shaders/sepia.fs" },
 ] as const;
